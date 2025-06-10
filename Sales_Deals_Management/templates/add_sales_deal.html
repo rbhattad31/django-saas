@@ -1,0 +1,30 @@
+<h2>Add Sales Deal</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  <!-- Seller Section -->
+  <fieldset style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+    <legend style="font-weight: bold; font-size: 1.2em;">Seller Details</legend>
+
+    {{ form.seller_name.label_tag }} {{ form.seller_name }} <br><br>
+    {{ form.seller_mobile.label_tag }} {{ form.seller_mobile }} <br><br>
+    {{ form.seller_email.label_tag }} {{ form.seller_email }} <br><br>
+    {{ form.seller_nationality.label_tag }} {{ form.seller_nationality }} <br><br>
+    {{ form.seller_source.label_tag }} {{ form.seller_source }}
+  </fieldset>
+
+  <!-- Buyer Section -->
+  <fieldset style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+    <legend style="font-weight: bold; font-size: 1.2em;">Buyer Details</legend>
+
+    {{ form.buyer_name.label_tag }} {{ form.buyer_name }} <br><br>
+    {{ form.buyer_mobile.label_tag }} {{ form.buyer_mobile }} <br><br>
+    {{ form.buyer_email.label_tag }} {{ form.buyer_email }} <br><br>
+    {{ form.buyer_nationality.label_tag }} {{ form.buyer_nationality }} <br><br>
+    {{ form.buyer_source.label_tag }} {{ form.buyer_source }}
+  </fieldset>
+
+  <!-- Submit -->
+  <button type="submit">Submit</button>
+</form>
