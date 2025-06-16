@@ -1,228 +1,243 @@
 from datetime import date
 from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 import uuid
 
 # Create your models here.
-from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
-from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+  
 
 
-# Commission Detail Model
-
- 
-    # total_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    # less_outside_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    # net_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    # classic = models.CharField(max_length=100)
-
-    # # Agents and their commission splits
-    # agent1 = models.ForeignKey(User, related_name='agent1_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    # agent1_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    # agent2 = models.ForeignKey(User, related_name='agent2_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    # agent2_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    # agent3 = models.ForeignKey(User, related_name='agent3_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    # agent3_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    # # Comments
-    # comment_by_agent = models.TextField(null=True, blank=True)
-    # comment_by_admin = models.TextField(null=True, blank=True)
-
-    # receipt_no = models.CharField(max_length=100)
-    # kyc_number = models.CharField(max_length=100, null=True, blank=True)
-
-    
-    # aml = models.CharField(max_length=3, choices=AML_CHOICES)
-
- 
-    # approval_status = models.CharField(max_length=20, choices=APPROVAL_CHOICES,null=True)
-
-    # created_at = models.DateTimeField(auto_now_add=True)
-
-    # def __str__(self):
-    #     return f"Commission #{self.id} - Receipt {self.receipt_no}"
-
-# Rental Deal  Rental_Deals    Model
-class Rental_Deal(models.Model):
-    DEAL_TYPE_CHOICES = [
-        ('new', 'New'),
-        ('renewal', 'Renewal'),
-    ]
-    APPROVAL_CHOICES = (
-        ('approve', 'Approve'),
-        ('reject', 'Reject'),
-        ('waiting', 'Waiting for Finance'),
-    )
-    AML_CHOICES = (
-        ('yes', 'Yes'),
-        ('no', 'No'),
-    )
-
-    PROPERTY_USAGE_CHOICES = [
-        ('residential', 'Residential'),
-        ('commercial', 'Commercial'),
-        ('industrial', 'Industrial'),
-        # Add more as needed
-    ]
-
-    
-
-    STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('submitted', 'Submitted'),
-    ]
-
-    # Required Fields
-    # Relation to User model for agent
-    
-    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='deals')  # Required via serializer logic
-    # Relation to Owner model for property owner
-    # owner = models.ForeignKey('Owner', on_delete=models.CASCADE, related_name='rental_deals')
-    deal_date = models.DateField(default=date.today)
-    reference_number = models.CharField(max_length=100, unique=True)
-    deal_type = models.CharField(max_length=10, choices=DEAL_TYPE_CHOICES) 
-    project_name = models.CharField(max_length=200)
-    unit_number = models.CharField(max_length=50)
-    building_name = models.CharField(max_length=200)
+class RentalDeals(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    submitted_date = models.DateField()
+    submitted_by_user = models.ForeignKey('Users', models.DO_NOTHING)
+    reference_number = models.TextField()
+    date = models.DateField()
+    unit_details = models.TextField()
+    building_name = models.TextField()
+    project_name = models.TextField()
+    is_new_deal = models.CharField(max_length=1)
+    owner_title = models.TextField(blank=True, null=True)
+    owner_first_name = models.TextField()
+    owner_last_name = models.TextField(blank=True, null=True)
+    owner_source = models.TextField()
+    owner_mobile = models.TextField()
+    owner_email = models.TextField(blank=True, null=True)
+    tenant_title = models.TextField()
+    tenant_first_name = models.TextField()
+    tenant_last_name = models.TextField(blank=True, null=True)
+    tenant_source = models.TextField()
+    tenant_mobile = models.TextField()
+    tenant_email = models.TextField(blank=True, null=True)
+    owner_agency = models.TextField()
+    agent_first_name = models.TextField()
+    agent_last_name = models.TextField(blank=True, null=True)
+    agent_phone = models.TextField()
+    agent_email = models.TextField(blank=True, null=True)
+    brn = models.TextField(blank=True, null=True)
+    tenant_agency = models.TextField()
+    tenant_agent_first_name = models.TextField()
+    tenant_agent_last_name = models.TextField(blank=True, null=True)
+    tenant_agent_phone = models.TextField()
+    tenant_agent_email = models.TextField(blank=True, null=True)
+    tenant_brn = models.TextField(blank=True, null=True)
+    tenancy_contract = models.TextField()
+    owner_passport_copy = models.TextField()
+    tenant_passport_visa_copy = models.TextField()
+    tenant_emirates_id = models.TextField(blank=True, null=True)
+    rental_deposit_cheque_copy = models.TextField()
+    title_deed = models.TextField()
+    owner_poa_pp_copy = models.TextField(blank=True, null=True)
+    key_hand_over_form = models.TextField(blank=True, null=True)
+    total_commission = models.TextField()
+    less_outsude_commission = models.TextField()
+    net_commission = models.TextField()
+    classic = models.TextField()
+    agent1 = models.TextField()
+    agent2 = models.TextField(blank=True, null=True)
+    agent3 = models.TextField(blank=True, null=True)
+    is_approved_rejected = models.CharField(max_length=1)
+    approved_rejected_by = models.TextField(blank=True, null=True)
+    is_entered_in_finance_system = models.BooleanField(default=False)
+    comments = models.TextField(blank=True, null=True)
+    rental_price = models.TextField(blank=True, null=True)
+    ejari = models.TextField(blank=True, null=True)
+    agent_name1 = models.TextField(blank=True, null=True)
+    agent_name2 = models.TextField(blank=True, null=True)
+    agent_name3 = models.TextField(blank=True, null=True)
+    owner_eid_copy = models.TextField(blank=True, null=True)
+    agent_comment = models.TextField(blank=True, null=True)
+    mediating_agency = models.TextField(blank=True, null=True)
+    mediating_agent_name = models.TextField(blank=True, null=True)
+    mediating_agent_phone = models.TextField(blank=True, null=True)
+    mediating_agent_email = models.TextField(blank=True, null=True)
+    mediating_agency_brn = models.TextField(blank=True, null=True)
+    poa_copy = models.TextField(blank=True, null=True)
     deal_start_date = models.DateField()
     deal_end_date = models.DateField()
-
-    # Optional Fields
-    property_usage = models.CharField(max_length=50, choices=PROPERTY_USAGE_CHOICES, blank=True, null=True)
-    property_type = models.CharField(max_length=50, blank=True, null=True)
-    property_size = models.CharField(max_length=50, blank=True, null=True)
-    rental_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    security_deposit = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    mode_of_payment = models.CharField(max_length=100, blank=True, null=True)
-    premises_number = models.CharField(max_length=50, blank=True, null=True)
-    plot_number = models.CharField(max_length=50, blank=True, null=True)
-
-    # Save as Draft / Submit Handling
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
- 
-   
- 
-    #source Details
-    owner_name = models.CharField(max_length=100)
-    owner_mobile = models.CharField(max_length=20)
-    owner_nationality = models.CharField(max_length=50)
-    owner_email = models.EmailField()
-    # source = models.ForeignKey('OwnerSource', on_delete=models.SET_NULL, null=True, blank=True)
-
- 
-
-    tenant_name = models.CharField(max_length=100)
-    tenant_mobile = models.CharField(max_length=20)
-    tenant_nationality = models.CharField(max_length=50)
-    tenant_email = models.EmailField()
-
-
-
-    # Agency Details
-
-    owner_agency_name = models.CharField(max_length=255)
-    owner_agency_brn = models.CharField(max_length=100, blank=True, null=True)
-    owner_agent_name = models.CharField(max_length=255)
-    owner_agent_phone = models.CharField(max_length=20)
-    owner_agent_email = models.EmailField(blank=True, null=True)
-
-    # Tenant Agency
-    tenant_agency_name = models.CharField(max_length=255)
-    tenant_agency_brn = models.CharField(max_length=100, blank=True, null=True)
-    tenant_agent_name = models.CharField(max_length=255)
-    tenant_agent_phone = models.CharField(max_length=20)
-    tenant_agent_email = models.EmailField(blank=True, null=True)
-
-    # Mediating Agency
-    mediating_agency_name = models.CharField(max_length=255, blank=True, null=True)
-    mediating_agency_brn = models.CharField(max_length=100, blank=True, null=True)
-    mediating_agent_name = models.CharField(max_length=255, blank=True, null=True)
-    mediating_agent_phone = models.CharField(max_length=20, blank=True, null=True)
-    mediating_agent_email = models.EmailField(blank=True, null=True)
-
-    # Revenue Details
-    total_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    less_outside_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    net_commission = models.DecimalField(max_digits=10, decimal_places=2)
-    classic = models.CharField(max_length=100)
+    receipt_no = models.TextField()
+    form_status = models.CharField(max_length=10, blank=True, null=True)
+    rental_kyc_number = models.TextField()
+    is_rental_aml = models.CharField(max_length=3, blank=True, null=True)
+    kyc_number = models.TextField(blank=True, null=True)
+    comments_finance = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=191, blank=True, null=True)
+    updated_by = models.CharField(max_length=191, blank=True, null=True)
+    account = models.ForeignKey('Accounts', models.DO_NOTHING, blank=True, null=True)
+    property = models.ForeignKey('Properties', models.DO_NOTHING, blank=True, null=True)
+    # branch = models.ForeignKey('Branches', models.DO_NOTHING, blank=True, null=True)
+    is_deleted = models.CharField(max_length=1)
+    plot_no = models.TextField(blank=True, null=True)
+    mode_of_payment = models.TextField(blank=True, null=True)
+    deal_agent = models.CharField(max_length=191, blank=True, null=True)
+    receipt_id = models.IntegerField()
+    property_usage = models.CharField(max_length=191)
+    property_size = models.CharField(max_length=191)
+    premises_no = models.CharField(max_length=191)
+    security_deposit = models.CharField(max_length=191)
+    submitted_by_agent = models.IntegerField()
+    property_type = models.CharField(max_length=191, blank=True, null=True)
+    tenancy_application_form = models.CharField(max_length=191, blank=True, null=True)
+    screening = models.CharField(max_length=191)
+    screening_comments = models.TextField()
+    seller_nationality = models.CharField(max_length=191)
+    buyer_nationality = models.CharField(max_length=191)
+    manager_approved_rejected = models.CharField(max_length=1)
 
 
    
-    # Agents and their commission splits
-    agent1 = models.ForeignKey(User, related_name='agent1_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    agent1_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    agent2 = models.ForeignKey(User, related_name='agent2_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    agent2_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    class Meta:
+        managed = False
+        db_table = 'rental_deals'
 
-    agent3 = models.ForeignKey(User, related_name='agent3_commissions', on_delete=models.SET_NULL, null=True, blank=True)
-    agent3_commission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    # Comments
-    comment_by_agent = models.TextField(null=True, blank=True)
-    comment_by_admin = models.TextField(null=True, blank=True)
+class Accounts(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    account_name = models.CharField(unique=True, max_length=191)
+    account_domain = models.CharField(unique=True, max_length=191)
+    contact_name = models.CharField(max_length=191, blank=True, null=True)
+    contact_email = models.CharField(max_length=191, blank=True, null=True)
+    contact_phone = models.CharField(max_length=191, blank=True, null=True)
+    additional_info = models.TextField(blank=True, null=True)
+    logo = models.TextField(blank=True, null=True)
+    plan = models.CharField(max_length=191, blank=True, null=True)
+    max_users = models.CharField(max_length=191, blank=True, null=True)
+    min_users = models.CharField(max_length=191, blank=True, null=True)
+    is_active = models.CharField(max_length=1)
+    is_deleted = models.CharField(max_length=1)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=191, blank=True, null=True)
+    updated_by = models.CharField(max_length=191, blank=True, null=True)
+    is_approved = models.CharField(max_length=1)
 
-    receipt_no = models.CharField(max_length=100)
-    kyc_number = models.CharField(max_length=100, null=True, blank=True)
+    class Meta:
+        managed = False
+        db_table = 'accounts'
 
-    AML_CHOICES = (
-        ('yes', 'Yes'),
-        ('no', 'No'),
-    )
-    aml = models.CharField(max_length=3, choices=AML_CHOICES)
 
-    APPROVAL_CHOICES = (
-        ('pending', 'Pending'),
-        ('approve', 'Approve'),
-        ('reject', 'Reject'),
-        ('waiting', 'Waiting for Finance'),
-    )
-    approval_status = models.CharField(max_length=20, choices=APPROVAL_CHOICES,default='pending')
 
-    created_at = models.DateTimeField(auto_now_add=True)
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-    is_entered_finance = models.BooleanField(default=False)
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+    
 
-    # documents
- 
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
 
-    tenancy_contract = models.FileField(upload_to=f'documents/tenancy_contracts/{uuid.uuid4()}/', blank=True, null=True)
-    title_deed = models.FileField(upload_to=f'documents/title_deeds/{uuid.uuid4()}/', blank=True, null=True)
-    tenant_passport_visa_copy = models.FileField(upload_to=f'documents/tenant_passports/{uuid.uuid4()}/', blank=True, null=True)
-    owner_eid_copy = models.FileField(upload_to=f'documents/owner_eid/{uuid.uuid4()}/', blank=True, null=True)
-    poa_pp = models.FileField(upload_to=f'documents/poa_pp/{uuid.uuid4()}/', blank=True, null=True)
-    key_handover_form = models.FileField(upload_to=f'documents/key_handover/{uuid.uuid4()}/', blank=True, null=True)
-    tenancy_application_form = models.FileField(upload_to=f'documents/tenancy_applications/{uuid.uuid4()}/', blank=True, null=True)
 
-    owner_passport_copy = models.FileField(upload_to=f'documents/owner_passports/{uuid.uuid4()}/', blank=True, null=True)
-    ejari = models.FileField(upload_to=f'documents/ejari/{uuid.uuid4()}/', blank=True, null=True)
-    tenants_eid_copy = models.FileField(upload_to=f'documents/tenant_eid/{uuid.uuid4()}/', blank=True, null=True)
-    rental_deposit_rental_cheque_copy = models.FileField(upload_to=f'documents/cheques/{uuid.uuid4()}/', blank=True, null=True)
-    poa_copy = models.FileField(upload_to=f'documents/poa_copy/{uuid.uuid4()}/', blank=True, null=True)
-    kyc_form = models.FileField(upload_to=f'documents/kyc_forms/{uuid.uuid4()}/', blank=True, null=True)
-    screening = models.FileField(upload_to=f'documents/screenings/{uuid.uuid4()}/', blank=True, null=True)
+class Users(AbstractBaseUser,PermissionsMixin):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=191,blank=False, null=True)
+    mobile_number = models.CharField(max_length=191)
+    role = models.IntegerField()
+    email = models.CharField(unique=True, max_length=191)
+    password = models.CharField(max_length=191)
+    gender = models.CharField(max_length=6, blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)
+    additional_info = models.TextField(blank=True, null=True)
+    timezone = models.CharField(max_length=191, blank=True, null=True)
+    is_active = models.CharField(max_length=1)
+    is_deleted = models.CharField(max_length=1)
+    remember_token = models.CharField(max_length=100, blank=True, null=True)
+    last_login = models.DateTimeField(
+    db_column='last_login_date_time', blank=True, null=True
+)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=191)
+    updated_by = models.CharField(max_length=191, blank=True, null=True)
+    image = models.TextField(blank=True, null=True)
+    user_account_id = models.CharField(max_length=191)
 
-    screening_comments = models.TextField(blank=True, null=True)
- 
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return f"{self.email}"
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name','password']
+
+    class Meta:
+        managed = False
+        db_table = 'users'
+
+
+class Properties(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    bayut_property_ref_no = models.CharField(unique=True, max_length=191)
+    property_status = models.CharField(max_length=7)
+    permit_number = models.BigIntegerField()
+    property_purpose = models.CharField(max_length=4)
+    property_parent_type = models.CharField(max_length=11)
+    property_type = models.CharField(max_length=16)
+    furnished = models.CharField(max_length=3, blank=True, null=True)
+    city = models.CharField(max_length=191)
+    locality = models.CharField(max_length=191)
+    sub_locality = models.CharField(max_length=191, blank=True, null=True)
+    tower_name = models.CharField(max_length=191, blank=True, null=True)
+    bayut_location_id = models.IntegerField()
+    property_title = models.CharField(max_length=191, blank=True, null=True)
+    property_description = models.TextField(blank=True, null=True)
+    property_size = models.IntegerField()
+    property_size_unit = models.CharField(max_length=191)
+    bedrooms = models.IntegerField()
+    bathroom = models.IntegerField()
+    price = models.IntegerField()
+    rent_frequency = models.CharField(max_length=191, blank=True, null=True)
+    listing_agent = models.CharField(max_length=191, blank=True, null=True)
+    listing_agent_phone = models.CharField(max_length=191, blank=True, null=True)
+    listing_agent_email = models.CharField(max_length=191, blank=True, null=True)
+    off_plan = models.CharField(max_length=191, blank=True, null=True)
+    featured_on_company_website = models.CharField(max_length=5, blank=True, null=True)
+    exclusive_rights = models.CharField(max_length=3, blank=True, null=True)
+    geopoints_latitude = models.DecimalField(max_digits=8, decimal_places=6, blank=True, null=True)
+    geopoints_longitude = models.DecimalField(max_digits=8, decimal_places=6, blank=True, null=True)
+    completion_status = models.CharField(max_length=191, blank=True, null=True)
+    last_updated = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'properties'
     
 
 
-
-
- 
-# 
  
 
 

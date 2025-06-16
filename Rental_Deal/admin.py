@@ -1,21 +1,17 @@
 from django.contrib import admin
-from .models import Rental_Deal
+from .models import RentalDeals
 
-# admin.site.register(Rental_Deal)
+# admin.site.register(RentalDeals)
 
-@admin.register(Rental_Deal)
+@admin.register(RentalDeals)
 class RentalDealAdmin(admin.ModelAdmin):
     list_display = (
-        'reference_number',
-        'agent',
-        'deal_type',
-        'project_name',
-        'unit_number',
-        'building_name',
+        'id', 
+        'date',
         'deal_start_date',
-        'deal_end_date',
-        'status',
-        'created_at',
-        'updated_at',
+        'reference_number', 
+        'is_new_deal',
+        'project_name',
+        'submitted_by_user',
     )
 

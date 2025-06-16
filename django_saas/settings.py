@@ -48,9 +48,10 @@ INSTALLED_APPS = [
 
     #filters
     'django_filters',
+    # 'silk',  # Django Silk for profiling and monitoring
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE = [ 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+ ]
 
 ROOT_URLCONF = 'django_saas.urls'
 
@@ -84,9 +85,13 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default':  {
+        'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
+        'NAME': 'bradsol',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -144,4 +149,17 @@ REST_FRAMEWORK = {
     
 }
 
+
+LOGIN_REDIRECT_URL = '/'
+
+# Redirects to this URL after logout
+LOGOUT_REDIRECT_URL = '/login/'
+
+# URL of the login view
+LOGIN_URL = '/login/'
+
+# URL of the logout view (optional, mostly used for redirection)
+LOGOUT_URL = '/logout/'
+# Custom user model
+AUTH_USER_MODEL = 'Rental_Deal.Users'
  
