@@ -1,315 +1,124 @@
-<nav
-  class="fixed-left navbar navbar-vertical  navbar-light bg-white pl-2"
-  id="sidenav-main"
->
-  {% comment %} <div class="scrollbar-inner">
-    <!-- Brand -->
-    <div class="sidenav-header align-items-center">
-      <a class="navbar-brand" href="/">
-        <img
-          src="/static/assets/img/brand/blue.png"
-          class="navbar-brand-img"
-          alt="Argon Design - Jinja Template Logo."
-        />
-      </a>
-    </div>
-    <div class="navbar-inner">
-      <!-- Collapse -->
-      <div class=" " id="">
-        <!-- Nav items -->
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a
-              class="nav-link {% if 'index' in segment %} active {% endif %}"
-              href="/"
-            >
-              <i class="ni ni-tv-2 text-primary"></i>
-              <span class="nav-link-text">Dashboard</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <ul class="list-group">
-              <!-- Main collapsible item -->
-              <li class="list-group-item p-0 border-0">
-                <a
-                  class="nav-link d-flex justify-content-between align-items-center rotate-icon collapsed px-3 py-2"
-                  data-bs-toggle="collapse"
-                  href="#rentalSubmenu"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="rentalSubmenu"
-                >
-                  <h5>Rental Deals Management</h6>
-                  <span class="chevron">&#x276F;</span>
-                </a>
-
-                <!-- Submenu -->
-                <ul class="list-group collapse ms-3" id="rentalSubmenu">
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a href="/rental-deals/all/"  id = "all-rental-deals"  class="text-decoration-none"
-                       ><h6>Rental Deals All</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a href="/rental-deals/drafts/" class="text-decoration-none"
-                      ><h6>Drafts</h6></a>
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/approved/"
-                      class="text-decoration-none"
-                      ><h6>Approved</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/pending/"
-                      class="text-decoration-none"
-                      ><h6>Pending</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/waiting/"
-                      class="text-decoration-none"
-                      ><h6>Waiting For Finance</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/rejected/"
-                      class="text-decoration-none"
-                      ><h6>Rejected</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/finance-entered/"
-                      class="text-decoration-none"
-                      ><h6>Finance Entered</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/pending-finance/"
-                      class="text-decoration-none"
-                      ><h6>Pending Finance</h6></a
-                    >
-                  </li>
-                </ul>
-              </li>
-
-              <!-- You can add more top-level list items here -->
-          
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if 'map' in segment %} active {% endif %}"
-              href="/map.html"
-            >
-              <i class="ni ni-pin-3 text-primary"></i>
-              <span class="nav-link-text">Google</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if 'profile' in segment %} active {% endif %}"
-              href="/profile.html"
-            >
-              <i class="ni ni-single-02 text-yellow"></i>
-              <span class="nav-link-text">Profile</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if 'tables' in segment %} active {% endif %}"
-              href="/tables.html"
-            >
-              <i class="ni ni-bullet-list-67 text-default"></i>
-              <span class="nav-link-text">Tables</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login.html">
-              <i class="ni ni-key-25 text-info"></i>
-              <span class="nav-link-text">Login (template)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/register.html">
-              <i class="ni ni-circle-08 text-pink"></i>
-              <span class="nav-link-text">Register (template)</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">
-              <i class="ni ni-user-run text-red"></i>
-              <span class="nav-link-text">Logout</span>
-            </a>
-          </li>
-        </ul>
-        <!-- Divider -->
-        <hr class="my-3" />
-        <!-- Heading -->
-        <h6 class="navbar-heading p-0 text-muted">
-          <span class="docs-normal">Resources</span>
-        </h6>
-        <!-- Navigation -->
-        <ul class="navbar-nav mb-md-3">
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              target="_blank"
-              href="https://appseed.us/admin-dashboards/django-dashboard-argon"
-            >
-              <i class="ni ni-archive-2"></i>
-              <span class="nav-link-text">Product Page</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              target="_blank"
-              href="https://appseed.us/admin-dashboards/django-dashboard-argon-pro"
-            >
-              <i class="ni ni-spaceship text-red"></i>
-              <span class="nav-link-text text-red">PRO Version</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a
-              class="nav-link active active-pro"
-              target="_blank"
-              href="http://appseed.us"
-            >
-              <i class="ni ni-send text-dark"></i>
-              <span class="nav-link-text">AppSeed</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div> {% endcomment %}
+<nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2" id="sidenav-main">
   <div class="sidebar">
-        <div class="text-center mb-4">
-            <h4>bradsol</h4>
+    <div class="text-center mb-4">
+      <h4>bradsol</h4>
+    </div>
+
+    <ul class="nav flex-column">
+
+      <!-- My Dashboard -->
+      <li class="nav-item">
+        <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> My Dashboard</a>
+      </li>
+
+      <!-- Accounts Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#accountsSubmenu" aria-expanded="false" aria-controls="accountsSubmenu">
+          <span><i class="fas fa-user"></i> Accounts Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="accountsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Users</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Roles</a></li>
+          </ul>
         </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> My Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-users"></i> Accounts</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="propertyManagementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-building"></i> Property Management Deals
-                </a>
-                
-            <ul class="list-group">
-              <!-- Main collapsible item -->
-              <li class="list-group-item p-0 border-0">
-                <a
-                  class="nav-link d-flex justify-content-between align-items-center rotate-icon collapsed px-3 py-2"
-                  data-bs-toggle="collapse"
-                  href="#rentalSubmenu"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="rentalSubmenu"
-                >
-                  <h5>Rental Deals Management</h6>
-                  <span class="chevron">&#x276F;</span>
-                </a>
+      </li>
 
-                <!-- Submenu -->
-                <ul class="list-group collapse ms-3" id="rentalSubmenu">
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a href="/rental-deals/all/"  id = "all-rental-deals"  class="text-decoration-none"
-                       ><h6>Rental Deals All</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a href="/rental-deals/draft/" class="text-decoration-none"
-                      ><h6>Drafts</h6></a>
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/approved/"
-                      class="text-decoration-none"
-                      ><h6>Approved</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/pending/"
-                      class="text-decoration-none"
-                      ><h6>Pending</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/waiting/"
-                      class="text-decoration-none"
-                      ><h6>Waiting For Finance</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/rejected/"
-                      class="text-decoration-none"
-                      ><h6>Rejected</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/entered-finance/"
-                      class="text-decoration-none"
-                      ><h6>Finance Entered</h6></a
-                    >
-                  </li>
-                  <li class="list-group-item border-0 px-3 py-1">
-                    <a
-                      href="/rental-deals/waiting-finance/"
-                      class="text-decoration-none"
-                      ><h6>Pending Finance</h6></a
-                    >
-                  </li>
-                </ul>
-              </li>
+      <!-- Property Management Deals -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#propertySubmenu" aria-expanded="false" aria-controls="propertySubmenu">
+          <span><i class="fas fa-building"></i> Property Management Deals</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="propertySubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">View Properties</a></li>
+          </ul>
+        </div>
+      </li>
 
-              <!-- You can add more top-level list items here -->
-          
-            </ul>
-          </li>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-receipt"></i> Management Receipts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-handshake"></i> Third Party Receipts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-cog"></i> Settings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-home"></i> Rental Deals Management</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Sales Deals Management</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-chart-bar"></i> Reports</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-file-alt"></i> Receipt</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </li>
-        </ul>
+      <!-- Third Party Receipts -->
+      <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-receipt"></i> Third Party Receipts</a></li>
+
+      <!-- Settings -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#settingsSubmenu" aria-expanded="false" aria-controls="settingsSubmenu">
+          <span><i class="fas fa-cogs"></i> Settings</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="settingsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">General</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Preferences</a></li>
+          </ul>
+        </div>
+      </li> 
+
+      <!-- Rental Deals Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#rentalDealsSubmenu" aria-expanded="false" aria-controls="rentalDealsSubmenu" id="rentalDealsToggle">
+          <span><i class="fas fa-home"></i> Rental Deals Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="rentalDealsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/list/" class="text-decoration-none rental-link"><i class="fas fa-users me-2"></i> All Rental Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/draft/" class="text-decoration-none rental-link"><i class="fas fa-user me-2"></i> My Drafts</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/pending/" class="text-decoration-none rental-link"><i class="fas fa-random me-2"></i> Pending Rental Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/approved/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-up me-2"></i> Approved Rental Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/rejected/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-down me-2"></i> Rejected Rental Deals</a></li>
+              
+         
+
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/waiting/" class="text-decoration-none rental-link"><i class="fas fa-hourglass-half me-2"></i> Waiting Finance Rental Deals</a></li>
+             
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-pending-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-times me-2"></i> Pending Finance Rental Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-entered-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-plus me-2"></i> Entered Finance Rental Deals</a></li> 
+          </ul>
+        </div>
+      </li>
+
+      <!-- Sales Deals Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#salesDealsSubmenu" aria-expanded="false" aria-controls="salesDealsSubmenu">
+          <span><i class="fas fa-clipboard-list"></i> Sales Deals Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="salesDealsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/list/" class="text-decoration-none"><i class="fas fa-users me-2"></i> All Sales Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/draft/" class="text-decoration-none"><i class="fas fa-user me-2"></i> My Drafts</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/pending/" class="text-decoration-none"><i class="fas fa-random me-2"></i> Pending Sales Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/approved/" class="text-decoration-none"><i class="fas fa-thumbs-up me-2"></i> Approved Sales Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/rejected/" class="text-decoration-none"><i class="fas fa-thumbs-down me-2"></i> Rejected Sales Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/waiting/" class="text-decoration-none"><i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Sales Deals</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/pending-finance/" class="text-decoration-none"><i class="fas fa-user-times me-2"></i> Pending Finance Sales Deal</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/entered-finance/" class="text-decoration-none"><i class="fas fa-user-plus me-2"></i> Entered Finance Sales Deal</a></li>
+          </ul>
+        </div>
+      </li> 
+
+      <!-- Reports Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportsSubmenu" aria-expanded="false" aria-controls="reportsSubmenu">
+          <span><i class="fas fa-database"></i> Reports Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="reportsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Sales Reports</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Rental Reports</a></li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Receipt -->
+      <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-file-invoice"></i> Receipt</a></li>
+
+      <!-- Logout -->
+      <li class="nav-item"><a class="nav-link" href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+
+    </ul>
   </div>
 </nav>
+{% comment %} <nav aria-label="breadcrumb">
+  <ol class="breadcrumb" id="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+  </ol>
+</nav> {% endcomment %}
+ 

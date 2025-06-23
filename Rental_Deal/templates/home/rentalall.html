@@ -7,7 +7,7 @@
 <div class="">
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>All Rental Deals</h3>
+    <h3> List of  <span id = "heading">All</span> </h3>
     <button class="btn btn-primary"> Create Rental  Deal</button>
 
   </div>
@@ -32,25 +32,25 @@
       <div class="col-md-6">
         <div class="mb-3">
           <label class="form-label">Reference No</label>
-          <input type="text" class="form-control" name="reference_number" placeholder="Reference No">
+          <input type="text" class="form-control" id = "filter-reference-number" name="reference_number" placeholder="Reference No">
         </div>
-       <input type="hidden" name="type" value="">
+       {% comment %} <input type="hidden" name="type" value=""> {% endcomment %}
 
         <div class="mb-3">
           <label class="form-label">Building Name</label>
-          <input type="text" class="form-control" name="building_name" placeholder="Building Name">
+          <input type="text" class="form-control" id="filter-building-name" name="building_name" placeholder="Building Name">
         </div>
         <div class="mb-3">
           <label class="form-label">Owner Name</label>
-          <input type="text" class="form-control" name="owner_name" placeholder="Owner Name">
+          <input type="text" class="form-control" id="filter-owner-name"  name="owner_name" placeholder="Owner Name">
         </div>
         <div class="mb-3">
           <label class="form-label">Owner Mobile</label>
-          <input type="text" class="form-control" name="owner_mobile" placeholder="Owner Mobile">
+          <input type="text" class="form-control" name="owner_mobile"  id="filter-owner-mobile" placeholder="Owner Mobile">
         </div>
         <div class="mb-3">
           <label class="form-label">New Deal / Renewal</label>
-          <select class="form-select" name="deal_type">
+          <select class="form-select" id="filter-deal-type" name="deal_type">
             <option value="">Select Deal</option>
             <option value="New">New</option>
             <option value="Renewal">Renewal</option>
@@ -58,7 +58,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Deal Date From</label>
-          <input type="date" class="form-control" name="from_date">
+          <input type="date" class="form-control" id= "filter-from-date" name="from_date">
         </div>
       </div>
 
@@ -66,23 +66,23 @@
       <div class="col-md-6">
         <div class="mb-3">
           <label class="form-label">Unit No</label>
-          <input type="text" class="form-control" name="unit_details" placeholder="Unit No">
+          <input type="text" class="form-control" id="filter-unit-details" name="filter-unit_details" placeholder="Unit No">
         </div>
         <div class="mb-3">
           <label class="form-label">Project Name</label>
-          <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+          <input type="text" class="form-control" name="project_name" id="filter-project-name"placeholder="Project Name">
         </div>
         <div class="mb-3">
           <label class="form-label">Tenant Name</label>
-          <input type="text" class="form-control" name="tenant_name" placeholder="Tenant Name">
+          <input type="text" class="form-control" name="tenant_name" id="filter-tenant-name" placeholder="Tenant Name">
         </div>
         <div class="mb-3">
           <label class="form-label">Tenant Mobile</label>
-          <input type="text" class="form-control" name="tenant_mobile" placeholder="Tenant Mobile">
+          <input type="text" class="form-control" name="tenant_mobile" id="filter-tenant-mobile" placeholder="Tenant Mobile">
         </div>
         <div class="mb-3">
           <label class="form-label">Deal Status</label>
-          <select class="form-select" name="deal_status">
+          <select class="form-select" id="filter-deal-status" name="deal_status">
             <option value="">Please Select</option>
             <option value="Active">Active</option>
             <option value="Closed">Closed</option>
@@ -90,7 +90,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Deal Date To</label>
-          <input type="date" class="form-control" name="to_date">
+          <input type="date" class="form-control" id = "filter-to-date" name="to_date">
         </div>
       </div>
     </div>
@@ -105,20 +105,10 @@
   </div>
 
   <!-- Visually OUTSIDE collapse but INSIDE form -->
-  <div class="row mt-3">
-    <div class="col-md-12 d-flex align-items-center">
-      <label class="me-2">Show</label>
-      <select name="length" class="form-select w-auto">
-        <option value="10" selected>10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-      </select>
-      <label class="ms-2">entries</label>
-    </div>
-  </div>
+   
 </form>
-</div>
-<table id="myTable" class="display">
+</div style="max-height: 400px; overflow-y: auto;">
+<table id="myTable" class="display " style="width:100% overflow-y: auto;">
     <thead>
         <tr>
       {% comment %} <th>ID</th>

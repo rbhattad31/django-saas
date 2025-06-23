@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     
     #apps
     'Rental_Deal',
+    'core',
 
 
     #rest_framework
@@ -87,7 +88,7 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME': 'bradsol',
+        'NAME': 'gopibradsol',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',
@@ -161,5 +162,5 @@ LOGIN_URL = '/login/'
 # URL of the logout view (optional, mostly used for redirection)
 LOGOUT_URL = '/logout/'
 # Custom user model
-AUTH_USER_MODEL = 'Rental_Deal.Users'
+AUTH_USER_MODEL = 'core.Users'
  

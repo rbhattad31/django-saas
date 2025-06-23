@@ -1,12 +1,42 @@
 from rest_framework import serializers
-from .models import RentalDeals
+from core.models import RentalDeals
+from rest_framework.reverse import reverse
 
 class DealSerializer(serializers.ModelSerializer):
-    # agent_username = serializers.CharField(source='', read_only=True)
+    view_link = serializers.SerializerMethodField()
+    update_link = serializers.SerializerMethodField()
+    delete_link = serializers.SerializerMethodField()
+    
+    email = serializers.CharField(source='submitted_by_user.email', read_only=True)
     class Meta:
         model = RentalDeals
         fields = '__all__'
-        # extra_fields = ['agent_username']
+        extra_fields = ['view_link', 'update_link', 'delete_link','agent_username']
+
+    def get_view_link(self, obj): 
+        request = self.context.get('request')
+        
+        print(request)
+        
+        if request:
+            return reverse('rental-deal-detail', kwargs={"pk":obj.pk},request=request)
+        return None
+
+    def get_update_link(self, obj):
+        request = self.context.get('request')
+        url = reverse('rental-deal-update', args=[obj.pk])
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+    def get_delete_link(self, obj):
+        request = self.context.get('request')
+        url = reverse('rental-deal-delete', args=[obj.pk])
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+        # extra_fields = ['agent_username'] 
         
 
 
@@ -54,8 +84,8 @@ class filterSerializer(serializers.Serializer):
     search =  SearchSerializer(required=False, default=dict)
 
     type = serializers.CharField(required=False, allow_blank=True)
-    from_date = serializers.DateField(required=False, source="from", input_formats=["%Y-%m-%d"], allow_null=True)
-    to_date = serializers.DateField(required=False, source="to", input_formats=["%Y-%m-%d"], allow_null=True)
+    from_date = serializers.DateField(required=False,   input_formats=["%Y-%m-%d"], allow_null=True)
+    to_date = serializers.DateField(required=False,   input_formats=["%Y-%m-%d"], allow_null=True)
 
     reference_number = serializers.CharField(required=False, allow_blank=True)
     unit_details = serializers.CharField(required=False, allow_blank=True)

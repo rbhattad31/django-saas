@@ -7,11 +7,12 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from core.models import Users
 
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import RentalDeals,Users
+from core.models import RentalDeals,Users
 from .serializers import DealSerializer,filterSerializer
 from .pagination import CustomPagination  
 from rest_framework.pagination import PageNumberPagination  
@@ -32,18 +33,53 @@ from django.db.models import Q
 
 class Rental_DealViewSet(viewsets.ModelViewSet):
     queryset = RentalDeals.objects.all()
-    serializer_class = filterSerializer  # for default `list`, `retrieve`
-    pagination_class = CustomPagination  # Custom pagination class
+       # for default `list`, `retrieve`
+    pagination_class = CustomPagination 
+    
+    def get_serializer_class(self):
+        if self.action == 'datatable_filter':
+            return filterSerializer
+        return DealSerializer # Custom pagination class
 
     @action(detail=False, methods=['post'] ,url_path='filter')
     def datatable_filter(self, request):
+        print(request)
+
+        serializer =  filterSerializer()
+        print(request.user)
+         
+        user = Users.objects.get(email = request.user)
+        print(user)
+
+        
         print("Request data:", request.data)
         data = filterSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         data = data.validated_data
         print("validated", data)
-        
-        queryset = RentalDeals.objects.all()
+
+
+        user = request.user
+
+       
+        # Superusers see everything
+        if user.is_superuser:
+            queryset = RentalDeals.objects.all()
+         
+
+        elif user.groups.filter(name="Manager").exists():
+            # Managers see all approved and rejected deals
+            queryset = RentalDeals.objects.filter(is_approved_rejected ="A")
+
+        elif user.groups.filter(name="Finance").exists():
+            # Finance sees only deals entered into the system
+            queryset = RentalDeals.objects.filter(is_entered_finance_system="1")
+ 
+      
+        else:
+            queryset = RentalDeals.objects.filter(submitted_by_user = user.id )
+
+        print(queryset)
 
 
 
@@ -52,16 +88,37 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Global search
         search_term = data.get("search", {}).get("value") or ''
+        print(search_term , "point x1")
+     
         if search_term:
+            print("point x2", queryset)
             queryset = queryset.filter(
+                Q(submitted_by_user__name__icontains=search_term) |
                 Q(reference_number__icontains=search_term) |
-                Q(building_name__icontains=search_term) |
                 Q(unit_details__icontains=search_term) |
+                Q(building_name__icontains=search_term) |
                 Q(project_name__icontains=search_term) |
-                Q(owner_name__icontains=search_term) |
-                Q(tenant_name__icontains=search_term)
+                Q(owner_first_name__icontains=search_term) |
+                Q(owner_last_name__icontains=search_term) |
+                Q(owner_mobile__icontains=search_term) |
+                Q(owner_email__icontains=search_term) |
+                Q(tenant_first_name__icontains=search_term) |
+                Q(tenant_last_name__icontains=search_term) |
+                Q(tenant_mobile__icontains=search_term) |
+                Q(tenant_email__icontains=search_term) |
+                Q(property_usage__icontains=search_term) |
+                Q(property_type__icontains=search_term) |
+                Q(property_size__icontains=search_term) |
+                Q(rental_price__icontains=search_term) |
+                Q(security_deposit__icontains=search_term) |
+                Q(mode_of_payment__icontains=search_term) |
+                Q(premises_no__icontains=search_term) |
+                Q(plot_no__icontains=search_term) |
+                Q(created_at__icontains=search_term) |
+                Q(updated_at__icontains=search_term)
             )
-            print("pointx1", queryset)
+            print("pointx3",queryset )
+           
 
         # Field-specific filters
         filter_fields = [
@@ -98,7 +155,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         elif deal_type == "pending":
             queryset = queryset.filter(is_approved_rejected="P")
 
-        elif deal_type == "waiting-finance":
+        elif deal_type == "pending-finance":
             queryset = queryset.filter(is_entered_in_finance_system="0")  
  
         elif deal_type == "entered-finance":
@@ -108,7 +165,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
  
 
  
-
+        print(queryset)
 
          
        
@@ -122,7 +179,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Pagination
         start = int(data.get("start") )  # Default to 0 if not provided
-        length = int(data.get("length"))  # Default to 10 if not provided
+        length = int(data.get("length")) 
+        print(start , length) # Default to 10 if not provided
         paginated = queryset[start:start + length]
         print("paginated", paginated)
         
@@ -130,23 +188,50 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         data = request.data.copy()  # Copy the original data to include in the responseda
         data.pop('csrfmiddlewaretoken', None)
 
-        serializer =  DealSerializer(paginated, many=True)
+        serializer =  DealSerializer(paginated, many=True,context={'request': request})
         response_data = {
-            "draw": int(data.get("draw") or 0),  # Ensure draw is an integer
+            "draw": data.get("draw") ,  # Ensure draw is an integer
             "recordsTotal": queryset.count(),
             "recordsFiltered": queryset.count(),
             "data": serializer.data,
-            "input": data    # original input back
-        }
+            # "input": data   
+              # original input back
+        } 
 
         return Response(response_data)
 
+
+    @action(detail=False, methods=['post'], url_path='create-deal')
+    def create_deal(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['get','put'], url_path='update')
+    def update_deal(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['delete'], url_path='delete-deal')
+    def delete_deal(self, request, pk=None):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
 Rental_DealViewSet_filter = Rental_DealViewSet.as_view({
     'post': 'datatable_filter'
 })
+Rental_DealViewSet_detail = Rental_DealViewSet.as_view({'get': 'retrieve'})
+Rental_DealViewSet_filter = Rental_DealViewSet.as_view({'post': 'datatable_filter'})
+Rental_DealViewSet_create = Rental_DealViewSet.as_view({'post': 'create_deal'})
+Rental_DealViewSet_update = Rental_DealViewSet.as_view({'put': 'update', 'get': 'update'})
+Rental_DealViewSet_delete = Rental_DealViewSet.as_view({'delete': 'delete_deal'})
  
 
 
@@ -162,7 +247,14 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
+            print(f'{username , password}')
+            # user = Users.objects.get(email=username)
+            # print()
+            # print(user.check_password(password))
+            
+            user =  authenticate(email = username , password = password)
+            print(user)
+            
             if user is not None:
                 login(request, user)
                 return redirect("/")
@@ -206,7 +298,7 @@ def register_user(request):
 
 
 
-# @login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
 
@@ -214,7 +306,7 @@ def index(request):
     return HttpResponse(html_template.render(context, request))
 
 
-# @login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def pages(request):
     context = {}
     # All resource paths end in .html.
@@ -241,7 +333,7 @@ def pages(request):
 
 
 
-# @login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def all_rental_deals(request):
     """
     View to list all rental deals.

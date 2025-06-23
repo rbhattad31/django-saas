@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path,include,re_path
 from django.conf import settings
 from django.conf.urls.static import static
-from Rental_Deal.views import index, pages, login_view, register_user, all_rental_deals
+from Rental_Deal.views import *
 from Rental_Deal import views
 from django.contrib.auth.views import LogoutView
+
+# Import the missing view functions
+from Rental_Deal.views import Rental_DealViewSet_detail, Rental_DealViewSet_update, Rental_DealViewSet_delete
 
 from Rental_Deal import urls 
 
@@ -28,17 +31,22 @@ urlpatterns = [
     path('', index, name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('Rental_Deal.urls')),
+    path("rental/filter",views.Rental_DealViewSet_filter),
     path('login/', login_view, name="login"),
     path('register/', register_user, name="register"),
     path("logout/", LogoutView.as_view(), name="logout"),
-     path('rental-deals/all/', views.all_rental_deals, name='rental-deal'),
+     path('rental-deals/list/', views.all_rental_deals, name='rental-deal-list'),
     path('rental-deals/draft/', views.all_rental_deals, name='rental-deal-draft'),
     path('rental-deals/approved/', views.all_rental_deals, name='rental-deal-approved'),
     path('rental-deals/rejected/', views.all_rental_deals, name='rental-deal-rejected'),
     path('rental-deals/pending/', views.all_rental_deals, name='rental-deal-pending'),
     path('rental-deals/waiting/', views.all_rental_deals, name='rental-deal-waiting'),
     path('rental-deals/entered-finance/', views.all_rental_deals, name='rental-deal-entered-finance'),
-    path('rental-deals/waiting-finance/', views.all_rental_deals, name='rental-deal-waiting-finance'),
+    path('rental-deals/pending-finance/', views.all_rental_deals, name='rental-deal-pending-finance'),
+    
+    path('rental-deals/<int:pk>/', Rental_DealViewSet_detail, name='rental-deal-detail'),
+    path('rental-deals/<int:pk>/update/', Rental_DealViewSet_update, name='rental-deal-update'),
+    path('rental-deals/<int:pk>/delete/', Rental_DealViewSet_delete, name='rental-deal-delete'),
 
      # Include the Rental_Deal app URLs
 
