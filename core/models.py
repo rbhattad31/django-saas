@@ -4,9 +4,18 @@
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+ 
+
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser
+from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser, Group
+from django.contrib.auth.models import Permission
+
+from django_multitenant.models import TenantModel, TenantManager
+# from django_multitenant.models import TenantModel, TenantManager
+
+
+
 
 # class AccountHasPermission(models.Model):
 #     id = models.BigAutoField(primary_key=True)
@@ -22,32 +31,137 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 #         return f"{self.account_id}-{self.role_id}-{self.permission_id}"
 
 
-# class Account(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     account_name = models.CharField(max_length=191, unique=True)
-#     account_domain = models.CharField(max_length=191, unique=True)
-#     contact_name = models.CharField(max_length=191, null=True, blank=True)
-#     contact_email = models.CharField(max_length=191, null=True, blank=True)
-#     contact_phone = models.CharField(max_length=191, null=True, blank=True)
-#     additional_info = models.TextField(null=True, blank=True)
-#     logo = models.TextField(null=True, blank=True)
-#     plan = models.CharField(max_length=191, null=True, blank=True)
-#     max_users = models.CharField(max_length=191, null=True, blank=True)
-#     min_users = models.CharField(max_length=191, null=True, blank=True)
-#     is_active = models.CharField(max_length=1, default='N')
-#     is_deleted = models.CharField(max_length=1, default='N')
-#     created_at = models.DateTimeField(null=True, blank=True)
-#     updated_at = models.DateTimeField(null=True, blank=True)
-#     created_by = models.CharField(max_length=191, null=True, blank=True)
-#     updated_by = models.CharField(max_length=191, null=True, blank=True)
-#     is_approved = models.CharField(max_length=1, default='N')
+class Account(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    account_name = models.CharField(max_length=191, unique=True)
+    account_domain = models.CharField(max_length=191, unique=True)
+    contact_name = models.CharField(max_length=191, null=True, blank=True)
+    contact_email = models.CharField(max_length=191, null=True, blank=True)
+    contact_phone = models.CharField(max_length=191, null=True, blank=True)
+    additional_info = models.TextField(null=True, blank=True)
+    logo = models.TextField(null=True, blank=True)
+    plan = models.CharField(max_length=191, null=True, blank=True)
+    max_users = models.CharField(max_length=191, null=True, blank=True)
+    min_users = models.CharField(max_length=191, null=True, blank=True)
+    is_active = models.CharField(
+        max_length=1, choices=[('Y', 'Yes'), ('N', 'No'), ('A', 'Active'), ('R', 'Rejected')],
+        default='N'
+    )
+    is_deleted = models.CharField(max_length=1, choices=[('Y', 'Yes'), ('N', 'No')], default='N')
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.CharField(max_length=191, null=True, blank=True)
+    updated_by = models.CharField(max_length=191, null=True, blank=True)
+    is_approved = models.CharField(max_length=1, choices=[('Y', 'Yes'), ('N', 'No')], default='N')
 
-#     class Meta:
-#         db_table = 'accounts'
-#         managed = False
+    class Meta:
+        db_table = 'accounts'
+        managed = False
 
-#     def __str__(self):
-#         return self.account_name
+    def __str__(self):
+        return self.account_name
+   
+    
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Check if the account is being created for the first time
+        super().save(*args, **kwargs)  # Save the Accoun
+
+    # Default Django permissions (CRUD)
+       
+        if is_new:
+            roles = {
+            "Admin": [
+                # ✅ Full access
+                "add_rentaldeals",
+                "change_rentaldeals",
+                "delete_rentaldeals",
+                "view_rentaldeals",
+                "manage_rental_deals",
+                "view_pending_rental_deals",
+                "view_approved_rental_deals",
+              # this nee dto be removed
+                "enter_finance_rental_deals",
+                "edit_draft_rental_deals",
+                "update_finance_status_rental_deals",
+                "generate_tenancy_contract_rental_deals",
+                "view_all_rental_deals",
+                "view_waiting_finance_rental_deals",
+                "view_rejected_rental_deals",
+                
+                "view_my_draft_rental_deals",
+                "view_admin_rental_fields",
+                "view_pending_finance_rental_deals",
+                "create_draft_rental_deals",
+                "update_amt_status_rental_deals",
+            ],
+            "Manager": [
+                
+                "manage_rental_deals",
+                "view_pending_rental_deals",
+                "view_approved_rental_deals",
+                "view_rentaldeals",
+                "edit_approved_rental_deals",  # this is manage approved 
+                "view_all_rental_deals",
+                "view_rejected_rental_deals",
+                "change_rentaldeals",
+                "view_my_draft_rental_deals",
+                 
+
+            ],
+            "Agent": [
+                "manage_rental_deals",
+                "view_pending_rental_deals",
+                "view_approved_rental_deals",
+                "add_rentaldeals",
+                "view_rentaldeals",
+                "edit_draft_rental_deals",
+                "generate_tenancy_contract_rental_deals",
+                "view_all_rental_deals",
+                "view_rejected_rental_deals",
+                "change_rentaldeals",
+                "view_my_draft_rental_deals",
+                "create_draft_rental_deals",
+            ],
+            "Finance": [
+                "manage_rental_deals",
+                "view_rentaldeals",
+                "enter_finance_rental_deals",
+                "update_finance_status_rental_deals",
+                "view_pending_finance_rental_deals",
+                "update_amt_status_rental_deals",
+                "comment_finance_rental_deals",
+                ],
+            }
+            for role, permissions in roles.items():
+                group_name = f"{self.id}-{role}"
+                group, _ = Group.objects.get_or_create(name=group_name)
+
+                for codename in permissions:
+                    try:
+                        perm = Permission.objects.get(codename=codename)
+                        group.permissions.add(perm)
+                    except Permission.DoesNotExist:
+                        print(f"⚠️ Permission '{codename}' not found — please make sure it exists.")
+        
+            # Create default roles only after the Account is saved and has a valid ID
+            # default_roles = ['Admin', 'Manager', 'Agent','Finance']
+            # for role in default_roles:
+            #     group_name = f"{self.id}-{role}"
+            #     Group.objects.get_or_create(name=group_name)
+
+
+
+
+
+class TenantBaseModel(TenantModel):
+    # account = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    tenant_id = 'account'
+    objects = TenantManager() 
+
+    class Meta:
+        abstract = True
+
 
 
 # class Branches(models.Model):
@@ -408,36 +522,36 @@ class Properties(models.Model):
 #         db_table = 'property_features'
 
 
-# class Receipts(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     date = models.DateField()
-#     receipt_number = models.BigIntegerField()
-#     dhs = models.CharField(max_length=191)
-#     fils = models.CharField(max_length=191)
-#     cheque_no = models.CharField(max_length=191)
-#     bank = models.CharField(max_length=191)
-#     sec_date = models.DateField()
-#     being = models.CharField(max_length=191)
-#     created_at = models.DateTimeField(blank=True, null=True)
-#     updated_at = models.DateTimeField(blank=True, null=True)
-#     status = models.CharField(max_length=191)
-#     deal_type = models.CharField(max_length=191)
-#     received_from = models.CharField(max_length=191, blank=True, null=True)
-#     payment_type = models.CharField(max_length=191, blank=True, null=True)
-#     deal_refer_no = models.CharField(max_length=191)
-#     sum_of_dhs = models.CharField(max_length=191)
-#     agent_name = models.CharField(max_length=191)
-#     project_name = models.CharField(max_length=191)
-#     building_name = models.CharField(max_length=191)
-#     unit_number = models.CharField(max_length=191)
-#     account_id = models.IntegerField()
-#     agent_id = models.IntegerField()
-#     agent_email = models.CharField(max_length=255)
-#     mail_status = models.CharField(max_length=255)
+class Receipts(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    date = models.DateField()
+    receipt_number = models.BigIntegerField()
+    dhs = models.CharField(max_length=191)
+    fils = models.CharField(max_length=191)
+    cheque_no = models.CharField(max_length=191)
+    bank = models.CharField(max_length=191)
+    sec_date = models.DateField()
+    being = models.CharField(max_length=191)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=191)
+    deal_type = models.CharField(max_length=191)
+    received_from = models.CharField(max_length=191, blank=True, null=True)
+    payment_type = models.CharField(max_length=191, blank=True, null=True)
+    deal_refer_no = models.CharField(max_length=191)
+    sum_of_dhs = models.CharField(max_length=191)
+    agent_name = models.CharField(max_length=191)
+    project_name = models.CharField(max_length=191)
+    building_name = models.CharField(max_length=191)
+    unit_number = models.CharField(max_length=191)
+    account_id = models.IntegerField()
+    agent_id = models.IntegerField()
+    agent_email = models.CharField(max_length=255)
+    mail_status = models.CharField(max_length=255)
 
-#     class Meta:
-#         managed = False
-#         db_table = 'receipts'
+    class Meta:
+        managed = False
+        db_table = 'receipts'
 
 
 
@@ -710,6 +824,9 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+
+        if password :
+            user.setpassword(password)
          
         user.save(using=self._db)
         return user
@@ -723,9 +840,10 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class Users(AbstractBaseUser,PermissionsMixin):
+class Users(AbstractUser):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=191, blank=False, null=True)
+    username = None 
     mobile_number = models.CharField(max_length=191)
     # role = models.ForeignKey('Role', on_delete=models.DO_NOTHING, db_column='role', related_name='users' ,null = True,blank=True)
     email = models.CharField(unique=True, max_length=191)
@@ -743,9 +861,33 @@ class Users(AbstractBaseUser,PermissionsMixin):
     created_by = models.CharField(max_length=191,blank=True)
     updated_by = models.CharField(max_length=191, blank=True, null=True)
     image = models.TextField(blank=True, null=True)
-    user_account_id = models.IntegerField(null=True,blank=True , default=2)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    # OR 'user_account_id' if you use db_column
+    groups = models.ManyToManyField(
+        Group,
+        related_name='custom_user_set',  # or 'users_set'
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='custom_user_permissions',  # or 'users_permissions'
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+
+   
+
+
+    objects = CustomUserManager()
+    # tenant_objects = TenantManager()
+
+    
      
 
 
@@ -755,7 +897,7 @@ class Users(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()
+    
 
     class Meta:
         # managed = False
@@ -773,24 +915,23 @@ class Users(AbstractBaseUser,PermissionsMixin):
 #         managed = False
 #         db_table = 'videos'
 
-from django.db import models
 
-class RentalDeals(models.Model):
-    submitted_date = models.DateField()
-    submitted_by_user = models.ForeignKey('users', on_delete=models.CASCADE)
-    reference_number = models.TextField()
+class RentalDeals ( models.Model):
+    submitted_date = models.DateField(auto_now_add=True)
+    submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    reference_number = models.CharField(max_length=191, unique=True)
     date = models.DateField()
     unit_details = models.TextField()
     building_name = models.TextField()
     project_name = models.TextField()
-    is_new_deal = models.CharField(max_length=1, choices=[('R', 'R'), ('Y', 'Y'), ('N', 'N')], default='Y')
+    is_new_deal = models.CharField(max_length=1, choices=[('R', 'R'),   ('N', 'N')], default='N')
     owner_title = models.TextField(blank=True, null=True)
     owner_first_name = models.TextField()
     owner_last_name = models.TextField(blank=True, null=True)
     owner_source = models.TextField()
     owner_mobile = models.TextField()
     owner_email = models.TextField(blank=True, null=True)
-    tenant_title = models.TextField()
+    tenant_title = models.TextField(blank= True ,null=True , default='N/A')
     tenant_first_name = models.TextField()
     tenant_last_name = models.TextField(blank=True, null=True)
     tenant_source = models.TextField()
@@ -823,7 +964,16 @@ class RentalDeals(models.Model):
     agent1 = models.TextField()
     agent2 = models.TextField(blank=True, null=True)
     agent3 = models.TextField(blank=True, null=True)
-    is_approved_rejected = models.CharField(max_length=1, choices=[('P', 'P'), ('F', 'F'), ('A', 'A'), ('R', 'R')], default='P')
+    is_approved_rejected = models.CharField(
+    max_length=1,
+    choices=[
+        ('P', 'Pending'),
+        ('F', 'Waiting Finance'),
+        ('A', 'Approved'),
+        ('R', 'Rejected')
+    ],
+    default='P'
+)  
     approved_rejected_by = models.TextField(blank=True, null=True)
     is_entered_in_finance_system = models.CharField(max_length=1, choices=[('0', 'No'), ('1', 'Yes')], default='0')
     comments = models.TextField(blank=True, null=True)
@@ -852,28 +1002,35 @@ class RentalDeals(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=191, blank=True, null=True)
     updated_by = models.CharField(max_length=191, blank=True, null=True)
-    account_id = models.IntegerField(null=True, blank=True ,default = 2 )
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True ,db_column='account_id')
     property = models.ForeignKey('properties', on_delete=models.SET_NULL, blank=True, null=True)
     #branch = models.ForeignKey('branches', on_delete=models.SET_NULL, blank=True, null=True)
     is_deleted = models.CharField(max_length=1, choices=[('Y', 'Y'), ('N', 'N')], default='N')
     plot_no = models.TextField(blank=True, null=True)
     mode_of_payment = models.TextField(blank=True, null=True)
     deal_agent = models.CharField(max_length=191, blank=True, null=True)
-    receipt_id = models.IntegerField()
-    property_usage = models.CharField(max_length=191)
-    property_size = models.CharField(max_length=191)
-    premises_no = models.CharField(max_length=191)
-    security_deposit = models.CharField(max_length=191)
+    receipt_id = models.IntegerField(default=0)
+    property_usage = models.CharField(max_length=191,blank=True ,null =True)
+    property_size = models.CharField(max_length=191,blank=True ,null =True)
+    premises_no = models.CharField(max_length=191, blank= True ,null = True )
+    security_deposit = models.CharField(max_length=191, blank=True ,null =True )
     submitted_by_agent = models.IntegerField()
     property_type = models.CharField(max_length=191, blank=True, null=True)
     tenancy_application_form = models.CharField(max_length=191, blank=True, null=True)
     screening = models.CharField(max_length=191)
-    screening_comments = models.TextField()
+    screening_comments = models.TextField(blank=True)
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
-    manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'P'), ('A', 'A'), ('R', 'R')], default='P')
+    manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
 
+    # tenant_id = 'account'  # OR 'user_account_id' if you use db_column
 
+    # objects = TenantManager()
+
+    
     class Meta:
-        #managed = False
+        managed = False
         db_table = 'rental_deals'
+  
+
+        

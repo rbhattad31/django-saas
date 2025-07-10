@@ -1,0 +1,3169 @@
+{% extends "layouts/base.html" %} {% block content %}
+<div class="main-content pt-4">
+  <div class="row">
+    <div class="col-md-12 main-header" id="successmsg" style="display: none">
+      <div class="alert alert-primary" id="alert-primary">
+        <button
+          class="close float-right"
+          type="button"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="card mt-3 mb-3">
+        <div class="card-header bg-transparent">
+          <h4 class="pb-2">
+            Create Rental Deal
+            <span class="float-right">
+              <a class="btn btn-primary btn-rounded" href="/rental-deals/list"
+                >Cancel</a
+              >
+            </span>
+          </h4>
+        </div>
+
+        <div class="card-body m-1">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <div class="nav-item">
+                <a
+                  href="#nav-property"
+                  class="nav-link active show"
+                  id="nav-property-tab"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  aria-controls="nav-property"
+                  aria-selected="true"
+                  >Property Details</a
+                >
+              </div>
+              <div class="nav-item">
+                <a
+                  href="#nav-source"
+                  class="nav-link"
+                  id="nav-source-tab"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  aria-controls="nav-source"
+                  aria-selected="false"
+                  >Source Details</a
+                >
+              </div>
+              <div class="nav-item">
+                <a
+                  href="#nav-agency"
+                  class="nav-link"
+                  id="nav-agency-tab"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  aria-controls="nav-agency"
+                  aria-selected="false"
+                  >Agency Details</a
+                >
+              </div>
+              <div class="nav-item">
+                <a
+                  href="#nav-revenue"
+                  class="nav-link"
+                  id="nav-revenue-tab"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  aria-controls="nav-revenue"
+                  aria-selected="false"
+                  >Revenue Details</a
+                >
+              </div>
+              <div class="nav-item">
+                <a
+                  href="#nav-documents"
+                  class="nav-link"
+                  id="nav-documents-tab"
+                  data-bs-toggle="tab"
+                  role="tab"
+                  aria-controls="nav-documents"
+                  aria-selected="false"
+                  >Upload Documents</a
+                >
+              </div>
+            </div>
+          </nav>
+
+          <form
+            id="deal_form"
+            enctype="multipart/form-data"
+            novalidate="novalidate"
+          >
+            <input
+              type="hidden"
+              value="gsSkujAbPPOiNjLiwrH7G7hILS2HU6INX5LGvag3"
+              name="csrf-token"
+              id="token"
+            />
+            <input type="hidden"   name="account_id" id="account_id" />
+            <input type="hidden"   name="save_as" id="save_as" />
+            <!-- Nav tabs started-->
+            <div class="tab-content p-2 ul-tab__content" id="nav-tabContent">
+              <!-- ===================Rental Property details tab start========================= -->
+              <div
+                class="tab-pane fade active show"
+                id="nav-property"
+                role="tabpanel"
+                aria-labelledby="nav-property-tab"
+              >
+                <div class="form-group row nav-property">
+                  <div class="col-md-6 form-group">
+                    <label for="role"
+                      >Deal Submitted By Agent<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <select
+                      class="selectbox2 form-control"
+                      name="submitted_by_agent"
+                      id="submitted_by_agent"
+                    >
+                      <option value="">Select Agent Name</option>
+                      <option value="10">Rahul B</option>
+                      <option value="11">Anirudh</option>
+                      <option value="12">Sonia</option>
+                      <option value="13">Anusha</option>
+                      <option value="16">Majid</option>
+                      <option value="17">Rakesh Saldhana</option>
+                      <option value="18">Jamil Mirza</option>
+                      <option value="19">Asad Lohar</option>
+                      <option value="20">Ashwin Radhakrishnan</option>
+                      <option value="21">Seema</option>
+                      <option value="22">Richard Ileogben</option>
+                      <option value="23">SHAHBAZ</option>
+                      <option value="25">Satish</option>
+                      
+                    </select>
+                    <span
+                      class="text-danger"
+                      id="submitted_by_agent_error"
+                    ></span>
+                  </div>
+
+                  <!-- <div class="col-md-6 form-group">
+			                  <label for="role">Property<span class="mandetory_field" style="color: red">*</span></label>
+			                  <select class="selectbox2 form-control" name="property" id="property">
+			                     <option value=""hidden>Select Property</option>
+			                     			                     <option value="3">Test</option>
+			                     			                  </select>
+			                  <span class="text-danger" id="property_error"></span>
+			                </div> -->
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="date"
+                      >Deal Date<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="date"
+                      class="form-control"
+                      id="deal_date"
+                      placeholder="Enter Deal Date"
+                      autocomplete="off"
+                      readonly="readOnly"
+                    />
+                    <span class="text-danger" id="date_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="reference_number"
+                      >Reference Number<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+
+                    <input
+                      type="text"
+                      name="reference_number"
+                      class="form-control"
+                      id="reference_number"
+                      placeholder="Reference No"
+                    />
+
+                    <span
+                      class="text-danger"
+                      id="reference_number_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="is_new_deal"
+                      >Deal<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <div class="row">
+                      <div class="col-3">
+                        <input
+                          type="radio"
+                          name="is_new_deal"
+                          id="is_new_deal"
+                          value="N"
+                        />
+                        New
+                      </div>
+                      <div class="col-4" style="margin-left: -60px">
+                        <input
+                          type="radio"
+                          class="ml-1"
+                          name="is_new_deal"
+                          id="is_new_deal"
+                          value="R"
+                        />
+                        Renewal <br />
+                      </div>
+                      <span class="text-danger" id="is_new_deal_error"></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="project_name"
+                      >Project Name<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="project_name"
+                      class="form-control"
+                      id="project_name"
+                      placeholder="Project Name"
+                    />
+                    <span class="text-danger" id="project_name_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="unit_details"
+                      >Unit No<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="unit_details"
+                      class="form-control"
+                      id="unit_details"
+                      placeholder="Unit No"
+                    />
+                    <span class="text-danger" id="unit_details_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="building_name"
+                      >Building Name<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="building_name"
+                      class="form-control"
+                      id="building_name"
+                      placeholder="Building Name"
+                    />
+                    <span class="text-danger" id="building_name_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="rental_price">Rental Price</label>
+                    <input
+                      type="text"
+                      name="rental_price"
+                      class="form-control"
+                      id="rental_price"
+                      placeholder="Rental Price"
+                    />
+                    <span class="text-danger" id="rental_price_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="deal_start_date"
+                      >Deal Start Date<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="deal_start_date"
+                      class="form-control startDate"
+                      id="deal_start_date"
+                      placeholder="Deal Start Date"
+                      autocomplete="off"
+                      readonly=""
+                    />
+                    <span class="text-danger" id="deal_start_date_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="deal_end_date"
+                      >Deal End Date<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="deal_end_date"
+                      class="form-control endDate"
+                      id="deal_end_date"
+                      placeholder="Deal End Date"
+                      autocomplete="off"
+                      readonly=""
+                    />
+                    <span class="text-danger" id="deal_end_date_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="agent1">Property Usage</label>
+                    <select
+                      name="property_usage"
+                      class="form-control"
+                      id="property_usage"
+                    >
+                      <option value="">Select Property Usage</option>
+                      <option value="industrial">Industrial</option>
+                      <option value="commercial">Commercial</option>
+                      <option value="residential">Residential</option>
+                    </select>
+                    <span class="text-danger" id="property_usage_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group mb-3">
+                    <label for="property_type">Property Type</label>
+                    <input
+                      type="text"
+                      name="property_type"
+                      class="form-control"
+                      id="property_type"
+                      placeholder="Property Type"
+                    />
+                    <span class="text-danger" id="property_type_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="property_size">Property Size</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="property_size"
+                      name="property_size"
+                      placeholder="Property Size"
+                    />
+                    <span class="text-danger" id="property_size_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="premises_no">Premises No</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="premises_no"
+                      name="premises_no"
+                      placeholder="Premises No"
+                    />
+                    <span class="text-danger" id="premises_no_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="security_deposit">Security Deposit</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="security_deposit"
+                      name="security_deposit"
+                      placeholder="Security Deposit"
+                    />
+                    <span
+                      class="text-danger"
+                      id="security_deposit_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="plot_no">Plot No</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="plot_no"
+                      name="plot_no"
+                      placeholder="Plot No"
+                    />
+                    <span class="text-danger" id="plot_no_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="mode_of_payment">Mode of Payment</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="mode_of_payment"
+                      name="mode_of_payment"
+                      placeholder="Mode of Payment"
+                    />
+                    <span class="text-danger" id="mode_of_payment_error"></span>
+                  </div>
+                </div>
+                <br />
+
+                <div class="form-group row mt-3">
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="changeTabToSource"
+                      style="float: right; color: white"
+                      >Next</a
+                    >
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="saveAsDraftProperty"
+                      style="float: right; color: white"
+                      >Save As Draft</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- ======================Rental Property details tab end========================= -->
+
+              <!-- ======================Property Source details tab start========================= -->
+              <div
+                class="tab-pane fade"
+                id="nav-source"
+                role="tabpanel"
+                aria-labelledby="nav-source-tab"
+              >
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                    <label>
+                      <h5>Owner Details</h5>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="role"
+                      >Name<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="owner_first_name"
+                      class="form-control"
+                      id="owner_first_name"
+                      placeholder="Owner Name"
+                    />
+                    <span
+                      class="text-danger"
+                      id="owner_first_name_error"
+                    ></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="role"
+                      >Source<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <select
+                      class="selectbox2 form-control"
+                      name="owner_source"
+                      id="owner_source"
+                    >
+                      <option value="">Select Owner Source</option>
+                      <option value="Dubizzle">Dubizzle</option>
+                      <option value="Property finder">Property finder</option>
+                      <option value="Classic Website">Classic Website</option>
+                      <option value="YZER">YZER</option>
+                      <option value="Gulfnews">Gulfnews</option>
+                      <option value="Others">Others</option>
+                      <option value="Reference">Reference</option>
+                      <option value="Agent">Agent</option>
+                      <option value="Network">Network</option>
+                      <option value="Social Media">Social Media</option>
+                      <option value="Walk In">Walk In</option>
+                      <option value="Security">Security</option>
+                      <option value="Developer">Developer</option>
+                      <option value="BAYUT">BAYUT</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="owner_mobile"
+                      >Mobile<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="owner_mobile"
+                      name="owner_mobile"
+                      placeholder="Owner Mobile"
+                    />
+                    <span class="text-danger" id="owner_mobile_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="owner_email"
+                      >Email<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="email"
+                      id="owner_email"
+                      name="owner_email"
+                      placeholder="Owner Email"
+                    />
+                    <span class="text-danger" id="owner_email_error"></span>
+                  </div>
+                </div>
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="seller_nationality"
+                      >Nationality<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="seller_nationality"
+                      name="seller_nationality"
+                      placeholder="Seller Nationality"
+                    />
+                    <span
+                      class="text-danger"
+                      id="seller_nationality_error"
+                    ></span>
+                  </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                    <label>
+                      <h5>Tenant Details</h5>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="role"
+                      >Name<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="tenant_first_name"
+                      class="form-control"
+                      id="tenant_first_name"
+                      placeholder="Tenant Name"
+                    />
+                    <span
+                      class="text-danger"
+                      id="tenant_first_name_error"
+                    ></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="role"
+                      >Source<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <select
+                      class="selectbox2 form-control"
+                      name="tenant_source"
+                      id="tenant_source"
+                    >
+                      <option value="">Select Tenant Source</option>
+                      <option value="Dubizzle">Dubizzle</option>
+                      <option value="Property finder">Property finder</option>
+                      <option value="Classic Website">Classic Website</option>
+                      <option value="YZER">YZER</option>
+                      <option value="Gulfnews">Gulfnews</option>
+                      <option value="Others">Others</option>
+                      <option value="Reference">Reference</option>
+                      <option value="Agent">Agent</option>
+                      <option value="Network">Network</option>
+                      <option value="Social Media">Social Media</option>
+                      <option value="Walk In">Walk In</option>
+                      <option value="Security">Security</option>
+                      <option value="Developer">Developer</option>
+                      <option value="BAYUT">BAYUT</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_mobile"
+                      >Mobile<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="tenant_mobile"
+                      name="tenant_mobile"
+                      placeholder="Tenant Mobile"
+                    />
+                    <span class="text-danger" id="tenant_mobile_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_email"
+                      >Email<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="email"
+                      id="tenant_email"
+                      name="tenant_email"
+                      placeholder="Tenant Email"
+                    />
+                    <span class="text-danger" id="tenant_email_error"></span>
+                  </div>
+                </div>
+                <div class="form-group row nav-source">
+                  <div class="col-md-6 form-group">
+                    <label for="buyer_nationality"
+                      >Nationality<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="buyer_nationality"
+                      name="buyer_nationality"
+                      placeholder="Buyer Nationality"
+                    />
+                    <span
+                      class="text-danger"
+                      id="buyer_nationality_error"
+                    ></span>
+                  </div>
+                </div>
+                <br />
+
+                <div class="form-group row mt-3">
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="previousTab1"
+                      style="float: right; color: white"
+                      >Previous</a
+                    >
+
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="changeTabToAgency"
+                      style="float: right; color: white"
+                      >Next</a
+                    >
+
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="saveAsDraftSource"
+                      style="float: right; color: white"
+                      >Save As Draft</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- ===============Property Source details tab start ===================== -->
+
+              <!-- ======================Property Agency details tab start========================== -->
+              <div
+                class="tab-pane fade"
+                id="nav-agency"
+                role="tabpanel"
+                aria-labelledby="nav-agency-tab"
+              >
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                    <label>
+                      <h5>Owner Agency Details</h5>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="owner_agency"
+                      >Agency Name<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="owner_agency"
+                      class="form-control"
+                      id="owner_agency"
+                      placeholder="Owner Agency"
+                    />
+                    <span class="text-danger" id="owner_agency_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="agent_first_name">
+                      Agent Name<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="agent_first_name"
+                      class="form-control"
+                      id="agent_first_name"
+                      placeholder="Agent Name"
+                    />
+                    <span
+                      class="text-danger"
+                      id="agent_first_name_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="brn">Agency Brn</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="brn"
+                      name="brn"
+                      placeholder="Agent Brn"
+                    />
+                    <span class="text-danger" id="brn_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="agent_phone"
+                      >Agent Phone<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="agent_phone"
+                      name="agent_phone"
+                      placeholder="Agent Phone"
+                    />
+                    <span class="text-danger" id="agent_phone_error"></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="agent_email">Agent Email</label>
+                    <input
+                      class="form-control"
+                      type="email"
+                      id="agent_email"
+                      name="agent_email"
+                      placeholder="Agent Email"
+                    />
+                    <span class="text-danger" id="agent_email_error"></span>
+                  </div>
+                </div>
+                <hr />
+
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                    <label>
+                      <h5>Tenant Agency Details</h5>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_agency"
+                      >Agency Name<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="tenant_agency"
+                      class="form-control"
+                      id="tenant_agency"
+                      placeholder="Tenant Agency"
+                    />
+                    <span class="text-danger" id="tenant_agency_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_agent_first_name"
+                      >Agent Name<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="tenant_agent_first_name"
+                      class="form-control"
+                      id="tenant_agent_first_name"
+                      placeholder="Tenant Agent Name"
+                    />
+                    <span
+                      class="text-danger"
+                      id="tenant_agent_first_name_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_brn">Agency Brn</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="tenant_brn"
+                      name="tenant_brn"
+                      placeholder="Tenant Brn"
+                    />
+                    <span class="text-danger" id="tenant_brn_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_agent_phone"
+                      >Agent Phone<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="tenant_agent_phone"
+                      name="tenant_agent_phone"
+                      placeholder="Tenant Agent Phone"
+                    />
+                    <span
+                      class="text-danger"
+                      id="tenant_agent_phone_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_agent_email">Agent Email</label>
+                    <input
+                      class="form-control"
+                      type="email"
+                      id="tenant_agent_email"
+                      name="tenant_agent_email"
+                      placeholder="Tenant Agent Email"
+                    />
+                    <span
+                      class="text-danger"
+                      id="tenant_agent_email_error"
+                    ></span>
+                  </div>
+                </div>
+                <hr />
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group mb-1">
+                    <label>
+                      <h5>Mediating Agency Details</h5>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="mediating_agency">Agency Name</label>
+                    <input
+                      type="text"
+                      name="mediating_agency"
+                      class="form-control"
+                      id="mediating_agency"
+                      placeholder="Mediating Agency"
+                    />
+                    <span
+                      class="text-danger"
+                      id="mediating_agency_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="mediating_agent_name">Agent Name</label>
+                    <input
+                      type="text"
+                      name="mediating_agent_name"
+                      class="form-control"
+                      id="mediating_agent_name"
+                      placeholder="Agent Name"
+                    />
+                    <span
+                      class="text-danger"
+                      id="mediating_agent_name_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="mediating_agency_brn">Agency Brn</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="mediating_agency_brn"
+                      name="mediating_agency_brn"
+                      placeholder="Agent Brn"
+                    />
+                    <span
+                      class="text-danger"
+                      id="mediating_agency_brn_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="mediating_agent_phone">Agent Phone</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="mediating_agent_phone"
+                      name="mediating_agent_phone"
+                      placeholder="Agent Phone"
+                    />
+                    <span
+                      class="text-danger"
+                      id="mediating_agent_phone_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-agency">
+                  <div class="col-md-6 form-group">
+                    <label for="mediating_agent_email">Agent Email</label>
+                    <input
+                      class="form-control"
+                      type="email"
+                      id="mediating_agent_email"
+                      name="mediating_agent_email"
+                      placeholder="Agent Email"
+                    />
+                    <span
+                      class="text-danger"
+                      id="mediating_agent_email_error"
+                    ></span>
+                  </div>
+                </div>
+                <br />
+
+                <div class="form-group row mt-3">
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="previousTab2"
+                      style="float: right; color: white"
+                      >Previous</a
+                    >
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="changeTabToRevenue"
+                      style="float: right; color: white"
+                      >Next</a
+                    >
+
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="saveAsDraftAgency"
+                      style="float: right; color: white"
+                      >Save As Draft</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- ==========Property Agency details tab end============ -->
+
+              <!-- ===============Property Revenue details tab start========================= -->
+              <div
+                class="tab-pane fade"
+                id="nav-revenue"
+                role="tabpanel"
+                aria-labelledby="nav-revenue-tab"
+              >
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="total_commission"
+                      >Total Commission<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="total_commission"
+                      class="form-control"
+                      id="total_commission"
+                      placeholder="Total Commission"
+                    />
+                    <span
+                      class="text-danger"
+                      id="total_commission_error"
+                    ></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="less_outsude_commission"
+                      >Less Outside Commission<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="less_outsude_commission"
+                      class="form-control"
+                      id="less_outsude_commission"
+                      placeholder="Less Outside Commission"
+                    />
+                    <span
+                      class="text-danger"
+                      id="less_outsude_commission_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="net_commission"
+                      >Net Commission<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      name="net_commission"
+                      class="form-control"
+                      id="net_commission"
+                      placeholder="Net Commission"
+                    />
+                    <span class="text-danger" id="net_commission_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="classic"
+                      >Classic<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="classic"
+                      name="classic"
+                      placeholder="Classic"
+                    />
+                    <span class="text-danger" id="classic_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="agent1"
+                      >Agent1<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="agent1"
+                      name="agent1"
+                      placeholder="Agent Commission"
+                    />
+                    <span class="text-danger" id="agent1_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="agent1"></label>
+                    <select
+                      name="agent_name1"
+                      class="form-control"
+                      id="agent_name1"
+                    >
+                      <option value="">Select Agent</option>
+                      <option value="10">Rahul B</option>
+                      <option value="11">Anirudh</option>
+                      <option value="12">Sonia</option>
+                      <option value="13">Anusha</option>
+                      <option value="16">Majid</option>
+                      <option value="17">Rakesh Saldhana</option>
+              
+                    </select>
+                    <span class="text-danger" id="agent_name1_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="agent2">Agent2</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="agent2"
+                      name="agent2"
+                      placeholder="Agent Commission"
+                    />
+                    <span class="text-danger" id="agent2_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="agent2"></label>
+                    <select
+                      name="agent_name2"
+                      class="form-control"
+                      id="agent_name2"
+                    >
+                      <option value="">Select Agent</option>
+                      <option value="10">Rahul B</option>
+                      <option value="11">Anirudh</option>
+                      <option value="12">Sonia</option>
+                      <option value="13">Anusha</option>
+                      
+                    </select>
+                    <span class="text-danger" id="agent_name2_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="agent3">Agent3</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="agent3"
+                      name="agent3"
+                      placeholder="Agent Commission"
+                    />
+                    <span class="text-danger" id="agent3_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="agent3"></label>
+                    <select
+                      name="agent_name3"
+                      class="form-control"
+                      id="agent_name3"
+                    >
+                      <option value="">Select Agent</option>
+                      <option value="10">Rahul B</option>
+                      <option value="11">Anirudh</option>
+                      <option value="12">Sonia</option>
+                      <option value="13">Anusha</option>
+                      <option value="16">Majid</option>
+                      <option value="17">Rakesh Saldhana</option>
+                      <option value="18">Jamil Mirza</option>
+                      <option value="19">Asad Lohar</option>
+                      <option value="20">Ashwin Radhakrishnan</option>
+                      <option value="21">Seema</option>
+                      <option value="22">Richard Ileogben</option>
+                      <option value="23">SHAHBAZ</option>
+                      <option value="25">Satish</option>
+                      <option value="27">ganesh@classicproperties.ae</option>
+                    
+           
+                    </select>
+                    <span class="text-danger" id="agent_name3_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <div class="col-md-6 form-group">
+                    <label for="agent_comment">Comment by Agent</label>
+                    <textarea
+                      class="form-control"
+                      name="agent_comment"
+                      id="agent_comment"
+                      rows="5"
+                      cols="50"
+                      placeholder="Agent Comments"
+                    ></textarea>
+                    <span class="text-danger" id="agent_comment_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="comments">Comment by Admin</label>
+                    <textarea
+                      class="form-control"
+                      name="comments"
+                      id="comments"
+                      rows="5"
+                      cols="50"
+                      placeholder="Admin Comments"
+                    ></textarea>
+                    <span class="text-danger" id="comments_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  <!-- <div class="col-md-6 form-group">
+			                  <label for="receipt_no">Receipt No<span class="mandetory_field" style="color:red">*</span></label>
+			                  <input class="form-control" type="text" id="receipt_no" name="receipt_no" placeholder="Receipt No">
+			                  <span class="text-danger" id="receipt_no_error"></span>
+			               </div> -->
+
+                  <div class="col-md-6 form-group">
+                    <label for="receipt_no"
+                      >Receipt No<span style="color: red">*</span></label
+                    >
+                    <select
+                      name="receipt_no"
+                      class="form-control"
+                      id="receipt_no"
+                    >
+                      <option value="Null">Null</option>
+                      <option value="No Commision">No Commision</option>
+                      <option value="" hidden="">Select Receipt No</option>
+
+                      <option value="4814">4814</option>
+
+                      <option value="4815">4815</option>
+
+                      <option value="4816">4816</option>
+
+                      <option value="4817">4817</option>
+
+                      <option value="4825">4825</option>
+
+                      <option value="4826">4826</option>
+
+                      <option value="4827">4827</option>
+
+                      <option value="4828">4828</option>
+
+                      <option value="4829">4829</option>
+ 
+                    </select>
+                    <span
+                      class="error text-danger err-name"
+                      id="receipt_no_error"
+                    ></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="kyc_number">KYC Number</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="kyc_number"
+                      name="kyc_number"
+                      placeholder="KYC Number"
+                    />
+                    <span class="text-danger" id="kyc_number_error"></span>
+                  </div>
+                </div>
+
+                <div class="row form-group nav-revenue">
+                  {% if perms.core.edit_approved_rental_deals  %}
+                  <div class="col-md-6 form-group">
+                    <label for="receipt_no">Approve/Reject</label><br />
+                    <div class="row">
+                      <div class="col-3">
+                        <input
+                          type="radio"
+                          name="is_approved_rejected"
+                          value="A"
+                        />
+                        Approve
+                      </div>
+                      <div class="col-3" style="margin-left: -50px">
+                        <input
+                          type="radio"
+                          class="ml-1"
+                          name="is_approved_rejected"
+                          value="R"
+                        />
+                        Reject
+                      </div>
+                      <div class="col-6" style="margin-left: -60px">
+                        <input
+                          type="radio"
+                          class="ml-1"
+                          name="is_approved_rejected"
+                          value="F"
+                        />
+                        Waiting for Finance
+                      </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if perms.core.update_amt_status_rental_deals %}
+                  <div class="col-md-6 form-group">
+                    <label for="kyc_number"
+                      >AML<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <div class="row">
+                      <div class="col-3">
+                        <input
+                          value="Yes"
+                          class=""
+                          name="is_rental_aml"
+                          id="is_rental_aml"
+                          type="radio"
+                        />
+                        Yes
+                      </div>
+                      <div class="col-5" style="margin-left: -80px">
+                        <input
+                          value="No"
+                          class="ml-1"
+                          name="is_rental_aml"
+                          id="is_rental_aml"
+                          type="radio"
+                        />
+                        No
+                      </div>
+                      <br />
+                      <span class="text-danger" id="is_rental_aml_error"></span>
+                    </div>
+                  </div>
+                  {% endif %}
+
+                </div>
+                <br />
+                <div class="form-group row mt-3">
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="previousTab3"
+                      style="float: right; color: white"
+                      >Previous</a
+                    >
+
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="changeTabToDocuments"
+                      style="float: right; color: white"
+                      >Next</a
+                    >
+
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="saveAsDraftRevenue"
+                      style="float: right; color: white"
+                      >Save As Draft</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <!-- ===================== Property Revenue details tab end ======================-->
+
+              <!--  =========================Upload Documents tab start============================= -->
+              <div
+                class="tab-pane fade"
+                id="nav-documents"
+                role="tabpanel"
+                aria-labelledby="nav-documents-tab"
+              >
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="tenancy_contract"
+                      >Tenancy Contract<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="tenancy_contract"
+                      type="file"
+                      value=""
+                      name="tenancy_contract[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_contract_existing_count"
+                      name="tenancy_contract_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_contract_removed"
+                      name="tenancy_contract_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_contract_new_removed_count"
+                      name="tenancy_contract_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="tenancy_contract_list"></div>
+                    <span
+                      class="text-danger"
+                      id="tenancy_contract_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="owner_passport_copy"
+                      >Owner Passport Copy<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="owner_passport_copy"
+                      type="file"
+                      value=""
+                      name="owner_passport_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_passport_copy_existing_count"
+                      name="owner_passport_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_passport_copy_removed"
+                      name="owner_passport_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_passport_copy_new_removed_count"
+                      name="owner_passport_copy_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="owner_passport_copy_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="owner_passport_copy_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="title_deed"
+                      >Title Deed<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="title_deed"
+                      type="file"
+                      value=""
+                      name="title_deed[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="title_deed_existing_count"
+                      name="title_deed_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="title_deed_removed"
+                      name="title_deed_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="title_deed_new_removed_count"
+                      name="title_deed_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="title_deed_list"></div>
+                    <span class="text-danger" id="title_deed_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="ejari">Ejari</label><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="ejari"
+                      type="file"
+                      value=""
+                      name="ejari[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="ejari_existing_count"
+                      name="ejari_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="ejari_removed"
+                      name="ejari_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="ejari_new_removed_count"
+                      name="ejari_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="ejari_list"></div>
+                    <span class="text-danger" id="ejari_error"></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_passport_visa_copy"
+                      >Tenant Passport Visa Copy<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="tenant_passport_visa_copy"
+                      type="file"
+                      value=""
+                      name="tenant_passport_visa_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_passport_visa_copy_existing_count"
+                      name="tenant_passport_visa_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_passport_visa_copy_removed"
+                      name="tenant_passport_visa_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_passport_visa_copy_new_removed_count"
+                      name="tenant_passport_visa_copy_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="tenant_passport_visa_copy_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="tenant_passport_visa_copy_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="tenant_emirates_id">Tenants Eid Copy</label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="tenant_emirates_id"
+                      type="file"
+                      value=""
+                      name="tenant_emirates_id[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_emirates_id_existing_count"
+                      name="tenant_emirates_id_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_emirates_id_removed"
+                      name="tenant_emirates_id_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="tenant_emirates_id_new_removed_count"
+                      name="tenant_emirates_id_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="tenant_emirates_id_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="tenant_emirates_id_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="owner_eid_copy">Owner Eid Copy</label><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="owner_eid_copy"
+                      type="file"
+                      value=""
+                      name="owner_eid_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_eid_copy_existing_count"
+                      name="owner_eid_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_eid_copy_removed"
+                      name="owner_eid_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_eid_copy_new_removed_count"
+                      name="owner_eid_copy_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="owner_eid_copy_list"></div>
+                    <span class="text-danger" id="owner_eid_copy_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="rental_deposit_cheque_copy"
+                      >Rental Deposit &amp; Rental Cheque Copy<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="rental_deposit_cheque_copy"
+                      type="file"
+                      value=""
+                      name="rental_deposit_cheque_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_deposit_cheque_copy_existing_count"
+                      name="rental_deposit_cheque_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_deposit_cheque_copy_removed"
+                      name="rental_deposit_cheque_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_deposit_cheque_copy_new_removed_count"
+                      name="rental_deposit_cheque_copy_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="rental_deposit_cheque_copy_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="rental_deposit_cheque_copy_error"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="owner_poa_pp_copy">Poa Pp</label><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="owner_poa_pp_copy"
+                      type="file"
+                      value=""
+                      name="owner_poa_pp_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_poa_pp_copy_existing_count"
+                      name="owner_poa_pp_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_poa_pp_copy_removed"
+                      name="owner_poa_pp_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="owner_poa_pp_copy_new_removed_count"
+                      name="owner_poa_pp_copy_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="owner_poa_pp_copy_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="owner_poa_pp_copy_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="poa_copy">Poa Copy</label><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="poa_copy"
+                      type="file"
+                      value=""
+                      name="poa_copy[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="poa_copy_existing_count"
+                      name="poa_copy_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="poa_copy_removed"
+                      name="poa_copy_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="poa_copy_new_removed_count"
+                      name="poa_copy_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="poa_copy_list"></div>
+                    <span class="text-danger" id="poa_copy_error"></span>
+                  </div>
+                </div>
+
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="key_hand_over_form"
+                      >Key Hand Over Form<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="key_hand_over_form"
+                      type="file"
+                      value=""
+                      name="key_hand_over_form[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="key_hand_over_form_existing_count"
+                      name="key_hand_over_form_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="key_hand_over_form_removed"
+                      name="key_hand_over_form_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="key_hand_over_form_new_removed_count"
+                      name="key_hand_over_form_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="key_hand_over_form_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="key_hand_over_form_error"
+                    ></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                    <label for="rental_kyc_number"
+                      >KYC Form<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="rental_kyc_number"
+                      type="file"
+                      value=""
+                      name="rental_kyc_number[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_kyc_number_existing_count"
+                      name="rental_kyc_number_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_kyc_number_removed"
+                      name="rental_kyc_number_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="rental_kyc_number_new_removed_count"
+                      name="rental_kyc_number_new_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="rental_kyc_number_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="rental_kyc_number_error"
+                    ></span>
+                  </div>
+                </div>
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="tenancy_application_form"
+                      >Tenancy Application Form<span
+                        class="mandetory_field"
+                        style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="tenancy_application_form"
+                      type="file"
+                      value=""
+                      name="tenancy_application_form[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_application_form_existing_count"
+                      name="tenancy_application_form_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_application_form_removed"
+                      name="tenancy_application_form_mou_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="tenancy_application_form_new_removed_count"
+                      name="tenancy_application_form_removed_count"
+                      value=""
+                    />
+                    <div
+                      id="upload_prevss"
+                      class="tenancy_application_form_list"
+                    ></div>
+                    <span
+                      class="text-danger"
+                      id="tenancy_application_form_error"
+                    ></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="_screening"
+                      >Screening<span class="mandetory_field" style="color: red"
+                        >*</span
+                      ></label
+                    ><br />
+                    <input
+                      multiple="multiple"
+                      class="imageUploadInput"
+                      id="screening"
+                      type="file"
+                      value=""
+                      name="screening[]"
+                    />
+                    <input
+                      type="hidden"
+                      id="screening_existing_count"
+                      name="screening_existing_count"
+                      value="0"
+                    />
+                    <input
+                      type="hidden"
+                      id="screening_removed"
+                      name="screening_removed"
+                      value=""
+                    />
+                    <input
+                      type="hidden"
+                      id="screening_new_removed_count"
+                      name="screening_new_removed_count"
+                      value=""
+                    />
+                    <div id="upload_prevss" class="screening_list"></div>
+                    <span class="text-danger" id="screening_error"></span>
+                  </div>
+                </div>
+                <div class="form-group row nav-documents">
+                  <div class="col-md-6 form-group">
+                    <label for="screening_comments">Screening Comments</label>
+                    <textarea
+                      class="form-control"
+                      name="screening_comments"
+                      id="screening_comments"
+                      row="5"
+                      cols="50"
+                      placeholder="Screening Comments"
+                    ></textarea>
+                  </div>
+                </div>
+                <br />
+
+                <div class="form-group row mt-3">
+                  <div class="col-sm-12 d-flex justify-content-center">
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="previousTab4"
+                      style="float: right; color: white"
+                      >Previous</a
+                    >
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="submitDeal"
+                      style="float: right; color: white"
+                      >Create Deal</a
+                    >
+                    <a
+                      class="txt-color btn btn-primary btn-rounded m-1"
+                      id="saveDeal"
+                      style="float: right; color: white"
+                      >Save As Draft</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <!--  =========================Upload Documents tab end============================= -->
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="sidebar-overlay open"></div>
+    </div>
+    <!-- ============ Vetical SIdebar Layout End ============= -->
+
+    <!-- ✅ jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ✅ Bootstrap and related -->
+    <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+    <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script>
+
+    <!-- ✅ jQuery UI (datepicker etc.) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- ✅ Datatables -->
+    <script src="/static/assets/js/datatables.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- ✅ jQuery Validation plugin -->
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script>
+      const  rental_data = {{ rental_data|safe }}
+      console.log("Django to JS:",  rental_data);
+    </script>
+    <script>
+      var site_url = "http://dealsaws.classicproperties.ae";
+
+      var lang = "";
+      if (lang == "ar") {
+        var oLanguage = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+        var msg = "الرجاء ملء الحقل الإلزامي";
+      } else {
+        var oLanguage = "";
+        var msg = "Please fill mandatory field";
+      }
+    </script>
+    <script src="http://dealsaws.classicproperties.ae/js/messages_en.js"></script>
+
+    <script type="text/javascript">
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          for (let cookie of document.cookie.split(";")) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+              cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      $(document).ready(function () {
+        $.validator.addMethod(
+          "alphanum_special",
+          function (value, element) {
+            return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
+          },
+          "Only letters, numbers, and certain special characters are allowed."
+        );
+
+        $.validator.addMethod(
+          "numeric",
+          function (value, element) {
+            return this.optional(element) || /^[0-9]*$/.test(value);
+          },
+          "Please enter a valid number."
+        );
+        $.validator.addMethod(
+          "only_text",
+          function (value, element) {
+            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value); // Example: allows only letters and spaces
+          },
+          "Please enter only letters."
+        );
+
+        $.validator.addMethod(
+          "custom_email",
+          function (value, element) {
+            return (
+              this.optional(element) ||
+              /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value)
+            );
+          },
+          "Please enter a valid email address."
+        );
+
+        $.validator.addMethod(
+          "dateAfterStart",
+          function (value, element, params) {
+            const startDate = $main(params).val();
+            if (!value || !startDate) return true;
+            return new Date(value) >= new Date(startDate);
+          },
+          "End date must be after start date."
+        );
+
+        $.validator.addMethod(
+          "phoneNumber",
+          function (value, element) {
+            var exp = /^[\+]?\d*$/im;
+            //console.log(exp.test(value));
+            return exp.test(value);
+          },
+          "Phone number must only contain numbers and +"
+        );
+
+        $("#deal_form").validate({
+          ignore: "",
+          rules: {
+            date: {
+              required: true,
+            },
+            submitted_by_agent: {
+              required: true,
+            },
+            reference_number: {
+              required: true,
+              alphanum_special: true,
+              maxlength: 20,
+            },
+            screening: {
+              required: true,
+              alphanum_special: true,
+            },
+            is_new_deal: {
+              alphanum_special: true,
+              required: true,
+            },
+
+            project_name: {
+              required: true,
+              maxlength: 255,
+            },
+
+            unit_details: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 15,
+            },
+
+            building_name: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+
+            rental_price: {
+              numeric: false,
+              required: false,
+              maxlength: 100,
+            },
+
+            deal_start_date: {
+              alphanum_special: true,
+              required: true,
+            },
+
+            deal_end_date: {
+              alphanum_special: true,
+              required: true,
+            },
+            owner_first_name: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            owner_source: {
+              alphanum_special: true,
+              required: true,
+            },
+            owner_mobile: {
+              phoneNumber: true,
+              required: true,
+              minlength: 6,
+              maxlength: 15,
+            },
+            owner_email: {
+              custom_email: true,
+              required: true,
+              maxlength: 100,
+            },
+            seller_nationality: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            buyer_nationality: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            tenant_first_name: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            tenant_source: {
+              alphanum_special: true,
+              required: true,
+            },
+            tenant_mobile: {
+              phoneNumber: true,
+              required: true,
+              minlength: 6,
+              maxlength: 15,
+            },
+            tenant_email: {
+              custom_email: true,
+              required: true,
+              maxlength: 100,
+            },
+            owner_agency: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            agent_first_name: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+
+            agent_phone: {
+              phoneNumber: true,
+              required: true,
+              minlength: 6,
+              maxlength: 15,
+            },
+
+            tenant_agency: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+            tenant_agent_first_name: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 255,
+            },
+
+            tenant_agent_phone: {
+              phoneNumber: true,
+              required: true,
+              minlength: 6,
+              maxlength: 15,
+            },
+            total_commission: {
+              numeric: true,
+              required: true,
+              maxlength: 10,
+            },
+            less_outsude_commission: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 100,
+            },
+            classic: {
+              numeric: true,
+              required: true,
+              maxlength: 10,
+            },
+            net_commission: {
+              numeric: true,
+              required: true,
+              maxlength: 10,
+            },
+            mediating_agency: {
+              maxlength: 255,
+            },
+
+            mediating_agent_name: {
+              maxlength: 255,
+            },
+            mediating_agency_brn: {
+              maxlength: 255,
+            },
+            brn: {
+              alphanum_special: true,
+              maxlength: 255,
+            },
+            tenant_brn: {
+              alphanum_special: true,
+              maxlength: 255,
+            },
+
+            mediating_agent_phone: {
+              phoneNumber: true,
+              minlength: 6,
+              maxlength: 15,
+            },
+            agent1: {
+              numeric: true,
+              required: true,
+              maxlength: 10,
+            },
+            agent2: {
+              numeric: true,
+              maxlength: 10,
+            },
+            agent3: {
+              numeric: true,
+              maxlength: 10,
+            },
+            agent_email: {
+              custom_email: true,
+              maxlength: 100,
+            },
+            tenant_agent_email: {
+              custom_email: true,
+              maxlength: 100,
+            },
+            mediating_agent_email: {
+              maxlength: 100,
+              custom_email: true,
+            },
+            agent_name1: {
+              required: true,
+            },
+
+            agent_comment: {
+              alphanum_special: true,
+            },
+
+            plot_no: {
+              alphanum_special: true,
+              maxlength: 255,
+            },
+
+            mode_of_payment: {
+              only_text: true,
+              maxlength: 255,
+            },
+            comments: {
+              alphanum_special: true,
+            },
+            receipt_no: {
+              alphanum_special: true,
+              required: true,
+              maxlength: 100,
+            },
+            is_rental_aml: {
+              alphanum_special: true,
+            },
+            kyc_number: {
+              numeric: true,
+              maxlength: 45,
+            },
+            property_size: {
+              alphanum_special: true,
+              maxlength: 255,
+            },
+            premises_no: {
+              alphanum_special: true,
+              maxlength: 255,
+            },
+            security_deposit: {
+              numeric: false,
+              maxlength: 255,
+            },
+            property_type: {
+              required: false,
+              alphanum_special: true,
+              maxlength: 255,
+            },
+
+            messages: {
+              owner_mobile: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+              tenant_mobile: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+
+              agent_phone: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+
+              tenant_agent_phone: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+              tenant_agent_phone: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+              mediating_agent_phone: {
+                phoneNumber: "Phone number must only contain numbers and +",
+                required: "This field is required",
+                minlength: "Minimum 6 characters is needed",
+                maxlength: "Maximum 15 characters allowed",
+              },
+            },
+          },
+          errorPlacement: function (error, element) {
+            if (element.attr("type") == "radio") {
+              var id = element.attr("id");
+              $("#" + id + "_error").css("margin-right", "200px");
+              error.addClass("field_error");
+              error.insertAfter("#" + id + "_error");
+            } else {
+              error.insertAfter(element);
+            }
+          },
+        });
+
+        $(document).on(
+          "click",
+          "#changeTabToSource,#saveAsDraftProperty",
+          function (event) {
+            var buttonName = $(this).attr("id");
+
+            $(
+              '[name="submitted_by_agent"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="screening"]'
+            ).each(function () {
+              $(this).rules("add", "required");
+            });
+
+            $(
+              '[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_rental_aml"],[name="tenant_agent_phone"],[name="agent_name1"],[name="mediating_agent_phone"]'
+            ).each(function () {
+              $(this).rules("remove", "required");
+              $(this).rules("remove", "phoneNumber");
+            });
+
+            if ($("#deal_form").valid()) {
+              $('#nav-tab a[href="#nav-source"]').tab("show");
+            } else {
+              $(".nav-source")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-agency")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-revenue")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-documents")
+                .closest(".form-group")
+                .find("label.error")
+                .hide();
+              $("html, body").animate(
+                {
+                  scrollTop: $(".main-header").offset().top,
+                },
+                1000
+              );
+
+              var validator = $("#deal_form").validate();
+              showErrors(validator);
+            }
+          }
+        );
+
+        //code for previous tab
+        $("#previousTab1").on("click", function () {
+          $('#nav-tab a[href="#nav-property"]').tab("show");
+        });
+
+        $(document).on(
+          "click",
+          "#changeTabToAgency,#saveAsDraftSource",
+          function (event) {
+            var buttonName = $(this).attr("id");
+
+            $(
+              '[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"]'
+            ).each(function () {
+              $(this).rules("add", "required");
+            });
+            $('[name="owner_mobile"],[name="tenant_mobile"]').each(function () {
+              $(this).rules("add", "phoneNumber");
+            });
+
+            $(
+              '[name="submitted_by_agent"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_rental_aml"],[name="tenant_agent_phone"],[name="agent_name1"],[name="screening"]'
+            ).each(function () {
+              $(this).rules("remove", "required");
+            });
+
+            if ($("#deal_form").valid()) {
+              $('#nav-tab a[href="#nav-agency"]').tab("show");
+            } else {
+              $(".nav-property")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-agency")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-revenue")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-documents")
+                .closest(".form-group")
+                .find("label.error")
+                .hide();
+              $("html, body").animate(
+                {
+                  scrollTop: $(".main-header").offset().top,
+                },
+                1000
+              );
+
+              var validator = $("#deal_form").validate();
+              showErrors(validator);
+            }
+          }
+        );
+
+        $("#previousTab2").on("click", function () {
+          $('#nav-tab a[href="#nav-source"]').tab("show");
+        });
+
+        $(document).on(
+          "click",
+          "#changeTabToRevenue,#saveAsDraftAgency",
+          function (event) {
+            var buttonName = $(this).attr("id");
+            if (buttonName == "changeTabToRevenue") {
+              $(
+                '[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"]'
+              ).each(function () {
+                $(this).rules("add", "required");
+                //$(this).rules('add','phoneNumber');
+              });
+              $('[name="agent_phone"],[name="tenant_agent_phone"]').each(
+                function () {
+                  $(this).rules("add", "phoneNumber");
+                  //$(this).rules('add','phoneNumber');
+                }
+              );
+            } else {
+              $(
+                '[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"]'
+              ).each(function () {
+                $(this).rules("remove", "required phoneNumber");
+                //$(this).rules('remove','phoneNumber');
+              });
+            }
+
+            $(
+              '[name="submitted_by_agent"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_rental_aml"],[name="agent_name1"],[name="screening"]'
+            ).each(function () {
+              $(this).rules("remove", "required phoneNumber");
+              //$(this).rules('remove','phoneNumber');
+            });
+
+            if ($("#deal_form").valid()) {
+              $('#nav-tab a[href="#nav-revenue"]').tab("show");
+            } else {
+              $(".nav-property")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-source")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-revenue")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-documents")
+                .closest(".form-group")
+                .find("label.error")
+                .hide();
+              $("html, body").animate(
+                {
+                  scrollTop: $(".main-header").offset().top,
+                },
+                1000
+              );
+
+              var validator = $("#deal_form").validate();
+              showErrors(validator);
+            }
+          }
+        );
+
+        $("#previousTab3").on("click", function () {
+          $('#nav-tab a[href="#nav-agency"]').tab("show");
+        });
+
+        $(document).on(
+          "click",
+          "#changeTabToDocuments,#saveAsDraftRevenue",
+          function (event) {
+            var buttonName = $(this).attr("id");
+
+            if (buttonName == "changeTabToDocuments") {
+              $(
+                '[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_rental_aml"],[name="agent_name1"]'
+              ).each(function () {
+                $(this).rules("add", "required");
+              });
+            } else {
+              $(
+                '[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_rental_aml"],[name="agent_name1"]'
+              ).each(function () {
+                $(this).rules("remove", "required");
+              });
+            }
+
+            $(
+              '[name="submitted_by_agent"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"],[name="screening"]'
+            ).each(function () {
+              $(this).rules("remove", "required");
+            });
+
+            if ($("#deal_form").valid()) {
+              $('#nav-tab a[href="#nav-documents"]').tab("show");
+            } else {
+              $(".nav-property")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-agency")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $(".nav-documents")
+                .closest(".form-group")
+                .find("span.text-danger")
+                .hide();
+              $(".nav-source")
+                .closest(".form-group")
+                .find("label.error")
+                .remove();
+              $("html, body").animate(
+                {
+                  scrollTop: $(".main-header").offset().top,
+                },
+                1000
+              );
+
+              var validator = $("#deal_form").validate();
+              showErrors(validator);
+            }
+          }
+        );
+
+        $("#previousTab4").on("click", function () {
+          $('#nav-tab a[href="#nav-revenue"]').tab("show");
+        });
+
+        $("#deal_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          autoclosed: true,
+          changeMonth: true,
+          changeYear: true,
+          maxDate: 0,
+          yearRange: "-100:+50",
+        });
+
+        $(".startDate").datepicker({
+          dateFormat: "dd-mm-yy",
+          changeMonth: true,
+          changeYear: true,
+          autoclosed: true,
+          yearRange: "-100:+50",
+          onSelect: function (date) {
+            var date2 = $("#deal_start_date").datepicker("getDate");
+            $("#deal_end_date").datepicker("option", "minDate", date2);
+            appendDate();
+            $("#deal_end_date").datepicker("option", "yearRange", "-100:+50");
+          },
+        });
+        $(".endDate").datepicker({
+          dateFormat: "dd-mm-yy",
+          changeMonth: true,
+          changeYear: true,
+          onClose: function () {
+            var dt1 = $("#deal_start_date").datepicker("getDate");
+            var dt2 = $("#deal_end_date").datepicker("getDate");
+            if (dt2 <= dt1) {
+              var minDate = $("#deal_end_date").datepicker("option", "minDate");
+              $("#deal_end_date").datepicker("setDate", minDate);
+            }
+          },
+        });
+
+        $("#deal_date").datepicker("setDate", "+0");
+        $("#deal_date").attr("readOnly", true);
+      });
+
+      $(document).on("click", ".remove_file", function () {
+        var name = $(this).data("name");
+        var value = $(this).attr("id");
+        var existingType = $(this).data("existing");
+        if ($("#" + name + "_removed").val().length == 0) {
+          $("#" + name + "_removed").val(value);
+        } else {
+          $("#" + name + "_removed").val(
+            $("#" + name + "_removed").val() + ", " + value
+          );
+        }
+        if (existingType == "old") {
+          $("#" + name + "_existing_count").val(
+            parseInt($("#" + name + "_existing_count").val()) - 1
+          );
+        } else {
+          $("#" + name + "_new_removed_count").val(
+            parseInt($("#" + name + "_new_removed_count").val()) - 1
+          );
+        }
+        $(this).parent("div").remove();
+        $(this).parents("span").remove();
+      });
+      $('input[type="file"]').on("change", function () {
+        var namedata = $(this).attr("id");
+        $("." + namedata + "_list").empty();
+        $("#" + namedata + "_new_removed_count").val(this.files.length);
+
+        if (this.files.length > 0) {
+          var filename = this.files[0].name;
+          var lastIndex = filename.lastIndexOf("\\");
+          if (lastIndex >= 0) {
+            filename = filename.substring(lastIndex + 1);
+          }
+
+          $("#yt" + $(this).attr("id")).val("");
+          filesize = 0;
+          var fileCount = 4;
+          if ($("#" + $(this).attr("id") + "_existing_count").val()) {
+            fileCount =
+              fileCount -
+              parseInt($("#" + $(this).attr("id") + "_existing_count").val());
+          }
+
+          files = this.files;
+          var result_array = Array.from(files);
+          var added = false;
+          for (let i = 0; i < this.files.length; i++) {
+            filesize = parseFloat(filesize + this.files[i].size);
+            var name = files[i].name;
+            $.map(result_array, function (name) {
+              if (name !== filename) {
+                var added = true;
+              }
+            });
+            if (!added) {
+              $("." + namedata + "_list").append(
+                '<div class="upload_prev">' +
+                  '<a class="filenameupload">' +
+                  this.files[i].name +
+                  "</a>" +
+                  '<p class="remove_file" id="' +
+                  this.files[i].name +
+                  '" data-name="' +
+                  namedata +
+                  '"' +
+                  ">X</p></div>"
+              );
+            }
+          }
+
+          if (filesize / 1024 / 1024 > 3) {
+            $("#" + $(this).attr("id") + "_error")
+              .html("File size should be less than 3 mb")
+              .show();
+            $("#" + $(this).attr("id")).val("");
+            $("." + namedata + "_list").empty();
+            $("#" + namedata + "_new_removed_count").val("0");
+          } else if (this.files.length > fileCount) {
+            alert("Length exceeded. Please select no more than 4 files");
+            $("#" + $(this).attr("id")).val("");
+            $("." + namedata + "_list").empty();
+            $("#" + namedata + "_new_removed_count").val("0");
+          } else {
+            $("#yt" + $(this).attr("id")).val("true");
+            $("#" + $(this).attr("id") + "_error")
+              .html("")
+              .hide();
+            $("#" + $(this).attr("id") + "-error")
+              .html("")
+              .hide();
+          }
+        }
+      });
+
+      $(document).on("click", "#submitDeal", function (event) {
+        $(
+          '[name="submitted_by_agent"],[name="owner_agency"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="is_rental_aml"],[name="screening"]'
+        ).each(function () {
+          $(this).rules("add", "required");
+        });
+
+        if (
+          $("#deal_form").valid() &
+          countMultipleFiles("tenancy_contract") &
+          countMultipleFiles("title_deed") &
+          countMultipleFiles("owner_passport_copy") &
+          countMultipleFiles("tenant_passport_visa_copy") &
+          countMultipleFiles("rental_deposit_cheque_copy") &
+          countMultipleFiles("key_hand_over_form") &
+          countMultipleFiles("key_hand_over_form") &
+          countMultipleFiles("screening") &
+          checkKyc()
+        ) {
+          $("#save_as").val("create-deal");
+          var url = "/list";
+          storefunctionality(url);
+        } else {
+          $("html, body").animate(
+            {
+              scrollTop: $(".main-header").offset().top,
+            },
+            1000
+          );
+
+          var validator = $("#deal_form").validate();
+          showErrors(validator);
+        }
+      });
+
+      // 
+      $(document).on("click", "#saveDeal", function (event) {
+        $(
+          '[name="submitted_by_agent"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="screening"]'
+        ).each(function () {
+          $(this).rules("add", "required");
+        });
+
+        $(
+          '[name="owner_agency"],[name="agent_first_name"],[name="tenant_agent_phone"],[name="brn"],[name="agent_name1"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_brn"],[name="tenant_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="tenancy_contract[]"],[name="owner_passport_copy[]"],[name="title_deed[]"],[name="owner_passport_copy[]"],[name="tenant_passport_visa_copy[]"],[name="rental_deposit_cheque_copy[]"],[name="is_rental_aml"]'
+        ).each(function () {
+          $(this).rules("remove", "required");
+        });
+
+        $(".nav-documents")
+          .closest(".form-group")
+          .find("span.text-danger")
+          .hide();
+
+        if ($("#deal_form").valid() & countMultipleFiles("screening")) {
+          $("#save_as").val("save-draft");
+          var url = "/list/draft";
+          storefunctionality(url);
+        } else {
+          $("html, body").animate(
+            {
+              scrollTop: $(".main-header").offset().top,
+            },
+            1000
+          );
+
+          var validator = $("#deal_form").validate();
+          showErrors(validator);
+        }
+      });
+      function countMultipleFiles(feild) {
+        var result = true;
+
+        if ($("#" + feild + "_new_removed_count").val() < 1) {
+          result = false;
+          var feildvalue = feild;
+          $("#" + feild + "_error")
+            .html("This field is required.")
+            .show();
+          $(".nav-documents")
+            .closest(".form-group")
+            .find("span.text-danger")
+            .show();
+        }
+        return result;
+      }
+      function checkKyc() {
+        var result = true;
+        $("#rental_kyc_number_error").empty();
+        $("#kyc_number_error").empty();
+        var existing_count = parseInt(
+          $("#rental_kyc_number_existing_count").val()
+        );
+        var removed_count = parseInt(
+          $("#rental_kyc_number_new_removed_count").val()
+        );
+        if ($("#rental_kyc_number_new_removed_count").val() == "") {
+          var removed_count = 0;
+        }
+        if (
+          existing_count < 1 &&
+          removed_count < 1 &&
+          $("#kyc_number").val() == ""
+        ) {
+          result = false;
+          $("#rental_kyc_number_error")
+            .html("Either KYC Form or KYC Number is required!")
+            .show();
+          $("#kyc_number_error")
+            .html("Either KYC Form or KYC Number is required!")
+            .show();
+          $(document).on("keyup", "input[name='kyc_number']", function (e) {
+            $("#" + "kyc_number" + "_error").hide();
+          });
+        }
+        return result;
+      }
+
+      function storefunctionality(urls) {
+        $("#save_draft_deal").attr("disabled", true);
+        //$(".loadscreen").show();
+        $("html, body").animate(
+          {
+            scrollTop: $(".main-header").offset().top,
+          },
+          1000
+        );
+        if (document.getElementById("deal_date").disabled == true)
+          document.getElementById("deal_date").removeAttribute("disabled");
+        $.ajax({
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          url: "/api/rental-deals/create/",
+          data: new FormData($("#deal_form")[0]),
+
+          contentType: false,
+          processData: false,
+        }).done(function (data) {
+          console.log(data);
+          $(".loadscreen").hide();
+          $("#save_draft_deal").removeAttr("disabled", true);
+          if (data.status == "success") {
+            scrollTop();
+            $("#alert-primary").text("Rental Deal Created Successfully");
+            $("#successmsg").show();
+            $("#deal_form")[0].reset();
+            //   setTimeout(function () {
+            //  window.location.href =
+            //      "http://dealsaws.classicproperties.ae/rental-deals" + urls;
+            //    }, 5000);
+          } else if (data.status == "validation_error") {
+            var messages = "";
+            $.each(data.data, function (index, value) {
+              messages +=
+                index.charAt(0).toUpperCase() +
+                index.slice(1) +
+                " : " +
+                value +
+                "\n";
+            });
+            swal("Please fill mandatory field", messages);
+            $.each(data.data, function (key, val) {
+              $("#" + key + "_error").text(val[0]);
+              $("#" + key + "_error").show();
+              $(document).on(
+                "keyup",
+                "input[name='" + key + "']",
+                function (e) {
+                  $("#" + key + "_error").hide();
+                }
+              );
+              $(document).on(
+                "change",
+                "select[name='" + key + "']",
+                function (e) {
+                  $("#" + key + "_error").hide();
+                }
+              );
+            });
+          } else {
+            console.log(data);
+            if (data.data == "DUF500") var alertmsg = data.message;
+            else var alertmsg = "Something Went Wrong !";
+            $("#alert-primary").text(alertmsg);
+            $("#successmsg").show();
+            setTimeout(function () {
+              $("#successmsg").fadeOut();
+            }, 3000);
+          }
+        });
+        
+      }
+
+      $("#property").on("change", function () {
+        var id = $(this).find(":selected").val();
+
+        $.ajax({
+          method: "POST",
+          url: "http://dealsaws.classicproperties.ae/property/get-data",
+          data: {
+            _token: "gsSkujAbPPOiNjLiwrH7G7hILS2HU6INX5LGvag3",
+            id: id,
+          },
+        }).done(function (data) {
+          if (data.status == "success") {
+            $("#project_name-error").hide();
+            $("#reference_number-error").hide();
+            $("#building_name-error").hide();
+
+            $("#reference_number").val(data.data.bayut_property_ref_no);
+            $("#property_size").val(data.data.property_size);
+            var property_usage = data.data.property_parent_type.toLowerCase();
+            $("#property_usage").val(property_usage).change();
+            $("#project_name").val(data.data.property_title);
+            $("#building_name").val(data.data.tower_name);
+            $("#rental_price").val(data.data.price);
+          } else if (data.status == "fail") {
+            $("#alert-primary").text("Data not Found!");
+            $("#successmsg").show();
+            $("html, body").animate(
+              {
+                scrollTop: $(".main-header").offset().top,
+              },
+              1000
+            );
+            setTimeout(function () {
+              $("#successmsg").fadeOut();
+            }, 3000);
+          }
+        });
+      });
+
+      function showErrors(validator) {
+        var messages = "";
+        $.each(validator.errorMap, function (index, value) {
+          if (lang == "ar") {
+            for (var key in form_fields) {
+              var val = form_fields[key];
+
+              if (key == index) {
+                messages += val + " : " + value + "\n";
+              } else {
+                // messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+              }
+            }
+          } else {
+            messages +=
+              index.charAt(0).toUpperCase() +
+              index.slice(1) +
+              " : " +
+              value +
+              "\n";
+          }
+        });
+        swal(msg, messages);
+      }
+
+      $(document).ready(function () {
+        $("#date").datepicker({
+          dateFormat: "dd-mm-yy",
+          autoclosed: true,
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0",
+          maxDate: 0,
+        });
+
+        $(".startDate").datepicker({
+          dateFormat: "dd-mm-yy",
+          changeMonth: true,
+          changeYear: true,
+          autoclosed: true,
+          yearRange: "-100:+0",
+          onSelect: function (date) {
+            var date2 = $("#deal_start_date").datepicker("getDate");
+            $("#deal_end_date").datepicker("option", "minDate", date2);
+            appendDate();
+            $("#deal_end_date").datepicker("option", "yearRange", "-100:+10");
+          },
+        });
+        $(".endDate").datepicker({
+          dateFormat: "dd-mm-yy",
+          changeMonth: true,
+          changeYear: true,
+          onClose: function () {
+            var dt1 = $("#deal_start_date").datepicker("getDate");
+            var dt2 = $("#deal_end_date").datepicker("getDate");
+            if (dt2 <= dt1) {
+              var minDate = $("#deal_end_date").datepicker("option", "minDate");
+              $("#deal_end_date").datepicker("setDate", minDate);
+            }
+          },
+        });
+        $("#owner_source").val("Reference");
+        $("#tenant_source").val("Reference");
+      });
+
+      // script to load data
+
+      loadAgentDropdown()
+      loadReceiptDropdown()
+
+      function loadAgentDropdown() {
+        agents = rental_data.agents;
+        console.log(agents);
+
+        populateAgentDropdown("#submitted_by_agent", agents);
+        populateAgentDropdown("#agent_name1", agents);
+        populateAgentDropdown("#agent_name2", agents);
+        populateAgentDropdown("#agent_name3", agents);
+      }
+
+      function populateAgentDropdown(selector, data) {
+        const $dropdown = $(selector);
+        $dropdown.empty().append('<option value="">Select Agent</option>');
+        if (Array.isArray(data)) {
+    data.forEach(function(agent) {
+      const option = $('<option></option>')
+        .val(agent.id) // or agent.user_id or whatever field you use
+        .text(agent.name); // or agent.full_name or agent.username
+
+      $dropdown.append(option);
+    });
+  }
+
+      }
+
+
+
+    function loadReceiptDropdown() {
+    receipts = rental_data.receipts
+  
+      populateReceiptDropdown("#receipt_no", receipts);
+       
+      console.log("loaded teh reciepts");
+      // Add more dropdowns if needed, e.g.:
+      // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+  
+}
+
+// Helper function to populate the receipt dropdown
+function populateReceiptDropdown(selector, data) {
+  console.log(selector, "recipt selector");
+  console.log(data, "receipt data");
+   
+  const $dropdown = $(selector);
+  $dropdown.empty().append('<option value="">Select Receipt</option>');
+
+  data.forEach(function (receipt) {
+    $dropdown.append(
+      `<option value="${receipt.id}">${receipt.receipt_number}</option>`
+    );
+  });
+}
+
+    </script>
+
+    {% endblock content %}
+  </div>
+</div>

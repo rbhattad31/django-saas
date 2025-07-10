@@ -1,3 +1,4 @@
+{% load custom_tags %}
 <nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2" id="sidenav-main">
   <div class="sidebar">
     <div class="text-center mb-4">
@@ -59,18 +60,42 @@
         </a>
         <div class="collapse" id="rentalDealsSubmenu">
           <ul class="list-group ms-3">
+            {% if perms.core.view_all_rental_deals %}
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/list/" class="text-decoration-none rental-link"><i class="fas fa-users me-2"></i> All Rental Deals</a></li>
+            {% endif  %}
+
+             {% if perms.core.view_my_draft_rental_deals %}
+
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/draft/" class="text-decoration-none rental-link"><i class="fas fa-user me-2"></i> My Drafts</a></li>
+            {% endif %}
+
+            {% if perms.core.view_pending_rental_deals  %}
+
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/pending/" class="text-decoration-none rental-link"><i class="fas fa-random me-2"></i> Pending Rental Deals</a></li>
+            {% endif %}
+            {% if perms.core.view_approved_rental_deals %}
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/approved/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-up me-2"></i> Approved Rental Deals</a></li>
+            {% endif %}
+
+            {% if perms.core.view_rejected_rental_deals %}
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/rejected/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-down me-2"></i> Rejected Rental Deals</a></li>
-              
-         
+           
+            {% endif  %}
+
+            {% if perms.core.view_waiting_finance_rental_deals %}
 
             <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/waiting/" class="text-decoration-none rental-link"><i class="fas fa-hourglass-half me-2"></i> Waiting Finance Rental Deals</a></li>
-             
+            {% endif %}
+              
+            {% if perms.core.view_pending_finance_rental_deals %}
+
             <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-pending-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-times me-2"></i> Pending Finance Rental Deals</a></li>
+            {% endif %}
+
+            {% if perms.core.enter_finance_rental_deals %}
+
             <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-entered-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-plus me-2"></i> Entered Finance Rental Deals</a></li> 
+            {% endif %}
           </ul>
         </div>
       </li>
@@ -111,7 +136,14 @@
       <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-file-invoice"></i> Receipt</a></li>
 
       <!-- Logout -->
-      <li class="nav-item"><a class="nav-link" href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      <li class="nav-item"> 
+         <form method="post" action="{% url 'logout' %}" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none;">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </form>
+      </li>
 
     </ul>
   </div>

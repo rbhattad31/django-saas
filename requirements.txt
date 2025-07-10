@@ -2,3 +2,5 @@ Django>=5.2,<6.0
 # rest_framework
 djangorestframework>=3.14,<4.0
 django-filter==24.1
+mysqlclient 
+django-multitenant

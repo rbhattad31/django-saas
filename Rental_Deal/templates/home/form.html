@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Custom jQuery Validation</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+</head>
+<body>
+
+  <form id="myForm">
+    <label>Full Name:</label>
+    <input type="text" name="full_name" placeholder="Enter full name"><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    // ✅ Define custom validation rule
+    $.validator.addMethod("lettersOnly", function (value, element) {
+      return this.optional(element) || /^[A-Za-z\s]+$/.test(value);
+    }, "Only letters and spaces are allowed.");
+
+    // ✅ Attach validation to form
+    $(document).ready(function () {
+      $('#myForm').validate({
+        rules: {
+          full_name: {
+            required: true,
+            lettersOnly: true
+          }
+        },
+        messages: {
+          full_name: {
+            required: "Full name is required",
+            lettersOnly: "Only letters and spaces are allowed"
+          }
+        },
+        submitHandler: function (form) {
+          alert("Form is valid. You can submit it via AJAX now.");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

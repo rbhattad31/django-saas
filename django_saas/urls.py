@@ -23,7 +23,7 @@ from Rental_Deal import views
 from django.contrib.auth.views import LogoutView
 
 # Import the missing view functions
-from Rental_Deal.views import Rental_DealViewSet_detail, Rental_DealViewSet_update, Rental_DealViewSet_delete
+from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_delete, Rental_DealViewSet_view,Rental_DealViewSet_finance_update  
 
 from Rental_Deal import urls 
 
@@ -35,7 +35,7 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('register/', register_user, name="register"),
     path("logout/", LogoutView.as_view(), name="logout"),
-     path('rental-deals/list/', views.all_rental_deals, name='rental-deal-list'),
+    path('rental-deals/list/', views.all_rental_deals, name='rental-deal-list'),
     path('rental-deals/draft/', views.all_rental_deals, name='rental-deal-draft'),
     path('rental-deals/approved/', views.all_rental_deals, name='rental-deal-approved'),
     path('rental-deals/rejected/', views.all_rental_deals, name='rental-deal-rejected'),
@@ -44,9 +44,19 @@ urlpatterns = [
     path('rental-deals/entered-finance/', views.all_rental_deals, name='rental-deal-entered-finance'),
     path('rental-deals/pending-finance/', views.all_rental_deals, name='rental-deal-pending-finance'),
     
-    path('rental-deals/<int:pk>/', Rental_DealViewSet_detail, name='rental-deal-detail'),
-    path('rental-deals/<int:pk>/update/', Rental_DealViewSet_update, name='rental-deal-update'),
+    
     path('rental-deals/<int:pk>/delete/', Rental_DealViewSet_delete, name='rental-deal-delete'),
+    path('rental-deals/view/<int:pk>/', Rental_DealViewSet_view, name='rental-deal-view'),
+
+
+    path('rental-deals/update/<int:pk>/', views.edit_rental_deal_view, name='rental-deal-custom-update'),
+    # path('rental-deals/upload/',  views.temp_upload_file, name='upload'),
+    # path('rental-deals/delete-temp-file/', views.delete_temp_file, name='delete-temp-file'),
+
+    path('update-single-field/', Rental_DealViewSet_finance_update, name = 'update_single_field'),
+    path('api/agents/dropdown/',Rental_DealViewSet_agent_dropdown, name = 'agent-dropdown'),
+    path('api/receipts/dropdown/' ,Rental_DealViewSet_receipts_dropdown,name =  'reciept-dropdown' ),
+    path('rental-deals-form/', create_rental_deal_view, name = 'create-rental-deal'),
 
      # Include the Rental_Deal app URLs
 
@@ -56,6 +66,7 @@ urlpatterns = [
     re_path(r'^.*\.*', pages, name='pages'),
     
     # path('silk/', include('silk.urls', namespace='silk'))
-]
+] 
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns

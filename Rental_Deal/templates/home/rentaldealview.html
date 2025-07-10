@@ -1,0 +1,1492 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} View Rental Deal  {% endblock title %}
+{% load custom_tags %}
+
+
+ {% block content %}
+ <div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary " id="alert-primary">
+            <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+            </div>
+        </div>
+    <div class="col-md-12">
+     
+        <div class="card mt-2 mb-4">
+            <div class="card-header bg-transparent">
+                <h4 class="p-2">View Rental Deal<span class="float-right">
+                    
+
+                    <a class="btn btn-primary btn-rounded" href= {% url "rental-deal-list" %}  >Back</a>
+
+
+                                        <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/receipt/downloadRentalDealsReceiptPDF/8877">Download Receipt</a> 
+                                                                                    </span>
+                    
+                </h4>
+                
+            </div>
+            <div class="card-body m-1">
+                <nav>
+                <div class="nav nav-tabs justify-content-start" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-property-tab" data-bs-toggle="tab" href="#nav-property" role="tab" aria-controls="nav-property" aria-selected="true">
+                    Property Details
+                    </a>
+
+                     <a class="nav-item nav-link " id="nav-source-tab" data-bs-toggle="tab" href="#nav-source" role="tab" aria-controls="nav-source" aria-selected="false">
+                      Source Details
+                     </a> 
+
+                    <a class="nav-item nav-link" id="nav-agency-tab" data-bs-toggle="tab" href="#nav-agency" role="tab" aria-controls="nav-agency" aria-selected="false">
+                    Agency Details
+                    </a>
+
+                    <a class="nav-item nav-link" id="nav-revenue-tab" data-bs-toggle="tab" href="#nav-revenue" role="tab" aria-controls="nav-revenue" aria-selected="false">
+                    Revenue Details
+                    </a>
+
+                    <a class="nav-item nav-link" id="nav-documents-tab" data-bs-toggle="tab" href="#nav-documents" role="tab" aria-controls="nav-documents" aria-selected="false">
+                    Documents
+                    </a>
+
+                    <a class="nav-item nav-link" id="nav-comments-tab" data-bs-toggle="tab" href="#nav-comments" role="tab" aria-controls="nav-comments" aria-selected="false">
+                    Status &amp; Comments
+                    </a>
+                </div>
+                </nav>
+
+
+                    <input type="hidden" value="5462" name="view_id" id="view_id">
+                        <!-- Nav tabs started-->
+                <div class="tab-content ul-tab__content" id="nav-tabContent">
+
+                        <!--  ==================== Rental Property details tab start ==============  -->  	
+                    <div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
+                                
+                                <div class="form-group row mt-2">
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal Submitted By Agent</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">   {{rentaldeal.submitted_by_user.name|ymd_to_dmy }}                                                                                                                                </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Mode of Payment</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value" > {{rentaldeal.mode_of_payment}}   <h6></label>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal Date</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value"> {{rentaldeal.date|ymd_to_dmy }}  </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Reference Number</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.reference_number}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                            
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">New Deal/Renewal</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.is_new_deal}} </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Project Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{ rentaldeal.project_name }}   </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div> 
+                            
+                            </div>
+
+                                <div class="form-group row mt-2">
+                                    
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Unit No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{ rentaldeal.unit_details }}    </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Building Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{ rentaldeal.building_name }}   </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>   
+                                
+                            </div> 
+
+                                <div class="form-group row mt-2">
+                                
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Rental Price</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">  {{rentaldeal.rental_price}}     </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal Start Date</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{ rentaldeal.deal_start_date|ymd_to_dmy }}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal End Date</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">  {{rentaldeal.deal_end_date|ymd_to_dmy}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Property Usage</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.property_usage}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                                    
+                            </div> 
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Property Type</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.property_type}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>   
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Property Size</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.property_size}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>              
+                            </div> 
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Premises No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.premises_no}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Plot No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.plot_no}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group row mt-2">
+                            <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Security Deposit</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.security_deposit}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                            
+                            </div> 
+                            <br>
+
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                    <button
+                                            class="txt-color btn btn-primary btn-rounded m-1"
+                                            id="changeTabToSource"
+                                            type="button"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#nav-source"
+                                            style="float: right; color: white;">
+                                            Next
+                                            </button>
+                                    </div>
+                                </div>  
+                    </div>
+
+                        <!-- ==================Rental Property details tab end =================================== --> 
+
+                        <!--   ================================ property Source details tab start ======================================    -->  	
+                    <div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Owner Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                            <div class="form-group row mt-2">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                <h6 class="labelname">Owner Name</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                                <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.owner_first_name}}</h6></label>
+                                            </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Source</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.owner_source}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Mobile</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.owner_mobile}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.owner_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                                <hr>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-1">
+                                <label><h5>Tenant Details</h5></label>
+                            </div>
+                        </div>
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Tenant Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.tenant_first_name}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Source</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.tenant_source}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Mobile</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.tenant_mobile}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.tenant_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <br>
+
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab1" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToAgency" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                    </div>
+                        <!-- =================Property Source details tab start  ===============  -->  	
+
+                        <!-- ==============================Property Agency details tab start====================================  -->  	
+                    <div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Owner Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                <div class="form-group row mt-2">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Agency Name</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6 format-value">
+                                                <label for=""><h6 class="value"> {{rentaldeal.owner_agency}} </h6></label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.agent_first_name}}   </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"></h6> {{rentaldeal.brn}} </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.agent_phone}} </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.agent_email}} </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                                <hr>
+
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Tenant Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ rentaldeal.tenant_agency}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.tenant_agent_first_name}}   </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">  {{rentaldeal.tenant_brn}} </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.tenant_mobile}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.tenant_agent_email}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  <hr>
+
+                                <div class="form-group row nav-agency">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Mediating Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                
+                        <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"></h6> {{rentaldeal.mediating_agency}}  </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname"> Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.mediating_agent_name}} </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"></h6> {{rentaldeal.mediating_agency_brn}} </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.mediating_agent_phone}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.mediating_agent_email}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 			           
+                                <br>
+
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab2" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToRevenue" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                    </div>
+                        <!-- ======================Property Agency details tab end =====================  --> 
+
+
+                        <!-- ====================Property Revenue details tab start=============================== -->  	
+                    <div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab"> 
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Total Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.total_commission}}  </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Less Outside Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.less_outsude_commission}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Net Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ rentaldeal.net_commission}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Classic</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeals.classic}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent1</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                    <div class="col-3 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.agent1}}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                                                                                        
+                                        <label for=""><h6 class="value"> {{rentaldeal.tenant_first_name}} </h6> <!-- ========= this need to be changes  i dont know value ============ -->
+                                    
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent2</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.agent2}} </h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                                                                                        
+                                        <label for=""><h6 class="value"> {{rentaldeal.agent2}} </h6> <!-- ========= this need to be changes  i dont know value ============ -->
+                                    
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent3</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                    <div class="col-3 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.agent3}} </h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                                                                                        
+                                        <label for=""><h6 class="value"></h6><!-- ========= this need to be changes  i dont know value ============ -->
+                                    
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.receipt_no}} </h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">KYC Number</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value"> {{rentaldeal.kyc_number}} </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>     
+
+                            
+                                <br>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab3" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToDocuments" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                    </div>
+                        <!--- =========================Property Revenue details tab end  =========================== --> 
+
+                        <!--  ======================Upload Documents tab start  =================== -->  	
+                    <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
+                                
+                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">      
+                                        <div class="row">                                                    
+                                            <div class="col-4">
+                                                        <label for="">
+                                                            <h6 class="labelname">Tenancy Contract</h6>
+                                                        </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                            <div id="upload_prevss" class="buyers_passport_copy_list"></div>
+                                            <span class="text-danger" id="buyers_passport_copy_error"></span>
+                                        <div class="upload_prev">
+                                        {% render_file_links rentaldeal.tenancy_contract aws_base_url rentaldeal.reference_number %}
+
+                                             
+                                        </div>
+                                                                
+                                                                            
+                                                </div>   
+                                    </div>               
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3"> 
+                                        <div class="row">                                                   
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Ejari</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                                <div id="upload_prevss" class="buyers_deposit_cheque_copy_list">
+                                                    {% render_file_links rentaldeal.ejari aws_base_url rentaldeal.reference_number %}
+
+                                                </div>
+                                            </div>
+                                            <span class="text-danger" id="buyers_deposit_cheque_copy_error"></span>
+                                             
+                                    </div>           
+                                    </div>
+                                    </div>
+
+                                <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                            <div class="row">
+                                <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Owner Passport Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="owner_passport_copy_list">
+                                    {% render_file_links rentaldeal.owner_passport_copy aws_base_url rentaldeal.reference_number %}
+
+
+                                </div>
+                                                                                                                                                                          
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="owner_passport_copy_error"></span>
+                            </div>                      
+                        </div>
+
+                        <div class="col-md-6 form-group mb-3">  
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Tenant Passport Visa Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="tenant_passport_visa_copy_list">
+                                        {% render_file_links rentaldeal.tenant_passport_visa_copy  aws_base_url rentaldeal.reference_number %}
+
+                                </div>
+                                                                                                                                                                               
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="tenant_passport_visa_copy_error"></span>
+                            </div>
+                        </div>
+                        </div>
+
+                                <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                            <div class="row">
+                                <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Tenants Eid Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="tenant_emirates_id_list">
+                                     {% render_file_links rentaldeal.tenant_emirates_id  aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="tenant_emirates_id_error"></span>
+                            </div>                      
+                        </div>
+
+
+                        <div class="col-md-6 form-group mb-3">  
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Owner Eid Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="owner_eid_copy_list">
+                                    {% render_file_links rentaldeal.owner_eid_copy  aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                    </div>
+                                <span class="text-danger" id="owner_eid_copy_error"></span>
+                            </div>
+                        </div>
+                        </div>
+
+                            <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                            <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Rental Deposit &amp; Rental Cheque Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="rental_deposit_cheque_copy_list">
+                                            {% render_file_links rentaldeal.rental_deposit_cheque_copy aws_base_url rentaldeal.reference_number %}
+                                                               </div>
+                           
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="rental_deposit_cheque_copy_error"></span>
+                            </div>                          
+                        </div>
+
+
+                        <div class="col-md-6 form-group mb-3">  
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Title Deed</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="title_deed_list">
+                                    {% render_file_links rentaldeal.title_deed aws_base_url rentaldeal.reference_number %}
+                                                                                                                                                   
+                                </div>
+                                                                                                                                                                             
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="title_deed_error"></span>
+                            </div>
+                            </div>
+                            </div>
+
+                            <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Poa Pp</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="owner_poa_pp_copy_list">
+                                    {% render_file_links rentaldeal.owner_poa_pp_copy aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                    </div>
+                                <span class="text-danger" id="owner_poa_pp_copy_error"></span>
+                            </div>                          
+                        </div>
+
+                            <div class="col-md-6 form-group mb-3"> 
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Poa Copy</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="poa_copy_list">
+                                    {% render_file_links rentaldeal.poa_copy aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                    </div>
+                                <span class="text-danger" id="poa_copy_error"></span>
+                            </div>
+                        </div>
+                            </div>
+
+                            <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                            <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Key Hand Over Form</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">     
+                                <div id="upload_prevss" class="key_hand_over_form_list">
+                                    {% render_file_links rentaldeal.key_hand_over_form aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                                                                                                                    
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="key_hand_over_form_error"></span>
+                            </div>                          
+                        </div>
+                        
+                            <div class="col-md-6 form-group mb-3"> 
+                    
+                        <div class="row">                                
+                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">KYC Form</h6>
+                                                </label>
+                                            </div>
+                                <div class="col-1">:</div>
+                                            <div class="col-6">                
+                                <div id="upload_prevss" class="rental_kyc_number_list">
+                                    {% render_file_links rentaldeal.kyc aws_base_url rentaldeal.reference_number %}
+                                </div>
+                                                                                                                                                    
+                                                                    
+                                                    </div>
+                                <span class="text-danger" id="rental_kyc_number_error"></span>
+                            </div>                              
+                        </div> 
+                        </div> 
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3"> 
+                                <div class="row">                                
+                                    <div class="col-4">
+                                        <label for="">
+                                            <h6 class="labelname">Tenancy Application Form</h6>
+                                        </label>
+                                    </div>
+                                    <div class="col-1">:</div>
+                                    <div class="col-6">                
+                                        <div id="upload_prevss" class="rental_kyc_number_list"> 
+                                            {% render_file_links rentaldeal.tenancy_application_form aws_base_url rentaldeal.reference_number %}
+                                        </div>
+                                                                                                                                                                                                                           
+                                                                                    
+                                                                    </div>
+                                    <span class="text-danger" id="tenancy_application_form_error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group mb-3"> 
+                                        <div class="row">                                
+                                            <div class="col-4">
+                                            <label for="">
+                                            <h6 class="labelname">Screening</h6>
+                                            </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">                
+                                            <div id="upload_prevss" class="kyc_number_list">
+                                                {% render_file_links rentaldeal.screening aws_base_url rentaldeal.reference_number %}
+                                            </div>
+                                                                                                                                                                                                                      
+                                                                                    
+                                                                                </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>                              
+                                    </div>
+                        </div>
+                        <div class="row">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Screening Comments</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6 format-value">
+                                                <label for="">
+                                                <h6 class="value">{{rentaldeal.screening_comments}} </h6>
+                                            </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <br>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab4" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToComments" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>	
+                    </div>
+                        <!-- =====================Upload Documents tab end  =========================== --> 
+
+                    <!--  ===================== status & comment start==============================   -->
+                    <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
+
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-4">
+                                <label><h5>Status</h5></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 form-group mb-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="">
+                                            <h6 class="labelname">Approve/Reject</h6>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="col-1">:</div>
+                                                                <div class="col-6">
+                                        <label for="">
+                                            <h6 class="value"> {{rentaldeal.is_approved_rejected_display}}</h6>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">AML</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{rentaldeal.is_rental_aml}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                            <div class="form-group row">
+                                <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Approved/Rejected By</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                <label for=""><h6 class="value">{{ rentaldeal.approved_rejected_by}}</h6>
+                                                </label>
+                                                </div>
+                                            
+                                            
+                                        
+                                        </div>
+                                    </div> 
+                                                        
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Is Entered In Finance System</h6>
+                                            </label>
+                                        </div>
+                                        
+                                            <div class="col-1">:</div>
+                                        <div class="col-6">
+                                             <label>
+                                                <h6 class="value" id="financeStatus{{ rentaldeal.id }}">{{ rentaldeal.is_entered_in_finance_system_display }}</h6>
+                                            </label>
+                                            {% if rentaldeal.is_entered_in_finance_system == "0" %}
+                                                <input 
+                                                    type="button" 
+                                                    class="btn btn-sm btn-info ml-3 status-finance" 
+                                                    value="Enter in Finance"
+                                                    id="financeBtn{{ rentaldeal.id }}"
+                                                
+                                                onclick="enterInFinance({{ rentaldeal.id }})"
+                                                >
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                            </div>                          
+                        </div> <hr>    
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-4">
+                                <label><h5>Comments</h5></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 form-group mb-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="">
+                                            <h6 class="labelname">Comment by Agent</h6>
+                                        </label>
+                                    </div>
+                                    <div class="col-1">:</div>
+                                    <div class="col-6 format-value">
+                                        <label for=""><h6 class="value"> {{rentaldeal.agent_comment}}</h6>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                                
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Comment by Admin</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{rentaldeal.comments}}  </h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                        {% if perms.core.comment_finance_rental_deals %}  
+                        <div class="form-group row">
+                            <div class="col-2 ">
+                                <label for="">
+                                    <h6 class="labelname">Comment by Finance</h6>
+                                </label>
+                            </div>
+                            <div class="col-1">:</div>
+                            
+                            <div class="col-6">
+                            <form id="finance_comment_form" method="post" novalidate>
+                                {% csrf_token %}
+
+                                <!-- Comment input area - initially hidden -->
+                                <div class="form-group mb-3 edit_comments_finance" hidden>
+                                    <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments"></textarea>
+                                    <br>
+                                    <input type="buttom" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" onclick="comment_finance({{ rentaldeal.id }})">
+                                </div>
+                            </form>
+                                <!-- Displayed comment (if any) -->
+                                <div class="col-6">
+                                    <div class="format-value">
+                                        <label>
+                                            <h6 class="value editCommentText" id="existing_comment">{{ rentaldeal.comments_finance|default_if_none:"" }}</h6>
+                                        </label>
+                                    </div>
+
+                                    <!-- Add/Edit button -->
+                                    <input 
+                                        type="button"
+                                        value="{% if rentaldeal.comments_finance %}Edit Comment{% else %}Add Comment{% endif %}" 
+                                        class="btn btn-sm btn-info ml-3 editComment"
+                                        style="margin-top:-15px"
+                                    >
+                                </div>
+                           
+                    </div>
+                        </div>   
+                        {% endif %}      
+                                        
+                            <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab5" style="float:right;color: white">Previous</a>
+                                    </div>
+                            </div>	
+                    </div>
+                </div> 	
+            </div>   
+            <!-- ======================== Status & Comment end ==================================   -->
+            </div>   
+        </div>
+	</div>
+			<div class="sidebar-overlay open"></div>
+</div>
+ 
+
+<!-- ✅ 1. Load jQuery (pick ONE: either local OR CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- ✅ 2. Load Bootstrap (optional) -->
+<script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ✅ 3. Load jQuery plugins -->
+<script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+<script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+<script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script>
+<script src="/static/assets/js/datatables.min.js"></script>
+
+<!-- ✅ 4. Load jQuery Validation (after jQuery only once) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<!-- ✅ 5. Your custom scripts -->
+<script src="/static/assets/js/rentalcustom.js"></script>
+
+  
+ 
+ 
+ 
+ {% endblock content %}
+
+
+
+
+
+

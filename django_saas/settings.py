@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     #apps
     'Rental_Deal',
     'core',
-
+    'django_multitenant',
 
     #rest_framework
     'rest_framework',  # Django REST Framework for API support'
@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.AccountMiddleware',
  ]
 
 ROOT_URLCONF = 'django_saas.urls'
@@ -88,7 +89,7 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME': 'gopibradsol',
+        'NAME': 'gopi',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',
@@ -163,4 +164,9 @@ LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 # Custom user model
 AUTH_USER_MODEL = 'core.Users'
- 
+
+# AWS S3 settings
+AWS_URL = "/media/rental/referencenumber_CP/"
+
+ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"
+

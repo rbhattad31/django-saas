@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import RentalDeals,Users
+from core.models import RentalDeals, Users, Account
 from django.contrib.auth.models import Group
 from django import forms
 
@@ -21,7 +21,7 @@ class RentalDealAdmin(admin.ModelAdmin):
         'reference_number', 
         'is_new_deal',
         'project_name',
-        'submitted_by_user',
+        'submitted_by_user_id',
     )
 
 from django.contrib import admin
@@ -71,19 +71,19 @@ class CustomUserAdmin(BaseUserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
-    list_display = ("id",'email', 'is_staff', 'is_superuser','password','get_groups')
+    list_display = ("id",'email', 'is_staff', 'is_superuser','password',"account_id","get_groups", 'account')
     list_filter = ('is_staff', 'is_superuser')
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('name',)}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',  'user_permissions' ,"groups",'account')}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'name', 'password1', 'password2'),
+            'fields': ('email', 'name', 'password1', 'password2', "account","groups"  ),
         }),
     )
 
@@ -96,6 +96,12 @@ class CustomUserAdmin(BaseUserAdmin):
     get_groups.short_description = 'Groups'
 
 admin.site.register(Users, CustomUserAdmin)
+
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ('id',"account_domain" )  # fields to show in the list view
+    search_fields = ('name',)
+    ordering = ('-created_at',)
 
 
 
