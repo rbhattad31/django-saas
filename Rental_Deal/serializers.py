@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from core.models import RentalDeals,Users,Receipts
+from django.utils.html import format_html
 from rest_framework.reverse import reverse
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
@@ -22,7 +23,7 @@ class AgentDropdownSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Users
-        fields = ['id', 'name']
+        fields = ['id', 'name',"email"]
 
     def get_name(self, obj):
         return f"{obj.name}".strip()
@@ -34,6 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DealSerializer(serializers.ModelSerializer):
+    # is_rental_aml = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     # users = UserSerializer(source='submitted_by_user', read_only=True)
     
 
@@ -57,20 +59,22 @@ class DealSerializer(serializers.ModelSerializer):
     view_link = serializers.SerializerMethodField()
     update_link = serializers.SerializerMethodField()
     delete_link = serializers.SerializerMethodField()
-    
+    contract_value = serializers.SerializerMethodField()
+
     email = serializers.CharField(source='submitted_by_user.email', read_only=True)
     username = serializers.CharField(source = "submitted_by_user.name",read_only =True)
 
     is_approved_rejected_display = serializers.SerializerMethodField()
     manager_approved_rejected_display = serializers.SerializerMethodField()
     is_entered_in_finance_system_display = serializers.SerializerMethodField()
+    action = serializers.SerializerMethodField()
 
 
 
     class Meta:
         model = RentalDeals
         fields = '__all__'
-        extra_fields = ['view_link', 'update_link', 'delete_link','agent_username']
+        extra_fields = ['view_link', 'update_link', 'delete_link','agent_username','action']
 
     
     CONDITIONAL_REQUIRED_FIELDS = [
@@ -95,7 +99,7 @@ class DealSerializer(serializers.ModelSerializer):
         # Also ensure these are here if they apply:
         # 'is_sale_aml',
         'agent_name1',
-        'is_rental_aml',
+        
         # Any other fields that should only be required for 'Complete' status
     ]
 
@@ -191,7 +195,7 @@ class DealSerializer(serializers.ModelSerializer):
                 'tenant_source',
                 'tenant_mobile',
                 'tenant_email',
-                'screening'
+               
             ]
             missing_fields = [
                 field for field in draft_required_fields if not data.get(field)
@@ -212,8 +216,8 @@ class DealSerializer(serializers.ModelSerializer):
                 'tenant_mobile', 'tenant_email', 'agent_first_name', 'agent_phone',
                 'tenant_agency', 'tenant_agent_first_name', 'tenant_agent_phone',
                 'total_commission', 'less_outsude_commission', 'net_commission',
-                'classic', 'agent1', 'receipt_no', 'is_sale_aml', 'agent_name1',
-                'is_rental_aml', 'screening'
+                'classic', 'agent1', 'receipt_no',  'agent_name1',
+                  'screening'
             ]
             missing_fields = [
                 field for field in complete_required_fields if not data.get(field)
@@ -262,40 +266,150 @@ class DealSerializer(serializers.ModelSerializer):
     
     def get_is_entered_in_finance_system_display(self, obj):
         return obj.get_is_entered_in_finance_system_display()
-    
+
+
+    can_edit = serializers.SerializerMethodField()
+    can_delete = serializers.SerializerMethodField()
+    can_view = serializers.SerializerMethodField()
+
+    def get_can_view(self, obj):
+        # obj is the RentalDeal instance for the current row
+        request = self.context.get('request')
+        if not request:
+            return False # No request context, cannot determine permissions
+
+        # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
+        # Replace 'your_app.change_rentaldeal' with your actual permission string
+        has_permission = request.user.has_perm('core.view_rentaldeals')
+        # is_editable_status = obj.status != 'archived' # Example status check
+
+        return has_permission  
+
     
 
-        # extra_fields = ['agent_username'] 
+    def get_can_edit(self, obj):
+        # obj is the RentalDeal instance for the current row
+        request = self.context.get('request')
+        if not request:
+            return False # No request context, cannot determine permissions
+
+        # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
+        # Replace 'your_app.change_rentaldeal' with your actual permission string
+        has_permission = request.user.has_perm('core.change_rentaldeals')
+        # is_editable_status = obj.status != 'archived' # Example status check
+
+        return has_permission  
+
+    def get_can_delete(self, obj):
+        # obj is the RentalDeal instance for the current row
+        request = self.context.get('request')
+        if not request:
+            return False # No request context, cannot determine permissions
+
+        # Example: User must have 'delete_rentaldeal' permission and be the creator of the deal
+        # Replace 'your_app.delete_rentaldeal' with your actual permission string
+        has_permission = request.user.has_perm('core.delete_rentaldeals')
+        # is_owner = (request.user == obj.created_by) if obj.created_by else False # Assuming created_by is a User field
+
+        return has_permission  
+    
+
+    def get_action(self, obj):
+        request = self.context.get('request')
+     
+        user = request.user
+        html = ""
+
+        # View
+        if user.has_perm('core.view_rentaldeals'):
+            print("it has view permission ifromteh  serlozer")
+            html += f'<a href="/rental-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
+
+        # Edit (disallowed if approved unless special permission exists)
+        if user.has_perm('core.change_rentaldeals'):
+            print("thsi is from  ifromnthe serlizer ", obj.is_approved_rejected =='A' )
+            print(type(obj.is_approved_rejected))
+            print("thsi is from  ifromnthe serlizer ", user.has_perm('core.edit_approved_rental_deals')  )
+
+            if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_rental_deals')):
+                print("entered the edit ")
+                html+=""
+
+            else:
+                html += f'<a href="/rental-deals/update/{obj.id}/" class="text-warning mx-2" id="editDealBtn" data-deal-id="{obj.id}"><i class="fas fa-edit"></i></a>'
+
+        # Delete
+        if user.has_perm('core.delete_rentaldeals'):
+            html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+
+        return format_html(html)
+    
+    
+    def get_contract_value(self, obj):
+        print(obj , "thisis objet for serlizer")
+        return self.number_to_indian_words(obj.rental_price)
+
+
+    def number_to_indian_words(self, number):
+        print(number ,'the amount number ')
+
+        if not number:
+            return "Invalid amount"
+
+    # Remove commas and extra spaces
+        number = str(number).replace(",", "").strip()
+
+        if not number.isdigit():
+            return "Invalid amount"
         
+        number = int(number)
+        ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
+        teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
+                 "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+        tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
 
+        def two_digits(n):
+            if 10 <= n <= 19:
+                return teens[n - 10]
+            elif n >= 20:
+                return tens[n // 10] + (" " + ones[n % 10] if n % 10 != 0 else "")
+            else:
+                return ones[n]
 
-    # def validate(self, data):
-    #     """
-    #     Enforce required fields only when status is 'submitted'.
-    #     """
-    #     status = data.get('status', self.instance.status if self.instance else 'draft')
+        def three_digits(n):
+            if n == 0:
+                return ""
+            elif n < 100:
+                return two_digits(n)
+            else:
+                return ones[n // 100] + " Hundred" + (" " + two_digits(n % 100) if n % 100 != 0 else "")
 
-    #     if status == 'submitted':
-    #         required_fields = [
-    #             'agent',
-    #             'deal_date',
-    #             'reference_number',
-    #             'deal_type',
-    #             'project_name',
-    #             'unit_number',
-    #             'building_name',
-    #             'deal_start_date',
-    #             'deal_end_date',
-    #         ]
+        if number == 0:
+            return "Zero"
+        if number > 99999999:
+            return "Number exceeds 1 crore"
 
-        #     missing = [field for field in required_fields if not data.get(field)]
-        #     if missing:
-        #         raise serializers.ValidationError({
-        #             field: "This field is required when submitting." for field in missing
-        #         })
+        parts = []
+        crore = number // 10000000
+        if crore:
+            parts.append(ones[crore] + " Crore")
+        number %= 10000000
 
-        # return data  
+        lakh = number // 100000
+        if lakh:
+            parts.append(two_digits(lakh) + " Lakh")
+        number %= 100000
 
+        thousand = number // 1000
+        if thousand:
+            parts.append(two_digits(thousand) + " Thousand")
+        number %= 1000
+
+        hundred_and_below = three_digits(number)
+        if hundred_and_below:
+            parts.append(hundred_and_below)
+
+        return " ".join(parts)
 
 class SearchSerializer(serializers.Serializer):
     value = serializers.CharField(required=False, allow_blank=True)

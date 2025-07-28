@@ -1,0 +1,14 @@
+.actived{
+  font-weight: bold;
+  background-color: #e4e7ec !important; /* Bootstrap primary blue */
+  border-top-right-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+
+
+
+
+.dataTables_wrapper {
+    width: 100%;
+    overflow-x: auto;
+}

@@ -81,7 +81,11 @@
     <div class="row">
       <div class="col-2">{% include "includes/sidenav.html" %}</div>
       <div class="main-content col-10" id="panel">
-        {% include "includes/navigation.html" %} {% block content %} {% endblock content %}
+        {% include "includes/navigation.html" %} {% block content %} 
+
+
+     
+        {% endblock content %}
       </div>
     </div>
 
@@ -93,12 +97,17 @@
     <script src="/static/assets/js/argon.js?v=1.2.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-            const currentUser = {
+    {% comment %} <script>
+      // this not send from hte back we are taking the data from the request
+            let currentUser = {
           id: "{{ request.user.id }}",
           email: "{{ request.user.email }}",
           name: "{{ request.user.get_full_name }}",
-          isAuthenticated: {{ request.user.is_authenticated|yesno:"true,false" }}
+          isAuthenticated: {{ request.user.is_authenticated|yesno:"true,false" }},
+          can_view : {{perms.core.view_rentaldeals|yesno:"true,false"}} ,
+          can_edit : {{perms.core.change_rentaldeals|yesno:"true,false"}} ,
+          can_delete : {{perms.core.delete_rentaldeals|yesno:"true,false"}} ,
+
         };
        
         console.log(currentUser);
@@ -110,7 +119,7 @@
     } else {
       usernameSpan.textContent = "Guest";
     }
-  });
+  }); {% endcomment %}
     </script>
   </body>
 </html>

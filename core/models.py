@@ -12,6 +12,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.contrib.auth.models import Permission
 
 from django_multitenant.models import TenantModel, TenantManager
+
+# from Rental_Deal.serializers import User
 # from django_multitenant.models import TenantModel, TenantManager
 
 
@@ -71,6 +73,8 @@ class Account(models.Model):
         if is_new:
             roles = {
             "Admin": [
+
+                # fot the rental Deal Management   Permisions for the Admin
                 # ✅ Full access
                 "add_rentaldeals",
                 "change_rentaldeals",
@@ -93,22 +97,90 @@ class Account(models.Model):
                 "view_pending_finance_rental_deals",
                 "create_draft_rental_deals",
                 "update_amt_status_rental_deals",
+                "comment_finance_rental_deals",
+
+
+                #Sale Deal Managment Permison for ad admin 
+                "add_salesdeals",
+                "change_salesdeals",
+                "delete_salesdeals",
+                "view_salesdeals",
+
+                "manage_sales_deals",
+                "view_all_sales_deals",
+                "view_pending_sales_deals",
+                "view_approved_sales_deals",
+                "view_rejected_sales_deals",
+                "view_waiting_finance_sales_deals",
+                "add_salesdeals",
+                "change_salesdeals",
+                "view_salesdeals",
+                "my_sales_deals_drafts",
+                "delete_salesdeals",
+                "view_admin_sales_fields",
+                "edit_approved_sales_deals",
+                "view_pending_finance_sales_deals",
+                "enter_finance_sales_deals",
+                "create_draft_sales_deal",
+                "edit_draft_sales_deal",
+                "update_aml_status_sales_deal",
+                "update_finance_status_sales_deal",
+                "comment_finance_sales_deal",
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+                # recipts Management permisiions for admin
+                # rather than addong if user can see the Recipts Module a permission if user have any of receipts it will be visible
+ 	            "add_receipts",
+ 	            "change_receipts" ,
+                "delete_receipts", # here i dont have download permission  but i am using delete permission  for that rather than creating   since just we need to check id permision presnet or not  so we can use delete for the download permission only 
+                "view_receipts",
+
+
+
             ],
             "Manager": [
-                
+                # Real Deal MAnagement Permission for the Manager
                 "manage_rental_deals",
                 "view_pending_rental_deals",
                 "view_approved_rental_deals",
                 "view_rentaldeals",
-                "edit_approved_rental_deals",  # this is manage approved 
+                # "edit_approved_rental_deals",  # this is not manage approved for some having edit and somenot having edit 
                 "view_all_rental_deals",
                 "view_rejected_rental_deals",
                 "change_rentaldeals",
                 "view_my_draft_rental_deals",
+
+                 #Sale Deal Managment Permison for mANAGE
+                "manage_sales_deals",
+                "view_all_sales_deals",
+                "view_pending_sales_deals",
+                "view_rejected_sales_deals",
+                "change_salesdeals",
+                "view_salesdeals",
+                 "view_my_draft_sales_deals",
+
+
+
+
+                # recipts management for the Mananger 
+                "view_receipts",
                  
 
             ],
             "Agent": [
+                # Real Deal MAnagement Permission for the Agent
                 "manage_rental_deals",
                 "view_pending_rental_deals",
                 "view_approved_rental_deals",
@@ -121,8 +193,28 @@ class Account(models.Model):
                 "change_rentaldeals",
                 "view_my_draft_rental_deals",
                 "create_draft_rental_deals",
+
+                 #Sale Deal Managment Permison for ad admin 
+                "manage_sales_deals",
+                "view_all_sales_deals",
+                "view_pending_sales_deals",
+                "view_approved_sales_deals",
+                "add_salesdeals",
+                "change_salesdeals",
+                "view_salesdeals",
+                "view_my_draft_sales_deals",
+                "create_draft_sales_deal",
+                "edit_draft_sales_deal",
+
+
+
+
+                # recipts management for the Agent 
+                
             ],
             "Finance": [
+
+                # Real Deal MAnagement Permission for the Finance
                 "manage_rental_deals",
                 "view_rentaldeals",
                 "enter_finance_rental_deals",
@@ -130,6 +222,34 @@ class Account(models.Model):
                 "view_pending_finance_rental_deals",
                 "update_amt_status_rental_deals",
                 "comment_finance_rental_deals",
+
+
+
+                 #Sale Deal Managment Permison for Finac
+                "manage_sales_deals",
+                "view_salesdeals",
+                "view_pending_finance_sales_deal",
+                "enter_finance_sales_deal",
+                "update_aml_status_sales_deal",
+                "update_finance_status_sales_deal",
+                "comment_finance_sales_deal",
+
+
+
+
+                 # recipts management for the Finace  
+                # rather than addong if user can see the Recipts Module a permission if user have any of receipts it will be visible
+ 	            "add_receipts",
+ 	            "change_receipts", 
+                "delete_receipts", # here i dont have download permission  but i am using delete permission  for that rather than creating   since just we need to check id permision presnet or not  so we can use delete for the download permission only 
+                "view_receipts",
+
+
+
+
+
+
+
                 ],
             }
             for role, permissions in roles.items():
@@ -528,8 +648,8 @@ class Receipts(models.Model):
     receipt_number = models.BigIntegerField()
     dhs = models.CharField(max_length=191)
     fils = models.CharField(max_length=191)
-    cheque_no = models.CharField(max_length=191)
-    bank = models.CharField(max_length=191)
+    cheque_no = models.CharField(max_length=191,blank=True, null=True)
+    bank = models.CharField(max_length=191,blank=True, null=True)
     sec_date = models.DateField()
     being = models.CharField(max_length=191)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -538,7 +658,7 @@ class Receipts(models.Model):
     deal_type = models.CharField(max_length=191)
     received_from = models.CharField(max_length=191, blank=True, null=True)
     payment_type = models.CharField(max_length=191, blank=True, null=True)
-    deal_refer_no = models.CharField(max_length=191)
+    deal_refer_no = models.CharField(max_length=191,blank=True ,null =True)
     sum_of_dhs = models.CharField(max_length=191)
     agent_name = models.CharField(max_length=191)
     project_name = models.CharField(max_length=191)
@@ -547,11 +667,43 @@ class Receipts(models.Model):
     account_id = models.IntegerField()
     agent_id = models.IntegerField()
     agent_email = models.CharField(max_length=255)
-    mail_status = models.CharField(max_length=255)
+    mail_status = models.CharField(max_length=255 ,blank=True,null=True)
 
     class Meta:
         managed = False
         db_table = 'receipts'
+
+
+class Deposits(models.Model):
+    date = models.DateField()
+    deposit_number = models.BigIntegerField()
+    dhs = models.CharField(max_length=191)
+    fils = models.CharField(max_length=191)
+    cheque_no = models.CharField(max_length=191)
+    bank = models.CharField(max_length=191)
+    sec_date = models.DateField()
+    being = models.CharField(max_length=191)
+    status = models.CharField(max_length=191)
+    deal_type = models.CharField(max_length=191)
+    received_from = models.CharField(max_length=191, null=True, blank=True)
+    payment_type = models.CharField(max_length=191, null=True, blank=True)
+    deal_refer_no = models.CharField(max_length=191)
+    sum_of_dhs = models.CharField(max_length=191)
+    agent_name = models.CharField(max_length=191)
+    project_name = models.CharField(max_length=191)
+    building_name = models.CharField(max_length=191)
+    unit_number = models.CharField(max_length=191)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+    account_id = models.IntegerField()
+    on_behalf_of = models.CharField(max_length=191)
+
+    def __str__(self):
+        return f"Deposit #{self.deposit_number} - {self.cheque_no}"
+    
+    class Meta:
+        managed = False
+        db_table = 'deposits'
 
 
 
@@ -665,10 +817,11 @@ class Receipts(models.Model):
 #         return self.name
 
 
+# 
 # class SalesDeals(models.Model):
-#     id = models.BigAutoField(primary_key=True)
+#     id = models.AutoField(primary_key=True)
 #     submitted_date = models.DateField()
-#     submitted_by_user = models.ForeignKey('Users', models.DO_NOTHING)
+#     submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
 #     date = models.DateField()
 #     reference_number = models.TextField()
 #     unit_details = models.TextField()
@@ -739,9 +892,9 @@ class Receipts(models.Model):
 #     updated_at = models.DateTimeField(blank=True, null=True)
 #     created_by = models.CharField(max_length=191)
 #     updated_by = models.CharField(max_length=191, blank=True, null=True)
-#     account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
+#     account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True,default=True)
 #     property = models.ForeignKey(Properties, models.DO_NOTHING, blank=True, null=True)
-#     branch = models.ForeignKey(Branches, models.DO_NOTHING, blank=True, null=True)
+#     # branch = models.ForeignKey(Branches, models.DO_NOTHING, blank=True, null=True)
 #     is_deleted = models.CharField(max_length=1)
 #     deal_agent = models.CharField(max_length=191, blank=True, null=True)
 #     receipt_id = models.CharField(max_length=191)
@@ -756,7 +909,6 @@ class Receipts(models.Model):
 #     class Meta:
 #         managed = False
 #         db_table = 'sales_deals'
-
 
 # class Settings(models.Model):
 #     id = models.BigAutoField(primary_key=True)
@@ -1031,6 +1183,101 @@ class RentalDeals ( models.Model):
     class Meta:
         managed = False
         db_table = 'rental_deals'
+
+
+
+
+class SalesDeals(models.Model):
+    id = models.AutoField(primary_key=True)
+    submitted_date = models.DateField()
+    submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
+    date = models.DateField()
+    reference_number = models.TextField()
+    unit_details = models.TextField()
+    builduing_name = models.TextField()
+    project_name = models.TextField()
+    developer_details = models.TextField(blank=True, null=True)
+    seller_name = models.TextField()
+    seller_source = models.TextField()
+    selller_mobile = models.TextField()
+    seller_email = models.TextField(blank=True, null=True)
+    buyer_name = models.TextField()
+    buyer_source = models.TextField()
+    buyer_mobile = models.TextField()
+    buyer_email = models.TextField(blank=True, null=True)
+    seller_agency = models.TextField()
+    seller_agent_name = models.TextField()
+    seller_agent_phone = models.TextField()
+    seller_agent_email = models.TextField(blank=True, null=True)
+    seller_agency_brn = models.TextField(blank=True, null=True)
+    buyer_agency = models.TextField()
+    buyer_agent_name = models.TextField()
+    buyer_agent_phone = models.TextField()
+    buyer_agent_email = models.TextField(blank=True, null=True)
+    buyer_agency_brn = models.TextField(blank=True, null=True)
+    mediating_agency = models.TextField(blank=True, null=True)
+    mediating_agent_name = models.TextField(blank=True, null=True)
+    mediating_agent_phone = models.TextField(blank=True, null=True)
+    mediating_agent_email = models.TextField(blank=True, null=True)
+    mediating_agency_brn = models.TextField(blank=True, null=True)
+    signed_mou = models.TextField(blank=True, null=True)
+    new_title_deed = models.TextField(blank=True, null=True)
+    old_title_deed = models.TextField(blank=True, null=True)
+    owners_passport_copy = models.TextField(blank=True, null=True)
+    buyers_passport_copy = models.TextField(blank=True, null=True)
+    buyers_deposit_cheque_copy = models.TextField(blank=True, null=True)
+    sellers_deposit_cheque_copy = models.TextField(blank=True, null=True)
+    seller_poa_passport_copy = models.TextField(blank=True, null=True)
+    buyer_poa_passport_copy = models.TextField(blank=True, null=True)
+    total_commission = models.TextField()
+    less_outsude_commission = models.TextField()
+    net_commission = models.TextField()
+    classic = models.TextField()
+    agent1 = models.TextField()
+    agent2 = models.TextField(blank=True, null=True)
+    agent3 = models.TextField(blank=True, null=True)
+    is_approved_rejected = models.CharField(max_length=1)
+    approved_rejected_by = models.TextField(blank=True, null=True)
+    is_entered_in_finance_system = models.CharField(max_length=1)
+    comments = models.TextField(blank=True, null=True)
+    deal_amount = models.TextField(blank=True, null=True)
+    owner_eid_copy = models.TextField(blank=True, null=True)
+    agent_name1 = models.TextField(blank=True, null=True)
+    agent_name2 = models.TextField(blank=True, null=True)
+    agent_name3 = models.TextField(blank=True, null=True)
+    buyer_eid = models.TextField(blank=True, null=True)
+    agent_comment = models.TextField(blank=True, null=True)
+    receipt_no = models.TextField()
+    seller_poa_copy = models.TextField(blank=True, null=True)
+    buyer_poa_copy = models.TextField(blank=True, null=True)
+    buyer_poa_eid = models.TextField(blank=True, null=True)
+    seller_poa_eid = models.TextField(blank=True, null=True)
+    form_status = models.CharField(max_length=10, blank=True, null=True)
+    sale_kyc_number = models.TextField(blank=True, null=True)
+    is_sale_aml = models.CharField(max_length=3, blank=True, null=True)
+    kyc_number = models.TextField(blank=True, null=True)
+    comments_finance = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=191)
+    updated_by = models.CharField(max_length=191, blank=True, null=True)
+    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True,default=True)
+    property = models.ForeignKey(Properties, models.DO_NOTHING, blank=True, null=True)
+    # branch = models.ForeignKey(Branches, models.DO_NOTHING, blank=True, null=True)
+    is_deleted = models.CharField(max_length=1)
+    deal_agent = models.CharField(max_length=191, blank=True, null=True)
+    receipt_id = models.CharField(max_length=191)
+    submitted_by_agent = models.IntegerField()
+    screening = models.CharField(max_length=191)
+    screening_comments = models.TextField()
+    seller_nationality = models.CharField(max_length=191)
+    buyer_nationality = models.CharField(max_length=191)
+    manager_cheque_copy = models.TextField()
+    manager_approved_rejected = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'sales_deals'
   
 
         

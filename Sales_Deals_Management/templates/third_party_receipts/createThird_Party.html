@@ -1,0 +1,156 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="main-content pt-4"><div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary " id="alert-primary">
+      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+    </div>
+</div> 
+<div class="col-md-12">
+  <h4 class="pb-2">Add Third Party Receipt<span class="float-right mr-2">
+    <a class="btn btn-primary btn-rounded" href="{% url 'third_party_receipts_list' %}">Cancel</a></span>
+  </h4>
+    <div class="card mb-5">
+    <div class="card-body">
+      <form id="createReceiptForm" novalidate="novalidate">
+        <input type="hidden" name="_token" value="73zTcDjqu3fZIGYUTKYdXLMlEi6HzpbbBH2x3B3R">
+        <div class="row">
+          <div class="col-md-6 form-group mb-3">
+            <label for="date">Receipt Date<span style="color: red">*</span></label>
+            <input type="text" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" autocomplete="off" readonly="readOnly"> 
+            <label class="error text-danger err-name" id="date_error_msg"></label>
+            <span class="error text-danger err-name" id="date_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+          <label for="deposit_number">Receipt Number<span style="color: red">*</span></label>
+          <input type="text" name="deposit_number" class="form-control" id="deposit_number" placeholder="Enter Receipt Number" value="1392" readonly="">       
+          <label class="error text-danger err-name" id="deposit_number_error_msg"></label>
+          <span class="error text-danger err-name" id="deposit_number_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="date">Received From<span style="color: red">*</span></label>
+            <input type="text" id="received_from" name="received_from" class="form-control" placeholder="Enter Received From"> 
+            <label class="error text-danger err-name" id="received_from_error_msg"></label>
+            <span class="error text-danger err-name" id="received_from_error"></span>
+          </div>
+         
+          <div class="col-md-6 form-group mb-3">
+            <label for="dhs">Dhs<span style="color: red">*</span></label>
+            <input type="text" name="dhs" class="form-control" id="dhs" placeholder="Enter Dhs">
+            <label class="error text-danger err-name" id="dhs_error_msg"></label>
+            <span class="error text-danger err-name" id="dhs_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">Fils<span style="color: red">*</span></label>
+            <input type="text" name="fils" class="form-control" id="fils" placeholder="Enter Fils">
+            <label class="error text-danger err-name" id="fils_error_msg"></label>
+            <span class="error text-danger err-name" id="fils_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">The Sum Of Dhs<span style="color: red">*</span></label>
+            <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" placeholder="Enter Sum Of Dhs">
+            <label class="error text-danger err-name" id="sum_of_dhs_error_msg"></label>
+            <span class="error text-danger err-name" id="sum_of_dhs_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="payment_type">Payment Type<span style="color: red">*</span></label>
+            <select name="payment_type" class="form-control" id="payment_type">
+                <option value="" selected="">Please Select</option>
+                <option class="payment-type-option" value="Cash">Cash</option>
+                <option class="payment-type-option" value="Cheque">Cheque</option>
+                <option class="payment-type-option" value="Bank Transfer">Bank Transfer</option>
+            </select> 
+            <span class="error text-danger err-name" id="payment_type_error"></span>
+          </div>
+         
+          <div class="col-md-6 form-group mb-3 cheque">
+            <label for="cash/cheque no">Cheque No<span class="cheque_no" style="color: red; display: none;">*</span></label>
+            <input type="text" name="cheque_no" class="form-control" id="cheque_no" placeholder="Enter Cheque No">
+            <label class="error text-danger err-name" id="cheque_no_error_msg"></label>
+            <span class="error text-danger err-name" id="cheque_no_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="bank">Bank Name<span class="bank_name" style="color: red; display: none;">*</span></label>
+            <input type="text" name="bank" class="form-control" id="bank" placeholder="Enter Bank Name">
+            <label class="error text-danger err-name" id="bank_error_msg"></label>
+            <span class="error text-danger err-name" id="bank_error"></span>
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="sec_date">Payment Date<span style="color: red">*</span></label>
+            <input type="text" name="sec_date" class="form-control hasDatepicker" id="sec_date" placeholder="Enter Payment Date" autocomplete="off" readonly="readOnly">
+            <label class="error text-danger err-name" id="sec_date_error_msg"></label>
+            <span class="error text-danger err-name" id="sec_date_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="being">Being<span style="color: red">*</span></label>
+            <input type="text" name="being" class="form-control" id="being" placeholder="Enter Being">
+            <label class="error text-danger err-name" id="being_error_msg"></label>
+            <span class="error text-danger err-name" id="being_error"></span>
+          </div>
+          <!-- <div class="col-md-6 form-group mb-3">
+            <label for="status">Status</label>
+           <select name="status" class="form-control" id="status">
+                <option value="Unused" selected="">Please Select</option>
+                <option value="Used">Used</option>
+                <option value="Unused">Unused</option>
+            </select>
+             <input type="text" name="status"
+            class="form-control" id="status" value="Unused"
+            placeholder="Status" readonly>
+            <span class="error text-danger err-name" id="status_error"></span>
+          </div> -->
+          <div class="col-md-6 form-group mb-3">
+            <label for="deal_type">Deal Type<span style="color: red">*</span></label>
+            <select name="deal_type" class="form-control" id="deal_type">
+                <option value="" selected="">Please Select</option>
+                <option value="Sales">Sales</option>
+                <option value="Rental">Rental</option>
+            </select> 
+            <span class="error text-danger err-name" id="deal_type_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="agent_name">Agent Name</label>
+            <input type="text" name="agent_name" class="form-control" id="agent_name" placeholder="Enter Agent Name">
+            <label class="error text-danger err-name" id="agent_name_error_msg"></label>
+            <span class="error text-danger err-name" id="agent_name_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="agent_name">On Behalf Of<span style="color: red">*</span></label>
+            <input type="text" name="on_behalf_of" class="form-control" id="on_behalf_of" placeholder="Enter On Behalf Of">
+            <label class="error text-danger err-name" id="on_behalf_of_error_msg"></label>
+            <span class="error text-danger err-name" id="on_behalf_of_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="building_name">Building Name<span class="building_name" style="color: red">*</span></label>
+            <input type="text" name="building_name" class="form-control" id="building_name" placeholder="Enter Building Name">
+            <label class="error text-danger err-name" id="building_name_error_msg"></label>
+            <span class="error text-danger err-name" id="building_name_error"></span>
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="unit_number">Unit Number<span class="unit_number" style="color: red">*</span></label>
+            <input type="text" name="unit_number" class="form-control" id="unit_number" placeholder="Enter Unit Number">
+            <label class="error text-danger err-name" id="unit_number_error_msg"></label>
+            <span class="error text-danger err-name" id="unit_number_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="project_name">Project Name<span class="project_name" style="color: red">*</span></label>
+            <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Enter Project Name">
+            <label class="error text-danger err-name" id="project_name_error_msg"></label>
+            <span class="error text-danger err-name" id="project_name_error"></span>
+          </div>
+           
+        </div>
+
+         <div class="form-group row">
+          <div class="col-sm-12 btn-center">
+            <button id="submit" class="btn btn-primary btn-rounded m-1">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock content %}

@@ -103,8 +103,8 @@
               name="csrf-token"
               id="token"
             />
-            <input type="hidden"   name="account_id" id="account_id" />
-            <input type="hidden"   name="save_as" id="save_as" />
+            <input type="hidden" name="account_id" id="account_id" />
+            <input type="hidden" name="save_as" id="save_as" />
             <!-- Nav tabs started-->
             <div class="tab-content p-2 ul-tab__content" id="nav-tabContent">
               <!-- ===================Rental Property details tab start========================= -->
@@ -142,7 +142,6 @@
                       <option value="22">Richard Ileogben</option>
                       <option value="23">SHAHBAZ</option>
                       <option value="25">Satish</option>
-                      
                     </select>
                     <span
                       class="text-danger"
@@ -1133,7 +1132,6 @@
                       <option value="13">Anusha</option>
                       <option value="16">Majid</option>
                       <option value="17">Rakesh Saldhana</option>
-              
                     </select>
                     <span class="text-danger" id="agent_name1_error"></span>
                   </div>
@@ -1163,7 +1161,6 @@
                       <option value="11">Anirudh</option>
                       <option value="12">Sonia</option>
                       <option value="13">Anusha</option>
-                      
                     </select>
                     <span class="text-danger" id="agent_name2_error"></span>
                   </div>
@@ -1203,8 +1200,6 @@
                       <option value="23">SHAHBAZ</option>
                       <option value="25">Satish</option>
                       <option value="27">ganesh@classicproperties.ae</option>
-                    
-           
                     </select>
                     <span class="text-danger" id="agent_name3_error"></span>
                   </div>
@@ -1275,7 +1270,6 @@
                       <option value="4828">4828</option>
 
                       <option value="4829">4829</option>
- 
                     </select>
                     <span
                       class="error text-danger err-name"
@@ -1296,7 +1290,7 @@
                 </div>
 
                 <div class="row form-group nav-revenue">
-                  {% if perms.core.edit_approved_rental_deals  %}
+                  {% if perms.core.edit_approved_rental_deals %}
                   <div class="col-md-6 form-group">
                     <label for="receipt_no">Approve/Reject</label><br />
                     <div class="row">
@@ -1328,8 +1322,7 @@
                       </div>
                     </div>
                   </div>
-                  {% endif %}
-                  {% if perms.core.update_amt_status_rental_deals %}
+                  {% endif %} {% if perms.core.update_amt_status_rental_deals %}
                   <div class="col-md-6 form-group">
                     <label for="kyc_number"
                       >AML<span class="mandetory_field" style="color: red"
@@ -1362,7 +1355,6 @@
                     </div>
                   </div>
                   {% endif %}
-
                 </div>
                 <br />
                 <div class="form-group row mt-3">
@@ -2014,7 +2006,7 @@
     <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
     <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script>
+    {% comment %} <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script> {% endcomment %}
 
     <!-- ✅ jQuery UI (datepicker etc.) -->
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -2027,8 +2019,10 @@
 
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script>
+        
       const  rental_data = {{ rental_data|safe }}
       console.log("Django to JS:",  rental_data);
+      
     </script>
     <script>
       var site_url = "http://dealsaws.classicproperties.ae";
@@ -2042,7 +2036,7 @@
         var msg = "Please fill mandatory field";
       }
     </script>
-    <script src="http://dealsaws.classicproperties.ae/js/messages_en.js"></script>
+    {% comment %} <script src="http://dealsaws.classicproperties.ae/js/messages_en.js"></script> {% endcomment %}
 
     <script type="text/javascript">
       function getCookie(name) {
@@ -2825,7 +2819,7 @@
           checkKyc()
         ) {
           $("#save_as").val("create-deal");
-          var url = "/list";
+          var url = "list/";
           storefunctionality(url);
         } else {
           $("html, body").animate(
@@ -2840,7 +2834,7 @@
         }
       });
 
-      // 
+      //
       $(document).on("click", "#saveDeal", function (event) {
         $(
           '[name="submitted_by_agent"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="screening"]'
@@ -2861,7 +2855,7 @@
 
         if ($("#deal_form").valid() & countMultipleFiles("screening")) {
           $("#save_as").val("save-draft");
-          var url = "/list/draft";
+          var url = "draft/";
           storefunctionality(url);
         } else {
           $("html, body").animate(
@@ -2944,60 +2938,116 @@
 
           contentType: false,
           processData: false,
-        }).done(function (data) {
-          console.log(data);
-          $(".loadscreen").hide();
-          $("#save_draft_deal").removeAttr("disabled", true);
-          if (data.status == "success") {
-            scrollTop();
-            $("#alert-primary").text("Rental Deal Created Successfully");
-            $("#successmsg").show();
-            $("#deal_form")[0].reset();
-            //   setTimeout(function () {
-            //  window.location.href =
-            //      "http://dealsaws.classicproperties.ae/rental-deals" + urls;
-            //    }, 5000);
-          } else if (data.status == "validation_error") {
-            var messages = "";
-            $.each(data.data, function (index, value) {
-              messages +=
-                index.charAt(0).toUpperCase() +
-                index.slice(1) +
-                " : " +
-                value +
-                "\n";
-            });
-            swal("Please fill mandatory field", messages);
-            $.each(data.data, function (key, val) {
-              $("#" + key + "_error").text(val[0]);
-              $("#" + key + "_error").show();
-              $(document).on(
-                "keyup",
-                "input[name='" + key + "']",
-                function (e) {
-                  $("#" + key + "_error").hide();
-                }
-              );
-              $(document).on(
-                "change",
-                "select[name='" + key + "']",
-                function (e) {
-                  $("#" + key + "_error").hide();
-                }
-              );
-            });
-          } else {
+        })
+          .done(function (data, textStatus, xhr, Response) {
             console.log(data);
-            if (data.data == "DUF500") var alertmsg = data.message;
-            else var alertmsg = "Something Went Wrong !";
-            $("#alert-primary").text(alertmsg);
+            console.log("Response Data:", data);
+            console.log("Text Status:", textStatus);
+            console.log("HTTP Status Code:", xhr.status);
+            console.log("HTTP Status Code:", Response);
+
+            $(".loadscreen").hide();
+            $("#save_draft_deal").removeAttr("disabled", true);
+            console.log(xhr.status);
+            if (xhr.status == 200) {
+              scrollTop();
+              $("#alert-primary").text("Rental Deal Created Successfully");
+              $("#successmsg").show();
+              $("#deal_form")[0].reset();
+              setTimeout(function () {
+                window.location.href = "/rental-deals/" + urls;
+              }, 5000);
+            } else if (data.status == "validation_error") {
+              var messages = "";
+              $.each(data.data, function (index, value) {
+                messages +=
+                  index.charAt(0).toUpperCase() +
+                  index.slice(1) +
+                  " : " +
+                  value +
+                  "\n";
+              });
+              swal("Please fill mandatory field", messages);
+              $.each(data.data, function (key, val) {
+                $("#" + key + "_error").text(val[0]);
+                $("#" + key + "_error").show();
+                $(document).on(
+                  "keyup",
+                  "input[name='" + key + "']",
+                  function (e) {
+                    $("#" + key + "_error").hide();
+                  }
+                );
+                $(document).on(
+                  "change",
+                  "select[name='" + key + "']",
+                  function (e) {
+                    $("#" + key + "_error").hide();
+                  }
+                );
+              });
+            } else {
+              console.log(data);
+              if (data.data == "DUF500") var alertmsg = data.message;
+              else var alertmsg = "Something Went Wrong !";
+              $("#alert-primary").text(alertmsg);
+              $("#successmsg").show();
+              setTimeout(function () {
+                $("#successmsg").fadeOut();
+              }, 3000);
+            }
+          })
+          .fail(function (xhr, textStatus, errorThrown, Response) {
+            // This block runs for HTTP error responses (4xx or 5xx status codes)
+            console.log("AJAX Request Failed!");
+            console.log("HTTP Status Code:", xhr.status);
+            console.log("Text Status:", textStatus);
+            console.log("Error Thrown:", errorThrown);
+            console.log("Error Thrown:", xhr.responseJSON);
+
+            let errorMessage = "An unknown error occurred.";
+
+            if (xhr.status === 400) {
+              // This is your "Bad Request" error
+              console.log("Bad Request details:", xhr.responseJSON);
+              scrollTop();
+
+              // Attempt to extract specific error messages from the backend
+              if (xhr.responseJSON) {
+                if (typeof xhr.responseJSON === "object") {
+                  // If backend sends an object with error details (common in DRF)
+                  const errors = [];
+                  for (const key in xhr.responseJSON) {
+                    if (Object.hasOwnProperty.call(xhr.responseJSON, key)) {
+                      const element = xhr.responseJSON[key];
+                      if (Array.isArray(element)) {
+                        errors.push(`${key}: ${element.join(", ")}`);
+                      } else {
+                        errors.push(`${key}: ${element}`);
+                      }
+                    }
+                  }
+                  errorMessage = "Bad Request: " + errors.join("; ");
+                } else {
+                  // If backend sends a simple string message
+                  errorMessage = "Bad Request: " + xhr.responseJSON;
+                }
+              } else {
+                errorMessage = "Bad Request: Invalid data provided.";
+              }
+            }
+
+            // Display the error message to the user
+            // Make sure you have an element with id="alert-danger" in your HTML
+            //$("#alert-danger").text(errorMessage).show();
+            $("#alert-primary").text(errorMessage);
             $("#successmsg").show();
             setTimeout(function () {
               $("#successmsg").fadeOut();
             }, 3000);
-          }
-        });
-        
+
+            // Hide error message after a few seconds // Display errors a bit longer
+          });
       }
 
       $("#property").on("change", function () {
@@ -3106,8 +3156,8 @@
 
       // script to load data
 
-      loadAgentDropdown()
-      loadReceiptDropdown()
+      loadAgentDropdown();
+      loadReceiptDropdown();
 
       function loadAgentDropdown() {
         agents = rental_data.agents;
@@ -3123,45 +3173,49 @@
         const $dropdown = $(selector);
         $dropdown.empty().append('<option value="">Select Agent</option>');
         if (Array.isArray(data)) {
-    data.forEach(function(agent) {
-      const option = $('<option></option>')
-        .val(agent.id) // or agent.user_id or whatever field you use
-        .text(agent.name); // or agent.full_name or agent.username
+          data.forEach(function (agent) {
+            const option = $("<option></option>")
+              .val(agent.id) // or agent.user_id or whatever field you use
+              .text(agent.name); // or agent.full_name or agent.username
 
-      $dropdown.append(option);
-    });
-  }
-
+            $dropdown.append(option);
+          });
+        }
       }
 
+      function loadReceiptDropdown() {
+        receipts = rental_data.receipts;
 
+        populateReceiptDropdown("#receipt_no", receipts);
 
-    function loadReceiptDropdown() {
-    receipts = rental_data.receipts
-  
-      populateReceiptDropdown("#receipt_no", receipts);
-       
-      console.log("loaded teh reciepts");
-      // Add more dropdowns if needed, e.g.:
-      // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
-  
-}
+        console.log("loaded teh reciepts");
+        // Add more dropdowns if needed, e.g.:
+        // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+      }
 
-// Helper function to populate the receipt dropdown
-function populateReceiptDropdown(selector, data) {
-  console.log(selector, "recipt selector");
-  console.log(data, "receipt data");
-   
-  const $dropdown = $(selector);
-  $dropdown.empty().append('<option value="">Select Receipt</option>');
+      // Helper function to populate the receipt dropdown
+      function populateReceiptDropdown(selector, data) {
+        console.log(selector, "recipt selector");
+        console.log(data, "receipt data");
 
-  data.forEach(function (receipt) {
-    $dropdown.append(
-      `<option value="${receipt.id}">${receipt.receipt_number}</option>`
-    );
-  });
-}
+        const $dropdown = $(selector);
+        $dropdown.empty().append('<option value="">Select Receipt</option>');
 
+        data.forEach(function (receipt) {
+          $dropdown.append(
+            `<option value="${receipt.id}">${receipt.receipt_number}</option>`
+          );
+        });
+      }
+
+      function scrollTop() {
+        $("html, body").animate(
+          {
+            scrollTop: $(".main-header").offset().top,
+          },
+          1000
+        );
+      }
     </script>
 
     {% endblock content %}

@@ -1,0 +1,1481 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="btn-close float-end" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card mt-3 mb-3">
+                <div class="card-header bg-transparent">
+                    <h4 class="pb-2">Create Sales Deal<span class="float-end">
+                        <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Cancel</a>
+                    </span></h4>
+                </div>
+                <div class="card-body m-1">
+                    <nav>
+                        <!-- <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active" id="nav-property-tab" data-bs-toggle="tab" href="#nav-property" role="tab">Property Details</a>
+                            <a class="nav-item nav-link" id="nav-source-tab" data-bs-toggle="tab" href="#nav-source" role="tab">Source Details</a>
+                            <a class="nav-item nav-link" id="nav-agency-tab" data-bs-toggle="tab" href="#nav-agency" role="tab">Agency Details</a>
+                            <a class="nav-item nav-link" id="nav-revenue-tab" data-bs-toggle="tab" href="#nav-revenue" role="tab">Revenue Details</a>
+                            <a class="nav-item nav-link" id="nav-documents-tab" data-bs-toggle="tab" href="#nav-documents" role="tab">Upload Documents</a>
+                        </div> -->
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <!-- <a class="nav-item nav-link active" id="nav-property-tab" href="#nav-property" role="tab">Property Details</a>
+                            <a class="nav-item nav-link" id="nav-source-tab" href="#nav-source" role="tab">Source Details</a>
+                            <a class="nav-item nav-link" id="nav-agency-tab" href="#nav-agency" role="tab">Agency Details</a>
+                            <a class="nav-item nav-link" id="nav-revenue-tab" href="#nav-revenue" role="tab">Revenue Details</a>
+                            <a class="nav-item nav-link" id="nav-documents-tab" href="#nav-documents" role="tab">Upload Documents</a> -->
+
+
+                            <a class="nav-item nav-link active" id="nav-property-tab" data-bs-toggle="tab" href="#nav-property" role="tab">Property Details</a>
+                            <a class="nav-item nav-link" id="nav-source-tab" data-bs-toggle="tab" href="#nav-source" role="tab">Source Details</a>
+                            <a class="nav-item nav-link" id="nav-agency-tab" data-bs-toggle="tab" href="#nav-agency" role="tab">Agency Details</a>
+                            <a class="nav-item nav-link" id="nav-revenue-tab" data-bs-toggle="tab" href="#nav-revenue" role="tab">Revenue Details</a>
+                            <a class="nav-item nav-link" id="nav-documents-tab" data-bs-toggle="tab" href="#nav-documents" role="tab">Upload Documents</a>
+
+                        </div>
+                    </nav>
+
+                    <form id="deal_form" enctype="multipart/form-data" novalidate="novalidate">
+                        {% csrf_token %}
+                        <input type="hidden" value="2" name="account_id" id="account_id">
+                        <input type="hidden" value="" name="save_as" id="save_as">
+                        <div class="tab-content ul-tab__content" id="nav-tabContent">
+                            <!-- Property Details Tab -->
+                            <div class="tab-pane fade show active" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
+                                <div class="form-group row nav-property">
+                                    <div class="col-md-6 form-group">
+                                        <label for="submitted_by_agent">Deal Submitted By Agent<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent" required>
+                                            <option value="">Select Agent Name</option>
+                                            <option value="10">Rahul B</option>
+                                           
+                                        </select>
+                                        <span class="text-danger" id="submitted_by_agent_error"></span>
+                                    </div>
+                                    <!-- <div class="col-md-6 form-group mb-3">
+                                        <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
+                                        <input type="date" name="submitted_date" class="form-control" id="submitted_date" placeholder="DD-MM-YYYY">
+                                        <span class="error text-danger" id="submitted_date_error"></span>
+                                    </div> -->
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
+                                        <input type="date" name="submitted_date" class="form-control" id="submitted_date" required>
+                                        <span class="error text-danger" id="submitted_date_error"></span>
+                                    </div>
+
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="reference_number">Reference Number<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference No">
+                                        <span class="text-danger" id="reference_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="unit_details">Unit No<span class="mandetory_field">*</span></label>
+                                        <input type="text" name="unit_details" class="form-control" id="unit_details" placeholder="Unit No">
+                                        <span class="error text-danger" id="unit_details_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="building_name">Building Name<span class="mandetory_field">*</span></label>
+                                        <input type="text" name="builduing_name" class="form-control" id="builduing_name" placeholder="Building Name">
+                                        <span class="error text-danger" id="builduing_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="project_name">Project Name<span class="mandetory_field">*</span></label>
+                                        <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Project Name">
+                                        <span class="error text-danger" id="project_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="deal_amount">Selling Price</label>
+                                        <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price">
+                                        <span class="error text-danger" id="deal_amount_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToSource" style="color: white">Next</a>
+ 
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" style="color: white">Save As Draft</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Source Details Tab -->
+                            <div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-1">
+                                        <label><h5>Seller Details</h5></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_name">Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="seller_name" class="form-control" id="seller_name" placeholder="Seller Name">
+                                        <span class="text-danger" id="seller_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_source">Source<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="seller_source" id="seller_source">
+                                            <option value="">Select Seller Source</option>
+                                            <option value="Dubizzle">Dubizzle</option>
+                                            <option value="Property finder">Property finder</option>
+                                            <option value="Classic Website">Classic Website</option>
+                                            <option value="YZER">YZER</option>
+                                            <option value="Gulfnews">Gulfnews</option>
+                                            <option value="Others">Others</option>
+                                            <option value="Reference">Reference</option>
+                                            <option value="Agent">Agent</option>
+                                            <option value="Network">Network</option>
+                                            <option value="Social Media">Social Media</option>
+                                            <option value="Walk In">Walk In</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Developer">Developer</option>
+                                            <option value="BAYUT">BAYUT</option>
+                                        </select>
+                                        <span class="text-danger" id="seller_source_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="selller_mobile">Mobile<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="selller_mobile" name="selller_mobile" placeholder="Seller Mobile">
+                                        <span class="text-danger" id="selller_mobile_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_email">Email<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="email" id="seller_email" name="seller_email" placeholder="Seller Email">
+                                        <span class="text-danger" id="seller_email_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_nationality">Nationality<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="seller_nationality" name="seller_nationality" placeholder="Seller Nationality">
+                                        <span class="text-danger" id="seller_nationality_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-1">
+                                        <label><h5>Buyer Details</h5></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_name">Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="buyer_name" class="form-control" id="buyer_name" placeholder="Buyer Name">
+                                        <span class="text-danger" id="buyer_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_source">Source<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="buyer_source" id="buyer_source">
+                                            <option value="">Select Buyer Source</option>
+                                            <option value="Dubizzle">Dubizzle</option>
+                                            <option value="Property finder">Property finder</option>
+                                            <option value="Classic Website">Classic Website</option>
+                                            <option value="YZER">YZER</option>
+                                            <option value="Gulfnews">Gulfnews</option>
+                                            <option value="Others">Others</option>
+                                            <option value="Reference">Reference</option>
+                                            <option value="Agent">Agent</option>
+                                            <option value="Network">Network</option>
+                                            <option value="Social Media">Social Media</option>
+                                            <option value="Walk In">Walk In</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Developer">Developer</option>
+                                            <option value="BAYUT">BAYUT</option>
+                                        </select>
+                                        <span class="text-danger" id="buyer_source_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_mobile">Mobile<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="buyer_mobile" name="buyer_mobile" placeholder="Buyer Mobile">
+                                        <span class="text-danger" id="buyer_mobile_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_email">Email<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="email" id="buyer_email" name="buyer_email" placeholder="Buyer Email">
+                                        <span class="text-danger" id="buyer_email_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_nationality">Nationality<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="buyer_nationality" name="buyer_nationality" placeholder="Buyer Nationality">
+                                        <span class="text-danger" id="buyer_nationality_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab1" style="color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToAgency" style="color: white">Next</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="saveAsDraftSource" style="color: white">Save As Draft</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Agency Details Tab -->
+                            <div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-1">
+                                        <label><h5>Seller Agency Details</h5></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_agency">Agency Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="seller_agency" class="form-control" id="seller_agency" placeholder="Seller Agency">
+                                        <span class="text-danger" id="seller_agency_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_agent_name">Agent Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="seller_agent_name" class="form-control" id="seller_agent_name" placeholder="Agent Name">
+                                        <span class="text-danger" id="seller_agent_name_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_agency_brn">Agency Brn</label>
+                                        <input class="form-control" type="text" id="seller_agency_brn" name="seller_agency_brn" placeholder="Agent Brn">
+                                        <span class="text-danger" id="seller_agency_brn_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_agent_phone">Agent Phone<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="seller_agent_phone" name="seller_agent_phone" placeholder="Agent Phone">
+                                        <span class="text-danger" id="seller_agent_phone_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_agent_email">Agent Email</label>
+                                        <input class="form-control" type="email" id="seller_agent_email" name="seller_agent_email" placeholder="Agent Email">
+                                        <span class="text-danger" id="seller_agent_email_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-1">
+                                        <label><h5>Buyer Agency Details</h5></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_agency">Agency Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="buyer_agency" class="form-control" id="buyer_agency" placeholder="Buyer Agency">
+                                        <span class="text-danger" id="buyer_agency_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_agent_name">Agent Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="buyer_agent_name" class="form-control" id="buyer_agent_name" placeholder="Agent Name">
+                                        <span class="text-danger" id="buyer_agent_name_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_agency_brn">Agency Brn</label>
+                                        <input class="form-control" type="text" id="buyer_agency_brn" name="buyer_agency_brn" placeholder="Buyer Brn">
+                                        <span class="text-danger" id="buyer_agency_brn_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_agent_phone">Agent Phone<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="buyer_agent_phone" name="buyer_agent_phone" placeholder="Agent Phone">
+                                        <span class="text-danger" id="buyer_agent_phone_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_agent_email">Agent Email</label>
+                                        <input class="form-control" type="email" id="buyer_agent_email" name="buyer_agent_email" placeholder="Agent Email">
+                                        <span class="text-danger" id="buyer_agent_email_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-1">
+                                        <label><h5>Mediating Agency Details</h5></label>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="mediating_agency">Agency Name</label>
+                                        <input type="text" name="mediating_agency" class="form-control" id="mediating_agency" placeholder="Mediating Agency">
+                                        <span class="text-danger" id="mediating_agency_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="mediating_agent_name">Agent Name</label>
+                                        <input type="text" name="mediating_agent_name" class="form-control" id="mediating_agent_name" placeholder="Agent Name">
+                                        <span class="text-danger" id="mediating_agent_name_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="mediating_agency_brn">Agency Brn</label>
+                                        <input class="form-control" type="text" id="mediating_agency_brn" name="mediating_agency_brn" placeholder="Agent Brn">
+                                        <span class="text-danger" id="mediating_agency_brn_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="mediating_agent_phone">Agent Phone</label>
+                                        <input class="form-control" type="text" id="mediating_agent_phone" name="mediating_agent_phone" placeholder="Agent Phone">
+                                        <span class="text-danger" id="mediating_agent_phone_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="mediating_agent_email">Agent Email</label>
+                                        <input class="form-control" type="email" id="mediating_agent_email" name="mediating_agent_email" placeholder="Agent Email">
+                                        <span class="text-danger" id="mediating_agent_email_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab2" style="color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToRevenue" style="color: white">Next</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" style="color: white">Save As Draft</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Revenue Details Tab -->
+                            <div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab">
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="total_commission">Total Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" required>
+                                        <span class="text-danger" id="total_commission_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="less_outside_commission">Less Outside Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="less_outside_commission" class="form-control" id="less_outside_commission" placeholder="Less Outside Commission">
+                                        <span class="text-danger" id="less_outside_commission_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="net_commission">Net Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="net_commission" class="form-control" id="net_commission" placeholder="Net Commission">
+                                        <span class="text-danger" id="net_commission_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="classic">Classic<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="classic" name="classic" placeholder="Classic">
+                                        <span class="text-danger" id="classic_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent1">Agent1<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="form-control" type="text" id="agent1" name="agent1" placeholder="Agent Commission">
+                                        <span class="text-danger" id="agent1_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name1">Agent Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select name="agent_name1" class="form-control" id="agent_name1">
+                                            <option value="">Select Agent</option>
+                                            <option value="1">Rahul B</option>
+                                            <option value="11">Anirudh</option>
+                                            <option value="12">Sonia</option>
+                                            <option value="13">Anusha</option>
+                                            <option value="16">Majid</option>
+                                            <option value="17">Rakesh Saldhana</option>
+                                            <option value="18">Jamil Mirza</option>
+                                            <option value="19">Asad Lohar</option>
+                                            <option value="20">Ashwin Radhakrishnan</option>
+                                            <option value="21">Seema</option>
+                                            <option value="22">Richard Ileogben</option>
+                                            <option value="23">SHAHBAZ</option>
+                                            <option value="25">Satish</option>
+                                            <option value="27">ganesh@classicproperties.ae</option>
+                                            <option value="28">Vikas Pamnani</option>
+                                            <option value="29">Yazan Abbar</option>
+                                            <option value="30">Yervant</option>
+                                            <option value="31">Sheryl Santos</option>
+                                            <option value="32">vivek@classicproperties.ae</option>
+                                            <option value="33">Leon Peter Zindi</option>
+                                            <option value="34">Kiran Shetty</option>
+                                            <option value="35">Vatche Saghdejian</option>
+                                            <option value="36">Lavin</option>
+                                            <option value="37">Hagop</option>
+                                            <option value="39">Utkurbek</option>
+                                            <option value="40">Heba</option>
+                                            <option value="41">Rohit Lohia</option>
+                                            <option value="42">Suneer</option>
+                                            <option value="43">Anuraag Bhattad</option>
+                                            <option value="44">David Melki</option>
+                                            <option value="45">Faizan Ahmed</option>
+                                            <option value="46">James</option>
+                                            <option value="47">Maya D</option>
+                                            <option value="48">Karan</option>
+                                            <option value="49">Hitesh</option>
+                                            <option value="50">Lata</option>
+                                            <option value="51">abhijeet</option>
+                                            <option value="52">Rehan</option>
+                                            <option value="53">Sarah Beshir</option>
+                                            <option value="54">Jayaram Raju</option>
+                                            <option value="59">Hagop Ghazarian</option>
+                                            <option value="63">Peter Anisseh Boutrous</option>
+                                            <option value="64">Sameera Priyadharshana Weerappulige</option>
+                                            <option value="65">Niranjan</option>
+                                            <option value="66">Mahar Ali Shah</option>
+                                            <option value="67">Bharath  Gumparthi</option>
+                                            <option value="68">Madhav Yogesh Jakhotia</option>
+                                            <option value="70">Sakina Ahammad</option>
+                                            <option value="71">Tarit Kumar Arnab</option>
+                                            <option value="72">Kapil Naik</option>
+                                            <option value="73">Paniz Jourabchian</option>
+                                            <option value="74">Marlyn Arellano</option>
+                                            <option value="75">Zeenat  Raza Sayed</option>
+                                            <option value="76">Dievesh Sirae</option>
+                                            <option value="77">Dane Strydom</option>
+                                            <option value="78">Rudolf Joseph</option>
+                                            <option value="79">Nawaz</option>
+                                            <option value="80">Ullas</option>
+                                            <option value="81">Rohan Tank</option>
+                                            <option value="82">Huda amir</option>
+                                            <option value="83">Lawrence</option>
+                                            <option value="84">Training Account</option>
+                                            <option value="85">Anusha New</option>
+                                            <option value="88">Sehrish Atta</option>
+                                            <option value="89">Nisha Bisht Shovan Singh Bisht</option>
+                                            <option value="90">Rayan Ghouse</option>
+                                            <option value="91">Shally Tyagi</option>
+                                            <option value="92">Rana Sami Jawad Al Dajani</option>
+                                            <option value="98">Maher Fares Sharrouf</option>
+                                            <option value="99">AbhishekRahul</option>
+                                            <option value="100">Raghav Sharma</option>
+                                            <option value="102">hasini</option>
+                                            <option value="103">Layla Murad Alsayeh</option>
+                                            <option value="104">Abhishek Ojha</option>
+                                            <option value="108" selected="">Subal Khera Tarun Khera</option>
+                                            <option value="109">Dawood Mueen Shaik</option>
+                                            <option value="110">Rajat Mukesh Ahuja</option>
+                                            <option value="111">Pranav Tuli</option>
+                                            <option value="113">Jobin George George Thomas</option>
+                                            <option value="114">Swaraj Sanjay Bhutada</option>
+                                            <option value="115">Varun Baswani</option>
+                                            <option value="116">Mantaj Kang</option>
+                                            <option value="117">CUSTOMER CARE DEPARTMENT</option>
+                                            <option value="118">Sujith CS</option>
+                                            <option value="119">Rakel Ghazarian</option>
+                                            <option value="120">Shriram Somani</option>
+                                            <option value="121">Payal Pravin Ragoowansi</option>
+                                            <option value="122">Hrag Geukjian</option>
+                                            <option value="123">Shruti Agarwal</option>
+                                            <option value="124">Shubh Sarda</option>
+                                            <option value="125">Hitesh Aswani</option>
+                                            <option value="126">Kalash Malani</option>
+                                        </select>
+                                        <span class="text-danger" id="agent_name1_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent2">Agent2</label>
+                                        <input class="form-control" type="text" id="agent2" name="agent2" placeholder="Agent Commission">
+                                        <span class="text-danger" id="agent2_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name2">Agent Name</label>
+                                        <select name="agent_name2" class="form-control" id="agent_name2">
+                                            <option value="">Select Agent</option>
+                                            
+                                        </select>
+                                        <span class="text-danger" id="agent_name2_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent3">Agent3</label>
+                                        <input class="form-control" type="text" id="agent3" name="agent3" placeholder="Agent Commission">
+                                        <span class="text-danger" id="agent3_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name3">Agent Name</label>
+                                        <select name="agent_name3" class="form-control" id="agent_name3">
+                                            <option value="">Select Agent</option>
+                                        </select>
+                                        <span class="text-danger" id="agent_name3_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_comment">Comment by Agent</label>
+                                        <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments"></textarea>
+                                        <span class="text-danger" id="agent_comment_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="comments">Comment by Admin</label>
+                                        <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
+                                        <span class="text-danger" id="comments_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no">Receipt No<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select name="receipt_no" class="form-control" id="receipt_no">
+                                            <option value="" hidden>Select Receipt No</option>
+                                            <option value="1">456456</option>
+                                            <option value="2">789789</option>
+                                            <option value="3">123212</option>
+                                        </select>
+                                        <span class="text-danger" id="receipt_no_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="kyc_number">KYC Number</label>
+                                        <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number">
+                                        <span class="text-danger" id="kyc_number_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="is_approved_rejected">Approve/Reject</label><br>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <input type="radio" name="is_approved_rejected" value="A"> Approve
+                                            </div>
+                                            <div class="col-3">
+                                                <input type="radio" name="is_approved_rejected" value="R"> Reject
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
+                                            </div>
+                                        </div>
+                                        <span class="text-danger" id="is_approved_rejected_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="is_sale_aml">AML<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <input value="Yes" name="is_sale_aml" id="is_sale_aml_yes" type="radio"> Yes
+                                            </div>
+                                            <div class="col-3">
+                                                <input value="No" name="is_sale_aml" id="is_sale_aml_no" type="radio"> No
+                                            </div>
+                                        </div>
+                                        <span class="text-danger" id="is_sale_aml_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab3" style="color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToDocuments" style="color: white">Next</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" style="color: white">Save As Draft</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Documents Tab -->
+                            <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="signed_mou">Form F<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="signed_mou" type="file" name="signed_mou[]">
+                                        <input type="hidden" id="signed_mou_existing_count" name="signed_mou_existing_count" value="0">
+                                        <input type="hidden" id="signed_mou_removed" name="signed_mou_removed" value="">
+                                        <input type="hidden" id="signed_mou_new_removed_count" name="signed_mou_new_removed_count" value="">
+                                        <div id="upload_prevss" class="signed_mou_list"></div>
+                                        <span class="text-danger" id="signed_mou_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="new_title_deed">New Title Deed<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="new_title_deed" type="file" name="new_title_deed[]">
+                                        <input type="hidden" id="new_title_deed_existing_count" name="new_title_deed_existing_count" value="0">
+                                        <input type="hidden" id="new_title_deed_removed" name="new_title_deed_removed" value="">
+                                        <input type="hidden" id="new_title_deed_new_removed_count" name="new_title_deed_new_removed_count" value="">
+                                        <div id="upload_prevss" class="new_title_deed_list"></div>
+                                        <span class="text-danger" id="new_title_deed_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="old_title_deed">Old Title Deed<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="old_title_deed" type="file" name="old_title_deed[]">
+                                        <input type="hidden" id="old_title_deed_existing_count" name="old_title_deed_existing_count" value="0">
+                                        <input type="hidden" id="old_title_deed_removed" name="old_title_deed_removed" value="">
+                                        <input type="hidden" id="old_title_deed_new_removed_count" name="old_title_deed_new_removed_count" value="">
+                                        <div id="upload_prevss" class="old_title_deed_list"></div>
+                                        <span class="text-danger" id="old_title_deed_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owners_passport_copy">Owner's Passport Copy<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="owners_passport_copy" type="file" name="owners_passport_copy[]">
+                                        <input type="hidden" id="owners_passport_copy_existing_count" name="owners_passport_copy_existing_count" value="0">
+                                        <input type="hidden" id="owners_passport_copy_removed" name="owners_passport_copy_removed" value="">
+                                        <input type="hidden" id="owners_passport_copy_new_removed_count" name="owners_passport_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="owners_passport_copy_list"></div>
+                                        <span class="text-danger" id="owners_passport_copy_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_eid_copy">Owner EID</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file" name="owner_eid_copy[]">
+                                        <input type="hidden" id="owner_eid_copy_existing_count" name="owner_eid_copy_existing_count" value="0">
+                                        <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_removed" value="">
+                                        <input type="hidden" id="owner_eid_copy_new_removed_count" name="owner_eid_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="owner_eid_copy_list"></div>
+                                        <span class="text-danger" id="owner_eid_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyers_passport_copy">Buyer's Passport Copy<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyers_passport_copy" type="file" name="buyers_passport_copy[]">
+                                        <input type="hidden" id="buyers_passport_copy_existing_count" name="buyers_passport_copy_existing_count" value="0">
+                                        <input type="hidden" id="buyers_passport_copy_removed" name="buyers_passport_copy_removed" value="">
+                                        <input type="hidden" id="buyers_passport_copy_new_removed_count" name="buyers_passport_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyers_passport_copy_list"></div>
+                                        <span class="text-danger" id="buyers_passport_copy_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyers_deposit_cheque_copy">Buyer's Deposit Cheque Copy<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyers_deposit_cheque_copy" type="file" name="buyers_deposit_cheque_copy[]">
+                                        <input type="hidden" id="buyers_deposit_cheque_copy_existing_count" name="buyers_deposit_cheque_copy_existing_count" value="0">
+                                        <input type="hidden" id="buyers_deposit_cheque_copy_removed" name="buyers_deposit_cheque_copy_removed" value="">
+                                        <input type="hidden" id="buyers_deposit_cheque_copy_new_removed_count" name="buyers_deposit_cheque_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyers_deposit_cheque_copy_list"></div>
+                                        <span class="text-danger" id="buyers_deposit_cheque_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_eid">Buyer EID</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyer_eid" type="file" name="buyer_eid[]">
+                                        <input type="hidden" id="buyer_eid_existing_count" name="buyer_eid_existing_count" value="0">
+                                        <input type="hidden" id="buyer_eid_removed" name="buyer_eid_removed" value="">
+                                        <input type="hidden" id="buyer_eid_new_removed_count" name="buyer_eid_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyer_eid_list"></div>
+                                        <span class="text-danger" id="buyer_eid_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="sellers_deposit_cheque_copy">Seller's Deposit Cheque Copy</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="sellers_deposit_cheque_copy" type="file" name="sellers_deposit_cheque_copy[]">
+                                        <input type="hidden" id="sellers_deposit_cheque_copy_existing_count" name="sellers_deposit_cheque_copy_existing_count" value="0">
+                                        <input type="hidden" id="sellers_deposit_cheque_copy_removed" name="sellers_deposit_cheque_copy_removed" value="">
+                                        <input type="hidden" id="sellers_deposit_cheque_copy_new_removed_count" name="sellers_deposit_cheque_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="sellers_deposit_cheque_copy_list"></div>
+                                        <span class="text-danger" id="sellers_deposit_cheque_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_poa_passport_copy">Seller PoA Passport Copy</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="seller_poa_passport_copy" type="file" name="seller_poa_passport_copy[]">
+                                        <input type="hidden" id="seller_poa_passport_copy_existing_count" name="seller_poa_passport_copy_existing_count" value="0">
+                                        <input type="hidden" id="seller_poa_passport_copy_removed" name="seller_poa_passport_copy_removed" value="">
+                                        <input type="hidden" id="seller_poa_passport_copy_new_removed_count" name="seller_poa_passport_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="seller_poa_passport_copy_list"></div>
+                                        <span class="text-danger" id="seller_poa_passport_copy_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_poa_passport_copy">Buyer PoA Passport Copy</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyer_poa_passport_copy" type="file" name="buyer_poa_passport_copy[]">
+                                        <input type="hidden" id="buyer_poa_passport_copy_existing_count" name="buyer_poa_passport_copy_existing_count" value="0">
+                                        <input type="hidden" id="buyer_poa_passport_copy_removed" name="buyer_poa_passport_copy_removed" value="">
+                                        <input type="hidden" id="buyer_poa_passport_copy_new_removed_count" name="buyer_poa_passport_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyer_poa_passport_copy_list"></div>
+                                        <span class="text-danger" id="buyer_poa_passport_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_poa_copy">Buyer PoA Copy</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyer_poa_copy" type="file" name="buyer_poa_copy[]">
+                                        <input type="hidden" id="buyer_poa_copy_existing_count" name="buyer_poa_copy_existing_count" value="0">
+                                        <input type="hidden" id="buyer_poa_copy_removed" name="buyer_poa_copy_removed" value="">
+                                        <input type="hidden" id="buyer_poa_copy_new_removed_count" name="buyer_poa_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyer_poa_copy_list"></div>
+                                        <span class="text-danger" id="buyer_poa_copy_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_poa_copy">Seller PoA Copy</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="seller_poa_copy" type="file" name="seller_poa_copy[]">
+                                        <input type="hidden" id="seller_poa_copy_existing_count" name="seller_poa_copy_existing_count" value="0">
+                                        <input type="hidden" id="seller_poa_copy_removed" name="seller_poa_copy_removed" value="">
+                                        <input type="hidden" id="seller_poa_copy_new_removed_count" name="seller_poa_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="seller_poa_copy_list"></div>
+                                        <span class="text-danger" id="seller_poa_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="buyer_poa_eid">Buyer PoA EID</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="buyer_poa_eid" type="file" name="buyer_poa_eid[]">
+                                        <input type="hidden" id="buyer_poa_eid_existing_count" name="buyer_poa_eid_existing_count" value="0">
+                                        <input type="hidden" id="buyer_poa_eid_removed" name="buyer_poa_eid_removed" value="">
+                                        <input type="hidden" id="buyer_poa_eid_new_removed_count" name="buyer_poa_eid_new_removed_count" value="">
+                                        <div id="upload_prevss" class="buyer_poa_eid_list"></div>
+                                        <span class="text-danger" id="buyer_poa_eid_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_poa_eid">Seller PoA EID</label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="seller_poa_eid" type="file" name="seller_poa_eid[]">
+                                        <input type="hidden" id="seller_poa_eid_existing_count" name="seller_poa_eid_existing_count" value="0">
+                                        <input type="hidden" id="seller_poa_eid_removed" name="seller_poa_eid_removed" value="">
+                                        <input type="hidden" id="seller_poa_eid_new_removed_count" name="seller_poa_eid_new_removed_count" value="">
+                                        <div id="upload_prevss" class="seller_poa_eid_list"></div>
+                                        <span class="text-danger" id="seller_poa_eid_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="sale_kyc_number">KYC/Form I/Referral Agreement/Management Approval Form<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="sale_kyc_number" type="file" name="sale_kyc_number[]">
+                                        <input type="hidden" id="sale_kyc_number_existing_count" name="sale_kyc_number_existing_count" value="0">
+                                        <input type="hidden" id="sale_kyc_number_removed" name="sale_kyc_number_removed" value="">
+                                        <input type="hidden" id="sale_kyc_number_new_removed_count" name="sale_kyc_number_new_removed_count" value="">
+                                        <div id="upload_prevss" class="sale_kyc_number_list"></div>
+                                        <span class="text-danger" id="sale_kyc_number_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="screening">Screening<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="screening" type="file" name="screening[]">
+                                        <input type="hidden" id="screening_existing_count" name="screening_existing_count" value="0">
+                                        <input type="hidden" id="screening_removed" name="screening_removed" value="">
+                                        <input type="hidden" id="screening_new_removed_count" name="screening_new_removed_count" value="">
+                                        <div id="upload_prevss" class="screening_list"></div>
+                                        <span class="text-danger" id="screening_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="screening_comments">Screening Comments</label>
+                                        <textarea class="form-control" name="screening_comments" id="screening_comments" cols="50" placeholder="Screening Comments"></textarea>
+                                        <span class="text-danger" id="screening_comments_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="manager_cheque_copy">Manager Cheque Copy<span class="mandetory_field" style="color: red">*</span></label><br>
+                                        <input multiple="multiple" class="imageUploadInput" id="manager_cheque_copy" type="file" name="manager_cheque_copy[]">
+                                        <input type="hidden" id="manager_cheque_copy_existing_count" name="manager_cheque_copy_existing_count" value="0">
+                                        <input type="hidden" id="manager_cheque_copy_removed" name="manager_cheque_copy_removed" value="">
+                                        <input type="hidden" id="manager_cheque_copy_new_removed_count" name="manager_cheque_copy_new_removed_count" value="">
+                                        <div id="upload_prevss" class="manager_cheque_copy_list"></div>
+                                        <span class="text-danger" id="manager_cheque_copy_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab4" style="color: white">Previous</a>
+                                        <button type="submit" class="txt-color btn btn-primary btn-rounded m-1" id="submitDeal" style="color: white">Create Deal</button>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="saveDeal" style="color: white">Save As Draft</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="form_status" name="form_status" value="Complete">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-overlay open"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        if (typeof jQuery === 'undefined') {
+            console.error("jQuery failed to load from CDN, attempting local fallback");
+            document.write('<script src="{% static "js/jquery-3.6.0.min.js" %}"><\/script>');
+        } else {
+            console.log("jQuery loaded, version:", $.fn.jquery);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script>
+        // Store jQuery in a local variable to avoid conflicts
+        var $j = jQuery.noConflict(true);
+        if (typeof $j.validator === 'undefined') {
+            console.error("jQuery Validate failed to load from CDN, attempting local fallback");
+            document.write('<script src="{% static "js/jquery.validate.min.js" %}"><\/script>');
+        } else {
+            console.log("jQuery Validate loaded, version:", $j.validator.version || "1.19.5");
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        
+    </script>
+    <script>
+        if (typeof bootstrap === 'undefined') {
+            console.error("Bootstrap JS failed to load from CDN, attempting local fallback");
+            document.write('<script src="{% static "js/bootstrap.bundle.min.js" %}"><\/script>');
+        } else {
+            console.log("Bootstrap JS loaded");
+        }
+    </script>
+ 
+    <script>
+         var sales_data = JSON.parse('{{ sales_data|escapejs }}'); // Parse JSON string safely
+         // var sales_data = JSON.parse('{{ sales_data|escapejs }}');
+        // Use local jQuery variable to avoid conflicts
+        (function($) {
+            // Function to initialize form validation
+            function initializeValidation() {
+                if (typeof $.validator === 'undefined') {
+                    console.error("jQuery Validate is not available, skipping validation initialization");
+                    $('#deal_form').on('submit', function(e) {
+                        e.preventDefault();
+                        console.log("Submitting form without validation due to missing plugin");
+                        submitForm();
+                    });
+                    return;
+                }
+ 
+                console.log("Initializing form validation");
+ 
+                // Custom validation methods
+                // $.validator.addMethod("date_format", function(value, element) {
+                //     var isValid = this.optional(element) || /^\d{2}-\d{2}-\d{4}$/.test(value);
+                //     console.log(`Validating date_format for ${element.name}: ${value}, Result: ${isValid}`);
+                //     return isValid;
+                // }, "Please enter a valid date in DD-MM-YYYY format.");
+               $.validator.addMethod("date_format", function(value, element) {
+                    return this.optional(element) || /^\d{4}-\d{2}-\d{2}$/.test(value);
+                }, "Please enter a valid date in YYYY-MM-DD format.");
+
+
+
+ 
+                $.validator.addMethod("only_text", function(value, element) {
+                    var isValid = this.optional(element) || /^[a-zA-Z][a-zA-Z\s\/-]*$/.test(value);
+                    console.log(`Validating only_text for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter a valid name (letters, spaces, hyphens, or slashes only).");
+ 
+                $.validator.addMethod("custom_email", function(value, element) {
+                    var regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+                    var isValid = this.optional(element) || regEx.test(value);
+                    console.log(`Validating custom_email for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter a valid email address.");
+ 
+                $.validator.addMethod("alpha_numeric", function(value, element) {
+                    var isValid = this.optional(element) || /^[a-zA-Z0-9\s\/-]+$/.test(value);
+                    console.log(`Validating alpha_numeric for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter a valid reference number (alphanumeric, spaces, hyphens, or slashes only).");
+ 
+                $.validator.addMethod("numeric", function(value, element) {
+                    var isValid = this.optional(element) || /^[0-9,.]+$/.test(value);
+                    console.log(`Validating numeric for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter a valid number.");
+ 
+                $.validator.addMethod("alphanum_special", function(value, element) {
+                    var isValid = this.optional(element) || /^[A-Za-z0-9\s,.:;_\/!@#$%^&*()\-\[\]]+$/.test(value);
+                    console.log(`Validating alphanum_special for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter valid characters (letters, numbers, or special characters).");
+ 
+                $.validator.addMethod("mobile_number", function(value, element) {
+                    var isValid = this.optional(element) || /^[+0-9\s-]+$/.test(value);
+                    console.log(`Validating mobile_number for ${element.name}: ${value}, Result: ${isValid}`);
+                    return isValid;
+                }, "Please enter a valid phone number.");
+ 
+                $.validator.addMethod("file_size_type", function(value, element) {
+                    if (element.files.length === 0) {
+                        var isRequired = $(element).prop('required');
+                        console.log(`Validating file_size_type for ${element.name}: No file uploaded, Required: ${isRequired}`);
+                        return !isRequired;
+                    }
+                    var file = element.files[0];
+                    var isValidType = /(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.name);
+                    var isValidSize = file.size <= 3000000; // 3MB limit
+                    console.log(`Validating file_size_type for ${element.name}: Type: ${file.name}, Size: ${file.size}, Valid Type: ${isValidType}, Valid Size: ${isValidSize}`);
+                    return isValidType && isValidSize;
+                }, "Please upload a valid file (JPG, JPEG, PNG, or PDF, <3MB).");
+                
+
+                // ✅ Forcefully block tab switching if invalid fields exist in current tab
+                // document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+                //     tab.addEventListener('show.bs.tab', function (e) {
+                //         const currentTab = document.querySelector('.tab-pane.active');
+                //         if (currentTab && currentTab.querySelector(':invalid')) {
+                //             e.preventDefault();
+                //             console.warn("🔒 Tab switching prevented due to invalid fields");
+                //         }
+                //     });
+                // });
+                let bypassTabValidation = false;
+                document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+                    tab.addEventListener('show.bs.tab', function (e) {
+                        const currentTab = document.querySelector('.tab-pane.active');
+                        if (!bypassTabValidation && currentTab && currentTab.querySelector(':invalid')) {
+                            e.preventDefault();
+                            console.warn("🔒 Tab switching prevented due to invalid fields");
+                        }
+                    });
+                });
+
+                $.validator.setDefaults({
+                    ignore: ":hidden:not(select)" // validate hidden fields except hidden selects
+                });
+
+
+                document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('show.bs.tab', function (e) {
+                const currentTab = document.querySelector('.tab-pane.active');
+                if (currentTab && currentTab.querySelector(':invalid')) {
+                    e.preventDefault();
+                    console.warn("🔒 Tab switching prevented due to invalid fields");
+                }
+            });
+        });
+
+        $("#deal_form").validate({
+            rules: {
+                submitted_by_agent: { required: true },
+                submitted_date: { required: true, date_format: true },
+                reference_number: { required: true, alpha_numeric: true },
+                unit_details: { required: true, alphanum_special: true },
+                builduing_name: { required: true, alphanum_special: true },
+                project_name: { required: true, alphanum_special: true },
+                deal_amount: { required: false, numeric: true },
+                seller_name: { required: true, only_text: true },
+                seller_source: { required: true },
+                selller_mobile: { required: true, mobile_number: true },
+                seller_email: { required: true, custom_email: true },
+                seller_nationality: { required: true, only_text: true },
+                buyer_name: { required: true, only_text: true },
+                buyer_source: { required: true },
+                buyer_mobile: { required: true, mobile_number: true },
+                buyer_email: { required: true, custom_email: true },
+                buyer_nationality: { required: true, only_text: true },
+                seller_agency: { required: true, alphanum_special: true },
+                seller_agent_name: { required: true, only_text: true },
+                seller_agency_brn: { required: false, alphanum_special: true },
+                seller_agent_phone: { required: true, mobile_number: true },
+                seller_agent_email: { required: false, custom_email: true },
+                buyer_agency: { required: true, alphanum_special: true },
+                buyer_agent_name: { required: true, only_text: true },
+                buyer_agency_brn: { required: false, alphanum_special: true },
+                buyer_agent_phone: { required: true, mobile_number: true },
+                buyer_agent_email: { required: false, custom_email: true },
+                mediating_agency: { required: false, alphanum_special: true },
+                mediating_agent_name: { required: false, only_text: true },
+                mediating_agency_brn: { required: false, alphanum_special: true },
+                mediating_agent_phone: { required: false, mobile_number: true },
+                mediating_agent_email: { required: false, custom_email: true },
+                total_commission: { required: true, numeric: true },
+                less_outside_commission: { required: true, numeric: true },
+                net_commission: { required: true, numeric: true },
+                classic: { required: true, numeric: true },
+                agent1: { required: true, numeric: true },
+                agent_name1: { required: false },
+                agent2: { required: false, numeric: true },
+                agent_name2: { required: false },
+                agent3: { required: false, numeric: true },
+                agent_name3: { required: false },
+                agent_comment: { required: false, alphanum_special: true },
+                comments: { required: false, alphanum_special: true },
+                receipt_no: { required: true },
+                kyc_number: { required: false, alphanum_special: true },
+                is_sale_aml: { required: true },
+                signed_mou: { required: true, file_size_type: true },
+                new_title_deed: { required: true, file_size_type: true },
+                old_title_deed: { required: true, file_size_type: true },
+                owners_passport_copy: { required: true, file_size_type: true },
+                owner_eid_copy: { required: false, file_size_type: true },
+                buyers_passport_copy: { required: true, file_size_type: true },
+                buyers_deposit_cheque_copy: { required: true, file_size_type: true },
+                buyer_eid: { required: false, file_size_type: true },
+                sellers_deposit_cheque_copy: { required: false, file_size_type: true },
+                seller_poa_passport_copy: { required: false, file_size_type: true },
+                buyer_poa_passport_copy: { required: false, file_size_type: true },
+                buyer_poa_copy: { required: false, file_size_type: true },
+                seller_poa_copy: { required: false, file_size_type: true },
+                buyer_poa_eid: { required: false, file_size_type: true },
+                seller_poa_eid: { required: false, file_size_type: true },
+                sale_kyc_number: { required: true, file_size_type: true },
+                screening: { required: true, file_size_type: true },
+                screening_comments: { required: false, alphanum_special: true },
+                manager_cheque_copy: { required: true, file_size_type: true }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        initializeValidation();
+    });
+ 
+                
+ 
+            // Wait for jQuery Validate to be ready
+            function waitForValidator(callback, maxAttempts = 50, attempt = 1) {
+                if (typeof $.validator !== 'undefined') {
+                    console.log("jQuery Validate is ready, version:", $.validator.version || "1.19.5");
+                    callback();
+                } else {
+                    if (attempt > maxAttempts) {
+                        console.error("jQuery Validate failed to load after", maxAttempts, "attempts, skipping validation");
+                        $('#deal_form').on('submit', function(e) {
+                            e.preventDefault();
+                            console.log("Submitting form without validation due to missing plugin");
+                            submitForm();
+                        });
+                        return;
+                    }
+                    console.log("Waiting for jQuery Validate to load (attempt", attempt, ")");
+                    setTimeout(function() {
+                        waitForValidator(callback, maxAttempts, attempt + 1);
+                    }, 100);
+                }
+            }
+ 
+            // // Validate only mandatory fields in the current tab
+            // function validateTab(tabClass) {
+            //     console.log(`Validating tab: ${tabClass}`);
+            //     var isValid = true;
+            //     if (typeof $.validator === 'undefined') {
+            //         console.error("Validator not available, cannot validate tab");
+            //         return false; // Block tab switching if validator is unavailable
+            //     }
+ 
+            //     var validator = $("#deal_form").validate();
+            //     var invalidFields = [];
+ 
+            //     $(tabClass + ' :input').each(function() {
+            //         var name = $(this).attr('name');
+            //         if (name && validator.settings.rules[name]) {
+            //             var rules = validator.settings.rules[name];
+            //             var isRequired = rules.required === true || (typeof rules.required === 'function' && rules.required(this));
+            //             if (isRequired) {
+            //                 console.log(`Checking required field ${name}: Value=${$(this).val()}`);
+            //                 if (!validator.element(this)) {
+            //                     console.log(`Validation failed for ${name}`);
+            //                     invalidFields.push(name);
+            //                     isValid = false;
+            //                 }
+            //             }
+            //         }
+            //     });
+ 
+            //     if (!isValid) {
+            //         console.log("Tab validation failed, invalid fields:", invalidFields);
+            //         validator.form(); // Trigger validation to show errors
+            //         // Focus on the first invalid field
+            //         var firstInvalidElement = $(tabClass + ' :input[name="' + invalidFields[0] + '"]');
+            //         $('html, body').animate({
+            //             scrollTop: firstInvalidElement.offset().top - 100
+            //         }, 500);
+            //         firstInvalidElement.focus();
+            //     } else {
+            //         console.log("Tab validation passed");
+            //     }
+            //     return isValid;
+            // }
+            function validateTab(tabClass) {
+                console.log(`Validating tab: ${tabClass}`);
+                var isValid = true;
+ 
+                if (typeof $.validator === 'undefined') {
+                    console.error("Validator not available, cannot validate tab");
+                    return false;
+                }
+ 
+                var validator = $("#deal_form").validate();
+ 
+                // ✅ Validate all inputs — not just ones with JS-defined rules
+                $(tabClass + ' :input').each(function () {
+                    if (!validator.element(this)) {
+                        isValid = false;
+                    }
+                });
+ 
+                if (!isValid) {
+                    console.log("Tab validation failed, some fields are invalid");
+ 
+                    // Scroll to first invalid field
+                    var firstError = $(tabClass + ' :input').filter(function () {
+                        return !validator.element(this);
+                    }).first();
+ 
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+ 
+                    firstError.focus();
+                } else {
+                    console.log("Tab validation passed");
+                }
+ 
+                return isValid;
+            }
+ 
+ 
+            // Initialize when document is ready
+            $(document).ready(function() {
+                $("#deal_form").validate({
+                    rules: {
+                        submitted_date: { required: true, date_format: true }
+                    },
+                    errorPlacement: function(error, element) {
+                        element.closest('.form-group').find('.text-danger').text(error.text()).show();
+                    },
+                    success: function(label, element) {
+                        $(element).closest('.form-group').find('.text-danger').text('').hide();
+                    }
+                });
+                console.log("Document ready, checking for jQuery Validate");
+                waitForValidator(initializeValidation);
+ 
+                // Tab navigation with validation for "Next" buttons
+                // $('#changeTabToSource').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Next button clicked for Property to Source");
+                //     if (validateTab('.nav-property')) {
+                //         console.log("Switching to Source tab");
+                //         $('#nav-source-tab').tab('show');
+                //     } else {
+                //         console.log("Cannot switch to Source tab: validation failed");
+                //     }
+                // });
+
+                $('#changeTabToSource').click(function(e) {
+                    e.preventDefault();
+                    console.log("Next button clicked for Property to Source");
+
+                    if (validateTab('.nav-property')) {
+                        console.log("Switching to Source tab");
+
+                        const tabTrigger = document.querySelector('#nav-source-tab');
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                    } else {
+                        console.log("Validation failed. Staying on Property tab.");
+                        const firstInvalid = document.querySelector('.nav-property [required]:invalid');
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                            firstInvalid.reportValidity(); // shows tooltip error
+                        }
+                    }
+                });
+
+                // $('#changeTabToAgency').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Next button clicked for Source to Agency");
+                //     if (validateTab('.nav-source')) {
+                //         console.log("Switching to Agency tab");
+                //         $('#nav-agency-tab').tab('show');
+                //     } else {
+                //         console.log("Cannot switch to Agency tab: validation failed");
+                //     }
+                // });
+                $('#changeTabToAgency').click(function(e) {
+                    e.preventDefault();
+                    console.log("Next button clicked for Source to Agency");
+
+                    if (validateTab('.nav-source')) {
+                        console.log("Switching to Agency tab");
+
+                        const tabTrigger = document.querySelector('#nav-agency-tab');
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                    } else {
+                        console.log("Cannot switch to Agency tab: validation failed");
+                    }
+                });
+
+                $('#changeTabToRevenue').click(function(e) {
+                    e.preventDefault();
+                    console.log("Next button clicked for Agency to Revenue");
+
+                    if (validateTab('.nav-agency')) {
+                        console.log("Switching to Revenue tab");
+
+                        const tabTrigger = document.querySelector('#nav-revenue-tab');
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                    } else {
+                        console.log("Cannot switch to Revenue tab: validation failed");
+                    }
+                });
+
+                $('#changeTabToDocuments').click(function(e) {
+                    e.preventDefault();
+                    console.log("Next button clicked for Revenue to Documents");
+
+                    if (validateTab('.nav-revenue')) {
+                        console.log("Switching to Documents tab");
+
+                        const tabTrigger = document.querySelector('#nav-documents-tab');
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                    } else {
+                        console.log("Cannot switch to Documents tab: validation failed");
+                    }
+                });
+
+                // Previous buttons (no validation)
+                // $('#previousTab1').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Previous button clicked, switching to Property tab");
+                //     $('#nav-property-tab').tab('show');
+                // });
+                // $('#previousTab2').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Previous button clicked, switching to Source tab");
+                //     $('#nav-source-tab').tab('show');
+                // });
+                // $('#previousTab3').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Previous button clicked, switching to Agency tab");
+                //     $('#nav-agency-tab').tab('show');
+                // });
+                // $('#previousTab4').click(function(e) {
+                //     e.preventDefault();
+                //     console.log("Previous button clicked, switching to Revenue tab");
+                //     $('#nav-revenue-tab').tab('show');
+                // });
+
+                $('#previousTab1').click(function (e) {
+                    e.preventDefault();
+                    console.log("Previous button clicked, switching to Property tab");
+                    bypassTabValidation = true;
+                    const tabTrigger = document.querySelector('#nav-property-tab');
+                    const tab = new bootstrap.Tab(tabTrigger);
+                    tab.show();
+                    setTimeout(() => { bypassTabValidation = false; }, 100);
+                });
+
+                $('#previousTab2').click(function (e) {
+                    e.preventDefault();
+                    console.log("Previous button clicked, switching to Source tab");
+                    bypassTabValidation = true;
+                    const tabTrigger = document.querySelector('#nav-source-tab');
+                    const tab = new bootstrap.Tab(tabTrigger);
+                    tab.show();
+                    setTimeout(() => { bypassTabValidation = false; }, 100);
+                });
+
+                $('#previousTab3').click(function (e) {
+                    e.preventDefault();
+                    console.log("Previous button clicked, switching to Agency tab");
+                    bypassTabValidation = true;
+                    const tabTrigger = document.querySelector('#nav-agency-tab');
+                    const tab = new bootstrap.Tab(tabTrigger);
+                    tab.show();
+                    setTimeout(() => { bypassTabValidation = false; }, 100);
+                });
+
+                $('#previousTab4').click(function (e) {
+                    e.preventDefault();
+                    console.log("Previous button clicked, switching to Revenue tab");
+                    bypassTabValidation = true;
+                    const tabTrigger = document.querySelector('#nav-revenue-tab');
+                    const tab = new bootstrap.Tab(tabTrigger);
+                    tab.show();
+                    setTimeout(() => { bypassTabValidation = false; }, 100);
+                });
+
+ 
+                // Save As Draft with tab-specific validation
+                $('#saveAsDraftProperty, #saveAsDraftSource, #saveAsDraftAgency, #saveAsDraftRevenue, #saveDeal').click(function(e) {
+                    e.preventDefault();
+
+                    var currentTab = $(this).closest('.tab-pane').attr('id');
+                    console.log(`Save As Draft clicked in tab: ${currentTab}`);
+
+                    var tabClass;
+                    switch (currentTab) {
+                        case 'nav-property': tabClass = '.nav-property'; break;
+                        case 'nav-source': tabClass = '.nav-source'; break;
+                        case 'nav-agency': tabClass = '.nav-agency'; break;
+                        case 'nav-revenue': tabClass = '.nav-revenue'; break;
+                        case 'nav-documents': tabClass = '.nav-documents'; break;
+                    }
+
+                    console.log(`Validating tab ${tabClass} for Save As Draft`);
+
+                    const isDraft = $(this).attr('id').includes('saveAsDraft');
+                    $('#form_status').val(isDraft ? 'Incomplete' : 'Complete'); // ✅ Django looks for 'form_status'
+
+                    if (validateTab(tabClass)) {
+                        console.log("Calling submitForm()");
+                        submitForm();
+                    }
+                });
+
+ 
+                // Form submission function
+                function submitForm() {
+                    console.log("Submitting form via AJAX to {% url 'sales-deals-create-page' %}");
+                    $.ajax({
+                        url: '{% url "sales-deals-create-page" %}',
+                        type: 'POST',
+                        data: new FormData($('#deal_form')[0]),
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        beforeSend: function() {
+                            console.log("AJAX request started");
+                        },
+                        success: function(response) {
+                            console.log("AJAX success:", response);
+                            if (response.status === 'success') {
+                                $('#alert-primary').text(response.message);
+                                $('#successmsg').show();
+                                console.log("Showing success message, redirecting to:", response.redirect_url);
+                                $('html, body').animate({
+                                    scrollTop: $('.main-header').offset().top
+                                }, 1000);
+                                setTimeout(function() {
+                                    $('#successmsg').fadeOut();
+                                    console.log("Redirecting now");
+                                    window.location.href = response.redirect_url;
+                                }, 3000);
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log("AJAX error:", xhr);
+                            let errorMsg = 'Error occurred while saving the deal.';
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                errorMsg = 'Form errors: ' + JSON.stringify(xhr.responseJSON.errors);
+                                console.log("Server-side validation errors:", xhr.responseJSON.errors);
+                                if (typeof $.validator !== 'undefined') {
+                                    var validator = $("#deal_form").validate();
+                                    validator.showErrors(xhr.responseJSON.errors);
+                                }
+                            } else if (xhr.responseText) {
+                                errorMsg = 'Error: ' + xhr.responseText;
+                            }
+                            $('#alert-primary').text(errorMsg);
+                            $('#successmsg').show();
+                            console.log("Showing error message:", errorMsg);
+                            setTimeout(function() {
+                                $('#successmsg').fadeOut();
+                                console.log("Hiding error message");
+                            }, 3000);
+                        }
+                    });
+                }
+ 
+                // Form submission for Create Deal
+                $('#deal_form').on('submit', function(e) {
+                    e.preventDefault();
+                    console.log("Create Deal form submitted");
+                    if (typeof $.validator !== 'undefined' && $(this).valid()) {
+                        console.log("Form is valid, setting save_as to empty");
+                        $('#save_as').val('');
+                        submitForm();
+                    } else {
+                        console.log("Form is invalid or validator not loaded, triggering validation or submitting anyway");
+                        if (typeof $.validator !== 'undefined') {
+                            $(this).validate().form();
+                        } else {
+                            submitForm(); // Fallback submission without validation
+                        }
+                    }
+                });
+
+
+                  loadAgentDropdown();
+                //   loadReceiptDropdown();
+
+                function loadAgentDropdown() {
+                    agents = sales_data.agents;
+                    console.log(agents);
+
+                    populateAgentDropdown("#submitted_by_agent", agents);
+                    populateAgentDropdown("#agent_name1", agents);
+                    populateAgentDropdown("#agent_name2", agents);
+                    populateAgentDropdown("#agent_name3", agents);
+                }
+
+                function populateAgentDropdown(selector, data) {
+                    console.log("Populating dropdown for:", selector, "with data:", data);
+                    const $dropdown = $(selector);
+                    $dropdown.empty().append('<option value="">Select Agent</option>');
+                    if (Array.isArray(data)) {
+                        console.log("Data is an array, proceeding to populate dropdown");
+                data.forEach(function(agent) {
+                const option = $('<option></option>')
+                    .val(agent.id) // or agent.user_id or whatever field you use
+                    .text(agent.name); // or agent.full_name or agent.username
+
+                $dropdown.append(option);
+                console.log("Added option:", agent.name, "with value:", agent.id);
+                    });
+                    }
+
+                }
+
+
+ 
+                // File input change handler
+                $('.imageUploadInput').on('change', function() {
+                    var file = this.files[0];
+                    var id = this.id;
+                    console.log(`File input changed for ${id}`);
+                    if (file) {
+                        if (!/(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.name)) {
+                            console.log(`Invalid file type for ${id}: ${file.name}`);
+                            $("#" + id + '_error').text('Please upload a valid file (JPG, JPEG, PNG, or PDF).').show();
+                            $(this).val('');
+                        } else if (file.size > 3000000) {
+                            console.log(`File too large for ${id}: ${file.size} bytes`);
+                            $("#" + id + '_error').text('File size should be less than 3 MB.').show();
+                            $(this).val('');
+                        } else {
+                            console.log(`Valid file uploaded for ${id}: ${file.name}, Size: ${file.size}`);
+                            $("#" + id + '_error').text('').hide();
+                        }
+                    } else {
+                        console.log(`No file selected for ${id}`);
+                    }
+                });
+            });
+        })($j); // Pass local jQuery to avoid conflicts
+    //     loadAgentDropdown();
+    // //   loadReceiptDropdown();
+
+    //   function loadAgentDropdown() {
+    //     agents = sales_data.agents;
+    //     console.log(agents);
+
+    //     populateAgentDropdown("#submitted_by_agent", agents);
+    //     populateAgentDropdown("#agent_name1", agents);
+    //     populateAgentDropdown("#agent_name2", agents);
+    //     populateAgentDropdown("#agent_name3", agents);
+    //   }
+
+    //   function populateAgentDropdown(selector, data) {
+    //     console.log("Populating dropdown for:", selector, "with data:", data);
+    //     const $dropdown = $j(selector);
+    //     $dropdown.empty().append('<option value="">Select Agent</option>');
+    //     if (Array.isArray(data)) {
+    //         console.log("Data is an array, proceeding to populate dropdown");
+    // data.forEach(function(agent) {
+    //   const option = $j('<option></option>')
+    //     .val(agent.id) // or agent.user_id or whatever field you use
+    //     .text(agent.name); // or agent.full_name or agent.username
+
+    //   $dropdown.append(option);
+    //   console.log("Added option:", agent.name, "with value:", agent.id);
+    //      });
+    //     }
+
+    //   }
+    </script>
+    <script>
+        // 'sales_data' is already declared above, so just log it here
+        console.log("Sales Data:", sales_data);
+    </script>
+</div>
+{% endblock content %}

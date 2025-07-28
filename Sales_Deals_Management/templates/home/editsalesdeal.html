@@ -1,0 +1,872 @@
+{% extends "layouts/base.html"%}
+
+{% block content %}
+
+<div class="main-content pt-4">  <div class="col-md-12" id="successmsg" style="display: none">
+        <div class="alert alert-primary " id="alert-primary">
+            <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+        </div>
+    </div>
+
+  <div class="col-md-12">
+    <h4 class="pb-2">Edit Sales Deal<span class="float-right mr-2"> 
+      <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Cancel</a>
+    </h4>
+    <div class="card mb-5">
+    <div class="card-body">
+    <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Property Details</h5></label>
+                  </div>
+              </div>
+      <form id="sales_form" enctype="multipart/form-data" novalidate="novalidate">
+             <input type="hidden" value="PLuNRBGyq7pgNZX0bDUjosj3T6eQihtsxFqyOHgH" name="csrf-token" id="token">
+              <input type="hidden" value="1837" name="id" id="id">
+              <input type="hidden" value="" name="comments_finance" id="comments_finance">
+              <input type="hidden" value="2" name="account_id" id="account_id">
+               <input type="hidden" value="" name="save_as" id="save_as">
+                 <div class="row">
+                      
+                                                             <div class="col-md-6 form-group">
+                                <label for="role">Deal Submitted By Agent<span class="mandetory_field" style="color: red"></span></label>
+                               <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
+                                 <option value="">Select Agent Name</option>
+                                                                       <option value="10">Rahul B</option>
+                                                                      <option value="11">Anirudh</option>
+                                                                      <option value="12">Sonia</option>
+                                                                      <option value="13">Anusha</option>
+                                                                      <option value="16">Majid</option>
+                                                                      <option value="17">Rakesh Saldhana</option>
+                                                                      <option value="18">Jamil Mirza</option>
+                                                                      <option value="19">Asad Lohar</option>
+                                                                      <option value="20">Ashwin Radhakrishnan</option>
+                                                                      <option value="21">Seema</option>
+                                                                      <option value="22">Richard Ileogben</option>
+                                                                      <option value="23">SHAHBAZ</option>
+                                                                      <option value="25">Satish</option>
+                                                                      <option value="27">ganesh@classicproperties.ae</option>
+                                                                      <option value="28">Vikas Pamnani</option>
+                                                                      <option value="29">Yazan Abbar</option>
+                                                                      <option value="30">Yervant</option>
+                                                                      <option value="31">Sheryl Santos</option>
+                                                                      <option value="32">vivek@classicproperties.ae</option>
+                                                                      <option value="33">Leon Peter Zindi</option>
+                                                                      <option value="34">Kiran Shetty</option>
+                                                                      <option value="35">Vatche Saghdejian</option>
+                                                                      <option value="36">Lavin</option>
+                                                                      <option value="37">Hagop</option>
+                                                                      <option value="39">Utkurbek</option>
+                                                                      <option value="40">Heba</option>
+                                                                      <option value="41">Rohit Lohia</option>
+                                                                      <option value="42">Suneer</option>
+                                                                      <option value="43">Anuraag Bhattad</option>
+                                                                      <option value="44">David Melki</option>
+                                                                      <option value="45">Faizan Ahmed</option>
+                                                                      <option value="46">James</option>
+                                                                      <option value="47">Maya D</option>
+                                                                      <option value="48">Karan</option>
+                                                                      <option value="49">Hitesh</option>
+                                                                      <option value="50">Lata</option>
+                                                                      <option value="51">abhijeet</option>
+                                                                      <option value="52">Rehan</option>
+                                                                      <option value="53">Sarah Beshir</option>
+                                                                      <option value="54">Jayaram Raju</option>
+                                                                      <option value="59">Hagop Ghazarian</option>
+                                                                      <option value="63">Peter Anisseh Boutrous</option>
+                                                                      <option value="64">Sameera Priyadharshana Weerappulige</option>
+                                                                      <option value="65">Niranjan</option>
+                                                                      <option value="66">Mahar Ali Shah</option>
+                                                                      <option value="67">Bharath  Gumparthi</option>
+                                                                      <option value="68">Madhav Yogesh Jakhotia</option>
+                                                                      <option value="70">Sakina Ahammad</option>
+                                                                      <option value="71">Tarit Kumar Arnab</option>
+                                                                      <option value="72">Kapil Naik</option>
+                                                                      <option value="73">Paniz Jourabchian</option>
+                                                                      <option value="74">Marlyn Arellano</option>
+                                                                      <option value="75">Zeenat  Raza Sayed</option>
+                                                                      <option value="76">Dievesh Sirae</option>
+                                                                      <option value="77">Dane Strydom</option>
+                                                                      <option value="78">Rudolf Joseph</option>
+                                                                      <option value="79">Nawaz</option>
+                                                                      <option value="80">Ullas</option>
+                                                                      <option value="81">Rohan Tank</option>
+                                                                      <option value="82">Huda amir</option>
+                                                                      <option value="83">Lawrence</option>
+                                                                      <option value="84">Training Account</option>
+                                                                      <option value="85">Anusha New</option>
+                                                                      <option value="88">Sehrish Atta</option>
+                                                                      <option value="89">Nisha Bisht Shovan Singh Bisht</option>
+                                                                      <option value="90">Rayan Ghouse</option>
+                                                                      <option value="91">Shally Tyagi</option>
+                                                                      <option value="92">Rana Sami Jawad Al Dajani</option>
+                                                                      <option value="98">Maher Fares Sharrouf</option>
+                                                                      <option value="99">AbhishekRahul</option>
+                                                                      <option value="100">Raghav Sharma</option>
+                                                                      <option value="102">hasini</option>
+                                                                      <option value="103">Layla Murad Alsayeh</option>
+                                                                      <option value="104">Abhishek Ojha</option>
+                                                                      <option value="108" selected="">Subal Khera Tarun Khera</option>
+                                                                      <option value="109">Dawood Mueen Shaik</option>
+                                                                      <option value="110">Rajat Mukesh Ahuja</option>
+                                                                      <option value="111">Pranav Tuli</option>
+                                                                      <option value="113">Jobin George George Thomas</option>
+                                                                      <option value="114">Swaraj Sanjay Bhutada</option>
+                                                                      <option value="115">Varun Baswani</option>
+                                                                      <option value="116">Mantaj Kang</option>
+                                                                      <option value="117">CUSTOMER CARE DEPARTMENT</option>
+                                                                      <option value="118">Sujith CS</option>
+                                                                      <option value="119">Rakel Ghazarian</option>
+                                                                      <option value="120">Shriram Somani</option>
+                                                                      <option value="121">Payal Pravin Ragoowansi</option>
+                                                                      <option value="122">Hrag Geukjian</option>
+                                                                      <option value="123">Shruti Agarwal</option>
+                                                                      <option value="124">Shubh Sarda</option>
+                                                                      <option value="125">Hitesh Aswani</option>
+                                                                      <option value="126">Kalash Malani</option>
+                                                                 </select>
+                            <span class="text-danger" id="submitted_by_agent_error"></span>
+                            </div>
+                           
+                       
+                          <div class="col-md-6 form-group mb-3">
+                          <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
+                          <input type="text" name="submitted_date" class="form-control hasDatepicker" id="submitted_date" placeholder="Submitted Date" value="25-06-2025" readonly="readonly">
+                            <span class="error text-danger" id="submitted_date_error"></span>
+                        </div>
+             
+              <div class="col-md-6 form-group mb-3">
+                          <label for="reference_number">Reference Number<span class="mandetory_field">*</span></label>
+                          <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference Number" value="CPS/1504">
+                            <span class="error text-danger" id="reference_number_error"></span>
+                        </div> 
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="unit_details">Unit No<span class="mandetory_field">*</span></label>
+                        <input type="text" name="unit_details" class="form-control" id="unit_details" placeholder="Unit No" value="1520">
+                          <span class="error text-danger" id="unit_details_error"></span>
+                      </div> 
+                    <div class="col-md-6 form-group mb-3">
+                        <label for="builduing_name">Building Name<span class="mandetory_field">*</span></label>
+                        <input type="text" name="builduing_name" class="form-control" id="builduing_name" placeholder="Building Name" value="Sky Gardens">
+                          <span class="error text-danger" id="builduing_name_error"></span>
+                      </div> 
+                
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="project_name">Project Name<span class="mandetory_field">*</span></label>
+                        <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Project Name" value="DIFC">
+                          <span class="error text-danger" id="project_name_error"></span>
+                      </div> 
+                    <div class="col-md-6 form-group mb-3">
+                        <label for="deal_amount">Selling Price</label>
+                        <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price" value="1,850,000">
+                          <span class="error text-danger" id="deal_amount_error"></span>
+                      </div>
+                      
+                  
+                   
+                </div>             
+                <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Seller Details</h5></label>
+                  </div>
+              </div>
+            
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="role">Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="seller_name" class="form-control" id="seller_name" placeholder="Seller Name" value="Dubai Islamic Bank PJSC">
+                          <span class="error text-danger" id="seller_name_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                  <label for="role">Source<span class="mandetory_field">*</span></label>
+                  <select class="selectbox2 form-control valid" name="seller_source" id="seller_source" aria-required="true" aria-invalid="false">
+                  <option value="">Select Seller Source</option>
+                        <option value="Dubizzle">Dubizzle</option>
+                        <option value="Property finder">Property finder</option>
+                        <option value="Classic Website">Classic Website</option>
+                        <option value="YZER">YZER</option>
+                        <option value="Gulfnews">Gulfnews</option>
+                        <option value="Others">Others</option>
+                        <option value="Reference">Reference</option>
+                        <option value="Agent">Agent</option>
+                        <option value="Network">Network</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Walk In">Walk In</option>
+                        <option value="Security">Security</option>
+                        <option value="Developer">Developer</option>
+                        <option value="BAYUT">BAYUT</option>
+                        </select>                
+              </div>
+        </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="selller_mobile">Mobile<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="selller_mobile" name="selller_mobile" placeholder="Seller Mobile" value="0553777123">
+                        <span class="text-danger" id="selller_mobile_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="seller_email">Email<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="email" id="seller_email" name="seller_email" placeholder="Seller Email" value="dib@dib.ae">
+                        <span class="text-danger" id="seller_email_error"></span>
+                  </div> 
+                                    
+              </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="seller_nationality">Nationality<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="seller_nationality" name="seller_nationality" placeholder="Nationality" value="UAE">
+                        <span class="text-danger" id="seller_nationality_error"></span>
+                  </div>
+
+                 
+                                    
+              </div>
+              <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Buyer Details</h5></label>
+                  </div>
+          </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="role">Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="buyer_name" class="form-control" id="buyer_name" placeholder="Buyer Name" value="Carlos De Ceballos Cabrillo">
+                          <span class="error text-danger" id="buyer_name_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                  <label for="role">Source<span class="mandetory_field">*</span></label>
+                  <select class="selectbox2 form-control" name="buyer_source" id="buyer_source">
+                  <option value="">Select Buyer Source</option>
+                        <option value="Dubizzle">Dubizzle</option>
+                        <option value="Property finder">Property finder</option>
+                        <option value="Classic Website">Classic Website</option>
+                        <option value="YZER">YZER</option>
+                        <option value="Gulfnews">Gulfnews</option>
+                        <option value="Others">Others</option>
+                        <option value="Reference">Reference</option>
+                        <option value="Agent">Agent</option>
+                        <option value="Network">Network</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Walk In">Walk In</option>
+                        <option value="Security">Security</option>
+                        <option value="Developer">Developer</option>
+                        <option value="BAYUT">BAYUT</option>
+                        </select>                
+              </div>
+              </div>
+          <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_mobile">Mobile<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="buyer_mobile" name="buyer_mobile" placeholder="Buyer Mobile" value="0585939148">
+                        <span class="text-danger" id="buyer_mobile_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_email">Email<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="email" id="buyer_email" name="buyer_email" placeholder="Buyer Email" value="carlos.de.cabrillo@gmail.com">
+                        <span class="text-danger" id="buyer_email_error"></span>
+                  </div>                    
+              </div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_nationality">Nationality<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="buyer_nationality" name="buyer_nationality" placeholder="Nationality" value="Spain">
+                        <span class="text-danger" id="buyer_nationality_error"></span>
+                  </div>
+
+                 
+                                    
+              </div>
+              <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Seller Agency Details</h5></label>
+                  </div>
+          </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="seller_agency">Agency Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="seller_agency" class="form-control" id="seller_agency" placeholder="Seller Agency" value="Classic Properties Real Estate LLC">
+                          <span class="error text-danger" id="seller_agency_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="seller_agent_name">Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="seller_agent_name" class="form-control" id="seller_agent_name" placeholder="Agent Name" value="Subal">
+                          <span class="error text-danger" id="seller_agent_name_error"></span>
+                  </div>
+              </div>
+          <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="seller_agency_brn">Agency Brn</label>
+                      <input class="form-control" type="text" id="seller_agency_brn" name="seller_agency_brn" placeholder="Agent Brn" value="">
+                        <span class="text-danger" id="seller_agency_brn_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="seller_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="seller_agent_phone" name="seller_agent_phone" placeholder="Agent Phone" value="971557237034">
+                        <span class="text-danger" id="seller_agent_phone_error"></span>
+                  </div>                    
+              </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="seller_agent_email">Agent Email</label>
+                      <input class="form-control" type="text" id="seller_agent_email" name="seller_agent_email" placeholder="Agent Email" value="">
+                        <span class="text-danger" id="seller_agent_email_error"></span>
+                  </div>                
+              </div>
+              
+              <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Buyer Agency Details</h5></label>
+                  </div>
+          </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_agency">Agency Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="buyer_agency" class="form-control" id="buyer_agency" placeholder="Buyer Agency" value="Classic Properties Real Estate LLC">
+                          <span class="error text-danger" id="buyer_agency_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_agent_name">Agent Name<span class="mandetory_field">*</span></label>
+                       <input type="text" name="buyer_agent_name" class="form-control" id="buyer_agent_name" placeholder="Agent Name" value="Subal">
+                          <span class="error text-danger" id="buyer_agent_name_error"></span>
+                  </div>
+              </div>
+          <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_agency_brn">Agency Brn</label>
+                      <input class="form-control" type="text" id="buyer_agency_brn" name="buyer_agency_brn" placeholder="Agent Brn" value="">
+                        <span class="text-danger" id="buyer_agency_brn_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="buyer_agent_phone" name="buyer_agent_phone" placeholder="Agent Phone" value="971557237034">
+                        <span class="text-danger" id="buyer_agent_phone_error"></span>
+                  </div>                    
+              </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_agent_email">Agent Email</label>
+                      <input class="form-control" type="email" id="buyer_agent_email" name="buyer_agent_email" placeholder="Agent Email" value="">
+                        <span class="text-danger" id="buyer_agent_email_error"></span>
+                  </div>                
+              </div>
+              
+              <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Mediating Agency Details</h5></label>
+                  </div>
+          </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="mediating_agency">Agency Name</label>
+                       <input type="text" name="mediating_agency" class="form-control" id="mediating_agency" placeholder="Mediating Agency" value="">
+                          <span class="error text-danger" id="mediating_agency_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="mediating_agent_name">Agent Name</label>
+                       <input type="text" name="mediating_agent_name" class="form-control" id="mediating_agent_name" placeholder="Agent Name" value="">
+                          <span class="error text-danger" id="mediating_agent_name_error"></span>
+                  </div>
+              </div>
+          <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="mediating_agency_brn">Agency Brn</label>
+                      <input class="form-control" type="text" id="mediating_agency_brn" name="mediating_agency_brn" placeholder="Agent Brn" value="">
+                        <span class="text-danger" id="mediating_agency_brn_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="mediating_agent_phone">Agent Phone</label>
+                      <input class="form-control" type="text" id="mediating_agent_phone" name="mediating_agent_phone" placeholder="Agent Phone" value="">
+                        <span class="text-danger" id="mediating_agent_phone_error"></span>
+                  </div>                    
+              </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="mediating_agent_email">Agent Email</label>
+                      <input class="form-control" type="text" id="mediating_agent_email" name="mediating_agent_email" placeholder="Agent Email" value="">
+                        <span class="text-danger" id="mediating_agent_email_error"></span>
+                  </div>                
+              </div>
+              
+              <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Revenue Details</h5></label>
+                  </div>
+          </div>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="total_commission">Total Commission<span class="mandetory_field">*</span></label>
+                       <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" value="58275">
+                          <span class="error text-danger" id="total_commission_error"></span>
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="less_outsude_commission">Less Outside Commission<span class="mandetory_field">*</span></label>
+                       <input type="text" name="less_outsude_commission" class="form-control" id="less_outsude_commission" placeholder="Less Outside Commission" value="2,775 Vat">
+                          <span class="error text-danger" id="less_outsude_commission_error"></span>
+                  </div>
+              </div>
+          <div class="row">
+                 <div class="col-md-6 form-group">
+                      <label for="net_commission">Net Commission<span class="mandetory_field">*</span></label>
+                       <input type="text" name="net_commission" class="form-control" id="net_commission" placeholder="Net Commission" value="55,500">
+                          <span class="error text-danger" id="net_commission_error"></span>
+                  </div>
+
+                  <div class="col-md-6 form-group">
+                      <label for="classic">Classic<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="classic" name="classic" placeholder="ClassicClassic" value="27,750">
+                        <span class="text-danger" id="classic_error"></span>
+                  </div>                    
+              </div>
+              
+              <div class="row">               
+                  <div class="col-md-6 form-group">
+                      <label for="agent1">Agent1<span class="mandetory_field">*</span></label>
+                      <input class="form-control" type="text" id="agent1" name="agent1" placeholder="Agent Commission" value="27,750">
+                        <span class="text-danger" id="agent1_error"></span>
+                  </div>    
+                  <div class="col-md-6 form-group">  
+                  <label for="agent1"></label>                   
+                   
+                      <select name="agent_name1" class=" form-control " id="agent_name1" value="72">
+                            <option value="">Select Agent</option>
+                                                                                     
+                                <option value="10">Rahul B</option>
+                                                                                                                   
+                                <option value="11">Anirudh</option>
+                                                                                    </select>
+                        <span class="text-danger" id="agent_name1_error"></span>
+                  </div>                  
+              </div>
+              
+              <div class="row">               
+                  <div class="col-md-6 form-group">
+                      <label for="agent2">Agent2</label>
+                      <input class="form-control" type="text" id="agent2" name="agent2" placeholder="Agent Commission" value="">
+                        <span class="text-danger" id="agent2_error"></span>
+                  </div>    
+                  <div class="col-md-6 form-group">  
+                  <label for="agent2"></label>                   
+                      <select name="agent_name2" class=" form-control " id="agent_name2" value="">
+                            <option value="">Select Agent</option>
+                                                                                     
+                                <option value="10">Rahul B</option>
+                                                                                                                   
+                                <option value="11">Anirudh</option>
+                                                                                    </select>
+                  </div>                  
+              </div>
+              <div class="row">               
+                  <div class="col-md-6 form-group">
+                      <label for="agent3">Agent3</label>
+                      <input class="form-control" type="text" id="agent3" name="agent3" placeholder="Agent Commission" value="">
+                        <span class="text-danger" id="agent3_error"></span>
+                  </div>    
+                  <div class="col-md-6 form-group">  
+                  <label for="agent3"></label>                   
+                       <select name="agent_name3" class=" form-control " id="agent_name3" value="">
+                            <option value="">Select Agent</option>
+                                                                                     
+                                <option value="10">Rahul B</option>
+                                                                                                                   
+                                <option value="11">Anirudh</option>
+                                                                                    </select>
+                  </div>                  
+              </div>
+              <div class="row">               
+                  <div class="col-md-6 form-group">
+                      <label for="agent_comment">Comment by Agent</label>
+                      <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">Documents attached including the receipt no are checked - MANJITHA</textarea>
+                        <span class="text-danger" id="agent_comment_error"></span>
+                  </div>   
+                                     <div class="col-md-6 form-group">
+                      <label for="comments">Comment by Admin</label>
+                      <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
+                        <span class="text-danger" id="comments_error"></span>
+                  </div>     
+                                 
+              </div>
+              <div class="row">
+                 
+                 <div class="col-md-6 form-group">
+                      <label for="receipt_no">Receipt No<span class="mandetory_field" style="color:red">*</span></label>
+                      <select name="receipt_no" class=" form-control " id="receipt_no">
+                                                                      <option value="8931" selected="">8931</option>
+                          <option value="Null">Null</option>
+                    <option value="No Commision">No Commision</option>
+                            
+                                              <option value="5003">5003</option>
+                                              <option value="4822">4822</option>
+                                              
+                  </select>
+                        <span class="text-danger" id="receipt_no_error"></span>
+                    </div>     
+                        
+                  <div class="col-md-6 form-group">
+                      <label for="kyc_number">KYC Number</label>
+                     <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number" value="">
+                        <span class="text-danger" id="kyc_number_error"></span>
+                  </div>    
+                                
+              </div>
+                             <div class="row">               
+                 <div class="col-md-6 form-group">
+                      <label for="receipt_no">Approve/Reject</label><br>
+                      <div class="row">
+                          <div class="col-3">
+                           <input type="radio" name="is_approved_rejected" value="A"> Approve
+                          </div>
+                          <div class="col-3" style="margin-left: -45px">
+                           <input type="radio" name="is_approved_rejected" value="R"> Reject
+                          </div>
+                          <div class="col-6" style="margin-left: -55px">
+                           <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
+                         </div>
+                      </div>   
+                  </div>   
+                  <div class="col-md-6 form-group">
+                      <label for="kyc_number">AML<span class="mandetory_field">*</span></label><br>
+                      <div class="row">
+                          <div class="col-3">
+                            <input value="Yes" class="" name="is_sale_aml" type="radio"> Yes
+                          </div>
+                          <div class="col-5" style="margin-left: -75px">
+                            <input value="No" class="" name="is_sale_aml" type="radio"> No
+                          </div>  
+                          <span class="text-danger" id="is_sale_aml_error"></span>
+                      </div>    
+                  </div>              
+              </div>
+                                           <hr>
+                <div class="row">
+                  <div class="col-md-6 form-group mb-1">
+                      <label><h5>Documents</h5></label>
+                  </div>
+          </div>
+                    <div class="row">                              
+                  <div class="col-md-6 form-group">
+                      <label for="signed_mou">Form F<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="signed_mou" type="file" value="" name="signed_mou[]">
+                                   
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/signed_mou1750840885SPA 1520.pdf" target="_new">
+                           signed_mou 1</a><p class="remove_file" id="signed_mou1750840885SPA 1520.pdf" data-name="signed_mou" data-existing="old">X</p></div>
+                            
+                                          
+                      
+                      <input type="hidden" id="signed_mou_existing_count" name="signed_mou_existing_count" value="1">
+                      <input type="hidden" id="signed_mou_existing_values" name="signed_mou_existing_values" value="signed_mou1750840885SPA 1520.pdf">
+                      <input type="hidden" id="signed_mou_removed" name="signed_mou_mou_removed" value="">
+                      <input type="hidden" id="signed_mou_new_removed_count" name="signed_mou_new_removed_count" value="">
+                      <div id="upload_prevss" class="signed_mou_list"></div>
+                      
+                        <span class="text-danger" id="signed_mou_error"></span>
+                        
+                  </div>    
+                  <div class="col-md-6 form-group">
+                      <label for="new_title_deed">New Title Deed<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="new_title_deed" type="file" value="" name="new_title_deed[]">
+                         
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/new_title_deed1750840885New Title Deed 1520 - Sky Gardens.pdf" target="_new">
+                           new_title_deed 1</a><p class="remove_file" id="new_title_deed1750840885New Title Deed 1520 - Sky Gardens.pdf" data-name="new_title_deed" data-existing="old">X</p></div>
+                            
+                                          
+                                  
+                      <input type="hidden" id="new_title_deed_existing_count" name="new_title_deed_existing_count" value="1">
+                      <input type="hidden" id="new_title_deed_existing_values" name="new_title_deed_existing_values" value="new_title_deed1750840885New Title Deed 1520 - Sky Gardens.pdf">
+                      <input type="hidden" id="new_title_deed_removed" name="new_title_deed_mou_removed" value="">
+                      <input type="hidden" id="new_title_deed_new_removed_count" name="new_title_deed_new_removed_count" value="">
+                      <div id="upload_prevss" class="new_title_deed_list"></div>
+                        <span class="text-danger" id="new_title_deed_error"></span>
+                  </div>                  
+              </div>
+              <div class="row">                              
+                  <div class="col-md-6 form-group">
+                      <label for="old_title_deed">Old Title Deed<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="old_title_deed" type="file" value="" name="old_title_deed[]">                     
+                           
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/old_title_deed1750840885Sky Gardens 1520.PDF" target="_new">
+                           old_title_deed 1</a><p class="remove_file" id="old_title_deed1750840885Sky Gardens 1520.PDF" data-name="old_title_deed" data-existing="old">X</p></div>
+                            
+                                          
+                                      
+                      <input type="hidden" id="old_title_deed_existing_count" name="old_title_deed_existing_count" value="1">
+                      <input type="hidden" id="old_title_deed_existing_values" name="old_title_deed_existing_values" value="old_title_deed1750840885Sky Gardens 1520.PDF">
+                      <input type="hidden" id="old_title_deed_removed" name="old_title_deed_removed" value="">
+                      <input type="hidden" id="old_title_deed_new_removed_count" name="old_title_deed_new_removed_count" value="">
+                      <div id="upload_prevss" class="old_title_deed_list"></div>
+                        <span class="text-danger" id="old_title_deed_error"></span>
+                  </div>    
+                  <div class="col-md-6 form-group">
+                       <label for="owners_passport_copy">Owners Passport Copy<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="owners_passport_copy" type="file" value="" name="owners_passport_copy[]">                     
+                           
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/owners_passport_copy1750840885Sky Gardens 1520.PDF" target="_new">
+                           owners_passport_copy 1</a><p class="remove_file" id="owners_passport_copy1750840885Sky Gardens 1520.PDF" data-name="owners_passport_copy" data-existing="old">X</p></div>
+                            
+                                
+                      <input type="hidden" id="owners_passport_copy_existing_count" name="owners_passport_copy_existing_count" value="1">
+                      <input type="hidden" id="owners_passport_copy_existing_values" name="owners_passport_copy_existing_values" value="owners_passport_copy1750840885Sky Gardens 1520.PDF">
+                      <input type="hidden" id="owners_passport_copy_removed" name="owners_passport_copy_mou_removed" value="">
+                      <input type="hidden" id="owners_passport_copy_new_removed_count" name="owners_passport_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="owners_passport_copy_list"></div>
+                        <span class="text-danger" id="owners_passport_copy_error"></span>
+                  </div>                  
+              </div>
+              
+              <div class="row">                              
+                  <div class="col-md-6 form-group">
+                      <label for="owner_eid_copy">Owner Eid</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file" value="" name="owner_eid_copy[]">
+                      
+                         
+                                         
+                      <input type="hidden" id="owner_eid_copy_existing_count" name="owner_eid_copy_existing_count" value="0">
+                      <input type="hidden" id="owner_eid_copy_existing_values" name="owner_eid_copy_existing_values" value="">
+                      <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_mou_removed" value="">
+                      <input type="hidden" id="owner_eid_copy_new_removed_count" name="owner_eid_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="owner_eid_copy_list"></div>
+                        <span class="text-danger" id="owner_eid_copy_error"></span>
+                  </div>         
+                  <div class="col-md-6 form-group">
+                      <label for="buyers_passport_copy">Buyers Passport Copy<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyers_passport_copy" type="file" value="" name="buyers_passport_copy[]">                     
+                         
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/buyers_passport_copy1750840885Buyer PP.jpg" target="_new">
+                           buyers_passport_copy 1</a><p class="remove_file" id="buyers_passport_copy1750840885Buyer PP.jpg" data-name="buyers_passport_copy" data-existing="old">X</p></div>
+                                                                                        
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/buyers_passport_copy1750840885Buyer Visa.pdf" target="_new">
+                           buyers_passport_copy 2</a><p class="remove_file" id="buyers_passport_copy1750840885Buyer Visa.pdf" data-name="buyers_passport_copy" data-existing="old">X</p></div>
+                            
+                                    
+                      <input type="hidden" id="buyers_passport_copy_existing_count" name="buyers_passport_copy_existing_count" value="2">
+                      <input type="hidden" id="buyers_passport_copy_existing_values" name="buyers_passport_copy_existing_values" value="buyers_passport_copy1750840885Buyer PP.jpg, buyers_passport_copy1750840885Buyer Visa.pdf">
+                      <input type="hidden" id="buyers_passport_copy_removed" name="buyers_passport_copy_mou_removed" value="">
+                      <input type="hidden" id="buyers_passport_copy_new_removed_count" name="buyers_passport_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="buyers_passport_copy_list"></div>
+                        <span class="text-danger" id="buyers_passport_copy_error"></span>
+                  </div>                  
+              </div>
+        
+        <div class="row">                              
+                  <div class="col-md-6 form-group">
+                      <label for="buyers_deposit_cheque_copy">Buyers Deposit Cheque Copy<span class="mandetory_field">*</span></label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyers_deposit_cheque_copy" type="file" value="" name="buyers_deposit_cheque_copy[]">                     
+                           
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/buyers_deposit_cheque_copy1750840886SD Cheque 506 &amp; 1520.jpeg" target="_new">
+                           buyers_deposit_cheque_copy 1</a><p class="remove_file" id="buyers_deposit_cheque_copy1750840886SD Cheque 506 &amp; 1520.jpeg" data-name="buyers_deposit_cheque_copy" data-existing="old">X</p></div>
+                            
+                                
+                      <input type="hidden" id="buyers_deposit_cheque_copy_existing_count" name="buyers_deposit_cheque_copy_existing_count" value="1">
+                      <input type="hidden" id="buyers_deposit_cheque_copy_existing_values" name="buyers_deposit_cheque_copy_existing_values" value="buyers_deposit_cheque_copy1750840886SD Cheque 506 &amp; 1520.jpeg">
+                      <input type="hidden" id="buyers_deposit_cheque_copy_new_removed_count" name="buyers_deposit_cheque_copy_new_removed_count" value="">
+                      <input type="hidden" id="buyers_deposit_cheque_copy_removed" name="buyers_deposit_cheque_copy_removed" value="">
+                      <div id="upload_prevss" class="buyers_deposit_cheque_copy_list"></div>
+                        <span class="text-danger" id="buyers_deposit_cheque_copy_error"></span>
+                  </div>           
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_eid">Buyer Eid</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyer_eid" type="file" value="" name="buyer_eid[]">
+                      
+                         
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/buyer_eid1750840886Buyer EID.pdf" target="_new">
+                           buyer_eid 1</a><p class="remove_file" id="buyer_eid1750840886Buyer EID.pdf" data-name="buyer_eid" data-existing="old">X</p></div>
+                            
+                                
+                      <input type="hidden" id="buyer_eid_existing_count" name="buyer_eid_existing_count" value="1">
+                      <input type="hidden" id="buyer_eid_existing_values" name="buyer_eid_existing_values" value="buyer_eid1750840886Buyer EID.pdf">
+                      <input type="hidden" id="buyer_eid_removed" name="buyer_eid_mou_removed" value="">
+                      <input type="hidden" id="buyer_eid_new_removed_count" name="buyer_eid_new_removed_count" value="">
+                      <div id="upload_prevss" class="buyer_eid_list"></div>
+                        <span class="text-danger" id="buyer_eid_error"></span>
+                  </div>                    
+              </div>
+              
+              <div class="row">                              
+                  <div class="col-md-6 form-group">
+                      <label for="sellers_deposit_cheque_copy">Sellers Deposit Cheque Copy</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="sellers_deposit_cheque_copy" type="file" value="" name="sellers_deposit_cheque_copy[]">                    
+                         
+                                         
+                      <input type="hidden" id="sellers_deposit_cheque_copy_existing_count" name="sellers_deposit_cheque_copy_existing_count" value="0">
+                      <input type="hidden" id="sellers_deposit_cheque_copy_existing_values" name="sellers_deposit_cheque_copy_existing_values" value="">
+                      <input type="hidden" id="sellers_deposit_cheque_copy_removed" name="sellers_deposit_cheque_copy_mou_removed" value="">
+                      <input type="hidden" id="sellers_deposit_cheque_copy_new_removed_count" name="sellers_deposit_cheque_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="sellers_deposit_cheque_copy_list"></div>
+                        <span class="text-danger" id="sellers_deposit_cheque_copy_error"></span>
+                  </div>          
+                  <div class="col-md-6 form-group">
+                      <label for="seller_poa_passport_copy">Seller Poa Passport Copy</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_passport_copy" type="file" value="" name="seller_poa_passport_copy[]">
+                      
+                         
+                                         
+                      <input type="hidden" id="seller_poa_passport_copy_existing_count" name="seller_poa_passport_copy_existing_count" value="0">
+                      <input type="hidden" id="seller_poa_passport_copy_existing_values" name="seller_poa_passport_copy_existing_values" value="">
+                      <input type="hidden" id="seller_poa_passport_copy_removed" name="seller_poa_passport_copy_mou_removed" value="">
+                      <input type="hidden" id="seller_poa_passport_copy_new_removed_count" name="seller_poa_passport_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="seller_poa_passport_copy_list"></div>
+                        <span class="text-danger" id="seller_poa_passport_copy_error"></span>
+                  </div>                      
+              </div>  
+              <div class="row">                                                        
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_poa_passport_copy">Buyer Poa Passport Copy</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_passport_copy" type="file" value="" name="buyer_poa_passport_copy[]">                     
+                         
+                                           
+                      <input type="hidden" id="buyer_poa_passport_copy_existing_count" name="buyer_poa_passport_copy_existing_count" value="0">
+                      <input type="hidden" id="buyer_poa_passport_copy_existing_values" name="buyer_poa_passport_copy_existing_values" value="">
+                      <input type="hidden" id="buyer_poa_passport_copy_removed" name="buyer_poa_passport_copy_mou_removed" value="">
+                      <input type="hidden" id="buyer_poa_passport_copy_new_removed_count" name="buyer_poa_passport_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="buyer_poa_passport_copy_list"></div>
+                        <span class="text-danger" id="buyer_poa_passport_copy_error"></span>
+                  </div>                        
+                                       
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_poa_copy">Buyer Poa Copy</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_copy" type="file" value="" name="buyer_poa_copy[]">                     
+                         
+                                       
+                      <input type="hidden" id="buyer_poa_copy_existing_count" name="buyer_poa_copy_existing_count" value="0">
+                      <input type="hidden" id="buyer_poa_copy_existing_values" name="buyer_poa_copy_existing_values" value="">
+                      <input type="hidden" id="buyer_poa_copy_removed" name="buyer_poa_copy_mou_removed" value="">
+                      <input type="hidden" id="buyer_poa_copy_new_removed_count" name="buyer_poa_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="buyer_poa_copy_list"></div>
+                        <span class="text-danger" id="buyer_poa_copy_error"></span>
+                  </div>  
+                  </div>
+              <div class="row">          
+                  <div class="col-md-6 form-group">
+                      <label for="seller_poa_copy">Sellers Poa Copy</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_copy" type="file" value="" name="seller_poa_copy[]">                     
+                         
+                                       
+                      <input type="hidden" id="seller_poa_copy_existing_count" name="seller_poa_copy_existing_count" value="0">
+                      <input type="hidden" id="seller_poa_copy_existing_values" name="seller_poa_copy_existing_values" value="">
+                      <input type="hidden" id="seller_poa_copy_removed" name="seller_poa_copy_mou_removed" value="">
+                      <input type="hidden" id="seller_poa_copy_new_removed_count" name="seller_poa_copy_new_removed_count" value="">
+                      <div id="upload_prevss" class="seller_poa_copy_list"></div>
+                        <span class="text-danger" id="seller_poa_copy_error"></span>
+                  </div>                        
+                                         
+                  <div class="col-md-6 form-group">
+                      <label for="buyer_poa_eid">Buyer Poa EID</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_eid" type="file" value="" name="buyer_poa_eid[]">                     
+                         
+                                         
+                      <input type="hidden" id="buyer_poa_eid_existing_count" name="buyer_poa_eid_existing_count" value="0">
+                      <input type="hidden" id="buyer_poa_eid_existing_values" name="buyer_poa_eid_existing_values" value="">
+                      <input type="hidden" id="buyer_poa_eid_removed" name="buyer_poa_eid_mou_removed" value="">
+                      <input type="hidden" id="buyer_poa_eid_new_removed_count" name="buyer_poa_eid_new_removed_count" value="">
+                      <div id="upload_prevss" class="buyer_poa_eid_list"></div>
+                        <span class="text-danger" id="buyer_poa_eid_error"></span>
+                </div>  
+                </div>
+              <div class="row">      
+                  <div class="col-md-6 form-group">
+                      <label for="seller_poa_eid">Sellers Poa EID</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_eid" type="file" value="" name="seller_poa_eid[]">                     
+                         
+                                         
+                      <input type="hidden" id="seller_poa_eid_existing_count" name="seller_poa_eid_existing_count" value="0">
+                      <input type="hidden" id="seller_poa_eid_existing_values" name="seller_poa_eid_existing_values" value="">
+                      <input type="hidden" id="seller_poa_eid_removed" name="seller_poa_eid_mou_removed" value="">
+                      <input type="hidden" id="seller_poa_eid_new_removed_count" name="seller_poa_eid_new_removed_count" value="">
+                      <div id="upload_prevss" class="seller_poa_eid_list"></div>
+                        <span class="text-danger" id="seller_poa_eid_error"></span>
+                  </div>                        
+                                         
+                  <div class="col-md-6 form-group">
+                      <label for="sale_kyc_number">KYC/Form I/Referral Agreement/Management Approval Form</label><br>
+                      <input multiple="multiple" class="imageUploadInput" id="sale_kyc_number" type="file" value="" name="sale_kyc_number[]">                     
+                         
+                                                                                                                                                         
+                          <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/sale_kyc_number1750840886Buyer KYC.pdf" target="_new">
+                           sale_kyc_number 1</a><p class="remove_file" id="sale_kyc_number1750840886Buyer KYC.pdf" data-name="sale_kyc_number" data-existing="old">X</p></div>
+                            
+                                
+                      <input type="hidden" id="sale_kyc_number_existing_count" name="sale_kyc_number_existing_count" value="1">
+                      <input type="hidden" id="sale_kyc_number_existing_values" name="sale_kyc_number_existing_values" value="sale_kyc_number1750840886Buyer KYC.pdf">
+                      <input type="hidden" id="sale_kyc_number_removed" name="sale_kyc_number_mou_removed" value="">
+                      <input type="hidden" id="sale_kyc_number_new_removed_count" name="sale_kyc_number_new_removed_count" value="">
+                      <div id="upload_prevss" class="sale_kyc_number_list"></div>
+                        <span class="text-danger" id="sale_kyc_number_error"></span>
+                  </div>                            
+              </div>
+                    <div class="row">
+                       <div class="col-md-6 form-group">
+        <label for="screening">Screening</label><br>
+        <input multiple="multiple" class="imageUploadInput" id="screening" type="file" value="" name="screening[]">
+                     
+                                                           
+        <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/screening1750840885Buyer Screening.pdf" target="_new">
+        screening 1</a><p class="remove_file" id="screening1750840885Buyer Screening.pdf" data-name="screening" data-existing="old">X</p></div>
+                                   
+        <input type="hidden" id="screening_existing_count" name="screening_existing_count" value="1">
+        <input type="hidden" id="screening_existing_values" name="screening_existing_values" value="screening1750840885Buyer Screening.pdf">
+        <input type="hidden" id="screening_removed" name="screening_mou_removed" value="">
+        <input type="hidden" id="screening_new_removed_count" name="screening_new_removed_count" value="">
+        <div id="upload_prevss" class="screening_list"></div>                      
+        <span class="text-danger" id="screening_error"></span>
+        </div>     
+         <div class="col-md-6 form-group mb-3">
+          <label for="screening_comments">Screening Comments</label>
+          <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" cols="50" placeholder="Screening Comments">No Match Found</textarea>
+        </div>
+      </div>  
+      <div class="row">
+                       <div class="col-md-6 form-group">
+        <label for="manager_cheque_copy">Manager Cheque Copy</label><br>
+        <input multiple="multiple" class="imageUploadInput" id="manager_cheque_copy" type="file" value="" name="manager_cheque_copy[]">
+                     
+                                                           
+        <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/manager_cheque_copy1750840886cheque 1520.pdf" target="_new">
+        manager_cheque_copy 1</a><p class="remove_file" id="manager_cheque_copy1750840886cheque 1520.pdf" data-name="manager_cheque_copy" data-existing="old">X</p></div>
+                                           
+        <div class="upload_prev">  <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/manager_cheque_copy1750840886Manager's Cheque.pdf" target="_new">
+        manager_cheque_copy 2</a><p class="remove_file" id="manager_cheque_copy1750840886Manager's Cheque.pdf" data-name="manager_cheque_copy" data-existing="old">X</p></div>
+                                   
+        <input type="hidden" id="manager_cheque_copy_existing_count" name="manager_cheque_copy_existing_count" value="2">
+        <input type="hidden" id="manager_cheque_copy_existing_values" name="manager_cheque_copy_existing_values" value="manager_cheque_copy1750840886cheque 1520.pdf, manager_cheque_copy1750840886Manager's Cheque.pdf">
+        <input type="hidden" id="manager_cheque_copy_removed" name="manager_cheque_copy_mou_removed" value="">
+        <input type="hidden" id="manager_cheque_copy_new_removed_count" name="manager_cheque_copy_new_removed_count" value="">
+        <div id="upload_prevss" class="manager_cheque_copy_list"></div>                      
+        <span class="text-danger" id="manager_cheque_copy_error"></span>
+        </div>     
+      </div> 
+                <div class="row mt-3">
+                    <div class="col-sm-12 btn-center mt-3">
+                                                                                  <button type="button" class="btn btn-primary btn-rounded m-1" id="create_deal">Submit Deal</button> 
+                    </div>
+                </div>
+          </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="/static/assets/vendor/jquery/dist/jquery.min.js"></script>
+  <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+  <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+  <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
+  
+  <script src="/static/assets/js/datatables.min.js"></script> 
+
+{% endblock content %}
+

@@ -1,0 +1,1439 @@
+<html>
+  {% load static %}
+  {% load custom_tags %}
+ 
+    <head>
+        <meta http-equiv=Content-Type content="text/html; charset=utf-8" />
+      
+        <title> </title>
+     
+        <title>Unified Tenancy Contract</title>
+       <link rel="stylesheet" href="{% static 'assets/css/bootstrap/bootstrap.min.css' %}">
+
+        <style>
+
+            * {
+  box-sizing: border-box;
+}
+    @page {
+    size: A4;
+    margin: 5mm 5mm;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+  }
+
+    .containerone {
+    max-width: 750px; !important
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .radio_buttons{
+                width: 15px;
+             }
+
+    .middle_part {
+        border-bottom: 0.5px dashed #574595;
+        text-align: left;
+        font-size:11px
+    }
+    .left_part {
+        border-bottom: 0.5px dashed #574595;
+        text-align: left;
+        padding-left: 10px;
+    }
+    .cstm_signle_tr_td{
+        width: 83%;
+    }
+    .label_td_2{
+        float:right;
+        text-align: right;
+        vertical-align: top;
+    }
+    .cstm_label{
+        color:#574595;
+        font-size: 8px;
+        
+       
+    }
+    .cstm_label_arb
+    {
+        font-family:"Droid Arabic Kufi",sans-serif;
+        color:#574595;
+        font-size: 10px; 
+    }
+    .custom_label{
+        color:#574595;
+        font-size: 14px;
+    }
+
+    .point_numbers{
+                width: 20px;
+             }
+    .multiple_label_td_s{
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .inner_data table{
+        padding: 1px 0;
+    }
+    .terms_table, .additional_terms, .attachments_for_ajari_table,.know_your_rights_table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .inner_points{
+        padding: 7px 0;
+        size:10px;
+    }
+    .know_your_rights_div, .attachments_for_ajari_div, .additional_terms_div, .terms_div {
+                padding: 5px 0;
+             }
+    .image_labels{
+        width: auto;
+    }
+    .heading_text{
+        color:#574595;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .cstm_label_arabic{
+        font-family:"Droid Arabic Kufi",sans-serif;
+        color:navy;
+        font-size: 10px;
+        line-height:px;
+        
+    }
+     
+    .label_td_arabic_2{
+        float:right;
+        text-align: right;
+    }
+    .text_center{
+            text-align: center;
+    }
+    .heading_image{
+        width: 200px;
+        }
+        .footer{
+            {% comment %} position: absolute;  {% endcomment %}
+            bottom: 0; 
+            margin: 0; 
+            width:100%;
+        }
+        .logos{
+        padding-bottom: 5px;
+        }
+        #main_heading{
+            padding-left: 5px;
+            border: 1px solid #574595;
+            border-radius: 10px;
+        }
+        .radio_buttons{
+        width: 15px;
+        }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  
+    border-collapse: collapse;
+  }
+   .points tr {
+line-height:10px ; 
+  
+  }
+  .additional_terms_table td {
+    font-size: 12px;
+
+  }
+
+              
+             .kyc-label{
+               font-size:10px;
+               line-height:2px;
+             }
+             .kyc-financial-label{
+                font-size:13px;
+             }
+             .checkbox
+             {
+                 font-size:36px;
+                 width: 100px;
+                 height: 190px;
+             }
+             #payment_method{
+                font-size:20px;
+
+             }
+             .tenancy-contract
+             {
+                 font-size:22px;
+             }
+           
+            .background{
+                background: #fff url('images/pdf_watermark_new.png');
+                background-size: 100%;
+            }
+
+            .property_type_text{
+                font-size: 12px;
+            }
+           
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                margin-left: 20px;
+                margin-top: 20px;
+            }
+
+ 
+    </style>
+
+              
+        
+    </head>
+    <body>
+    <div class="containerone"style="max-width:775px; width:750px  ; border :2px solid black;   box-sizing: border-box;padding:10px ;" >
+
+        <div class="d-flex justify-content-between align-items-start " style="max-width:720px ;margin-bottom:20px" >
+            <div class="d-flex align-items-center gap-2">
+                <!-- Placeholder for Government of Dubai Logo -->
+                <img src="/static/assets/img/tenancy_contract_images/logo1.png" alt="Gov Logo" class=" rounded-3" style = "width: 100px">
+            </div>
+            <div class="text-end">
+                <!-- Placeholder for Land Department Logo -->
+                <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 150px">
+            </div>
+        </div>
+        <div class="inner_data background" style ="margin-top:10px max-width:300px">
+        
+        
+            
+
+
+    
+        <div id="main_heading" style="height: 4%;">
+                {% comment %} @php 
+                    $contract_date= explode("-",$data['contract_date']);
+                    //echo str_replace("-","/",$contract_date);
+                @endphp {% endcomment %}
+                <table class="heading_table">
+                    <tr>
+                        <td width="30%" style="width:20%">
+                            <table>
+                                <tr >
+                                    <td  style="width:25%" ><span class="custom_label label_1" style="font-size: 12px;"><b>Date</b></span></td>
+                                    <td style="width:80%" >
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="20%" style = "width:20%" class="middle_part" style="text-align:center;padding: 0px 0px 0px 0px;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'day'}}</span></td>
+                                                <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="30%" style = "width:20%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'month'}}</span></td>
+                                                <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="50%" style = "width:40%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{ deal.date|split_dmy:'year'}}</span></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td><span class="cstm_label_arabic" style="font-size: 12px;">التاريخ</span></td>
+                                </tr>
+                                <tr>
+                                    <td width="10%"><span class="custom_label label_1" style="font-size: 12px;"><b>No.</b></span></td>
+                                    <td width="80%" class="middle_part cstm_signle_tr_td" style="text-align:center;"><span class="contarct_details"><span style="font-size: 12px;">{{deal.reference_number}}</span></td>
+                                    <td width="10%"><span class="cstm_label_arabic" style="font-size: 16px;">الرقم</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="10%"></td>
+                        <td style="width:70%"  >
+                            <table>
+                                <tr>
+                                    <td style="height:30px;width:100%;"><img alt="Tenancy Contract" class="heading_image" src="/static/assets/img/tenancy_contract_images/heading_tenancy.png" style="width:45%;"/></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="heading_text tenancy-contract" style="font-size:20px;"><b>TENANCY CONTRACT</b></span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>  
+           
+        </div>
+        <div class = "fields">
+            <table width="100%">
+                <tr>
+                    <td><span class="cstm_label label_1">Property Usage</span></td>
+                    <td>                        
+                        <table>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr><td class="label_td_2"><span class="cstm_label_arabic">صناعي <br> Industrial</span></td></tr>
+                                        <tr><td><span class="cstm_label label_1"> </span></td></tr>
+                                    </table>
+                                </td>
+                                <td>
+                                     {% if deal.property_usage and deal.property_usage == "Industrial" %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                    {% else %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr><td class="label_td_2"><span class="cstm_label_arabic">تجاري  <br> Commercial</span>  </td></tr>
+                                        <tr><td><span class="cstm_label label_1"></span></td></tr>
+                                    </table>
+                                </td>
+                                <td>
+                               {% if deal.property_usage and deal.property_usage == "Commercial" %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                    {% else %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                    <table>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr><td class="label_td_2"><span class="cstm_label_arabic">سكني <br>Residential</span>  </td></tr>
+                                        <tr><td><span class="cstm_label label_1"></span></td></tr>
+                                    </table>
+                                </td>
+                                <td>                            
+                       {% if deal.property_usage and deal.property_usage == "Residential" %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                    {% else %}
+                                <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                    {% endif %}
+                        </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                    <table>
+                            <tr>
+                    <td class="label_td_2"><span class="cstm_label_arabic">استخدام الوحدة</span></td>
+                            </tr>
+                            </table>
+                            </td>
+                </tr>
+            </table>
+            <table width="100%">
+                <tr>
+                    <td style="width:8%" ><span class="cstm_label">Owner Name</span></td>
+                    <td  style="width:87%" class="middle_part"><span class="contarct_details">{{deal.owner_first_name}}</span></td>
+                    <td  style="text-align:right;"><span class="cstm_label_arabic">اسم المالك</span></td>
+                </tr>
+            </table>
+            <table width="100%">
+                <tr>
+                    <td style="width:9%"  ><span class="cstm_label">Landlord Name</span></td>
+                    <td style="width: 85%"class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{ deal.owner_first_name}}</span></td>
+                    <td class="label_td_2"><span class="cstm_label_arabic">اسم المؤجر</span></td>
+                </tr>
+            </table>
+            <table width="100%">
+                <tr>
+                    <td style="width:8%"  ><span class="cstm_label">Tenant Name</span></td>
+                    <td  style="width:85%" class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{ deal.tenant_first_name}}</span></td>
+                    <td class="label_td_2"><span class="cstm_label_arabic">اسم المستأجر</span></td>
+                </tr>
+            </table>
+            <table class="multiple_label_td_s">
+                <tr>
+                    <td width="50%" style="padding: 0; width:50%">
+                        <table width="100%">
+                            <tr>
+                                <td style="width:16%"  ><span class="cstm_label">Tenant Email</span></td>
+                                <td style="width:57% " class="middle_part"><span style = "word-wrap: break-word; white-space: normal" class="contarct_details ">{{ deal.tenant_email}}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">البريد الالكترونى للمستأجر</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="50%">
+                        <table width="100%">
+                            <tr>
+                                <td    style="width:18%"><span class="cstm_label">Landlord Email</span></td>
+                                <td width="53%" style="width:59%" class="middle_part"><span style = "word-wrap: break-word; white-space: normal"class="contarct_details">{{ deal.owner_email}}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">البريد الالكترونى للمؤجر</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>   
+            <table class="multiple_label_td_s">
+                    <tr>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:17%"  ><span class="cstm_label">Tenant Phone</span></td>
+                                    <td width="65%" style="width:68% " class="middle_part"><span class="contarct_details">{{deal.tenant_mobile}}</span></td>
+                                    <td class="label_td_2"><span class="cstm_label_arabic">هاتف المستأجر</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:19%" ><span class="cstm_label">Landlord Phone</span></td>
+                                    <td width="65%"  style="width:67% " class="middle_part"><span class="contarct_details">{{ deal.owner_mobile}}</span></td>
+                                    <td class="label_td_2"><span class="cstm_label_arabic">هاتف المؤجر</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+            </table> 
+            <table class="multiple_label_td_s">
+                    <tr>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:23%"  ><span class="cstm_label">Propert Size (S.M)</span></td>
+                                    <td width="65%" style="width:52% " class="middle_part"><span class="contarct_details">{{deal.property_size}}</span></td>
+                                   <td width="33%"><span class="cstm_label_arabic">(</span><span class="cstm_label_arabic">مساحة الوحدة (متر.مربع</span></td></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td style="width:18%" ><span class="cstm_label"> Property Type  </span></td>
+                                    <td width="69%"  style="width:70% " class="middle_part"><span class="contarct_details">{{ deal.property_type}}</span></td>
+                                     <td width="%"><span class="cstm_label_arabic">نوع الوحدة</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+            </table> 
+            <table class="multiple_label_td_s">
+                <tr>
+                    <td width="50%">
+                        <table width="100%">
+                            <tr>
+                                <td  style = "width:25%"  ><span class="cstm_label">Premises No (DEWA)</span></td>
+                                <td width="53%" style = "width:58%" class="middle_part"><span class="contarct_details">{{ deal.premises_no }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">(</span><span class="cstm_label_arabic">رقم العقار (ديوا</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="50%">
+                        <table width="100%">
+                            <tr>
+                                <td style = "width:10%" >  <span class="cstm_label">Plot No</span></td>
+                                <td width="77%" style = "width:77%" class="middle_part"><span class="contarct_details">{{ deal.plot_no }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">رقم الأرض</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table class="multiple_label_td_s">
+                <tr>
+                    <td width="50%">
+                        <table width="100%">
+                            <tr>
+                                <td  style = "width:23%"  ><span class="cstm_label">Contract Period&nbsp;&nbsp;&nbsp;To</span></td>
+                                <td width="53%" style = "width:58%" class="middle_part"><span class="contarct_details">{{ deal.deal_end_date  }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">(</span><span class="cstm_label_arabic">رقم العقار (ديوا</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="50%">
+                        <table width="100%">
+                            <tr>
+                                <td style = "width:7%" >  <span class="cstm_label">From</span></td>
+                                <td width="77%" style = "width:79%" class="middle_part"><span class="contarct_details">{{ deal.deal_start_date }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">رقم الأرض</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table> 
+            <table width="100%">
+                <tr>
+                    <td style="width:8%" ><span class="cstm_label">Annual Rent</span></td>
+                    <td class="middle_part" style="width:85%"  width="84%"><span class="contarct_details">{{ deal.rental_price}}</span></td>
+                    <td   class="label_td_2"><span class="cstm_label_arabic">الإيجار السنوي</span></td>
+                </tr>
+            </table>
+            <table width="100%">
+                <tr>
+                    <td style="width:9%" ><span class="cstm_label">Contract Value</span></td>
+                    <td class="middle_part" style="width:84%"  width="84%"><span class="contarct_details">{{ deal.contract_value }}</span></td>
+                    <td   class="label_td_2"><span class="cstm_label_arabic">الإيجار السنوي</span></td>
+                </tr>
+            </table>
+            <table class="multiple_label_td_s">
+                <tr>
+                    <td width="50%" style ="width:50%"  >
+                        <table width="100%">
+                            <tr>
+                                <td  style ="width:30%"   ><span class="cstm_label">Security Deposit Amount</span></td>
+                                <td width="55%"  style ="width:55%" class="middle_part"><span class="contarct_details">{{ deal.security_deposit }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">مبلغ التأمين</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="50%" style ="width:50%" >
+                        <table width="100%">
+                            <tr>
+                                <td  style ="width:20%"  ><span class="cstm_label">Mode of Payment</span></td>
+                                <td width="61%"   style ="width:67%"  class="middle_part"><span class="contarct_details">{{ deal.mode_of_payment }}</span></td>
+                                <td class="label_td_2"><span class="cstm_label_arabic">طريقة السداد</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+                
+
+
+
+        </div>
+        <br>
+        <div>
+                <div class="terms_div">
+                    <table class="terms_table"  >
+                        <tr>
+                            <td><img alt="logo2" src="/static/assets/img/tenancy_contract_images/terms.png"></td>
+                        </tr>
+                    </table>
+                </div>
+                <table class="points"  style="width:100%;" >
+                    <tr style="width:50%">
+                        <td width="10px" style = "width:3%">
+                            <img alt="One" class="point_numbers" src="/static/assets/img/tenancy_contract_images/one.png" />
+                        </td>
+                        <td width="350px" style = "width:50%" style="padding-left: -10px;">
+                            <span class="cstm_label" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                                The tenant has inspected the premises and agreed to lease the unit on its current condition.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img alt="One" class="point_numbers" src="/static/assets/img/tenancy_contract_images/one.png" /></td>
+                        <td  width="350px" style = "width:45%" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">عاين المستأجر الوحدة موضوع الإيجار ووافق على إستئجار العقار على حالته الحالية</span>
+                        </td>
+                    </tr>
+                    <tr style="width:50%" >
+                        <td width="10px" style = "width:5%"><img class="point_numbers" alt="Two" src="/static/assets/img/tenancy_contract_images/two.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                Tenant undertakes to use the premises for designated purpose, tenant has no rights to any to counterpart without or with either contract tenancy the relinquish or transfer without landlord written approval Also tenant is not allowed to sublease the premises or any part thereof to third party in whole or in part unless it is legally permitted
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="Two" src="/static/assets/img/tenancy_contract_images/two.png"/></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">باستعمال المأجور للغرض المخصص له. ولا يجوز للمستأجر تحويل او التنازل</span>
+                            <br><span class="cstm_label_arabic">عن عقد الايجار للغير بمقابل أو دون مقابل دون موافقة المالك خطيا. كما لا يجوز للمستأجر</span>
+                            <br><span class="cstm_label_arabic">تاجير المأجور أو أي جزء منه من الباطن مالم يُسمح بذلك قانونا.</span>
+                        </td>
+                    </tr>
+                    <tr style="width:100%">
+                        <td width="10px"style="width:10%" ><img alt="three" class="point_numbers" src="/static/assets/img/tenancy_contract_images/three.png"/></td>
+                        <td width="350px"  style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                The tenant undertakes not to make any amendments, modifications or addendums to the premises subject of the contract without obtaining the landlord written approval, tenant shall be liable for any damages or failure due to that.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/three.png" /></td>
+                        <td  width="350px" style  = " width: 80%"  class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يتعهد المستاجر بعدم إجراء أي تعديلات أو إضافات على العقار موضوع العقد دون موافقة
+                        المالك الخطية. ويكون المستأجر مسؤولا عن أى أضرار أو نقص أو تلف يلحق بالعقار
+                         </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="10px"><img class="point_numbers" alt="four" src="/static/assets/img/tenancy_contract_images/four.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                The tenant shall be responsible for payment of all electricity, water, cooling and gas charges resulting of occupying leased unit unless other condition agreed in written.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="four" src="/static/assets/img/tenancy_contract_images/four.png" /></td>
+                        <td  width="350px" style  = " width: 80%" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يكون المستاجر مسؤولا عن سداد كافة فواتير الكهرباء والمياه والتبريد والغاز المترتبة عن
+    اشغاله المأجور, مالم يتم الاتفاق على غير ذلك كثابياً
+    </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="10px"><img alt="five" class="point_numbers" src="/static/assets/img/tenancy_contract_images/five.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                The tenant must pay the rent amount in the manner and dates agreed with the landlord.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="five" src="/static/assets/img/tenancy_contract_images/five.png" /></td>
+                        <td  width="350px" style  = " width: 80%" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يتعهد المستاجر بسداد مبلغ الإيجار المتفق عليه في هذا العقد في التواريخ والطريقة</span>
+                            <br><span class="cstm_label_arabic">المتفق عليها.</span>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td width="10px"><img class="point_numbers" alt="six" src="/static/assets/img/tenancy_contract_images/six.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                The Tenant fully undertakes to comply with all the regulations and instructions related to the management of the property and the use of the premises and of common areas such (parking, swimming pools, gymnasium, etc…).
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="six" src="/static/assets/img/tenancy_contract_images/six.png" /></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يلتزم المستأجر التقيد التام بالانظمة والتعليمات المتعلقة باستخدام المأجور والمنافع<span>
+                            <br><span class="cstm_label_arabic">المشتركة (كمواقف السيارات. احواض السباحة, النادي الصحي! الخا؛<span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="10px"><img class="point_numbers" alt="seven" src="/static/assets/img/tenancy_contract_images/seven.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                Tenancy contract parties declare all mentioned emails addresses and phone numbers are correct, all formal and legal notifications will be sent to those addresses in case of dispute between parties.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="seven" src="/static/assets/img/tenancy_contract_images/seven.png" /></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يقر اطراف التعاقد يصحة العناوين وارقام الهواتف المذكورة اعلاه. وتكون تلك العناوير</span>
+                            <br><span class="cstm_label_arabic">هي المعتمدة رسمياً للإخطارات والإعلانات القضائية في حالة نشوء أي نزاع بين أطراف</span>
+                            <br><span class="cstm_label_arabic">.العقد</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="10px"><img class="point_numbers" alt="eight" src="/static/assets/img/tenancy_contract_images/eight.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                The Landlord undertakes to enable the tenant of the full use of the premises including its facilities (Swimming pool, gym, parking lot, etc) and do the regular maintenance as intended unless other condition agreed in written, and not to do any act that would detract from the premises benefit.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="eight" src="/static/assets/img/tenancy_contract_images/eight.png" /></td>
+                        <td  width="350px"style="width:85%"  class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يتعهد المؤجر بتمكين المستاجر من الانتفاع النام بالعقار للغرض المؤجر لأجله والمرافق
+    الخاصة به (حوض سباحة. نادي صحي, مواقف سيارات ..... إلخ) كما يكون مسئولاً عن أعمال
+    الصيانة مالم يتم الإنفاق على غير ذلك. وعدم التعرض له في منفعة العقار
+    </span>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td width="10px" style = "width:3%" ><img alt="nine" class="point_numbers" src="/static/assets/img/tenancy_contract_images/nine.png" /></td>
+                        <td width="350px"    style="text-align:justify;vertical-align:top; padding-left: -10px;">
+                            <span class="cstm_label">
+                                By signing this agreement from the first party, the “Landlord” hereby confirms and undertakes that he is the current owner of the property or his legal representative under legal power of attorney duly entitled by the competent authorities.
+                            </span>
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="nine" src="/static/assets/img/tenancy_contract_images/nine.png" /></td>
+                        <td  width="350px"  class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يعتبر توقيع المؤجر على هذا العقد إقرار منه بأنه المالك الحالي للعقار أو الوكيل القانوني</span>
+                            <br><span class="cstm_label_arabic">لذلك المالك بموجب وكالة قانونية موثقة أصولياً لدى الجهات المختصة</span>
+                        </td>
+                    </tr> 
+                    
+                    <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td> </tr>  
+                </table>
+            </div>
+            <div style = "margin-top:30px"  >
+                <table width="100%">
+                    <tr>
+                        <td width="50%" >
+                            <table width="100%">
+                                <tr><td class="text_center"><span class="cstm_label_arabic">إمضـــــاء  المستأجر</span></td></tr>
+                                <tr>
+                                    <td class="text_center"><span class="cstm_label_arabic">Tenant Signature</span></td>
+                                </tr>
+                                {% comment %} <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    
+                                </tr> {% endcomment %}
+                                 <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                <tr >
+                                    <td class="text_center">
+                                        <table style="margin-left:2%; margin-top:20px">
+                                            <tr>
+                                                <td><span class="cstm_label label_1">Date</span></td>
+                                                <td class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{deal.date}}</span></td>
+                                                <td><span class="cstm_label_arabic">التاريخ</span></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td class="text_center"><span class="cstm_label_arabic">إمضـــــاء  الـمــؤجــــر</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text_center"><span class="cstm_label_arabic">Landlord Signature&nbsp;</span></td>
+                                </tr>
+                                <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                 <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                <tr>
+                                    <td class="text_center">
+                                        <table style="margin-left:2%; margin-top:20px">
+                                            <tr>
+                                                <td><span class="cstm_label label_1">Date</span></td>
+                                                <td class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{ deal.date}}</span></td>
+                                                <td><span class="cstm_label_arabic">التاريخ</span></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table  class="points">
+                    
+                    <tr>
+                        <td class="inner_points" style = "width:3%" width="10px"><img class="point_numbers" alt="ten" src="/static/assets/img/tenancy_contract_images/ten.png" /></td>
+                        <td width="350px" style = "width:50%" style="text-align:justify;vertical-align:top; padding-left: 5px;">
+                            <span class="cstm_label">
+                                Any disagreement or dispute may arise from execution or interpretation of this contract shall be settled by the Rental Dispute Center.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="ten" src="/static/assets/img/tenancy_contract_images/ten.png" /></td>
+                        <td  width="350px"   style = "width:85%"class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">أي خلاف أو نزاع قد بنشا عن تنفيذ أو تفسير هذا العقد يعود البت فيه لمركز فض</span>
+                            <br><span class="cstm_label_arabic">المنازعات الإيجارية</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="eleven" src="/static/assets/img/tenancy_contract_images/eleven.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: 5px;">
+                            <span class="cstm_label">
+                                This Contract is subject to all provisions of Law No (26) of 2007 regulating    the relation between landlords and tenants in the Emirate of Dubai as amended, and as it will be changed or amended from time to time, as long with any related legislations and regulations applied  in  the  Emirate  of  Dubai.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="eleven" src="/static/assets/img/tenancy_contract_images/eleven.png" /></td> 
+                        <td width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يخضع هذا العقد لكافة أحكام القانون رقم (26) لسنة 2007 بشان تنظيم العلاقة بين</span>
+                            <br><span class="cstm_label_arabic">مؤجري ومستأجري العقارات في إمارة دبي, وتعديلاته وأي تغيير أو تعديل يطرأ عليه من</span>
+                            <br><span class="cstm_label_arabic">وقت لآخر. كما يخضع للتشريعات واللوائح الأخرى ذات العلاقة النافذة في إمارة دبي</span> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="twleve" class="point_numbers" src="/static/assets/img/tenancy_contract_images/twleve.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: 5px;">
+                            <span class="cstm_label">
+                                Any additional condition will not be considered in case it conflicts with law.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="twleve" src="/static/assets/img/tenancy_contract_images/twleve.png" /></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">لا يعتد بأي شرط تم إضاقته إلى هذا العقد في حال تعارضه مع القانون.</span>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="thirteen" class="point_numbers" src="/static/assets/img/tenancy_contract_images/thirteen.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: 5px;">
+                            <span class="cstm_label">
+                                In case of discrepancy occurs between Arabic and non Arabic texts with regards to the interpretation of this agreement or the scope of its application , the Arabic text shall prevail.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="thirteen" src="/static/assets/img/tenancy_contract_images/thirteen.png" /></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">في حال حدوث أي تعارض أو اختلاف في التفسير بين النص العربي والنص الأجنبي يعتمد</span>
+                            <br><span class="cstm_label_arabic">النص العربي</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="fourteen" src="/static/assets/img/tenancy_contract_images/fourteen.png" /></td>
+                        <td width="350px" style="text-align:justify;vertical-align:top; padding-left: 5px;">
+                            <span class="cstm_label">
+                                The Landlord undertakes to register this tenancy contract on EJARI affiliated to Dubai Land Department and provide with all required documents.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="fourteen" src="/static/assets/img/tenancy_contract_images/fourteen.png" /></td>
+                        <td  width="350px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">يتعهد المؤجر بتسجيل عقد الإيجار في نظام إيجاري التابع لدائرة الأراضي والأملاك وتوفير</span>
+                            <br><span class="cstm_label_arabic">كافة المستندات اللازمة لذا</span>
+                        </td> 
+                    </tr>
+                </table>
+            </div> 
+            <div>
+                <div class="know_your_rights_div">
+                    <table class="know_your_rights_table">
+                        <tr>
+                            <td><img alt="logo2" src="/static/assets/img/tenancy_contract_images/know_your_rights.png"></td>
+                        </tr>
+                    </table>
+                </div>
+                <table class="points" >
+                    <tr>
+                        <td class="inner_points" style="width:2%"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" /></td>
+                        <td width="360px" style = "width:50% ">
+                            <span class="cstm_label">
+                                You may visit Rental Dispute Center website www.rdc.gov.ae and use  Smart Judge service in case of any rental dispute between parties.
+                             </span>
+                         </td>
+                         <td width="10px" style="width:5%" class="label_td_2"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"  /></td>
+                        <td  width="360px" style="width:95%" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">واستخدام خدمة </span><span class="cstm_label_arabic">www.rdc.gov.ae </span><span class="cstm_label_arabic">يمكنكم الذكي زيارة موقع مركز فض المنازعات الإيجارية القاضي الذكي في حال نشوء أي نزاع إيجاري بين الأطراف.</span></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Law No 26 of 2007 regulating relationship between landlords and tenants.
+                             </span>
+                         </td>
+                         <td width="10px" style="width:5%" class="label_td_2"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td  width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">الإطلاع على قانون رقم 26 لسنة 2007 بشان تنظيم العلاقة بين المؤجرين والمستأجرين. </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Law No 33 of 2008 amending law 26 of year 2007.
+                             </span>
+                         </td>
+                         <td width="10px" style="width:5%" class="label_td_2"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td  width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">الإطلاع على قانون رقم 33 لسنة 2008 الخاص بتعديل بعض أحكام قانون 26 لعام 2007.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Law No 43 of 2013 determining rent increases for properties.
+                             </span>
+                            </td>
+                            <td width="10px" style="width:5%" class="label_td_2"><img alt="ten" src="/static/assets/img/tenancy_contract_images/new_bullet_point.PNG" height="12" width="10"/></td>
+                        <td width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">الإطلاع على قانون رقم 43 لسنة 2013 بشأن تحديد زيادة بدل الإيجار</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <div class="attachments_for_ajari_div">
+                    <table class="attachments_for_ajari_table">
+                        <tr>
+                            <td><img alt="logo2" src="/static/assets/img/tenancy_contract_images/attachments_for_aJARI.png"></td>
+                        </tr>
+                    </table>
+                </div>
+                <table class ="points" >
+                    <tr>
+                        <td class="inner_points" style="width:3%" width="10px"><img class="point_numbers" alt="one" src="/static/assets/img/tenancy_contract_images/one.png" /></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Original unified tenancy contract.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img alt="one" class="point_numbers" src="/static/assets/img/tenancy_contract_images/one.png" /></td>
+                        <td  width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">نسخة أصلية عن عقد الإيجار الموحد</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img alt="two" class="point_numbers" src="/static/assets/img/tenancy_contract_images/two.png" /></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Copy of Emirates ID or passport for tenant (individuals) Or trade license for tenant (companies).
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="two" src="/static/assets/img/tenancy_contract_images/two.png" /></td>
+                        <td  width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">صور من بطاقة الهوية أو جواز سفر المستاجر (للتفراد) أو صور من الرقصة التجارية</span>
+                            <br><span class="cstm_label_arabic">للمستأجر&rlm;</span><span class="cstm_label_arabic">(للشركات)&rlm;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/three.png" /></td>
+                        <td width="360px">
+                            <span class="cstm_label">
+                                Original Emirates ID of applicant or representative card by DNRD.
+                             </span>
+                         </td>
+                         <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/three.png" /></td>
+                        <td  width="360px" class="label_td_arabic_2">
+                            <span class="cstm_label_arabic">آصل هوية الإمارات لمقدم الطلب أو بطاقة مندوب صادرة عن العامة للإقامة وشؤون الأجانب.</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <div class="additional_terms_div">
+                    <table class="additional_terms">
+                        <tr>
+                            <td><img alt="logo2" src="/static/assets/img/tenancy_contract_images/additional_terms.png"></td>
+                        </tr>
+                    </table>
+                </div>
+                <table class ="points additional_terms_table">
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="one" src="/static/assets/img/tenancy_contract_images/one.png" /></td>
+                        <td width="720px" style="width:95% ; " class="left_part">
+                        <span>AED &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ deal.security_deposit}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;security deposit is refundable by the owner.</span>   
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="ten" src="/static/assets/img/tenancy_contract_images/one.png" /></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="two" src="/static/assets/img/tenancy_contract_images/two.png" /></td>
+                        <td width="720px" class="left_part">
+                        <span>Property should be in good condition at the time of handing over.</span>  
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="two" src="/static/assets/img/tenancy_contract_images/two.png" /></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/three.png" /></td>
+                        <td width="720px" class="left_part">
+                        <span>Landlord is responsible for Developers service charges.</span>    
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/three.png" /></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/four.png" /></td>
+                        <td width="720px" class="left_part">
+                        <span>This contract is valid for one year only.</span>  
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/four.png" /></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/five.png" /></td>
+                        <td width="720px" class="left_part">
+                        <span>Further Additional conditions are attached.</span>    
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/five.png" /></td>
+                    </tr>
+                    <tr>
+                        <td class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/six.png" /></td>
+                        <td width="720px" class="left_part">
+                            
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/six.png" /></td>
+                    </tr>
+                    <tr>
+                        <td  class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/seven.png" /></td>
+                        <td width="720px" class="left_part">
+                            
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/seven.png" /></td>
+                    </tr>
+                    <tr>
+                        <td  class="inner_points" width="10px"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/eight.png" /></td>
+                        <td width="720px" class="left_part">
+                            
+                        </td>
+                        <td width="10px" class="label_td_2"><img class="point_numbers" alt="three" src="/static/assets/img/tenancy_contract_images/eight.png" /></td>
+                    </tr>
+                </table>
+                <table style = "margin-top:20px;margin-bottom:10px;" > 
+                    <tr>
+                        <td width="50%">
+                            <span class="cstm_label">
+                                Note: You may add an addendum to this tenancy contract in case you have additional terms while it needs to be signed by all parties.
+                             </span>
+                        </td>
+                        <td width="50%" class="label_td_2">
+                            <span class="cstm_label_arabic">ملاحظة: يمكن إضافة ملحق إلى هذا العقد في حال وجود أي شروط إضافية. على آن يوقع</span>
+                            <br><span class="cstm_label_arabic">من أطراف التعاقد&rlm;</span><span class="cstm_label_arabic">.&rlm;</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td class="text_center"><span class="cstm_label_arabic">Tenant Signature&nbsp;/&nbsp;إمضـــــاء  المستأجر </span></td>
+                                </tr>
+                            <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                 <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                <tr>
+                                    <td class="text_center">
+                                        <table>
+                                            <tr>
+                                                <td><span class="cstm_label label_1">Date</span></td>
+                                                <td class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{deal.date}}</span></td>
+                                                <td><span class="cstm_label_arabic">التاريخ</span></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table width="100%">
+                                <tr>
+                                    <td class="text_center"><span class="cstm_label_arabic">Landlord Signature&nbsp;/&nbsp;إمضـــــاء  الـمــؤجــــر </span></td>
+                                </tr>
+                               <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                 <tr><td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></td></tr>
+                                <tr>
+                                    <td class="text_center">
+                                        <table>
+                                            <tr>
+                                                <td><span class="cstm_label label_1">Date</span></td>
+                                                <td class="middle_part cstm_signle_tr_td"><span class="contarct_details">{{deal.date}}</span></td>
+                                                <td><span class="cstm_label_arabic">التاريخ</span></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="footer">
+                <table class="footer_table" style="">
+                    <tr >
+                        <td><img  alt="logo2" src="/static/assets/img/tenancy_contract_images/new_footer.png"></td><br>
+                    </tr>
+                </table>
+            </div>
+            <div class="inner_data">
+             <div style="height : auto">
+                <div class="kyc_form_div" style= "height:80px">
+                    <img alt="logo2" src="/static/assets/img/tenancy_contract_images/kyc_form.PNG" style="heigth:500px">
+                </div>
+                <div class="kyc_form_div " style = "padding:0px;margin-top:20px;">
+                  
+                         
+                <table width="100%"style="width:100%; ">
+                    <tr style = "height :50px;"  >
+                        
+                        <td style =" line-height:8px ; " ><label for="date"><span class="kyc-label"><b> DATE </b></span></label>
+                        <textarea type="text" class="form-control" id=" date" name="application_number"  style="width:180px;height:25px;font-size:5px;" > </textarea>
+                        </td>
+                        <td  style = "line-height:8px ; " ><label for="application_number"><span class="kyc-label"><b>APPLICATION NUMBER</b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number" style="width:100%;height:25px;font-size:5px;"  ></textarea>
+                        </td>
+                    </tr>
+                    <tr style = " width:100% ; height :50px; ">
+                        
+                        <td style = "line-height:8px ; " ><label for="application_number"><span class="kyc-label"><b> UNIT DETAILS: AREA/ BLDG. NAME/ UNIT NO. </b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number"  style="width:100%;height:25px;font-size:5px;" > </textarea>
+                        </td>
+                         
+                    </tr>
+                     <tr style = " width:100%;height :50px; ">
+                        
+                        <td style = "line-height:8px ; "  ><label for="application_number  "  style = "font-size:14"><span class="kyc-label"><b> FULL NAME(AS PER PASSPORT) </b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number"   style="width:100%;height:25px;font-size:5px;" > </textarea>
+                        </td>
+                        <td  style = "line-height:8px ; "  ><label for="application_number"><span class="kyc-label"><b>PASSPORT NO./EID NO.</b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number" style="width:100%;height:25px;font-size:5px;"  ></textarea>
+                        </td>
+                    </tr>
+                     <tr style = " width:100% ;height :50px;">
+                        
+                        <td  style = "line-height:8px ; "  ><label for="application_number"><span class="kyc-label"><b> E-MAIL </b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number"   style="width:100%;height:25px;font-size:5px;"  > </textarea> 
+                        </td>
+                        <td  style = "line-height:8px ; "  ><label for="application_number"><span class="kyc-label"><b>MOBILE NUMBER</b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number" style="width:100%;height:25px;font-size:5px;"  ></textarea> 
+                        </td>
+                    </tr>
+                     <tr>
+                        <td class="">
+                            <label for="visa_status" style = ""><span class="kyc-label"><b>VISA STATUS</b></span></label> 
+                            
+                                    <div style="display: flex; margin-top: -30px ; gap:20px; ">
+    <!-- Resident -->
+                                <label style="display: inline-flex; align-items: center;">
+                                    <input type="checkbox" id="resident" name="visa_status"   style="width: 18px; height: 18px; margin-right: 5px;">
+                                    <span class="kyc-label">Resident</span>
+                                </label>
+
+                                <!-- Non Resident -->
+                                <label style="display: inline-flex; align-items: center;">
+                                    <input type="checkbox" id="non_resident" name="visa_status"  style="width: 18px; height: 18px; margin-right: 5px;">
+                                    <span class="kyc-label">Non Resident</span>
+                                </label>
+                                </div>
+                       
+                            </td>
+                        <td  style = "line-height:12px ; "  ><label for="application_number"><span class="kyc-label"><b> NATIONALITY </b></span></label>
+                        <textarea type="text" class="form-control" id="application_number" name="application_number" style="width:100%;height:25px;font-size:5px;"  ></textarea> 
+                        </td>
+                    </tr>
+                   
+                </table><hr>
+                <div class="finacial_details_div" style = "margin-top:-10px">
+                     <table class="financial_details">
+                        <tr>
+                            <td><h6><u>FINANCIAL DETAILS ABOUT PROPERTY</u><h6></td>
+                        </tr>
+                    </table>
+                    <table width="100%">
+                        <tr>
+                                <td style="width: 12%; height: 30px; vertical-align: middle;">
+                                    <label style="font-size: 10px;"><b>LOOKING TO:</b></label>
+                                </td>
+
+                                <!-- Rent A Property -->
+                                <td style="width: 20%; height: 30px; vertical-align: middle;">
+                                    <div style="display: flex; align-items: center; height: 100%; margin-right:10px">
+                                        <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                        <span style="font-size: 12px; padding-left: 6px;">Rent A Property</span>
+                                    </div>
+                                </td>
+
+                                <!-- Buy A Property + Sub-options -->
+                            <td style="width: 50%; height: 30px; vertical-align: middle;">
+                                    <div style="display: flex; align-items: center; height: 100%; flex-wrap: wrap;">
+                                    
+                                    <!-- Buy A Property -->
+                                        <div style="display: flex; align-items: center; margin-right: 8px;">
+                                        <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                        <span style="font-size: 12px; padding-left: 6px;">Buy A Property ( </span>  
+                                        </div>
+
+                                        <!-- Self Use -->
+                                        <div style="display: flex; align-items: center; margin-right: 8px;">
+                                        <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                        <span style="font-size: 12px; padding-left: 6px;"> Self Use</span>
+                                        </div>
+
+                                        <!-- Investment -->
+                                        <div style="display: flex; align-items: center;">
+                                        <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                        <span style="font-size: 12px; padding-left: 6px;">Investment )</span>
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <!-- Sell A Property -->
+                            <td style="width: 20%; height: 30px; vertical-align: middle;">
+                                <div style="display: flex; align-items: center; height: 100%;">
+                                    <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                    <span style="font-size: 12px; padding-left: 6px;">Sell A Property</span>
+                                </div>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+                            <td style="width: 10%; height: 30px; vertical-align: middle;">
+                                    <label style="font-size: 9px;"><b> </b></label>
+                                </td>
+                            <td style="width: 20%; height: 30px; vertical-align: middle;">
+                                <div style="display: flex; align-items: center; height: 100%;">
+                                    <div style="width: 18px; height: 18px; border: 1px solid black;"></div>
+                                    <span style="font-size: 12px; padding-left: 6px;"> Other  </span>
+                                </div>
+                            </td>
+                        </tr>
+                    
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td style="width:17% ">
+                                <label for="property_budget"><span class="kyc-financial-label" style = "font-size : 10px"><b>PROPERTY BUDGET:</b></span></label>
+                            </td>
+                            <td>
+                                <textarea type="text" class="form-control" id="property_budget" name="property_budget" style="width:300px;height:25px;font-size:5px; "> </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <label><span class="kyc-financial-label" style = "font-size:10px  ">&nbsp;<b>PAYMENT METHOD (SELECT ALL THAT IS APPLICABLE)</b></span></label>
+                    <table width="100%">
+                        <tr>
+                        <!-- Row 1, Col 1 -->
+                        <td style="width: 30%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">Bank Loan</span>
+                            </div>
+                        </td>
+
+                        <!-- Row 1, Col 2 -->
+                        <td style="width: 40%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">Manager Cheque from UAE Bank</span>
+                            </div>
+                        </td>
+                        <td style="width: 10%;"></td>
+                        </tr>
+
+                        <tr>
+                        <!-- Row 2, Col 1 -->
+                        <td style="width: 30%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">Cash</span>
+                            </div>
+                        </td>
+
+                        <!-- Row 2, Col 2 -->
+                        <td style="width: 40%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">Company Sponsored</span>
+                            </div>
+                        </td>
+                        <td style="width: 10%;"></td>
+                        </tr>
+
+                        <tr>
+                        <!-- Row 3, Col 1 -->
+                        <td style="width: 30%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">Cheque from UAE Bank</span>
+                            </div>
+                        </td>
+
+                        <!-- Row 3, Col 2 -->
+                        <td style="width: 40%; height: 30px;">
+                            <div style="display: flex; align-items: center;">
+                            <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                            <span style="font-size: 12px;">
+                                Other&nbsp;<u>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</u>
+                            </span>
+                            </div>
+                        </td>
+                        <td style="width: 10%;"></td>
+                        </tr>
+
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <label for="if_cash"><span class="kyc-financial-label" style="font-size: 10px;" ><b>IF CASH, MENTION SOURCE OF FUNDS WITH DOCUMENTS:</b></span></label><br>
+                                <textarea type="text" class="form-control" id="if_cash" name="if_cash" style="width:600px;height:25px;font-size:5px; margin-top:-10px"> </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <label for="security_deposit"><span class="kyc-financial-label" style="font-size: 10px;"><b>SECURITY DEPOSIT (CASH, CHEQUE, OR BANK TRANSFER):</b></span></label><br>
+                                <textarea type="text" class="form-control" id="security_deposit" name="security_deposit" style="width:600px;height:25px;font-size:5px; margin-top:-10px"> </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <table width="100%"  style = "margin-top:-10px" >
+                        <tr>
+                            <td style="width:30%"><label><span style = "font-size:10px" class="kyc-financial-label"><b>NATURE OF INCOME (AGENCY): </b></span></label></td>
+                            <td style="width:30%"><label><span class="kyc-financial-label" style = "font-size:10px" ><b>MODE OF PAYMENT: </b></span></label></td>
+                            <td width="width:10%"></td>
+                        </tr>
+                        <tr style = "margin-top: -10px" >
+                            <!-- Row 1, Col 1 -->
+                            <td style="width: 30%; height: 20px; " >
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Commission</span>
+                                </div>
+                            </td>
+
+                            <!-- Row 1, Col 2 -->
+                            <td style="width: 30%; height: 20px;"  >
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Cash</span>
+                                </div>
+                            </td>
+                            <td style="width: 10%;"></td>
+                            </tr>
+
+                            <tr>
+                            <!-- Row 2, Col 1 -->
+                            <td style="width: 30%; height: 30px;">
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Management Fee</span>
+                                </div>
+                            </td>
+
+                            <!-- Row 2, Col 2 -->
+                            <td style="width: 30%; height: 30px;">
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Cheque</span>
+                                </div>
+                            </td>
+                            <td style="width: 10%;"></td>
+                            </tr>
+
+                            <tr>
+                            <!-- Row 3, Col 1 -->
+                            <td style="width: 30%; height: 30px;">
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Admin Fee</span>
+                                </div>
+                            </td>
+
+                            <!-- Row 3, Col 2 -->
+                            <td style="width: 30%; height: 30px;">
+                                <div style="display: flex; align-items: center;">
+                                <div style="width: 18px; height: 18px; border: 1px solid black; margin-right: 6px;"></div>
+                                <span style="font-size: 12px;">Bank Transfer</span>
+                                </div>
+                            </td>
+                            <td style="width: 10%;"></td>
+                        </tr>
+
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <label for="if_cash"><span class="kyc-financial-label" style = "font-size:10px"><b>IF CASH, MENTION SOURCE OF FUNDS WITH DOCUMENTS:</b></span></label><br>
+                                <textarea type="text" class="form-control" id="if_cash" name="if_cash" style="width:600px;height:25px;font-size:5px; margin-top:-10px"> </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="kyc_form_div">
+                    <table width="100%">
+                        <tr>
+                        <td style="width: 58%; font-size: 10px;">
+                            <div style="font-size: 10px; display: flex; align-items: center; gap: 10px;">
+                            <b >Are you PEP:</b>
+
+                            <div style="display: inline-flex; align-items: center; margin-top:-6px;">
+                            <div style="width: 14px; height: 14px; border: 1px solid black; margin-right: 4px;"></div>
+                            <span style="font-size: 10px;">YES</span>
+                            </div>
+
+                            <div style="display: inline-flex; align-items: center; margin-top:-6px;">
+                            <div style="width: 14px; height: 14px; border: 1px solid black; margin-right: 4px;"></div>
+                            <span style="font-size: 10px;">NO</span>
+                            </div>
+                            </div>
+
+                            <br>
+                            <span style="font-size: 10px; margin-top:-100px">(Politically Exposed Person)</span>
+                            </td>
+
+                            <td style="width:50%; font-size:10px; rignt:0px "> <label class="form-check-label" for="payment_method"><span class="kyc-financial-label"><b>Other&nbsp;<u>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</b></u></span></label><br>
+                            <label cclass="form-check-label" for="mode_of_payment" style ="font-size:10px"><spanclass="kyc-financial-label">(Ultimate Beneficiary Owner-Applicable for companies only)</span></label>
+                            </td>
+                            
+                        </tr>
+                    </table>
+                    </div>
+                    <br>
+                    <div class="declaration_div">
+                     <table class="declaration">
+                        <tr style = "height:20px">
+                            <td style="margin-top:-6px; height:20px"><h6 style = "margin:0px;margin-top:-6px">DECLARATION<h6></td>
+                        </tr>
+                    </table>
+                    <table style="width:100%; margin-top: 0px; font-size: 10px; line-height: 1.4;">
+                        <tr>
+                            <td>
+                                <p style="margin: 0;">
+                                    I hereby declare that the information provided in this form is accurate and complete. I confirm that any information found incorrect and/or incomplete that leads to a violation of regulations may initiate legal actions, and I accept that I am the responsible party for any and all charges, penalties, and violations.
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right; padding-top: 10px;">
+                                <div style="display: inline-block; text-align: right;">
+                                    <span style="margin-right: 10px;font-size:15px">Signature:</span>
+                                    <div style="display: inline-block; border: 1px solid #000; width: 200px; height: 25px; vertical-align: middle;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </div>
+                
+                
+                </div>
+            </div>    
+        </div>
+    <div>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 16px; text-transform: uppercase; margin: 0;">Acknowledgement of Receiving</h1>
+    </div>
+
+    <p style="font-size: 12px; line-height: 1.5; margin-bottom: 20px;">
+        I, the landlord/representative Mr./Ms. 
+        <u><strong>{{ deal.owner_first_name }}</strong></u> 
+        of tower/villa 
+        <u><strong>{{ deal.building_name }}</strong></u> 
+        Unit No. 
+        <u><strong>{{ deal.unit_details }}</strong></u> 
+        Location: 
+        <u><strong>{{ deal.location }}</strong></u>, 
+        acknowledge that I received the cash/original cheques for total rental payment of 
+        <u><strong>AED {{ deal.annual_rent }}</strong></u> 
+        and security deposit of 
+        <u><strong>AED {{ deal.security_deposit_amount }}</strong></u> 
+        as mentioned below.
+    </p>
+
+    <div style="margin-bottom: 30px;background-color: #efebebff; padding:10px">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; ">
+            <thead style="background-color: #e0e0e0;">
+                <tr>
+                    <th style="border: 1px solid black; padding: 8px;">Payment Mode</th>
+                    <th style="border: 1px solid black; padding: 8px;">Payment For</th>
+                    <th style="border: 1px solid black; padding: 8px;">Cheque No. / Bank Transfer Ref No.</th>
+                    <th style="border: 1px solid black; padding: 8px;">Amount (AED)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in "123456"|make_list %}
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                    <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                    <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                    <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; font-size: 12px;">
+        <div style="margin-bottom: 10px;">
+            <strong>Landlord / Representative Signature:</strong>
+            <span style="display: inline-block; border-bottom: 1px solid black; width: 200px; height: 20px; vertical-align: bottom;"></span>
+        </div>
+        <div>
+            <strong>Date:</strong>
+            <span style="display: inline-block; border-bottom: 1px solid black; width: 150px; height: 20px; vertical-align: bottom;"></span>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </div>
+
+    </body>
+</html>
+ 

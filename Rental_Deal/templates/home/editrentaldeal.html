@@ -1,6 +1,5 @@
 {% extends "layouts/base.html" %} {% load custom_tags %} {% load static %}
- 
- {%block title %}Edit Rental Deal{% endblock title %} {% block content %}
+{%block title %}Edit Rental Deal{% endblock title %} {% block content %}
 <div
   id="dealMeta"
   class="hidden"
@@ -1002,6 +1001,7 @@
               </textarea>
               <span class="text-danger" id="agent_comment_error"></span>
             </div>
+            {% if perms.core.view_admin_rental_fields %}
 
             <div class="col-md-6 form-group">
               <label for="comments">Comment by Admin</label>
@@ -1015,6 +1015,7 @@
               ></textarea>
               <span class="text-danger" id="comments_error"></span>
             </div>
+            {% endif %}
           </div>
 
           <div class="row">
@@ -1058,7 +1059,7 @@
             {% if perms.core.view_admin_rental_fields %}
             <div class="col-md-6 form-group">
               <label for="receipt_no">Approve/Reject</label><br />
-              <div class="row"> 
+              <div class="row">
                 <div class="col-3">
                   <input
                     type="radio"
@@ -1080,7 +1081,12 @@
             </div>
             {% endif %}
 
-              {% if perms.core.edit_approved_rental_deals %}
+            {% for group in request.user.groups.all %}
+          {% if "Manager" in group.name %}
+    
+       
+             {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+
             <div class="col-md-6 form-group">
               <label for="receipt_no">Approve/Reject</label><br />
               <div class="row">
@@ -1094,17 +1100,22 @@
                   Approve
                 </div>
                 <div class="col-3" style="margin-left: -45px">
-                  <input type="radio" name="manager_approved_rejected" value="R" />
+                  <input
+                    type="radio"
+                    name="manager_approved_rejected"
+                    value="R"
+                  />
                   Reject
                 </div>
-                 
               </div>
             </div>
-            {% endif %}
+           {% comment %} {% endif %} {% endcomment %}
+            {% comment %} {% break %} {% endcomment %}
+          {% endif %}
+        {% endfor %}
 
 
-
-            {% if perms.core.update_amt_status_rental_deals %}
+             {% if perms.core.update_amt_status_rental_deals %}
             <div class="col-md-6 form-group">
               <label for="kyc_number"
                 >AML<span class="mandetory_field" style="color: red"
@@ -1456,9 +1467,9 @@
 
 <!-- ✅ 5. Your custom scripts -->
 <script src="/static/assets/js/rentalcustom.js"></script>
-<script  >
+<script>
   const  rental_data = {{ rental_data|safe }}
- 
+
   console.log("Django to JS:",  rental_data);
 </script>
 

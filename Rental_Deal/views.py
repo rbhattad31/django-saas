@@ -1,3 +1,4 @@
+import datetime
 from fileinput import filename
 from urllib import request
 from django.shortcuts import render, get_object_or_404
@@ -24,6 +25,10 @@ from rest_framework.pagination import PageNumberPagination
 # from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from .forms import LoginForm, SignUpForm  # Add this import for LoginForm and SignUpForm
+from datetime import datetime
+from weasyprint import HTML
+from django.template.loader import render_to_string
+
    
 
 # from django_filters import rest_framework as filters
@@ -57,7 +62,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     # filter bsed on input 
     @action(detail=False, methods=['post'] ,url_path='filter')
     def datatable_filter(self, request):
-        print(request)
+        print(request.data)
+        print(request.data.get("order") ,"togetordering")
         user = Users.objects.get(email = request.user)
         print(request.user)
         account_id = user.account_id
@@ -114,27 +120,53 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # Global search
         search_term = data.get("search", {}).get("value") or ''
         print(search_term , "point x1")
+        combined_q_object = Q()
      
-        if search_term:
-            print("point x2", queryset)
-            queryset = queryset.filter(
-                Q(submitted_by_user__name__icontains=search_term) |
-                Q(reference_number__icontains=search_term) |
-                Q(unit_details__icontains=search_term) |
-                Q(building_name__icontains=search_term) |
-                Q(project_name__icontains=search_term) |
-                Q(owner_first_name__icontains=search_term) |
-                Q(owner_last_name__icontains=search_term) |
-                Q(owner_mobile__icontains=search_term) |
-                Q(owner_email__icontains=search_term) |
-                Q(tenant_first_name__icontains=search_term) |
-                Q(tenant_last_name__icontains=search_term) |
-                Q(tenant_mobile__icontains=search_term) |
-                Q(tenant_email__icontains=search_term) |
-                Q(property_usage__icontains=search_term) 
-              
-            )
-            print("pointx3",queryset )
+        combined_q_object |= Q(submitted_by_user__name__icontains=search_term)
+        combined_q_object |= Q(reference_number__icontains=search_term)
+        combined_q_object |= Q(unit_details__icontains=search_term)
+        combined_q_object |= Q(building_name__icontains=search_term)
+        combined_q_object |= Q(project_name__icontains=search_term)
+        combined_q_object |= Q(owner_first_name__icontains=search_term)
+        combined_q_object |= Q(owner_last_name__icontains=search_term)
+        combined_q_object |= Q(owner_mobile__icontains=search_term)
+        combined_q_object |= Q(owner_email__icontains=search_term)
+        combined_q_object |= Q(tenant_first_name__icontains=search_term)
+        combined_q_object |= Q(tenant_last_name__icontains=search_term)
+        combined_q_object |= Q(tenant_mobile__icontains=search_term)
+        combined_q_object |= Q(tenant_email__icontains=search_term)
+
+        # --- Specific Handling for Date Fields ---
+        try:
+            # Attempt to parse the search_term as DD-MM-YYYY
+            parsed_date = datetime.strptime(search_term, '%d-%m-%Y').date()
+            # If successful, format it to YYYY-MM-DD for database comparison
+            formatted_date_for_db = parsed_date.strftime('%Y-%m-%d')
+            print(formatted_date_for_db)
+
+            # Now add these date filters using the correctly formatted date.
+            # For exact date match:
+            combined_q_object |= Q(date=formatted_date_for_db)
+            combined_q_object |= Q(deal_start_date=formatted_date_for_db)
+            combined_q_object |= Q(deal_end_date=formatted_date_for_db)
+
+            # If your date fields are DATETIME/TIMESTAMP, you might need a range query
+            # For example, to search for '2017-04-11' in a DATETIME field:
+            # from datetime import timedelta
+            # end_of_day = parsed_date + timedelta(days=1)
+            # combined_q_object |= Q(date__range=(parsed_date, end_of_day))
+            # combined_q_object |= Q(deal_start_date__range=(parsed_date, end_of_day))
+            # combined_q_object |= Q(deal_end_date__range=(parsed_date, end_of_day))
+
+
+        except ValueError:
+            # If search_term is not a valid DD-MM-YYYY date, then skip adding date filters.
+            # This means date fields will not be searched if the input is not a valid date.
+            pass
+
+        # Apply the combined Q object to the queryset
+        print("point x2", queryset)
+        queryset = queryset.filter(combined_q_object)
            
 
         # Field-specific filters
@@ -144,6 +176,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             "owner_mobile", "tenant_mobile"
         ]
         for field in filter_fields:
+            print()
             value = data.get(field)
             if value:
                 filter_kwargs = {f"{field}__icontains": value}
@@ -161,16 +194,25 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         if type_filter:
             if type_filter == 'pending':
                 if account_id:
-                    if role in ['8-Manager', '8-Agent',]:
+                    if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
                         queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
                     else:
                         queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
 
             elif type_filter == 'approved':
-                queryset = queryset.filter(is_approved_rejected='A', manager_approved_rejected='A', form_status='Complete')
+                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+                    queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
+                else:
+                    queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
 
             elif type_filter == 'rejected':
-                queryset = queryset.filter(Q(is_approved_rejected='R') | Q(manager_approved_rejected='R'), form_status='Complete')
+                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+                    queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
+                else:
+                     queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
+                
+
+
             elif type_filter == "waiting-finance" :
                 queryset = queryset.filter(is_approved_rejected='F')
 
@@ -191,16 +233,57 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
  
         print(queryset)
+        order = request.data.get("order", [{}])[0]  # ⬅️ Use raw request.data
+        print("Order parameter:", order)
+ 
+        column_index = order.get("column")
+        direction = order.get("dir")
+        print(f"Column index: {column_index}, Direction: {direction}")
+ 
+        column_mapping = {
+            0: None,  # Action column (not orderable)
+            1: "id",
+            2: "reference_number",
+            3: "deal_date",
+            4: "unit_details",
+            5: "building_name",
+            6: "project_name",
+            7: "rental_price",
+            8: "deal_start_date",
+            9: "deal_end_date",
+            10: "submitted_date"
+           
+        }
+ 
+        if column_index is not None and direction:
+            try:
+                column_index = int(column_index)
+                column_name = column_mapping.get(column_index)
+                print(f"Mapped column name: {column_name}")
+ 
+                if column_name:
+                    order_expression = column_name if direction == "asc" else f"-{column_name}"
+                    print("Ordering expression:", order_expression)
+ 
+                    queryset = queryset.order_by(order_expression)
+                    print("✅ Ordering applied. SQL:", str(queryset.query))
+                    for obj in queryset[:5]:
+                        print("➡️", obj.id, getattr(obj, column_name.strip("-"), None))
+                else:
+                    print("❌ No mapped column for given index:", column_index)
+            except Exception as e:
+                print(f"⚠️ Ordering error: {str(e)}")
 
          
        
 
 
         # Date range filter
-        if data.get("from"):
-            queryset = queryset.filter(date__gte=data.get("from"))
-        if data.get("to"):
-            queryset = queryset.filter(date__lte=data.get("to"))
+        if data.get("from_date"):
+            print( "thsiiis from_data" , data.get("from_date"))
+            queryset = queryset.filter(date__gte=data.get("from_date"))
+        if data.get("to_date"):
+            queryset = queryset.filter(date__lte=data.get("to_date "))
 
         # Pagination
         start = int(data.get("start") )  # Default to 0 if not provided
@@ -319,6 +402,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             mutable_data[base_field_name] = combined_str 
             print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
 
+            
+
+
+        
+
+        
+
+
         # userobj = Users.objects.filter(pk = request.user.id)
 
         print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
@@ -329,16 +420,23 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
         print(f"DEBUG: mutable_data before serializer: {mutable_data}") 
 
+
+
+        
+        # adding reference number to the table of recipts 
+        Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no = mutable_data['reference_number'])
+        Receipts.objects.filter(id=mutable_data['receipt_no']).update(status = "Used")
         
 
 
         mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
+
         print(f"multable data  acoount_id {mutable_data['account']}")
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # edit the data 
     # @action(detail=True, methods=['get', 'post']) 
@@ -590,14 +688,23 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='view')
     def view_rental_deal(self, request, pk=None):
         rental_deal = get_object_or_404(RentalDeals, pk=pk)
-        serializer = DealSerializer(rental_deal)
+
+
+        print(rental_deal.receipt_no,"this is the recipt no")
+
+
+        serializer = DealSerializer(rental_deal,context={'request': request})
         aws_url = settings.AWS_URL
         # return HttpResponse("hello this is view page")
 
+        recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
+        print(recipt_no.id , "this is recipt id ")
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url})
+
+
+        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no})
     
-    # submitted by user dropdown
+    # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):
         """
         Custom action to get the user who submitted the deal.
@@ -615,6 +722,22 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     def receipt_drop_down(self, request):
         reciepts = Receipts.objects.all()
         return Response(ReceiptDropdownSerilizer(reciepts,many=True).data)
+    
+    # tenancy contact Generation  
+    def download_tenancey_contact_pdf(self,request, pk =None):
+        rental_deal = RentalDeals.objects.get(pk=pk) 
+        deal = DealSerializer(rental_deal,context={'request': request})
+        print(deal.data, "this is pdf")
+        html_string = render_to_string('home/tenancy_contract_pdf.html', {'deal': deal.data})
+        html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+        pdf_file = html.write_pdf()
+
+        download = request.GET.get("download") == "1"
+        disposition = 'attachment' if download else 'inline'
+
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'{disposition}; filename="receipt_{rental_deal.reference_number}.pdf"'
+        return response
 
 
 
@@ -635,6 +758,7 @@ Rental_DealViewSet_update = Rental_DealViewSet.as_view({
 Rental_DealViewSet_finance_update = Rental_DealViewSet.as_view({'put': 'update_single_field'})
 Rental_DealViewSet_agent_dropdown = Rental_DealViewSet.as_view({'get': 'submitted_by_user_dropdown'})
 Rental_DealViewSet_receipts_dropdown = Rental_DealViewSet.as_view({'get': 'receipt_drop_down'})
+Rental_DealViewSet_tenancey_contact  = Rental_DealViewSet.as_view({'get': 'download_tenancey_contact_pdf'})
  
 
 
@@ -647,6 +771,8 @@ def login_view(request):
     msg = None
 
     if request.method == "POST":
+
+        print(request)
 
         if form.is_valid():
             username = form.cleaned_data.get("username")
@@ -750,13 +876,14 @@ def all_rental_deals(request):
 def edit_rental_deal_view(request, pk): 
     deal = RentalDeals.objects.get(pk=pk)
     aws_url = settings.AWS_URL
-    try:
-        agent_group = Group.objects.get(name="Agent")  # Adjust group name if needed
-        agents = Users.objects.filter(is_active=True)
-    except Group.DoesNotExist:
-            agents = Users.objects.none()
+    # account_id = request.user.account_id
+    # try:
+    #     agent_group = Group.objects.get(name="Agent")  # Adjust group name if needed
+    #     agents = Users.objects.filter(is_active=True)
+    # except Group.DoesNotExist:
+    #         agents = Users.objects.none()
     
-    agents = Users.objects.filter(is_active=True)
+    agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
     reciepts_db = Receipts.objects.all()
@@ -786,7 +913,7 @@ def create_rental_deal_view(request):
     # except Group.DoesNotExist:
     #         agents = Users.objects.none()
 
-    agents = Users.objects.filter(is_active=True)
+    agents = Users.objects.filter(is_active=True , account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
     reciepts_db = Receipts.objects.all()
@@ -796,7 +923,7 @@ def create_rental_deal_view(request):
         'agents': agents,
         'receipts': receipts
     }
-    print(rental_data)
+    # print(rental_data) # to check teh data 
     return render(request, 'home/createrentaldeal.html', { "rental_data" :  json.dumps(rental_data), } )
 
 

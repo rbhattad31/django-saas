@@ -106,15 +106,74 @@
           <span><i class="fas fa-clipboard-list"></i> Sales Deals Management</span> <span class="chevron">&#x276F;</span>
         </a>
         <div class="collapse" id="salesDealsSubmenu">
+         
+
           <ul class="list-group ms-3">
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/list/" class="text-decoration-none"><i class="fas fa-users me-2"></i> All Sales Deals</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/draft/" class="text-decoration-none"><i class="fas fa-user me-2"></i> My Drafts</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/pending/" class="text-decoration-none"><i class="fas fa-random me-2"></i> Pending Sales Deals</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/approved/" class="text-decoration-none"><i class="fas fa-thumbs-up me-2"></i> Approved Sales Deals</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/rejected/" class="text-decoration-none"><i class="fas fa-thumbs-down me-2"></i> Rejected Sales Deals</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/waiting/" class="text-decoration-none"><i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Sales Deals</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/pending-finance/" class="text-decoration-none"><i class="fas fa-user-times me-2"></i> Pending Finance Sales Deal</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href="/sales-deals/entered-finance/" class="text-decoration-none"><i class="fas fa-user-plus me-2"></i> Entered Finance Sales Deal</a></li>
+
+            {% if perms.core.view_all_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/list/" class="text-decoration-none">
+                  <i class="fas fa-users"></i> All Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_my_draft_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/draft/" class="text-decoration-none">
+                  <i class="fas fa-user me-2"></i> My Drafts
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_pending_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/pending/" class="text-decoration-none">
+                  <i class="fas fa-random me-2"></i> Pending Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_approved_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/approved/" class="text-decoration-none">
+                  <i class="fas fa-thumbs-up me-2"></i> Approved Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_rejected_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/rejected/" class="text-decoration-none">
+                  <i class="fas fa-thumbs-down me-2"></i> Rejected Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_waiting_finance_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/waiting/" class="text-decoration-none">
+                  <i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_pending_finance_sales_deal %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/pending-finance/" class="text-decoration-none">
+                  <i class="fas fa-user-times me-2"></i> Pending Finance Sales Deal
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.enter_finance_sales_deal %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/entered-finance/" class="text-decoration-none">
+                  <i class="fas fa-user-plus me-2"></i> Entered Finance Sales Deal
+                </a>
+              </li>
+            {% endif %}
+
           </ul>
         </div>
       </li> 
@@ -133,10 +192,12 @@
       </li>
 
       <!-- Receipt -->
-      <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-file-invoice"></i> Receipt</a></li>
+       {% if perms.core.view_receipts or perms.core.change_receipts or perm.core.delete_receipts  %}
+       <li class="nav-item"><a class="nav-link" href={% url "receipts_list" %}><i class="fas fa-file-invoice"></i> Receipt</a></li>
+       {% endif %}
 
       <!-- Logout -->
-      <li class="nav-item"> 
+      <li class="nav-item">  
          <form method="post" action="{% url 'logout' %}" style="display: inline;">
     {% csrf_token %}
     <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none;">

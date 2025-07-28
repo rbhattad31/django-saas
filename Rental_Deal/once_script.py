@@ -6,7 +6,7 @@ from core.models import RentalDeals  # Replace with your actual app name
 # Ensure content type exists for unmanaged model
 content_type, _ = ContentType.objects.get_or_create(app_label='core', model='rentaldeals')
 
-custom_permissions = [
+custom_permissions = [ 
     ("manage_rental_deals", "Rental Deals Management"),
     ("view_pending_rental_deals", "Pending Rental Deals"),
     ("view_approved_rental_deals", "Approved Rental Deals"),

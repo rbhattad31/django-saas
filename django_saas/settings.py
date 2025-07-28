@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     #apps
-    'Rental_Deal',
     'core',
+    'Rental_Deal',
+    "Sales_Deals_Management",
+    "Third_Party_Receipts",
     'django_multitenant',
 
     #rest_framework

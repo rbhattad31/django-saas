@@ -1,0 +1,158 @@
+<!-- templates/receipt_template.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Receipt</title>
+    <style>
+       
+      .header, .footer {
+        text-align: center;
+        top:0px;
+      }
+      .header h1 {
+        color: #d38d00;
+      }
+      .company-details {
+        text-align: center;
+      }
+      .company-details h2 {
+        margin: 5px 0;
+      }
+      .company-details small {
+        display: block;
+      }
+      .flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      .right {
+        text-align: right;
+      }
+      .arabic {
+        font-family: 'Arial', sans-serif;
+        direction: rtl;
+      }
+      .amount-box {
+        {% comment %} border: 2px solid black; {% endcomment %}
+        width: 200px;
+        text-align: center;
+        padding: 10px;
+        font-size: 20px;
+      }
+       table { width: 100%;  margin-top: 10px; border: 2px solid black; }
+      td, th { border: 1px solid #000;   }
+      {% comment %} .section {
+        margin-top: 20px;
+      } {% endcomment %}
+      .field {
+        margin: 10px 0;
+      }
+      .note {
+        font-size: 14px;
+        color: #000;
+      }
+      .highlight-red {
+        color: red;
+        font-weight: bold;
+      }
+      .bordered {
+        border-top: 1px dashed #999;
+        margin-top: 30px;
+        padding-top: 10px;
+      }
+      .company_details{
+         display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Receipt</h1>
+    </div>
+
+    <div class="company_details">
+    <img src="/static/assets/img/brand/image.png" alt="Classic Properties Logo" class="logo">
+    <div class="info">
+      <div class="company-name">CLASSIC PROPERTIES REAL ESTATE LLC</div>
+      <div class="address">
+        P.O.Box: 15862, Suite No. 509,510, Clover Bay Tower, Business Bay, Dubai, UAE
+        <span class="orn">ORN No.18175</span>
+      </div>
+      <div class="contacts">
+        <span>📞 +97142711116</span>
+        <span>📞 +97142711128</span>
+        <span>✉ <a href="mailto:info@classicproperties.ae">info@classicproperties.ae</a></span>
+        <span>🌐 <a href="https://www.classicproperties.ae" target="_blank">www.classicproperties.ae</a></span>
+      </div>
+    </div>
+  </div>
+
+    <div class="flex section">
+      <div class="amount-box">
+        <div class="section">
+          <table>
+            <tr>
+              <th>Dhs.</th>
+              <th>Fils</th>
+            </tr>
+            <tr>
+              <td>{{ receipt.dhs|floatformat:0 }}</td>
+              <td>{{ receipt.fils }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <span class="arabic bold">سند القبض</span>
+        <div class="bold">Receipt Voucher</div>
+        <div>TRN :1003229315000003</div>
+      </div>
+
+      <div class="right">
+        <div class="bold">
+          Receipt No:<span class="highlight-red"
+            >{{receipt.receipt_number}}</span
+          >
+        </div>
+        <div>Date: {{receipt.date}}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="field">
+        <strong>Received From Mr./Ms./M/s:</strong> {{receipt.received_from}}
+      </div>
+      <div class="field">
+        <strong>The Sum of Dhs:</strong>{{receipt.sum_of_dhs}}
+      </div>
+      <div class="field">
+        <strong>Cash / Cheque No:</strong> {{receipt.payment_type}}
+        <strong>Bank:</strong> {{receipt.bank}}
+      </div>
+      <div class="field"><strong>Date:</strong> {{receipt.sec_date}}</div>
+      <div class="field"><strong>Being:</strong> {{receipt.being}}</div>
+    </div>
+
+    <div class="section">
+      <div class="note">
+        <strong>Note:</strong><br />
+        Cheque bounce charges will be AED 105.00 inclusive of VAT.
+      </div>
+
+      <div class="note bordered">
+        This is a computer generated receipt and doesn't require signature.
+      </div>
+    </div>
+  </body>
+</html>

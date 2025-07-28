@@ -16,7 +16,7 @@ function getCookie(name) {
   return cookieValue;
 }
 
- 
+console.log(currentUser);
 
 $(document).on("click", ".editComment", function () {
   // Show the textarea and submit button
@@ -27,53 +27,50 @@ $(document).on("click", ".editComment", function () {
   $("#comments_finance").val(existingComment);
 
   $("#existing_comment").hide();
-  
 
   // Hide the "Edit/Add Comment" button
   $(this).hide();
 });
 
 function comment_finance(id) {
-    // e.preventDefault(); // Prevent normal form submit
+  // e.preventDefault(); // Prevent normal form submit
 
-    const comment = $("#comments_finance").val();
- 
+  const comment = $("#comments_finance").val();
 
-    $.ajax({
-        url: '/update-single-field/' ,// Your backend URL
-        method: "PUT",
-         headers: {
+  $.ajax({
+    url: "/update-single-field/", // Your backend URL
+    method: "PUT",
+    headers: {
       "X-CSRFToken": getCookie("csrftoken"), // if CSRF is enabled
     },
-        contentType: "application/json",
-        data: JSON.stringify({
+    contentType: "application/json",
+    data: JSON.stringify({
       object_id: id,
       field_name: "comments_finance",
       value: comment,
     }),
-        success: function (response) {
-            // Show the label again
-            const latestComment = response.updated_value;
-            $("#existing_comment").text(latestComment).show(); // Update label text
-            $("#existing_comment_label").show();
-            
+    success: function (response) {
+      // Show the label again
+      const latestComment = response.updated_value;
+      $("#existing_comment").text(latestComment).show(); // Update label text
+      $("#existing_comment_label").show();
 
-            // Hide the textarea section
-            $(".edit_comments_finance").attr("hidden", true);
+      // Hide the textarea section
+      $(".edit_comments_finance").attr("hidden", true);
 
-            // Optionally, show the button again as "Edit Comment"
-            $(".editComment")
-                .val("Edit Comment")
-                .data("existing-comment", comment)
-                .show();
-                // location.reload(); 
-                alert("Submiteed the fiance comment")
-        },
-        error: function (xhr) {
-            alert("Failed to save comment.");
-        }
-    });
-};
+      // Optionally, show the button again as "Edit Comment"
+      $(".editComment")
+        .val("Edit Comment")
+        .data("existing-comment", comment)
+        .show();
+      // location.reload();
+      alert("Submiteed the fiance comment");
+    },
+    error: function (xhr) {
+      alert("Failed to save comment.");
+    },
+  });
+}
 
 // $(document).ready(function () {
 //  $.ajax({
@@ -117,6 +114,9 @@ function getTypeFromURL() {
   return mapping[lastPart] || null;
 }
 
+console.log(getTypeFromURL())
+
+// for the heading  to see all l types 
 $(document).ready(function () {
   const type = getTypeFromURL();
   let headingText =
@@ -183,20 +183,8 @@ $(document).ready(function () {
       console.log("✅ Success:", data);
     },
     columns: [
-      {
-        data: null,
-        title: "Actions",
-        render: function (data, type, row, meta) {
-          return `
-                <a href="/rental-deals/view/${row.id}/" class="text-primary"><i class="fas fa-eye"></i></a>
-                <a href="/rental-deals/update/${row.id}/" class="text-warning mx-2" id="editDealBtn" data-deal-id="${row.id}"><i class="fas fa-edit"></i></a>
-
-                <a href="#" class="text-danger delete-btn" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-  <i class="fas fa-trash"></i>
-</a>
-              `;
-        },
-      },
+     {data: "action",
+        title: "Action ",},
       { data: "email", title: "submitted_by_user" },
       {
         data: "reference_number",
@@ -244,6 +232,7 @@ $(document).ready(function () {
         //   return new Date(data).toLocaleDateString(); // ✅ format: M/D/YYYY
         // },
       },
+      
     ],
   });
 
@@ -439,35 +428,55 @@ $(document).ready(function () {
       loadAgentDropdown(data);
       loadReceiptDropdown(data);
 
-      $.each(data, function (key, value) {
-        const $field = $(`[name="${key}"], #${key}`);
-        if ($field.length) {
-          const type = $field.attr("type");
+     $.each(data, function (key, value) {
+  const $field = $(`[name="${key}"], #${key}`);
 
-          if (type === "file") {
-            console.log("Handling file input:", key, value);
-            // 🔸 Show file info or link somewhere else
-            renderFilePreviewsNextToInput(key, value, awsUrl, referenceNumber);
+  if ($field.length) {
+    const type = $field.attr("type");
 
-            const count = value
-              ? value.split(",").filter((f) => f.trim() !== "").length
-              : 0;
-            appendHiddenFileTrackingFields(key, value || "", count);
-            return; // skip setting .val() on file inputs
-          }
+    // 🔸 Handle file inputs
+    if (type === "file") {
+      console.log("Handling file input:", key, value);
+      renderFilePreviewsNextToInput(key, value, awsUrl, referenceNumber);
+      const count = value ? value.split(",").filter((f) => f.trim() !== "").length : 0;
+      appendHiddenFileTrackingFields(key, value || "", count);
+      return; // skip .val() on file inputs
+    }
 
-          if (type === "checkbox") {
-            $field.prop(
-              "checked",
-              value === true || value === 1 || value === "true"
-            );
-          } else if ($field.is("select")) {
-            $field.val(value).trigger("change");
-          } else {
-            $field.val(value);
-          }
+    // ✅ Handle radio buttons only
+    if ($field.is(':radio')) {
+      const $radios = $(`input[type="radio"][name="${key}"]`);
+      if (!value || value === "P") {
+        $radios.prop("checked", false); // uncheck if P/null
+      } else {
+        const $match = $radios.filter(`[value="${value}"]`);
+        if ($match.length) {
+          console.log($match.length)
+          $radios.prop("checked", false); // clear others
+          $match.prop("checked", true);   // set correct one
+        } else {
+          $radios.prop("checked", false); // no match, clear all
         }
-      });
+      }
+
+    // ✅ Handle checkboxes
+    } else if (type === "checkbox") {
+      $field.prop("checked", value === true || value === 1 || value === "true");
+
+    // ✅ Handle selects
+    } else if ($field.is("select")) {
+      $field.val(value).trigger("change");
+
+    // ✅ Handle all other input types
+    } else {
+      $field.val(value);
+    }
+  }
+});
+
+// ✅ Manually uncheck specific radio groups (overrides)
+ 
+
     },
     error: function () {
       alert("Failed to load data.");
@@ -521,7 +530,13 @@ $(document).ready(function () {
       success: function (data) {
         // $("#save_draft_deal").removeAttr("disabled");
         console.log(data.status);
-        alert("Rental deal updated successfully!");
+         scrollTop();
+            $("#alert-primary").text("Rental Deal Updated Successfully");
+              $("#successmsg").show();
+               setTimeout(function () {
+                window.location.href = "/rental-deals/Approved" ;
+              }, 5000);
+       alert("Rental deal updated successfully!");
 
         if (data.status === "success") {
           alert("Rental deal updated successfully!");
@@ -578,6 +593,16 @@ $(document).ready(function () {
     });
   });
 });
+
+
+function scrollTop() {
+        $("html, body").animate(
+          {
+            scrollTop: $(".main-header").offset().top,
+          },
+          1000
+        );
+      }
 
 function loadAgentDropdown(requestdata) {
   agents = rental_data.agents;
@@ -831,7 +856,7 @@ function datepickershow_edit() {
     changeMonth: true,
     changeYear: true,
     yearRange: "-100:+0",
-    maxDate: 0,
+    maxDate: 0, 
     onSelect: function (date) {
       var date2 = $("#deal_start_date").datepicker("getDate");
       $("#deal_end_date").datepicker("option", "minDate", date2);

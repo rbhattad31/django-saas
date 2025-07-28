@@ -1,27 +1,60 @@
-<nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom my-3 h-auto ">
-  <div class="container-fluid d-flex justify-content-end  ">
-      <div class="header d-flex justify-content-end gap-5   align-items-center">
-        
+{% comment %} {% load json_script %} {% endcomment %} {% load custom_tags %}
 
-          {% comment %} <div class="user-info d-flex gap-2 align-item-center">
-            <p class="language-label my-1">Language:</p>
-            <select class="form-select d-block" aria-label="Language Select">
-              <option selected disabled>Select Language</option>
-              <option value="ar">Arabic</option>
-              <option value="en">English</option>
-           
-       
-            </select>
-            
-          </div> {% endcomment %}
-          <div class="user-info">
-            <span class="username" id = "username" >jhone </span>
-          </div>
-
-         <img src="/static/assets/img/brand/favicon.png" alt="User Avatar" class="user-avatar">
-
-          
-
+<nav
+  class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom my-3 h-auto"
+>
+  <div class="container-fluid d-flex justify-content-end">
+    <div class="header d-flex justify-content-end gap-5 align-items-center">
+      {% comment %}
+      <div class="user-info d-flex gap-2 align-item-center">
+        <p class="language-label my-1">Language:</p>
+        <select class="form-select d-block" aria-label="Language Select">
+          <option selected disabled>Select Language</option>
+          <option value="ar">Arabic</option>
+          <option value="en">English</option>
+        </select>
       </div>
+      {% endcomment %}
+      <div class="user-info">
+        <span class="username" id="username"> </span>
+      </div>
+
+      <img
+        src="/static/assets/img/brand/favicon.png"
+        alt="User Avatar"
+        class="user-avatar"
+      />
+      <script>
+            // this not send from hte back we are taking the data from the request
+                  const currentUser = {
+                id: "{{ request.user.id }}",
+                email: "{{ request.user.email }}",
+                name: "{{ request.user.get_full_name }}",
+                isAuthenticated: {{ request.user.is_authenticated|yesno:"true,false" }},
+                can_view : {{perms.core.view_rentaldeals|yesno:"true,false"}} ,
+                can_edit : {{perms.core.change_rentaldeals|yesno:"true,false"}} ,
+                can_delete : {{perms.core.delete_rentaldeals|yesno:"true,false"}} ,
+                permissions: {% user_permissions_json %}
+
+
+              };
+
+              console.log(currentUser.permissions)
+
+               if (currentUser.permissions.includes("core.change_rentaldeals")) {
+          console.log("Can edit rental deals  this is to check for the custom tags");
+        }
+              {% comment %} console.log(currentUser); {% endcomment %}
+              document.addEventListener("DOMContentLoaded", function () {
+          const usernameSpan = document.getElementById("username");
+
+          if (currentUser.isAuthenticated) {
+            usernameSpan.textContent = currentUser.email;
+          } else {
+            usernameSpan.textContent = "Guest";
+          }
+        });
+      </script>
+    </div>
   </div>
 </nav>

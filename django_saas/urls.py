@@ -23,14 +23,17 @@ from Rental_Deal import views
 from django.contrib.auth.views import LogoutView
 
 # Import the missing view functions
-from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_delete, Rental_DealViewSet_view,Rental_DealViewSet_finance_update  
+from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_delete, Rental_DealViewSet_view,Rental_DealViewSet_finance_update,Rental_DealViewSet_tenancey_contact  
 
 from Rental_Deal import urls 
-
+from core import urls
 urlpatterns = [
     path('', index, name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('Rental_Deal.urls')),
+    path('', include('Sales_Deals_Management.urls')),
+    path('third_party_receipts/', include('Third_Party_Receipts.urls')),
+    path('receipt/',include('core.urls')),
     path("rental/filter",views.Rental_DealViewSet_filter),
     path('login/', login_view, name="login"),
     path('register/', register_user, name="register"),
@@ -58,14 +61,16 @@ urlpatterns = [
     path('api/receipts/dropdown/' ,Rental_DealViewSet_receipts_dropdown,name =  'reciept-dropdown' ),
     path('rental-deals-form/', create_rental_deal_view, name = 'create-rental-deal'),
 
+
+    path("tenancey/contract/download/<int:pk>/",Rental_DealViewSet_tenancey_contact,name = "tenancey-contact"),
      # Include the Rental_Deal app URLs
 
-    # Removed path('', views.index, name='home') because 'views' is not defined
+ 
 
     # Matches any html file
     re_path(r'^.*\.*', pages, name='pages'),
     
-    # path('silk/', include('silk.urls', namespace='silk'))
+    
 ] 
 
 if settings.DEBUG:

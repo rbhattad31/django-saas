@@ -10,3 +10,14 @@ label.error {
   font-size: 12px;
   margin-top: 5px;
 }
+
+table.dataTable thead > tr > th.sorting:after,
+table.dataTable thead > tr > th.sorting_asc:after,
+table.dataTable thead > tr > th.sorting_desc:after {
+    left: auto !important; /* Ensure it's not forced left */
+    right: 8px !important; /* Or whatever default right padding DataTables uses */
+    /* You might also need to adjust top, position, etc. if they are wrong */
+    position: absolute !important;
+    top: 50% !important;
+    margin-top: -8px !important; /* Adjust if icon size varies */
+}

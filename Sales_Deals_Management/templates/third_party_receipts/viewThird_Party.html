@@ -1,0 +1,99 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="main-content pt-4"><div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary " id="alert-primary">
+      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+    </div>
+</div> 
+<div class="col-md-12">
+	<h4 class="pb-2">Third Party Receipt Details<span class="float-right mr-2">
+		<a class="btn btn-primary btn-rounded" href="{% url 'third_party_receipts_list' %}">Back</a></span>
+	</h4>
+	<div class="card mb-5">
+		<div class="card-body">
+			<form id="createReceiptForm">
+				<input type="hidden" name="_token" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI">
+				<div class="row">
+					<div class="col-md-6 form-group mb-3">
+						<label for="date">Receipt Date</label>
+            <input type="text" id="date" name="date" class="form-control" value="{{deposit.date}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="receipt_number">Received From</label>
+            <input type="text" name="received_from" class="form-control" id="received_from" placeholder="Enter Received From" value="{{deposit.received_from}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="receipt_number">Receipt Number</label>
+            <input type="text" name="deposit_number" class="form-control" id="deposit_number" placeholder="Enter Receipt Number" value="{{deposit.deposit_number}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="dhs">Dhs</label>
+            <input type="text" name="dhs" class="form-control" id="dhs" value="{{deposit.dhs}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">Fils</label>
+            <input type="text" name="fils" class="form-control" id="fils" value="{{deposit.fils}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">The Sum Of Dhs</label>
+            <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" value="{{deposit.sum_of_dhs}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="payment_type">Payment Type</label>
+            <input type="text" name="payment_type" class="form-control" id="payment_type" value="{{deposit.payment_type}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          
+          <div class="col-md-6 form-group mb-3">
+            <label for="cash/cheque no">Cheque No</label>
+            <input type="text" name="cheque_no" class="form-control" id="cheque_no" value="{{deposit.cheque_no}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+         
+          <div class="col-md-6 form-group mb-3">
+            <label for="bank">Bank Name</label>
+            <input type="text" name="bank" class="form-control" id="bank" value="{{deposit.bank}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="sec_date">Payment Date</label>
+            <input type="text" name="sec_date" class="form-control" id="sec_date" value="{{deposit.sec_date}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="being">Being</label>
+            <input type="text" name="being" class="form-control" id="being" value="{{deposit.being}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+           <!-- <div class="col-md-6 form-group mb-3">
+            <label for="status">Status</label>
+            <input type="text" name="status" class="form-control" id="status" value="" readonly style="background-color: #f8f9fa">
+          </div> -->
+           <div class="col-md-6 form-group mb-3">
+            <label for="deal_type">Deal Type</label>
+            <input type="text" name="deal_type" class="form-control" id="deal_type" value="{{deposit.deal_type}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="deal_type">Agent Name</label>
+            <input type="text" name="agent_name" class="form-control" id="agent_name" value="{{deposit.agent_name}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="deal_type">On Behalf Of</label>
+            <input type="text" name="on_behalf_of" class="form-control" id="on_behalf_of" value="{{deposit.on_behalf_of}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="project_name">Building Name</label>
+            <input type="text" name="building_name" class="form-control" id="building_name" value="{{deposit.building_name}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+
+          <div class="col-md-6 form-group mb-3">
+            <label for="project_name">Unit Number</label>
+            <input type="text" name="unit_number" class="form-control" id="unit_number" value="{{deposit.unit_number}}" readonly="" style="background-color: #f8f9fa">
+          </div>
+          </div>
+			</form>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock content %}
+

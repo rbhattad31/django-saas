@@ -1,4 +1,5 @@
 
+import json
 import re
 from django import template
 from datetime import datetime
@@ -63,6 +64,27 @@ def ymd_to_dmy(value):
         return value  # Fallback: return original if it fails
 
 
+
+
+@register.simple_tag(takes_context=True)
+def user_permissions_json(context):
+    user = context['request'].user
+    perms = list(user.get_all_permissions())  # convert set to list
+    return mark_safe(json.dumps(perms))
+
+@register.filter
+def split_dmy(date_str, part):
+    try:
+        day, month, year = date_str.split("-")
+        if part == "day":
+            return day
+        elif part == "month":
+           
+            return month  # Return full month name
+        elif part == "year":
+            return year
+    except:
+        return ""
 
 
 # import re

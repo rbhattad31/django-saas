@@ -6,19 +6,23 @@
 
 {% block content %}
 
-<div class="">
+<div class="">  
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3> List of  <span id = "heading">All</span> </h3>
+
+  
+    {% if perms.core.add_rentaldeals %}  
     <a class="btn btn-primary" href="{% url 'create-rental-deal' %}"> Create Rental  Deal</a>
+    {% endif %}
 
   </div>
 
  
 
 <!-- Bootstrap CSS -->
-<div>
-<form id="filterForm" class="m-0 border rounded p-3 bg-light ">
+  <div>
+  <form id="filterForm" class="m-0 border rounded p-3 bg-light ">
   <!-- Filter Toggle -->
   <div class="d-flex align-items-center mb-2">
     <strong class="me-2">Filters By:</strong>
@@ -110,9 +114,9 @@
 
   <!-- Visually OUTSIDE collapse but INSIDE form -->
    
-</form>
-</div style="max-height: 400px; overflow-y: auto;">
-<table id="myTable" class="display " style="width:100% overflow-y: auto;">
+  </form>
+  </div style="max-height: 400px; overflow-y: auto;">
+  <table id="myTable" class="display " style="width:100% overflow-y: auto;">
     <thead>
         <tr>
       {% comment %} <th>ID</th>
@@ -128,7 +132,7 @@
     <tbody>
         
     </tbody>
-</table>
+  </table>
 
 
 

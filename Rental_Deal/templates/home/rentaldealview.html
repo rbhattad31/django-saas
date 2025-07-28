@@ -22,7 +22,10 @@
                     <a class="btn btn-primary btn-rounded" href= {% url "rental-deal-list" %}  >Back</a>
 
 
-                                        <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/receipt/downloadRentalDealsReceiptPDF/8877">Download Receipt</a> 
+                                        <a class="btn btn-primary btn-rounded" href="/receipt/{{ recipt_no.id}}/download/" target="_blank" >Download  Receipt</a> 
+{% if perms.core.view_admin_rental_fields %}
+                                        <a class="btn btn-primary btn-rounded" href="/tenancey/contract/download/{{rentaldeal.id}}/" target="_blank" > Generate Tenancy Contract   </a> 
+                                        {% endif %}
                                                                                     </span>
                     
                 </h4>
@@ -75,7 +78,7 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6">
-                                            <label for=""><h6 class="value">   {{rentaldeal.submitted_by_user.name|ymd_to_dmy }}                                                                                                                                </h6>
+                                            <label for=""><h6 class="value">   {{rentaldeal.username  }}                                                                                                                                </h6>
                                             </label>
                                         </div>
                                     </div>
@@ -1339,6 +1342,7 @@
                                     </div> 
                                                         
                                 <div class="col-md-6 form-group mb-3">
+                                    {% if perms.core.update_finance_status_rental_deals %}
                                     <div class="row">
                                         <div class="col-4">
                                             <label for="">
@@ -1363,6 +1367,7 @@
                                             {% endif %}
                                         </div>
                                     </div>
+                                    {% endif %}
                             </div>                          
                         </div> <hr>    
                         <div class="row">
@@ -1387,7 +1392,7 @@
                                 </div>
                             </div>
 
-                                
+                            {% if perms.core.comment_finance_rental_deals %}  
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">
@@ -1402,6 +1407,8 @@
                                         </div>
                                     </div>
                                 </div>
+                            {% endif %} 
+                            
                             </div> 
 
                         {% if perms.core.comment_finance_rental_deals %}  
@@ -1414,7 +1421,7 @@
                             <div class="col-1">:</div>
                             
                             <div class="col-6">
-                            <form id="finance_comment_form" method="post" novalidate>
+                                <form id="finance_comment_form" method="post" novalidate>
                                 {% csrf_token %}
 
                                 <!-- Comment input area - initially hidden -->
@@ -1423,14 +1430,14 @@
                                     <br>
                                     <input type="buttom" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" onclick="comment_finance({{ rentaldeal.id }})">
                                 </div>
-                            </form>
+                                </form>
                                 <!-- Displayed comment (if any) -->
-                                <div class="col-6">
-                                    <div class="format-value">
+                                    <div class="col-6">
+                                        <div class="format-value">
                                         <label>
                                             <h6 class="value editCommentText" id="existing_comment">{{ rentaldeal.comments_finance|default_if_none:"" }}</h6>
                                         </label>
-                                    </div>
+                                        </div>
 
                                     <!-- Add/Edit button -->
                                     <input 
@@ -1441,7 +1448,7 @@
                                     >
                                 </div>
                            
-                    </div>
+                            </div>
                         </div>   
                         {% endif %}      
                                         
@@ -1458,7 +1465,7 @@
         </div>
 	</div>
 			<div class="sidebar-overlay open"></div>
-</div>
+</div> 
  
 
 <!-- ✅ 1. Load jQuery (pick ONE: either local OR CDN) -->

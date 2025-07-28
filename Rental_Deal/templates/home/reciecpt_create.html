@@ -1,0 +1,497 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="main-content pt-4">
+  <div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary " id="alert-primary">
+      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+    </div>
+</div> 
+<div class="col-md-12">
+  <h4 class="pb-2">Add New Receipt<span class="float-right mr-2">
+    <a class="btn btn-primary btn-rounded" href="{% url "receipts_list" %}">Cancel</a></span>
+  </h4>
+    <div class="card mb-5">
+    <div class="card-body">
+      <form id="createReceiptForm" novalidate="novalidate">
+        <input type="hidden" name="_token" value="OR4rYuxpSyEx26RSxMDYemREutpeaZnFrJ9xrQpT">
+        <div class="row">
+          <div class="col-md-6 form-group mb-3">
+            <label for="date">Receipt Date<span style="color: red">*</span></label>
+            <input type="text" id="date" name="date" class="form-control  " placeholder="Enter Receipt Date" autocomplete="off" readonly="readOnly"> 
+            <label class="error text-danger err-name" id="date_error_msg"></label>
+            <span class="error text-danger err-name" id="date_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+          <label for="receipt_number">Receipt Number<span style="color: red">*</span></label>
+          <input type="text" name="receipt_number" class="form-control" id="receipt_number" placeholder="Enter Receipt Number" value={{next_receipt_number}} readonly="">       
+          <label class="error text-danger err-name" id="receipt_number_error_msg"></label>
+          <span class="error text-danger err-name" id="receipt_number_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="date">Received From<span style="color: red">*</span></label>
+            <input type="text" id="received_from" name="received_from" class="form-control" placeholder="Enter Received From"> 
+            <label class="error text-danger err-name" id="received_from_error_msg"></label>
+            <span class="error text-danger err-name" id="received_from_error"></span>
+          </div>
+         
+          <div class="col-md-6 form-group mb-3">
+            <label for="dhs">Dhs<span style="color: red">*</span></label>
+            <input type="text" name="dhs" class="form-control" id="dhs" placeholder="Enter Dhs">
+            <label class="error text-danger err-name" id="dhs_error_msg"></label>
+            <span class="error text-danger err-name" id="dhs_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">Fils<span style="color: red">*</span></label>
+            <input type="text" name="fils" class="form-control" id="fils" placeholder="Enter Fils">
+            <label class="error text-danger err-name" id="fils_error_msg"></label>
+            <span class="error text-danger err-name" id="fils_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="fils">The Sum Of Dhs<span style="color: red">*</span></label>
+            <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" placeholder="Enter Sum Of Dhs">
+            <label class="error text-danger err-name" id="sum_of_dhs_error_msg"></label>
+            <span class="error text-danger err-name" id="sum_of_dhs_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="payment_type">Payment Type<span style="color: red">*</span></label>
+            <select name="payment_type" class="form-control" id="payment_type">
+                <option value="" selected="">Please Select</option>
+                <option class="payment-type-option" value="Cash">Cash</option>
+                <option class="payment-type-option" value="Cheque">Cheque</option>
+                <option class="payment-type-option" value="Bank Transfer">Bank Transfer</option>
+            </select> 
+            <span class="error text-danger err-name" id="payment_type_error"></span>
+          </div>
+         
+          <div class="col-md-6 form-group mb-3 cheque">
+            <label for="cash/cheque no">Cheque No<span class="cheque_no" style="color: red; display: none;">*</span></label>
+            <input type="text" name="cheque_no" class="form-control" id="cheque_no" placeholder="Enter Cheque No">
+            <label class="error text-danger err-name" id="cheque_no_error_msg"></label>
+            <span class="error text-danger err-name" id="cheque_no_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="bank">Bank Name<span class="bank_name" style="color: red; display: none;">*</span></label>
+            <input type="text" name="bank" class="form-control" id="bank" placeholder="Enter Bank Name">
+            <label class="error text-danger err-name" id="bank_error_msg"></label>
+            <span class="error text-danger err-name" id="bank_error"></span>
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="sec_date">Payment Date<span style="color: red">*</span></label>
+            <input type="text" name="sec_date" class="form-control" id="sec_date" placeholder="Enter Payment Date" autocomplete="off" readonly="readOnly">
+            <label class="error text-danger err-name" id="sec_date_error_msg"></label>
+            <span class="error text-danger err-name" id="sec_date_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="being">Being<span style="color: red">*</span></label>
+            <input type="text" name="being" class="form-control" id="being" placeholder="Enter Being">
+            <label class="error text-danger err-name" id="being_error_msg"></label>
+            <span class="error text-danger err-name" id="being_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="status">Status</label>
+           <!-- <select name="status" class="form-control" id="status">
+                <option value="Unused" selected="">Please Select</option>
+                <option value="Used">Used</option>
+                <option value="Unused">Unused</option>
+            </select> -->
+             <input type="text" name="status" class="form-control" id="status" value="Unused" placeholder="Status" readonly="">
+            <span class="error text-danger err-name" id="status_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="deal_type">Deal Type<span style="color: red">*</span></label>
+            <select name="deal_type" class="form-control" id="deal_type">
+                <option value="" selected="">Please Select</option>
+                <option value="Sales">Sales</option>
+                <option value="Rental">Rental</option>
+            </select> 
+            <span class="error text-danger err-name" id="deal_type_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="agent_name">Agent Name<span class="agent_name" style="color: red">*</span></label>
+              <select name="agent_name" class="form-control " id="agent_name">
+                  <option value="">Select Agent</option>
+                                <option value="Rahul B" data-email="rahul@classicproperties.ae" data-agent_id="10">Rahul B</option>
+                                                      <option value="Anirudh" data-email="anirudh@classicproperties.ae" data-agent_id="11">Anirudh</option>
+                                                       
+                                                      <option value="Hrag Geukjian" data-email="hrag@classicproperties.ae" data-agent_id="122">Hrag Geukjian</option>
+                                                      <option value="Shruti Agarwal" data-email="shruti@classicproperties.ae" data-agent_id="123">Shruti Agarwal</option>
+                                                      <option value="Shubh Sarda" data-email="shubh@classicproperties.ae" data-agent_id="124">Shubh Sarda</option>
+                                                      <option value="Hitesh Aswani" data-email="hitesh.a@classicproperties.ae" data-agent_id="125">Hitesh Aswani</option>
+                                                      <option value="Kalash Malani" data-email="kalash@classicproperties.ae" data-agent_id="126">Kalash Malani</option>
+                                                      </select>
+              <input type="hidden" name="agent_email" id="agent_email">
+              <input type="hidden" name="agent_id" id="agent_id">
+            <span class="error text-danger err-name" id="agent_name_error"></span>
+          </div>
+          <div class="col-md-6 form-group mb-3">
+            <label for="project_name">Project Name<span class="project_name" style="color: red">*</span></label>
+            <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Enter Project Name">
+            <label class="error text-danger err-name" id="project_name_error_msg"></label>
+            <span class="error text-danger err-name" id="project_name_error"></span>
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="building_name">Building Name<span class="building_name" style="color: red">*</span></label>
+            <input type="text" name="building_name" class="form-control" id="building_name" placeholder="Enter Building Name">
+            <label class="error text-danger err-name" id="building_name_error_msg"></label>
+            <span class="error text-danger err-name" id="building_name_error"></span>
+          </div>
+           <div class="col-md-6 form-group mb-3">
+            <label for="unit_number">Unit Number<span class="unit_number" style="color: red">*</span></label>
+            <input type="text" name="unit_number" class="form-control" id="unit_number" placeholder="Enter Unit Number">
+            <label class="error text-danger err-name" id="unit_number_error_msg"></label>
+            <span class="error text-danger err-name" id="unit_number_error"></span>
+          </div>
+        </div>
+
+         <div class="form-group row">
+          <div class="col-sm-12 btn-center">
+            <button id="submit" class="btn btn-primary btn-rounded m-1">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+    const  recicept_data = {{ reciecpt_data|safe }}
+    console.log("Django to JS:",  recicept_data);
+</script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ✅ Bootstrap and related -->
+    <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+    <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    {% comment %} <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script> {% endcomment %}
+
+    <!-- ✅ jQuery UI (datepicker etc.) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- ✅ Datatables -->
+    <script src="/static/assets/js/datatables.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- ✅ jQuery Validation plugin -->
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<script type="text/javascript">
+
+      function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      for (let cookie of document.cookie.split(";")) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+ 
+$.validator.addMethod("only_text", function(value, element) {
+  return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
+  },"Enter valid Name");
+		
+			
+$.validator.addMethod("custom_email", function (value, element) {
+      		var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        	return this.optional(element) || regEx.test(value);
+    		}, "Enter a valid email address.");
+
+$.validator.addMethod("alpha_numeric", function (value, element, param) {
+       return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+    }, "Enter valid Profile Id");
+
+$.validator.addMethod("numeric", function (value, element, param) {
+    	 return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers.");
+$.validator.addMethod("text_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+     },"Enter only letters and special characters.");
+$.validator.addMethod("alphanum_special", function(value, element) {
+    return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+ },"Enter only letters, numbers and special characters.");
+$.validator.addMethod("lettersonly", function(value, element) {
+  return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+}, "Letters only please")
+
+  $('#createReceiptForm').validate({
+    ignore: "",
+    ignore: [], 
+    rules: {
+        date:{
+         required: true,
+         },
+         receipt_number:{
+         required: true,
+         alphanum_special: true,
+        },
+        received_from:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+       
+        dhs:{
+         required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+        fils:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+        sum_of_dhs:{
+        required: true,
+        alphanum_special: true, 
+        maxlength: 255,
+        },
+        bank:{
+        alphanum_special: true,
+        },
+        sec_date:{
+        required: true,
+        },
+        being:{
+        required: true,
+        },
+        deal_type:{
+        required: true,
+        },
+        payment_type:{
+        required:true,    
+        },
+        cheque_no:{
+        alphanum_special: true, 
+        minlength:3,
+        maxlength:15,
+
+        },
+        project_name: {
+       required: true,
+       maxlength: 255,
+       },
+        building_name: {
+       alphanum_special: true,
+       required: true,
+       maxlength: 255,
+     },
+     agent_name: {
+       alphanum_special: true,
+       required: true,
+       maxlength: 255,
+   
+     },
+     unit_number:{
+      alphanum_special: true,
+      required: true,
+      maxlength: 15,
+     }
+
+      },
+    
+
+  
+  submitHandler:function(){
+            $('#submitButton').attr('disabled',true);
+            $('.loadscreen').show();
+            $.ajax({
+                method: "POST",
+                headers: {
+                        "X-CSRFToken":  getCookie("csrftoken")
+            },  
+               url: "/receipt/api/create/",
+                data:new FormData($("#createReceiptForm")[0]),
+                contentType: false,
+              processData: false,
+              })
+            .done(function( data, textStatus, xhr, Response ) {
+                $('.loadscreen').hide();
+                console.log(data);
+                console.log("Response Data:", data);
+                console.log("Text Status:", textStatus);
+                console.log("HTTP Status Code:", xhr.status);
+                console.log("HTTP Status Code:", Response);
+
+                $('#submitButton').removeAttr('disabled',true);
+                if(xhr.status == 201){
+                  $("#createReceiptForm")[0].reset();
+                    $("#alert-primary").text("Receipt has been created successfully!");
+                    $("#successmsg").show();
+                  //  $('html, body').animate({
+                     // scrollTop: $('.main-header').offset().top
+                  //}, 1000);
+                 // setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
+                    
+                }
+                else if(data.status=='validation_error'){
+                  $.each(data.data, function (key, val) {
+                        $("#"+key+"_error").text(val[0]);
+                        $("#"+key+"_error").show();
+                        $(document).on("keyup", "input[name='"+key+"']", function(e) {
+                              $("#"+key+"_error").hide();
+                         });
+                         if(key == 'receipt_number' && val[0] == 'The receipt number has already been taken.'){
+                          swal("Receipt number is already taken", "Click Ok to refresh the receipt number")
+                          .then(function(){
+                              location.reload();
+                          });
+                         }
+                  });
+                  
+                }
+                else{
+                   $("#alert-primary").text("Something Went Wrong !");
+                    $("#successmsg").show();
+                 //   $('html, body').animate({
+                  //    scrollTop: $('.main-header').offset().top
+                 // }, 1000);
+                    setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                }
+                
+            });
+            }
+
+});
+      $(document).ready(function() {
+  $("#date").datepicker({
+       dateFormat: "dd-mm-yy",
+       autoclosed:true,
+       changeMonth: true,
+       changeYear: true,
+       maxDate: 0,
+       yearRange: "-50:+50",
+   });
+   $("#date").datepicker('setDate', '+0');
+   $('#date').attr('readOnly', true);
+  $("#sec_date").datepicker({
+       dateFormat: "dd-mm-yy",
+       autoclosed:true,
+       changeMonth: true,
+       changeYear: true,
+       yearRange: "-50:+50",
+   });
+  
+   $("#sec_date").datepicker('setDate', '+0');
+   $('#sec_date').attr('readOnly', true);
+
+
+  var payment_type = $('#payment_type').val();
+  if(payment_type == '')
+  {
+    $('.bank_name').hide();
+    $('.cheque_no').hide();
+  }
+  else if(payment_type == 'Cash')
+  {
+    $('.bank_name').hide();
+    $('.cheque_no').hide();
+  }
+  else if(payment_type == 'Cheque')
+  {
+    $('.bank_name').show();
+    $('.cheque_no').show();
+  }
+  else if(payment_type == 'Bank Transfer')
+  {
+    $('.bank_name').show();
+    $('.cheque_no').hide();
+  }
+
+  $('#payment_type').on('change', function() {  
+    var payment_type = this.value;
+    if(payment_type == 'Cheque')
+      {
+        $('.bank_name').show();
+        $('.cheque_no').show();
+      }
+    else if(payment_type == 'Cash')
+      {
+        $('.bank_name').hide();
+        $('.cheque_no').hide();
+      } 
+      else if(payment_type == 'Bank Transfer')
+      { 
+        $('.cheque_no').hide();
+        $('.bank_name').show();
+      }
+  });
+
+    $("#submit").click(function () {
+      var payment_type = $('#payment_type').val();
+      if(payment_type == 'Cash'){
+          $('#cheque_no_error').hide();
+          $('#bank_error').hide();
+      }
+      else if(payment_type == 'Cheque'){
+          $('#cheque_no_error').show();
+          $('#bank_error').show();
+      }
+      else if(payment_type == 'Bank Transfer'){ 
+          $('#cheque_no_error').hide();
+          $('#bank_error').show();
+      }
+    });
+ 
+}); 
+
+loadAgentDropdown()
+
+{% comment %} load agents data  {% endcomment %}
+
+ function loadAgentDropdown() {
+      agents = recicept_data.agents;
+      console.log(agents);
+
+      populateAgentDropdown(
+        "#agent_name",
+        agents,
+        
+      );
+
+    }
+
+    // populate the user data based on requriement
+function populateAgentDropdown(selector, data) {
+        const $dropdown = $(selector);
+        $dropdown.empty().append('<option value="">Select Agent</option>');
+        if (Array.isArray(data)) {
+          data.forEach(function (agent) {
+            const option = $("<option></option>")
+              .val(agent.name) // or agent.user_id or whatever field you use
+              .text(agent.name) // or agent.full_name or agent.username
+              .attr("data-email", agent.email) // sets the display text
+              .attr("data-agent_id", agent.id);
+              
+            $dropdown.append(option);
+          });
+        }
+      }
+
+
+    $(document).ready(function() {
+      $('#agent_name').on('change', function() {
+          var selectedOption = $(this).find(':selected');
+          var agentEmail = selectedOption.data('email'); // Get the value of the 'data-email' attribute
+          var agentId = selectedOption.data('agent_id'); // Get the value of the 'data-email' attribute
+          $('#agent_email').val(agentEmail);
+          $('#agent_id').val(agentId);// Update the value of the hidden field with the agent email
+          console.log(agentEmail,agentId , "Fromthe  agent assignng and agemt enmil assign serge");
+      })
+  });
+    
+</script>
+
+
+{% endblock content %}

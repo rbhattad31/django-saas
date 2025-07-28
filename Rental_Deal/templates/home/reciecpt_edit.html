@@ -1,0 +1,820 @@
+{% extends 'layouts/base.html' %} {% load static %} {% block content %}
+
+<div
+  id="dealMeta"
+  class="hidden"
+  data-deal-id="{{ receipt_id }}"
+  style="display: none"
+></div>
+
+<div class="main-content pt-4">
+  <div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary" id="alert-primary">
+      <button
+        class="close float-right"
+        type="button"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <h4 class="pb-2">
+      Edit Receipt Details<span class="float-right mr-2">
+        <a
+          class="btn btn-primary btn-rounded"
+          href="http://dealsaws.classicproperties.ae/receipt/list"
+          >Cancel</a
+        ></span
+      >
+    </h4>
+    <div class="card mb-5">
+      <div class="card-body">
+        <form id="createReceiptForm" novalidate="novalidate">
+          <input
+            type="hidden"
+            name="_token"
+            value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
+          />
+          <div class="row">
+            <input
+              type="hidden"
+              value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
+              name="csrf-token"
+              id="token"
+            />
+            <input type="hidden" name="id" value="4334" id="id" />
+            <div class="col-md-6 form-group mb-3">
+              <label for="date"
+                >Receipt Date<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                id="date"
+                name="date"
+                class="form-control hasDatepicker"
+                placeholder="Enter Receipt Date"
+                readonly=""
+              />
+              <span class="error text-danger err-name" id="date_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="receipt_number"
+                >Receipt Number<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="receipt_number"
+                class="form-control"
+                id="receipt_number"
+                placeholder="Enter Receipt Number"
+                readonly=""
+                style="background-color: #f8f9fa"
+              />
+              <span
+                class="error text-danger err-name"
+                id="receipt_number_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="received_from"
+                >Received From<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="received_from"
+                class="form-control"
+                id="received_from"
+                placeholder="Enter Received From"
+              />
+              <span
+                class="error text-danger err-name"
+                id="received_from_error"
+              ></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="dhs">Dhs<span style="color: red">*</span></label>
+              <input
+                type="text"
+                name="dhs"
+                class="form-control"
+                id="dhs"
+                placeholder="Enter Dhs"
+              />
+              <span class="error text-danger err-name" id="dhs_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="fils">Fils<span style="color: red">*</span></label>
+              <input
+                type="text"
+                name="fils"
+                class="form-control"
+                id="fils"
+                placeholder="Enter Fils"
+              />
+              <span class="error text-danger err-name" id="fils_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="sum_of_dhs"
+                >The Sum Of Dhs<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="sum_of_dhs"
+                class="form-control"
+                id="sum_of_dhs"
+                placeholder="Enter Sum Of Dhs"
+              />
+              <span
+                class="error text-danger err-name"
+                id="sum_of_dhs_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="payment_type"
+                >Payment Type<span style="color: red">*</span></label
+              >
+              <select
+                name="payment_type"
+                class="form-control"
+                id="payment_type"
+              >
+                <option value="Cash" selected="" hidden="">Cash</option>
+                <option value="Cash">Cash</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+              </select>
+              <span
+                class="error text-danger err-name"
+                id="deal_type_error"
+              ></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3 cheque">
+              <label for="cash/cheque no"
+                >Cheque No<span
+                  class="cheque_no"
+                  style="color: red; display: none"
+                  >*</span
+                ></label
+              >
+              <input
+                type="text"
+                name="cheque_no"
+                class="form-control"
+                id="cheque_no"
+                placeholder="Enter Cheque No"
+              />
+              <span
+                class="error text-danger err-name"
+                id="cheque_no_error"
+              ></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="bank"
+                >Bank Name<span
+                  class="bank_name"
+                  style="color: red; display: none"
+                  >*</span
+                ></label
+              >
+              <input
+                type="text"
+                name="bank"
+                class="form-control"
+                id="bank"
+                placeholder="Enter Bank Name"
+              />
+              <span class="error text-danger err-name" id="bank_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="sec_date"
+                >Payment Date<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="sec_date"
+                class="form-control"
+                id="sec_date"
+                placeholder="Enter Payment Date"
+                readonly=""
+              />
+              <span
+                class="error text-danger err-name"
+                id="sec_date_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="being">Being<span style="color: red">*</span></label>
+              <input
+                type="text"
+                name="being"
+                class="form-control"
+                id="being"
+                placeholder="Enter Being"
+              />
+              <span class="error text-danger err-name" id="being_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="status"
+                >Status<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="status"
+                class="form-control"
+                id="status"
+                placeholder="msg.Enter Status"
+                readonly=""
+              />
+              <span class="error text-danger err-name" id="status_error"></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="deal_type"
+                >Deal Type<span style="color: red">*</span></label
+              >
+              <select name="deal_type" class="form-control" id="deal_type">
+                <option value="Rental" selected="" hidden="">Rental</option>
+                <option value="Sales">Sales</option>
+                <option value="Rental">Rental</option>
+              </select>
+              <span
+                class="error text-danger err-name"
+                id="deal_type_error"
+              ></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="agent_name"
+                >Agent Name<span style="color: red">*</span></label
+              >
+              <select name="agent_name" class="form-control" id="agent_name">
+                <option value="">Select Agent</option>
+                <option
+                  select
+                  value="Rahul B"
+                  data-email="rahul@classicproperties.ae"
+                  data-agent_id="10"
+                >
+                  Rahul B
+                </option>
+
+                <option
+                  value="Kalash Malani"
+                  data-email="kalash@classicproperties.ae"
+                  data-agent_id="126"
+                >
+                  Kalash Malani
+                </option>
+              </select>
+              <input
+                type="hidden"
+                name="agent_email"
+                id="agent_email"
+                value="swaraj@classicproperties.ae"
+              />
+              <input type="hidden" name="agent_id" id="agent_id" />
+              <!-- <input type="text" name="agent_name" class="form-control" id="agent_name" value="Swaraj Sanjay Bhutada" placeholder="Enter Agent Name" readonly>-->
+              <span
+                class="error text-danger err-name"
+                id="agent_name_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="project_name"
+                >Project Name<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="project_name"
+                class="form-control"
+                id="project_name"
+                placeholder="Enter Project Name"
+              />
+              <span
+                class="error text-danger err-name"
+                id="project_name_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="building_name"
+                >Building Name<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="building_name"
+                class="form-control"
+                id="building_name"
+                placeholder="Enter Building Name"
+              />
+              <span
+                class="error text-danger err-name"
+                id="building_name_error"
+              ></span>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="unit_number"
+                >Unit Number<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="unit_number"
+                class="form-control"
+                id="unit_number"
+                placeholder="Enter Unit Number"
+              />
+              <span
+                class="error text-danger err-name"
+                id="unit_number_error"
+              ></span>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12 btn-center">
+              <button id="submit" class="btn btn-primary btn-rounded m-1">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+<script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+<script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
+<script src="/static/assets/js/datatables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      for (let cookie of document.cookie.split(";")) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+
+      const  recicept_data = {{ reciecpt_data|safe }}
+
+      console.log("Django to JS:",  recicept_data);
+
+
+
+
+
+      $.validator.addMethod(
+  "alphanum_special",
+  function (value, element) {
+    const cleaned = value.trim();
+    return this.optional(element) || /^[a-zA-Z0-9 _.,\-\/()]*$/.test(cleaned);
+  },
+  "Only alphanumeric and basic special characters allowed."
+);
+
+$.validator.addMethod(
+  "phoneNumber",
+  function (value, element) {
+    var exp = /^[\+]?\d*$/im;
+    //console.log(exp.test(value));
+    return exp.test(value);
+  },
+  "Phone number must only contain numbers and +"
+);
+
+$.validator.addMethod(
+  "numeric",
+  function (value, element) {
+    return this.optional(element) || /^[0-9]+$/.test(value);
+  },
+  "Please enter a valid number."
+);
+
+$.validator.addMethod(
+  "only_text",
+  function (value, element) {
+    return this.optional(element) || /^[a-zA-Z\s]+$/.test(value.trim());
+  },
+  "Only letters and spaces are allowed."
+);
+// validations for the form
+$.validator.addMethod(
+  "custom_email",
+  function (value, element) {
+    // Accepts empty values or valid email format
+    return (
+      this.optional(element) ||
+      /^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,7}$/.test(value.trim())
+    );
+  },
+  "Please enter a valid email address."
+);
+
+$('#createReceiptForm').validate({
+          ignore: "",
+    rules: {
+        date:{
+         required: true,
+         },
+         receipt_number:{
+         required: true,
+         alphanum_special: true,
+        },
+        received_from:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+       
+        dhs:{
+          required: true,
+          alphanum_special: true,
+          maxlength: 255,
+        },
+        fils:{
+          required: true,
+          alphanum_special: true,
+          maxlength: 255,
+        },
+        sum_of_dhs:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255, 
+        },
+        cheque_no:{
+        alphanum_special: true, 
+        minlength:3,
+        maxlength:15,
+        },
+        bank:{
+          alphanum_special: true,
+        },
+        sec_date:{
+        required: true,
+        },
+        being:{
+        required: true,
+        },
+        status:{
+        required: true,
+        },
+        deal_type:{
+        required: true,
+        },
+        payment_type:{
+        required:true,    
+        },
+        project_name: {
+       required: true,
+       maxlength: 255,
+       },
+        building_name: {
+       alphanum_special: true,
+       required: true,
+       maxlength: 255,
+     },
+     agent_name: {
+       alphanum_special: true,
+       required: true,
+       maxlength: 255,
+   
+     },
+     unit_number:{
+       alphanum_special: true,
+       required: true,
+       maxlength: 15,
+     }
+
+      },
+      messages: {
+            // Define custom messages for your required fields here
+            date: "Please select a date.",
+            receipt_number: "Receipt number is required and can contain alphanumeric and special characters.",
+            received_from: "Please enter who received this, using alphanumeric and special characters (max 255).",
+            dhs: "DHS value is required and can contain alphanumeric and special characters (max 255).",
+            fils: "Fils value is required and can contain alphanumeric and special characters (max 255).",
+            sum_of_dhs: "Sum of DHS is required and can contain alphanumeric and special characters (max 255).",
+            sec_date: "Please select a secondary date.",
+            being: "Please describe what this receipt is for.",
+            status: "Please select the status.",
+            deal_type: "Please select the deal type.",
+            payment_type: "Please select the payment type.",
+            project_name: "Project name is required (max 255 characters).",
+            building_name: "Building name is required and can contain alphanumeric and special characters (max 255).",
+            agent_name: "Agent name is required and can contain alphanumeric and special characters (max 255).",
+            unit_number: "Unit number is required and can contain alphanumeric and special characters (max 15)."
+        },
+        
+    errorPlacement: function (error, element) {
+    if (element.attr("type") == "radio") {
+      var id = element.attr("id");
+      $("#" + id + "_error").css("margin-right", "200px");
+      error.addClass("field_error");
+      error.insertAfter("#" + id + "_error");
+    } else {
+      //k = error.insertAfter(element);
+        var elementName = element.attr("name");
+
+            // Construct the ID of the error span based on the element's name
+            var errorSpanId = "#" + elementName + "_error";
+     error.appendTo(errorSpanId);
+     // console.log("Error placed after:", k);
+      
+    }
+  },
+
+  })
+
+
+
+
+    $(document).ready(function () {
+      const dealId = $("#dealMeta").data("deal-id");
+
+      if (!dealId) {
+        console.error("Missing deal ID.");
+        return;
+      }
+
+      console.log("Editing deal:", dealId);
+
+      // 🔹 Load data via GET
+      $.ajax({
+        url: `/receipt/api/edit/${dealId}/`,
+        method: "GET",
+        success: function (data) {
+          console.log("API data:", data);
+          //const awsUrl = window.awsUrl; // Ensure awsUrl is defined globally
+          const referenceNumber = data.reference_number;
+
+          //datepickershow_edit();
+
+          //loadReceiptDropdown(data);
+
+          $.each(data, function (key, value) {
+            const $field = $(`[name="${key}"], #${key}`);
+            //if (key === "agent_name") return;
+            if ($field.length) {
+              const type = $field.attr("type");
+
+
+
+              if (type === "checkbox") {
+                $field.prop(
+                  "checked",
+                  value === true || value === 1 || value === "true"
+                );
+              } else if ($field.is("select")) {
+                $field.val(value).trigger("change");
+              } else {
+                $field.val(value);
+              }
+            }
+          });
+           loadAgentDropdown(data);
+        },
+        error: function () {
+          alert("Failed to load data.");
+        },
+      });
+
+      // 🔹 Submit form via POST
+      $("#submit").click(function (e) {
+        console.log("Submitting form for deal ID:", dealId);
+        e.preventDefault();
+        const form = $("#createReceiptForm").get(0);
+        console.log("pointA", form)
+        const $form = $("#createReceiptForm"); // Use the form ID, not the button ID
+        console.log("pointA", $form)
+        // Replace with actual form ID (not the button)
+
+        const formData = new FormData(form); // Use FormData to handle file uploads
+
+        console.log("Form data before submission:", formData);
+
+        console.log($('#createReceiptForm').valid())
+
+ 
+        // Include checkbox values manually
+         if ($('#createReceiptForm').valid()) {
+
+            $.ajax({
+              url: `/receipt/api/edit/${dealId}/`,
+              method: "PUT",
+              data: formData,
+              processData: false,
+              contentType: false,
+              headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+              },
+
+              // ✅ Required to send FormData
+
+              success: function (data) {
+                // $("#save_draft_deal").removeAttr("disabled");
+                console.log(data.status);
+                //alert("Rental deal updated successfully!");
+
+                if (data.status === "success") {
+                  alert("Rental deal updated successfully!");
+                  scrollTop();
+                $("#alert-primary").text("Reciecpt Created Successfully");
+                $("#successmsg").show();
+                $("#deal_form")[0].reset();
+                  location.reload(); // Or redirect if needed
+                }
+              },
+
+              error: function (err) {
+                if (err.status === 400) {
+                  const data = err.responseJSON;
+                  let messages = "";
+
+                  $.each(data, function (field, errors) {
+                    const msg = Array.isArray(errors) ? errors[0] : errors;
+                    messages += `${field}: ${msg}\n`;
+
+                    $.each(data.data, function (index, value) {
+                      messages +=
+                        index.charAt(0).toUpperCase() +
+                        index.slice(1) +
+                        " : " +
+                        value +
+                        "\n";
+                    });
+
+                    swal("Please fill mandatory field", messages);
+
+                    // Show field-wise error messages
+                    $.each(data.data, function (key, val) {
+                      $("#" + key + "_error")
+                        .text(val[0])
+                        .show();
+
+                      $(document).on("keyup", "input[name='" + key + "']", function () {
+                        $("#" + key + "_error").hide();
+                      });
+
+                      $(document).on(
+                        "change",
+                        "select[name='" + key + "']",
+                        function () {
+                          $("#" + key + "_error").hide();
+                        }
+                      );
+                    });
+                  });
+                } else {
+                  const alertmsg = data.message || "Something went wrong!";
+                  swal("Error", alertmsg, "error");
+                }
+                // alert("Update failed.");
+                console.error(err);
+              },
+            });
+          }
+          else {
+        // Form is INVALID.
+        // jQuery Validation has already displayed the error messages next to the fields.
+        console.log("Receipt form is invalid. Please review the errors.");
+        // Optional: Scroll to the first error to improve UX
+        // $('html, body').animate({
+        //     scrollTop: $('.error:visible:first').offset().top - 50
+        // }, 500);
+    }
+      });
+
+
+
+    function loadAgentDropdown(requestdata) {
+      agents = recicept_data.agents;
+      console.log(agents);
+
+      populateAgentDropdown(
+        "#agent_name",
+        agents,
+        requestdata.agent_id
+      );
+
+    }
+
+    // populate the user data based on requriement
+
+    function populateAgentDropdown(selector, data, selectedId = null) {
+      console.log(selector)
+      const $dropdown = $(selector);
+      $dropdown.empty().append('<option value="">Select Agent</option>');
+
+      console.log(selectedId)
+      console.log(data)
+
+      data.forEach(function (agent) {
+        console.log(agent.id)
+        const isSelected = selectedId == agent.id ? "selected" : "";
+        console.log(isSelected)
+
+        $dropdown.append(
+          `<option value="${agent.id}" ${isSelected}>${agent.name}</option>`
+        );
+        });
+          console.log("A:", $("#agent_name").val());
+
+          if (selectedId !== null && selectedId !== "") {
+             $dropdown.val(String(selectedId));
+          }
+
+           console.log("Selected in JS:", $dropdown.val());
+
+    }
+
+      });
+</script>
+<!-- Start script here to add required msg in cheque no and datepicker field-->
+<script>
+  $(document).ready(function () {
+    $("#date").datepicker({
+      dateFormat: "dd-mm-yy",
+      autoclosed: true,
+      changeMonth: true,
+      changeYear: true,
+      maxDate: 0,
+      yearRange: "-50:+50",
+    });
+    $("#sec_date").datepicker({
+      dateFormat: "dd-mm-yy",
+      autoclosed: true,
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "-50:+50",
+    });
+    var payment_type = $("#payment_type").val();
+    if (payment_type == "") {
+      $(".bank_name").hide();
+      $(".cheque_no").hide();
+    } else if (payment_type == "Cash") {
+      $(".bank_name").hide();
+      $(".cheque_no").hide();
+    } else if (payment_type == "Cheque") {
+      $(".bank_name").show();
+      $(".cheque_no").show();
+    } else if (payment_type == "Bank Transfer") {
+      $(".bank_name").show();
+      $(".cheque_no").hide();
+    }
+
+    $("#payment_type").on("change", function () {
+      var payment_type = this.value;
+      if (payment_type == "Cheque") {
+        $(".bank_name").show();
+        $(".cheque_no").show();
+      } else if (payment_type == "Cash") {
+        $(".bank_name").hide();
+        $(".cheque_no").hide();
+      } else if (payment_type == "Bank Transfer") {
+        $(".cheque_no").hide();
+        $(".bank_name").show();
+      }
+    });
+    $("#submit").click(function () {
+      var payment_type = $("#payment_type").val();
+      if (payment_type == "Cash") {
+        $("#cheque_no_error").hide();
+        $("#bank_error").hide();
+      } else if (payment_type == "Cheque") {
+        $("#cheque_no_error").show();
+        $("#bank_error").show();
+      } else if (payment_type == "Bank Transfer") {
+        $("#cheque_no_error").hide();
+        $("#bank_error").show();
+      }
+    });
+  });
+  {% comment %} $(document).ready(function () {
+    $("#agent_name").on("change", function () {
+      var selectedOption = $(this).find(":selected");
+      var agentEmail = selectedOption.data("email"); // Get the value of the 'data-email' attribute
+      var agentId = selectedOption.data("agent_id"); // Get the value of the 'data-email' attribute
+      $("#agent_email").val(agentEmail);
+      $("#agent_id").val(agentId); // Update the value of the hidden field with the agent email
+    });
+  }); {% endcomment %}
+</script>
+
+{% endblock content %}
