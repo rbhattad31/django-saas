@@ -127,6 +127,34 @@ class Account(models.Model):
                 "update_finance_status_sales_deal",
                 "comment_finance_sales_deal",
 
+                # Property Management   for admin
+                "add_rentalproperties",
+                "property_rentalproperties",
+                "draft_rentalproperties",  
+
+                "create_draft_property_rentalproperties",
+                "view_properties_rentalproperties",
+                "edit_properties_rentalproperties",
+                "delete_properties_rentalproperties",
+                "edit_approved_properties_rentalproperties",
+
+                "add_management_receipts_rentalproperties",
+                "edit_management_receipts_rentalproperties",
+                "view_management_receipts_rentalproperties",
+                "download_management_receipts_rentalproperties",
+
+                "pending_properties_rentalproperties",
+                "approved_properties_rentalproperties",
+                "rejected_properties_rentalproperties",
+                "waiting_for_finance_properties_rentalproperties",
+                "pending_finance_properties_rentalproperties",
+                "entered_finance_properties_rentalproperties",
+
+                "admin_properties_fields_rentalproperties",
+                "update_aml_status_properties_rentalproperties",
+                "update_finance_status_properties_rentalproperties",
+                "finance_comment_properties_rentalproperties",
+
                 
 
 
@@ -172,6 +200,20 @@ class Account(models.Model):
                  "view_my_draft_sales_deals",
 
 
+                #  Property  Management for the   Manager 
+                "draft_rentalproperties",
+                "view_properties_rentalproperties",
+                
+                "edit_properties_rentalproperties",
+
+                "view_management_receipts_rentalproperties",
+                "download_management_receipts_rentalproperties",
+
+                "pending_properties_rentalproperties",
+                "approved_properties_rentalproperties",
+                "rejected_properties_rentalproperties",
+
+
 
 
                 # recipts management for the Mananger 
@@ -206,6 +248,19 @@ class Account(models.Model):
                 "create_draft_sales_deal",
                 "edit_draft_sales_deal",
 
+                # Property Managment for the Agent  
+                "property_rentalproperties",
+                "draft_rentalproperties",
+                "add_rentalproperties",
+                "create_draft_property_rentalproperties",
+                "view_properties_rentalproperties",
+                "edit_properties_rentalproperties",
+
+                "pending_properties_rentalproperties",
+                "approved_properties_rentalproperties",
+                "rejected_properties_rentalproperties",
+
+
 
 
 
@@ -233,6 +288,24 @@ class Account(models.Model):
                 "update_aml_status_sales_deal",
                 "update_finance_status_sales_deal",
                 "comment_finance_sales_deal",
+
+                 # Property Managment for the  Finance 
+                "add_rentalproperties",
+                "view_properties_rentalproperties",
+                "add_management_receipts_rentalproperties",
+                "edit_management_receipts_rentalproperties",
+                "view_management_receipts_rentalproperties",
+                "download_management_receipts_rentalproperties",
+
+                "waiting_for_finance_properties_rentalproperties",
+                "pending_finance_properties_rentalproperties",
+                "entered_finance_properties_rentalproperties",
+
+                "update_aml_status_properties_rentalproperties",
+                "update_finance_status_properties_rentalproperties",
+                "finance_comment_properties_rentalproperties",
+
+
 
 
 
@@ -273,14 +346,14 @@ class Account(models.Model):
 
 
 
-class TenantBaseModel(TenantModel):
-    # account = models.ForeignKey(Account, on_delete=models.CASCADE)
+# class TenantBaseModel(TenantModel):
+#     # account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
-    tenant_id = 'account'
-    objects = TenantManager() 
+#     tenant_id = 'account'
+#     objects = TenantManager() 
 
-    class Meta:
-        abstract = True
+#     class Meta:
+#         abstract = True
 
 
 
@@ -358,35 +431,7 @@ class TenantBaseModel(TenantModel):
 #         managed = False
 #         db_table = 'countries'
 
-
-# class Deposits(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     date = models.DateField()
-#     deposit_number = models.BigIntegerField()
-#     dhs = models.CharField(max_length=191)
-#     fils = models.CharField(max_length=191)
-#     cheque_no = models.CharField(max_length=191)
-#     bank = models.CharField(max_length=191)
-#     sec_date = models.DateField()
-#     being = models.CharField(max_length=191)
-#     status = models.CharField(max_length=191)
-#     deal_type = models.CharField(max_length=191)
-#     received_from = models.CharField(max_length=191, blank=True, null=True)
-#     payment_type = models.CharField(max_length=191, blank=True, null=True)
-#     deal_refer_no = models.CharField(max_length=191)
-#     sum_of_dhs = models.CharField(max_length=191)
-#     agent_name = models.CharField(max_length=191)
-#     project_name = models.CharField(max_length=191)
-#     building_name = models.CharField(max_length=191)
-#     unit_number = models.CharField(max_length=191)
-#     created_at = models.DateTimeField(blank=True, null=True)
-#     updated_at = models.DateTimeField(blank=True, null=True)
-#     account_id = models.IntegerField()
-#     on_behalf_of = models.CharField(max_length=191)
-
-#     class Meta:
-#         managed = False
-#         db_table = 'deposits'
+ 
 
 
 # class DropdownTypes(models.Model):
@@ -674,113 +719,9 @@ class Receipts(models.Model):
         db_table = 'receipts'
 
 
-class Deposits(models.Model):
-    date = models.DateField()
-    deposit_number = models.BigIntegerField()
-    dhs = models.CharField(max_length=191)
-    fils = models.CharField(max_length=191)
-    cheque_no = models.CharField(max_length=191)
-    bank = models.CharField(max_length=191)
-    sec_date = models.DateField()
-    being = models.CharField(max_length=191)
-    status = models.CharField(max_length=191)
-    deal_type = models.CharField(max_length=191)
-    received_from = models.CharField(max_length=191, null=True, blank=True)
-    payment_type = models.CharField(max_length=191, null=True, blank=True)
-    deal_refer_no = models.CharField(max_length=191)
-    sum_of_dhs = models.CharField(max_length=191)
-    agent_name = models.CharField(max_length=191)
-    project_name = models.CharField(max_length=191)
-    building_name = models.CharField(max_length=191)
-    unit_number = models.CharField(max_length=191)
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
-    account_id = models.IntegerField()
-    on_behalf_of = models.CharField(max_length=191)
-
-    def __str__(self):
-        return f"Deposit #{self.deposit_number} - {self.cheque_no}"
-    
-    class Meta:
-        managed = False
-        db_table = 'deposits'
 
 
 
-
-
-# class RentalProperties(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     deal_date = models.TextField()
-#     reference_number = models.TextField()
-#     pms = models.TextField()
-#     project_name = models.TextField()
-#     building_name = models.TextField()
-#     unit_details = models.TextField()
-#     pms_price = models.TextField()
-#     pm_start_date = models.TextField()
-#     pm_end_date = models.TextField()
-#     tenancy_start_date = models.TextField()
-#     tenancy_end_date = models.TextField()
-#     owner_first_name = models.TextField()
-#     owner_source = models.TextField()
-#     owner_mobile = models.TextField()
-#     owner_email = models.TextField()
-#     agency_name = models.TextField()
-#     agent_name = models.TextField()
-#     brn = models.TextField(blank=True, null=True)
-#     agent_phone = models.TextField()
-#     agent_email = models.TextField(blank=True, null=True)
-#     no_of_cheque = models.TextField()
-#     cheque_date = models.TextField()
-#     pms_contract = models.TextField()
-#     owner_passport_copy = models.TextField()
-#     owner_eid_copy = models.TextField()
-#     pms_cheque_copy = models.TextField()
-#     title_deed = models.TextField()
-#     poa_pp = models.TextField(blank=True, null=True)
-#     poa_copy = models.TextField(blank=True, null=True)
-#     key_hand_over_form = models.TextField(blank=True, null=True)
-#     kyc_form = models.TextField(blank=True, null=True)
-#     kyc_number = models.TextField(blank=True, null=True)
-#     total_commission = models.TextField()
-#     less_outside_commission = models.TextField()
-#     net_commission = models.TextField()
-#     classic = models.TextField()
-#     agent1 = models.TextField()
-#     agent2 = models.TextField(blank=True, null=True)
-#     agent3 = models.TextField(blank=True, null=True)
-#     comments = models.TextField(blank=True, null=True)
-#     agent_name1 = models.TextField(blank=True, null=True)
-#     agent_name2 = models.TextField(blank=True, null=True)
-#     agent_name3 = models.TextField(blank=True, null=True)
-#     receipt_no = models.TextField()
-#     form_status = models.CharField(max_length=10, blank=True, null=True)
-#     created_at = models.DateTimeField(blank=True, null=True)
-#     updated_at = models.DateTimeField(blank=True, null=True)
-#     created_by = models.CharField(max_length=191, blank=True, null=True)
-#     updated_by = models.CharField(max_length=191, blank=True, null=True)
-#     account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
-#     status = models.CharField(max_length=15)
-#     deal_sno = models.IntegerField()
-#     is_approved_rejected = models.CharField(max_length=1)
-#     approved_rejected_by = models.TextField(blank=True, null=True)
-#     is_entered_in_finance_system = models.CharField(max_length=1)
-#     comments_finance = models.TextField(blank=True, null=True)
-#     submitted_by_user_id = models.IntegerField()
-#     is_deleted = models.CharField(max_length=1)
-#     agent_comment = models.TextField(blank=True, null=True)
-#     is_property_aml = models.CharField(max_length=3)
-#     screening = models.CharField(max_length=191)
-#     screening_comments = models.TextField()
-#     seller_nationality = models.CharField(max_length=191)
-#     buyer_nationality = models.CharField(max_length=191)
-#     submitted_date = models.DateField()
-#     manager_approved_rejected = models.CharField(max_length=1)
-
-#     class Meta:
-#         managed = False
-#         db_table = 'rental_properties'
 
 
 
@@ -818,98 +759,7 @@ class Deposits(models.Model):
 
 
 # 
-# class SalesDeals(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     submitted_date = models.DateField()
-#     submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
-#     date = models.DateField()
-#     reference_number = models.TextField()
-#     unit_details = models.TextField()
-#     builduing_name = models.TextField()
-#     project_name = models.TextField()
-#     developer_details = models.TextField(blank=True, null=True)
-#     seller_name = models.TextField()
-#     seller_source = models.TextField()
-#     selller_mobile = models.TextField()
-#     seller_email = models.TextField(blank=True, null=True)
-#     buyer_name = models.TextField()
-#     buyer_source = models.TextField()
-#     buyer_mobile = models.TextField()
-#     buyer_email = models.TextField(blank=True, null=True)
-#     seller_agency = models.TextField()
-#     seller_agent_name = models.TextField()
-#     seller_agent_phone = models.TextField()
-#     seller_agent_email = models.TextField(blank=True, null=True)
-#     seller_agency_brn = models.TextField(blank=True, null=True)
-#     buyer_agency = models.TextField()
-#     buyer_agent_name = models.TextField()
-#     buyer_agent_phone = models.TextField()
-#     buyer_agent_email = models.TextField(blank=True, null=True)
-#     buyer_agency_brn = models.TextField(blank=True, null=True)
-#     mediating_agency = models.TextField(blank=True, null=True)
-#     mediating_agent_name = models.TextField(blank=True, null=True)
-#     mediating_agent_phone = models.TextField(blank=True, null=True)
-#     mediating_agent_email = models.TextField(blank=True, null=True)
-#     mediating_agency_brn = models.TextField(blank=True, null=True)
-#     signed_mou = models.TextField(blank=True, null=True)
-#     new_title_deed = models.TextField(blank=True, null=True)
-#     old_title_deed = models.TextField(blank=True, null=True)
-#     owners_passport_copy = models.TextField(blank=True, null=True)
-#     buyers_passport_copy = models.TextField(blank=True, null=True)
-#     buyers_deposit_cheque_copy = models.TextField(blank=True, null=True)
-#     sellers_deposit_cheque_copy = models.TextField(blank=True, null=True)
-#     seller_poa_passport_copy = models.TextField(blank=True, null=True)
-#     buyer_poa_passport_copy = models.TextField(blank=True, null=True)
-#     total_commission = models.TextField()
-#     less_outsude_commission = models.TextField()
-#     net_commission = models.TextField()
-#     classic = models.TextField()
-#     agent1 = models.TextField()
-#     agent2 = models.TextField(blank=True, null=True)
-#     agent3 = models.TextField(blank=True, null=True)
-#     is_approved_rejected = models.CharField(max_length=1)
-#     approved_rejected_by = models.TextField(blank=True, null=True)
-#     is_entered_in_finance_system = models.CharField(max_length=1)
-#     comments = models.TextField(blank=True, null=True)
-#     deal_amount = models.TextField(blank=True, null=True)
-#     owner_eid_copy = models.TextField(blank=True, null=True)
-#     agent_name1 = models.TextField(blank=True, null=True)
-#     agent_name2 = models.TextField(blank=True, null=True)
-#     agent_name3 = models.TextField(blank=True, null=True)
-#     buyer_eid = models.TextField(blank=True, null=True)
-#     agent_comment = models.TextField(blank=True, null=True)
-#     receipt_no = models.TextField()
-#     seller_poa_copy = models.TextField(blank=True, null=True)
-#     buyer_poa_copy = models.TextField(blank=True, null=True)
-#     buyer_poa_eid = models.TextField(blank=True, null=True)
-#     seller_poa_eid = models.TextField(blank=True, null=True)
-#     form_status = models.CharField(max_length=10, blank=True, null=True)
-#     sale_kyc_number = models.TextField(blank=True, null=True)
-#     is_sale_aml = models.CharField(max_length=3, blank=True, null=True)
-#     kyc_number = models.TextField(blank=True, null=True)
-#     comments_finance = models.TextField(blank=True, null=True)
-#     created_at = models.DateTimeField(blank=True, null=True)
-#     updated_at = models.DateTimeField(blank=True, null=True)
-#     created_by = models.CharField(max_length=191)
-#     updated_by = models.CharField(max_length=191, blank=True, null=True)
-#     account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True,default=True)
-#     property = models.ForeignKey(Properties, models.DO_NOTHING, blank=True, null=True)
-#     # branch = models.ForeignKey(Branches, models.DO_NOTHING, blank=True, null=True)
-#     is_deleted = models.CharField(max_length=1)
-#     deal_agent = models.CharField(max_length=191, blank=True, null=True)
-#     receipt_id = models.CharField(max_length=191)
-#     submitted_by_agent = models.IntegerField()
-#     screening = models.CharField(max_length=191)
-#     screening_comments = models.TextField()
-#     seller_nationality = models.CharField(max_length=191)
-#     buyer_nationality = models.CharField(max_length=191)
-#     manager_cheque_copy = models.TextField()
-#     manager_approved_rejected = models.CharField(max_length=1)
-
-#     class Meta:
-#         managed = False
-#         db_table = 'sales_deals'
-
+#  
 # class Settings(models.Model):
 #     id = models.BigAutoField(primary_key=True)
 #     name = models.CharField(max_length=191)
@@ -1067,7 +917,7 @@ class Users(AbstractUser):
 #         managed = False
 #         db_table = 'videos'
 
-
+# Renal Deal Management 
 class RentalDeals ( models.Model):
     submitted_date = models.DateField(auto_now_add=True)
     submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -1187,6 +1037,9 @@ class RentalDeals ( models.Model):
 
 
 
+
+# sale deal management  
+
 class SalesDeals(models.Model):
     id = models.AutoField(primary_key=True)
     submitted_date = models.DateField()
@@ -1278,6 +1131,216 @@ class SalesDeals(models.Model):
     class Meta:
         managed = False
         db_table = 'sales_deals'
+
+
+#  Thrid party recipcepts 
+class Deposits(models.Model):
+    date = models.DateField()
+    deposit_number = models.BigIntegerField()
+    dhs = models.CharField(max_length=191)
+    fils = models.CharField(max_length=191)
+    cheque_no = models.CharField(max_length=191)
+    bank = models.CharField(max_length=191)
+    sec_date = models.DateField()
+    being = models.CharField(max_length=191)
+    status = models.CharField(max_length=191)
+    deal_type = models.CharField(max_length=191)
+    received_from = models.CharField(max_length=191, null=True, blank=True)
+    payment_type = models.CharField(max_length=191, null=True, blank=True)
+    deal_refer_no = models.CharField(max_length=191)
+    sum_of_dhs = models.CharField(max_length=191)
+    agent_name = models.CharField(max_length=191)
+    project_name = models.CharField(max_length=191)
+    building_name = models.CharField(max_length=191)
+    unit_number = models.CharField(max_length=191)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+    account_id = models.IntegerField()
+    on_behalf_of = models.CharField(max_length=191)
+
+    def __str__(self):
+        return f"Deposit #{self.deposit_number} - {self.cheque_no}"
+    
+    class Meta:
+        managed = False
+        db_table = 'deposits'
+
+
+
+
+
+
+
+
+
+ 
+
+#  Property Management  Models 
+
+class RentalProperties(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    deal_date = models.TextField()
+    reference_number = models.TextField()
+    pms = models.TextField(blank= True , null = True)
+    
+    project_name = models.TextField()
+    building_name = models.TextField()
+    unit_details = models.TextField()
+    pms_price = models.TextField()
+    pm_start_date = models.TextField()
+    pm_end_date = models.TextField()
+    tenancy_start_date = models.TextField()
+    tenancy_end_date = models.TextField()
+    owner_first_name = models.TextField()
+    owner_source = models.TextField()
+    owner_mobile = models.TextField()
+    owner_email = models.TextField()
+    agency_name = models.TextField()
+    agent_name = models.TextField()
+    brn = models.TextField(blank=True, null=True)
+    agent_phone = models.TextField()
+    agent_email = models.TextField(blank=True, null=True)
+    no_of_cheque = models.TextField()
+    cheque_date = models.TextField()
+    pms_contract = models.TextField()
+    owner_passport_copy = models.TextField()
+    owner_eid_copy = models.TextField()
+    pms_cheque_copy = models.TextField()
+    title_deed = models.TextField()
+    poa_pp = models.TextField(blank=True, null=True)
+    poa_copy = models.TextField(blank=True, null=True)
+    key_hand_over_form = models.TextField(blank=True, null=True)
+    # pms_contract = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # owner_passport_copy = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # owner_eid_copy = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # pms_cheque_copy = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # title_deed = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # poa_pp = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # poa_copy = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # key_hand_over_form = models.FileField(upload_to='uploads/', null=True, blank=True)
+    # kyc_form = models.FileField(upload_to='uploads/', null=True, blank=True)
+    kyc_form = models.TextField(blank=True, null=True)
+    kyc_number = models.TextField(blank=True, null=True)
+    total_commission = models.TextField()
+    less_outside_commission = models.TextField()
+    net_commission = models.TextField()
+    classic = models.TextField()
+    agent1 = models.TextField()
+    agent2 = models.TextField(blank=True, null=True)
+    agent3 = models.TextField(blank=True, null=True)
+    comments = models.TextField(blank=True, null=True)
+    agent_name1 = models.TextField(blank=True, null=True)
+    agent_name2 = models.TextField(blank=True, null=True)
+    agent_name3 = models.TextField(blank=True, null=True)
+    receipt_no = models.TextField()
+    form_status = models.CharField(
+        max_length=50,
+        choices=[
+            ('Complete', 'Complete'),
+            ('Incomplete', 'Incomplete')
+        ],
+        blank=True,
+        null=True
+    )
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=191, blank=True, null=True)
+    updated_by = models.CharField(max_length=191, blank=True, null=True)
+    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
+      
+
+    status = models.CharField(max_length=20, choices = [
+        ('Active', 'Active'),
+        ('About To Expire', 'About To Expire'),
+        ('Expired', 'Expired'),
+        ('Renew', 'Renew'),
+        ('Closed', 'Closed'),
+        ('Inactive', 'Inactive'),
+    ], default='Active')
+    # deal_sno = models.IntegerField()
+    deal_sno = models.IntegerField(null=True,blank=True)
+    #is_approved_rejected = models.CharField(max_length=1)
+    # is_approved_rejected = models.CharField(max_length=1, null=False, blank=True)
+    is_approved_rejected = models.CharField(max_length=1,choices=[('P','pending'),("A","Approved"),('R',"Rejected"),('W',"Waiting Finance")] ,  null=True, blank=True,default="P")
+
+    approved_rejected_by = models.TextField(blank=True, null=True)
+    is_entered_in_finance_system = models.CharField(max_length=1)
+    comments_finance = models.TextField(blank=True, null=True)
+    submitted_by_user_id = models.IntegerField()
+    is_deleted = models.CharField(max_length=1,choices=[('Y','Y'),('N','N')],default='N')
+    agent_comment = models.TextField(blank=True, null=True)
+    is_property_aml = models.CharField(max_length=3)
+    screening = models.CharField(max_length=191)
+    screening_comments = models.TextField()
+    seller_nationality = models.CharField(max_length=191)
+    buyer_nationality = models.CharField(max_length=191)
+    submitted_date = models.DateField()
+    #manager_approved_rejected = models.CharField(max_length=10)
+    manager_approved_rejected = models.CharField(
+        max_length=1,
+        choices=[
+            ('A', 'Approved'),
+            ('R', 'Rejected'),
+            ('P', 'Pending'),
+            
+        ],
+        null=True,
+        blank=True, default ="P"
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'rental_properties'
+
+    def debug_form_status(self):
+        print(f"\nForm Status: {self.form_status} (Length: {len(self.form_status) if self.form_status else 0})")
+
+
+
+
+
+
+
+class ManagementReceipts(models.Model):
+    id = models.BigAutoField(primary_key=True)  # 1. Primary Key, Auto Increment, NOT NULL
+    date = models.DateField(null=False)  # 2. NOT NULL
+    receipt_number = models.BigIntegerField(null=True,blank=True)  # 3. NOT NULL
+    dhs = models.CharField(max_length=191, null=False)  # 4. NOT NULL
+    fils = models.CharField(max_length=191, null=False)  # 5. NOT NULL
+    cheque_no = models.CharField(max_length=15, blank=True, null=True)  # 6. NOT NULL
+    # bank = models.CharField(max_length=191, null=False)  # 7. NOT NULL
+    bank = models.CharField(max_length=255, blank=True, null=True)
+    sec_date = models.DateField(null=False)  # 8. NOT NULL
+    being = models.CharField(max_length=191, null=False)  # 9. NOT NULL
+    status = models.CharField(max_length=191, null=False)  # 10. NOT NULL
+    # deal_type = models.CharField(max_length=191, null=False)  # 11. NOT NULL
+    deal_type = models.CharField(max_length=50, choices=[
+        ('Management Fee', 'Management Fee'),
+        ('Ejari Fee', 'Ejari Fee')
+    ])
+    received_from = models.CharField(max_length=191, blank=True, null=True)  # 12. DEFAULT NULL
+    # payment_type = models.CharField(max_length=191, blank=True, null=True)  # 13. DEFAULT NULL
+    payment_type = models.CharField(max_length=50, choices=[
+        ('Cash', 'Cash'),
+        ('Cheque', 'Cheque'),
+        ('Bank Transfer', 'Bank Transfer')
+    ])
+    deal_refer_no = models.CharField(max_length=191, null=True,blank=True)  # 14. NOT NULL
+    sum_of_dhs = models.CharField(max_length=191, null=False)  # 15. NOT NULL
+    agent_name = models.CharField(max_length=191, null=False)  # 16. NOT NULL
+    project_name = models.CharField(max_length=191, null=False)  # 17. NOT NULL
+    building_name = models.CharField(max_length=191, null=False)  # 18. NOT NULL
+    unit_number = models.CharField(max_length=191, null=False)  # 19. NOT NULL
+    created_at = models.DateTimeField(blank=True, null=True)  # 20. DEFAULT NULL
+    updated_at = models.DateTimeField(blank=True, null=True)  # 21. DEFAULT NULL
+    # account_id = models.IntegerField(null=False)  # 22. NOT NULL
+    account_id = models.IntegerField(null=True)  # 22. NOT NULL
+
+
+    class Meta:
+        managed = False  # Assuming this model is managed outside of Django (existing DB table)
+        db_table = 'management_receipts'
+    
   
 
         

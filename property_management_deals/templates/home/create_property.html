@@ -1,0 +1,914 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Create Property {% endblock title %}
+
+{% block stylesheets %}
+<style>
+    a.addition {
+        position: relative;
+        margin-left: 10px;
+        top: 0;
+    }
+    a.subtraction {
+        position: relative;
+        margin-left: 10px;
+        top: 0;
+    }
+    .cheque-dates {
+        margin-right: 20px;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .nav-tabs .nav-link {
+        border-radius: 0.25rem;
+        margin-right: 5px;
+    }
+    .nav-tabs .nav-link.active {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-rounded {
+        border-radius: 50px;
+    }
+    .file-preview {
+        margin-top: 10px;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card mt-3 mb-3">
+                <div class="card-header bg-transparent">
+                    <h4 class="pb-2">Create Property
+                        <span class="float-right">
+                            <a class="btn btn-primary btn-rounded" href="#" onclick="window.history.back();">Cancel</a>
+                        </span>
+                    </h4>
+                </div>
+                <div class="card-body m-1">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a href="#nav-property" class="nav-item nav-link active show" id="nav-property-tab" data-toggle="tab" role="tab" aria-controls="nav-property" aria-selected="true">Property Details</a>
+                            <a href="#nav-source" class="nav-item nav-link" id="nav-source-tab" data-toggle="tab" role="tab" aria-controls="nav-source" aria-selected="false">Owner Details</a>
+                            <a href="#nav-agency" class="nav-item nav-link" id="nav-agency-tab" data-toggle="tab" role="tab" aria-controls="nav-agency" aria-selected="false">Owner Agency Details</a>
+                            <a href="#nav-cheque" class="nav-item nav-link" id="nav-cheque-tab" data-toggle="tab" role="tab" aria-controls="nav-cheque" aria-selected="false">Cheque Details</a>
+                            <a href="#nav-revenue" class="nav-item nav-link" id="nav-revenue-tab" data-toggle="tab" role="tab" aria-controls="nav-revenue" aria-selected="false">Revenue Details</a>
+                            <a href="#nav-documents" class="nav-item nav-link" id="nav-documents-tab" data-toggle="tab" role="tab" aria-controls="nav-documents" aria-selected="false">Upload Documents</a>
+                        </div>
+                    </nav>
+                    <form id="rental_property_form"   enctype="multipart/form-data" novalidate="novalidate">
+                         
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <input type="hidden" value="2" name="account_id" id="account_id">
+                        <div class="tab-content ul-tab__content" id="nav-tabContent">
+                            <!-- Property Details -->
+                            <div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
+                                <div class="form-group row nav-property">
+                                    <div class="col-md-6 form-group">
+                                        <label for="submitted_by_agent">Deal Submitted By Agent<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent" required>
+                                            <option value="">Select Agent Name</option>
+                                            {% for agent in agents %}
+                                            <option value="{{ agent.id }}">{{ agent.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="submitted_by_agent_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="deal_date">Deal Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" id="deal_date" name="deal_date" class="form-control" required>
+                                        <span class="text-danger" id="deal_date_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="reference_number">Reference Number<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference No" required>
+                                        <span class="text-danger" id="reference_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="project_name">Project Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Project Name" required>
+                                        <span class="text-danger" id="project_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="building_name">Building Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="building_name" class="form-control" id="building_name" placeholder="Building Name" required>
+                                        <span class="text-danger" id="building_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="unit_details">Unit No<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="unit_details" class="form-control" id="unit_details" placeholder="Unit No" required>
+                                        <span class="text-danger" id="unit_details_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="pms_price">PMS Price<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="pms_price" class="form-control" id="pms_price" placeholder="PMS Price" required>
+                                        <span class="text-danger" id="pms_price_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="pm_start_date">PM Start Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" name="pm_start_date" class="form-control startDate" id="pm_start_date" required>
+                                        <span class="text-danger" id="pm_start_date_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="pm_end_date">PM End Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" name="pm_end_date" class="form-control endDate" id="pm_end_date" required>
+                                        <span class="text-danger" id="pm_end_date_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="tenancy_start_date">Tenancy Start Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" required>
+                                        <span class="text-danger" id="tenancy_start_date_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="tenancy_end_date">Tenancy End Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" required>
+                                        <span class="text-danger" id="tenancy_end_date_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Next</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Owner Details -->
+                            <div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                                <div class="form-group row nav-source">
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_first_name">Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="owner_first_name" class="form-control" id="owner_first_name" placeholder="Owner Name" required>
+                                        <span class="text-danger" id="owner_first_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_source">Source<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="owner_source" id="owner_source" required>
+                                            <option value="">Select Owner Source</option>
+                                            <option value="Dubizzle">Dubizzle</option>
+                                        </select>
+                                        <span class="text-danger" id="owner_source_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_mobile">Mobile<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" id="owner_mobile" name="owner_mobile" class="form-control" placeholder="Owner Mobile" required>
+                                        <span class="text-danger" id="owner_mobile_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_email">Email<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="email" id="owner_email" name="owner_email" class="form-control" placeholder="Owner Email" required>
+                                        <span class="text-danger" id="owner_email_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="seller_nationality">Nationality<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" id="seller_nationality" name="seller_nationality" class="form-control" placeholder="Seller Nationality" required>
+                                        <span class="text-danger" id="seller_nationality_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-property')">Previous</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Next</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftSource" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Owner Agency Details -->
+                            <div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
+                                <div class="form-group row nav-agency">
+                                    <div class="col-md-6 form-group">
+                                        <label for="agency_name">Agency Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="agency_name" class="form-control" id="agency_name" placeholder="Agency Name" required>
+                                        <span class="text-danger" id="agency_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name">Agent Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="agent_name" class="form-control" id="agent_name" placeholder="Agent Name" required>
+                                        <span class="text-danger" id="agent_name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="brn">Agent BRN</label>
+                                        <input type="text" id="brn" name="brn" class="form-control" placeholder="Agent BRN">
+                                        <span class="text-danger" id="brn_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_phone">Agent Phone<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" id="agent_phone" name="agent_phone" class="form-control" placeholder="Agent Phone" required>
+                                        <span class="text-danger" id="agent_phone_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_email">Agent Email</label>
+                                        <input type="email" id="agent_email" name="agent_email" class="form-control" placeholder="Agent Email">
+                                        <span class="text-danger" id="agent_email_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Previous</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Next</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Cheque Details -->
+                            <div class="tab-pane fade" id="nav-cheque" role="tabpanel" aria-labelledby="nav-cheque-tab">
+                                <div class="row form-group nav-cheque">
+                                    <div class="col-md-5 form-group">
+                                        <label for="no_of_cheque">Number Of Cheques<span class="mandetory_field" style="color: red">*</span> (Max-12)</label>
+                                        <input type="text" id="no_of_cheque" name="no_of_cheque" class="form-control" placeholder="Number Of Cheques" required>
+                                        <span class="text-danger" id="no_of_cheque_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-cheque cheque-date">
+                                    <div class="col-md-5 form-group">
+                                        <label for="cheque_date_1">Cheque Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="date" id="cheque_date_1" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
+                                        <span class="text-danger" id="cheque_date_1_error"></span>
+                                    </div>
+                                    <div class="col-md-7 form-group">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1 addition" id="add-cheque-row">Add</button>
+                                    </div>
+                                </div>
+                                <div class="row form-group nav-cheque append-cheque-date"></div>
+                                <br>
+                                <small>(Note: The date of cheques may vary, so add additional rows as needed, up to a maximum of 12.)</small>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Previous</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-revenue')">Next</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftCheque" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Revenue Details -->
+                            <div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab">
+                                <div class="row form-group nav-revenue">
+                                    <div class="col-md-6 form-group">
+                                        <label for="total_commission">Total Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" required>
+                                        <span class="text-danger" id="total_commission_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="less_outside_commission">Less Outside Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="less_outside_commission" class="form-control" id="less_outside_commission" placeholder="Less Outside Commission" required>
+                                        <span class="text-danger" id="less_outside_commission_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="net_commission">Net Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="net_commission" class="form-control" id="net_commission" placeholder="Net Commission" required>
+                                        <span class="text-danger" id="net_commission_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="classic">Classic<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" id="classic" name="classic" class="form-control" placeholder="Classic" required>
+                                        <span class="text-danger" id="classic_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent1">Agent 1 Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" id="agent1" name="agent1" class="form-control" placeholder="Agent Commission" required>
+                                        <span class="text-danger" id="agent1_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name1">Agent Name<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select name="agent_name1" class="form-control" id="agent_name1" required>
+                                            <option value="">Select Agent</option>
+                                            {% for agent in agents %}
+                                            <option value="{{ agent.id }}">{{ agent.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="agent_name1_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent2">Agent 2 Commission</label>
+                                        <input type="text" id="agent2" name="agent2" class="form-control" placeholder="Agent Commission">
+                                        <span class="text-danger" id="agent2_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name2">Agent Name</label>
+                                        <select name="agent_name2" class="form-control" id="agent_name2">
+                                            <option value="">Select Agent</option>
+                                            {% for agent in agents %}
+                                            <option value="{{ agent.id }}">{{ agent.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="agent_name2_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent3">Agent 3 Commission</label>
+                                        <input type="text" id="agent3" name="agent3" class="form-control" placeholder="Agent Commission">
+                                        <span class="text-danger" id="agent3_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_name3">Agent Name</label>
+                                        <select name="agent_name3" class="form-control" id="agent_name3">
+                                            <option value="">Select Agent</option>
+                                            {% for agent in agents %}
+                                            <option value="{{ agent.id }}">{{ agent.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="agent_name3_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="agent_comment">Comment by Agent</label>
+                                        <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" placeholder="Agent Comments"></textarea>
+                                        <span class="text-danger" id="agent_comment_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="comments">Comment by Admin</label>
+                                        <textarea class="form-control" name="comments" id="comments" rows="5" placeholder="Admin Comments"></textarea>
+                                        <span class="text-danger" id="comments_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no">Receipt No<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select name="receipt_no" class="form-control" id="receipt_no" required>
+                                            <option value="">Select Receipt No</option>
+                                            <option value="Null">Null</option>
+                                            <option value="No Commision">No Commission</option>
+                                            {% for receipt in receipt_nos %}
+                                            <option value="{{ receipt.id }}">{{ receipt.receipt_number }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="receipt_no_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="kyc_number">KYC Number</label>
+                                        <input type="text" id="kyc_number" name="kyc_number" class="form-control" placeholder="KYC Number">
+                                        <span class="text-danger" id="kyc_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="is_approved_rejected">Approve/Reject</label>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <input type="radio" name="is_approved_rejected" value="A"> Approve
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="radio" name="is_approved_rejected" value="R"> Reject
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
+                                            </div>
+                                        </div>
+                                        <span class="text-danger" id="is_approved_rejected_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="is_property_aml">AML<span class="mandetory_field" style="color: red">*</span></label>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input value="Yes" name="is_property_aml" id="is_property_aml_yes" type="radio" required> Yes
+                                            </div>
+                                            <div class="col-6">
+                                                <input value="No" name="is_property_aml" id="is_property_aml_no" type="radio"> No
+                                            </div>
+                                        </div>
+                                        <span class="text-danger" id="is_property_aml_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Previous</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-documents')">Next</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Upload Documents -->
+                            <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
+                                <div class="form-group row nav-documents">
+                                    <div class="col-md-6 form-group">
+                                        <label for="pms_contract">PMS Contract<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="pms_contract" type="file" name="pms_contract" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="pms_contract_preview"></div>
+                                        <span class="text-danger" id="pms_contract_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_passport_copy">Owner Passport Copy<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="owner_passport_copy" type="file" name="owner_passport_copy" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="owner_passport_copy_preview"></div>
+                                        <span class="text-danger" id="owner_passport_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_eid_copy">Owner EID Copy</label>
+                                        <input class="imageUploadInput form-control" id="owner_eid_copy" type="file" name="owner_eid_copy" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="owner_eid_copy_preview"></div>
+                                        <span class="text-danger" id="owner_eid_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="pms_cheque_copy">PMS Cheque Copy<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="pms_cheque_copy" type="file" name="pms_cheque_copy" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="pms_cheque_copy_preview"></div>
+                                        <span class="text-danger" id="pms_cheque_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="title_deed">Title Deed<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="title_deed" type="file" name="title_deed" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="title_deed_preview"></div>
+                                        <span class="text-danger" id="title_deed_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="poa_pp">POA PP</label>
+                                        <input class="imageUploadInput form-control" id="poa_pp" type="file" name="poa_pp" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="poa_pp_preview"></div>
+                                        <span class="text-danger" id="poa_pp_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="poa_copy">POA Copy</label>
+                                        <input class="imageUploadInput form-control" id="poa_copy" type="file" name="poa_copy" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="poa_copy_preview"></div>
+                                        <span class="text-danger" id="poa_copy_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="key_hand_over_form">Key Hand Over Form</label>
+                                        <input class="imageUploadInput form-control" id="key_hand_over_form" type="file" name="key_hand_over_form" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="key_hand_over_form_preview"></div>
+                                        <span class="text-danger" id="key_hand_over_form_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="kyc_form">KYC Form<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="kyc_form" type="file" name="kyc_form" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="kyc_form_preview"></div>
+                                        <span class="text-danger" id="kyc_form_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="screening">Screening<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input class="imageUploadInput form-control" id="screening" type="file" name="screening" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="screening_preview"></div>
+                                        <span class="text-danger" id="screening_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="screening_comments">Screening Comments</label>
+                                        <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" placeholder="Screening Comments"></textarea>
+                                        <span class="text-danger" id="screening_comments_error"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-revenue')">Previous</button>
+                                        <button type="submit" class="btn btn-primary btn-rounded m-1" id="submitDeal">Create Property</button>
+                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftDocuments" onclick="saveAsDraft()">Save As Draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery UI for Datepicker -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- jQuery Validate -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+var $main = jQuery.noConflict(true);
+window.$main = $main;
+
+console.log("Using $main version:", $main.fn.jquery);
+console.log("Validator available:", typeof $main.validator !== "undefined");
+
+function showErrors(validator) {
+    let messages = '';
+    if (validator && Array.isArray(validator.errorList)) {
+        $main.each(validator.errorList, function (_, error) {
+            if (!error || !error.element) return;
+            const field = $main(error.element);
+            const fieldName = field.attr('name');
+            let labelText = $main(`label[for="${field.attr('id')}"]`).text().trim();
+            if (!labelText) {
+                labelText = field.closest('.form-group').find('label').first().text().trim() || fieldName;
+            }
+            messages += `${labelText.replace(/\*$/, '')}: ${error.message}\n`;
+        });
+    }
+    alert(messages || "Please correct the errors in the form.");
+}
+
+function validateChequeDates() {
+    const numberOfCheques = parseInt($main('#no_of_cheque').val()) || 0;
+    const chequeDatesCount = $main('[name="cheque_date[]"]').length;
+    if (numberOfCheques !== chequeDatesCount) {
+        $main('#no_of_cheque_error').text(`Please add exactly ${numberOfCheques} cheque date(s).`);
+        return false;
+    }
+    $main('#no_of_cheque_error').text('');
+    return true;
+}
+
+function switchTab(tabId) {
+    const currentTab = document.querySelector('.tab-pane.show.active')?.id;
+    const validator = $main("#rental_property_form").validate();
+
+    const tabOrder = [
+        'nav-property',
+        'nav-source',
+        'nav-agency',
+        'nav-cheque',
+        'nav-revenue',
+        'nav-documents'
+    ];
+
+    const tabFields = {
+        'nav-property': ['submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
+        'nav-source': ['owner_first_name', 'owner_source', 'owner_mobile', 'owner_email', 'seller_nationality'],
+        'nav-agency': ['agency_name', 'agent_name', 'agent_phone'],
+        'nav-cheque': ['no_of_cheque', 'cheque_date[]'],
+        'nav-revenue': ['total_commission', 'less_outside_commission', 'net_commission', 'classic', 'agent1', 'agent_name1', 'receipt_no', 'is_property_aml'],
+        'nav-documents': ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening']
+    };
+
+    // Remove required rules from all fields
+    Object.keys(tabFields).forEach(tab => {
+        tabFields[tab].forEach(field => {
+            $main(`[name="${field}"]`).each(function () {
+                $main(this).rules('remove', 'required');
+            });
+        });
+    });
+
+    // Validate current tab if moving forward
+    const currentIndex = tabOrder.indexOf(currentTab);
+    const targetIndex = tabOrder.indexOf(tabId);
+    const isNext = targetIndex > currentIndex;
+
+    if (isNext && currentTab && tabFields[currentTab]) {
+        tabFields[currentTab].forEach(field => {
+            $main(`[name="${field}"]`).each(function () {
+                $main(this).rules('add', { required: true });
+            });
+        });
+
+        const currentTabValid = $main(`#${currentTab}`).find(':input').valid();
+        if (!currentTabValid) {
+            showErrors(validator);
+            return;
+        }
+
+        if (currentTab === 'nav-cheque' && tabId === 'nav-revenue') {
+            if (!validateChequeDates()) {
+                return;
+            }
+        }
+    }
+
+    $main(`#${tabId}-tab`).tab('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveAsDraft() {
+    const form = $main('#rental_property_form');
+    const validator = form.validate();
+
+    const draftFields = [
+        'submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name',
+        'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
+        'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
+        'seller_nationality'
+    ];
+
+    // Add required rules for draft fields
+    draftFields.forEach(field => {
+        $main(`[name="${field}"]`).each(function () {
+            $main(this).rules('add', { required: true });
+        });
+    });
+
+    // Remove required rules for other fields
+    const allFields = [
+        'agency_name', 'agent_name', 'agent_phone', 'brn', 'agent_email', 'no_of_cheque',
+        'cheque_date[]', 'total_commission', 'less_outside_commission', 'net_commission',
+        'classic', 'agent1', 'agent_name1', 'agent2', 'agent_name2', 'agent3', 'agent_name3',
+        'agent_comment', 'comments', 'receipt_no', 'kyc_number', 'is_approved_rejected',
+        'is_property_aml', 'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
+        'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form',
+        'kyc_form', 'screening', 'screening_comments'
+    ];
+
+    allFields.forEach(field => {
+        $main(`[name="${field}"]`).each(function () {
+            $main(this).rules('remove', 'required');
+        });
+    });
+
+    if (form.valid()) {
+        const formData = new FormData(form[0]);
+        formData.append('save_as', 'draft');
+
+        $main.ajax({
+            url: '/rental-properties/create/',
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRFToken': $main('input[name="csrfmiddlewaretoken"]').val()
+            },
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    $main('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
+                    setTimeout(() => $main('#successmsg').hide(), 3000);
+                } else {
+                    alert('Failed to save draft: ' + (response.message || 'Unknown error'));
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = xhr.responseJSON?.message || 'Unknown error';
+                if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
+                    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                }
+                alert('Error saving draft: ' + errorMsg);
+            }
+        });
+    } else {
+        showErrors(validator);
+    }
+}
+
+$main(document).ready(function () {
+    // Initialize datepickers
+    $main('.startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true
+    });
+
+    // Custom validation methods
+    $main.validator.addMethod("alphanum_special", function (value, element) {
+        return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
+    }, "Only letters, numbers, and certain special characters are allowed.");
+
+    $main.validator.addMethod("numeric", function (value, element) {
+        return this.optional(element) || /^[0-9]*$/.test(value);
+    }, "Please enter a valid number.");
+
+    $main.validator.addMethod("custom_email", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
+    }, "Please enter a valid email address.");
+
+    $main.validator.addMethod("dateAfterStart", function (value, element, params) {
+        const startDate = $main(params).val();
+        if (!value || !startDate) return true;
+        return new Date(value) >= new Date(startDate);
+    }, "End date must be after start date.");
+
+    $main.validator.addMethod("fileSize", function (value, element) {
+        const maxFileSize = 3 * 1024 * 1024; // 3MB
+        if (element.files && element.files.length > 0) {
+            return element.files[0].size <= maxFileSize;
+        }
+        return true;
+    }, "File size must be less than 3MB.");
+
+    $main.validator.addMethod("fileExtension", function (value, element) {
+        if (!value) return true;
+        const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+        const extension = value.split('.').pop().toLowerCase();
+        return allowedExtensions.includes(extension);
+    }, "Only PDF, JPG, JPEG, and PNG files are allowed.");
+
+    // Initialize form validation
+    $main('#rental_property_form').validate({
+        ignore: "",
+        rules: {
+            submitted_by_agent: { required: true, alphanum_special: true, maxlength: 255 },
+            deal_date: { required: true, date: true },
+            reference_number: { required: true, alphanum_special: true, maxlength: 20 },
+            project_name: { required: true, alphanum_special: true, maxlength: 255 },
+            building_name: { required: true, alphanum_special: true, maxlength: 255 },
+            unit_details: { required: true, alphanum_special: true, maxlength: 15 },
+            pms_price: { required: true, numeric: true, maxlength: 10 },
+            pm_start_date: { required: true, date: true },
+            pm_end_date: { required: true, date: true, dateAfterStart: '[name="pm_start_date"]' },
+            tenancy_start_date: { required: true, date: true },
+            tenancy_end_date: { required: true, date: true, dateAfterStart: '[name="tenancy_start_date"]' },
+            owner_first_name: { required: true, alphanum_special: true, maxlength: 255 },
+            owner_source: { required: true, alphanum_special: true, maxlength: 255 },
+            owner_mobile: { required: true, numeric: true, minlength: 6, maxlength: 15 },
+            owner_email: { required: true, custom_email: true, maxlength: 100 },
+            seller_nationality: { required: true, alphanum_special: true, maxlength: 255 },
+            agency_name: { required: true, alphanum_special: true, maxlength: 255 },
+            agent_name: { required: true, alphanum_special: true, maxlength: 255 },
+            agent_phone: { required: true, numeric: true, minlength: 6, maxlength: 15 },
+            brn: { alphanum_special: true, maxlength: 255 },
+            agent_email: { custom_email: true, maxlength: 100 },
+            no_of_cheque: { required: true, numeric: true, minlength: 1, maxlength: 2, min: 1, max: 12 },
+            'cheque_date[]': { required: true, date: true },
+            total_commission: { required: true, numeric: true, maxlength: 10 },
+            less_outside_commission: { required: true, numeric: true, maxlength: 10 },
+            net_commission: { required: true, numeric: true, maxlength: 10 },
+            classic: { required: true, numeric: true, maxlength: 10 },
+            agent1: { required: true, numeric: true, maxlength: 10 },
+            agent_name1: { required: true, alphanum_special: true, maxlength: 255 },
+            agent2: { numeric: true, maxlength: 10 },
+            agent_name2: { alphanum_special: true, maxlength: 255 },
+            agent3: { numeric: true, maxlength: 10 },
+            agent_name3: { alphanum_special: true, maxlength: 255 },
+            receipt_no: { required: true, alphanum_special: true, maxlength: 100 },
+            kyc_number: { alphanum_special: true, maxlength: 255 },
+            agent_comment: { alphanum_special: true, maxlength: 255 },
+            comments: { alphanum_special: true, maxlength: 255 },
+            is_approved_rejected: { required: false },
+            is_property_aml: { required: true },
+            pms_contract: { required: true, fileSize: true, fileExtension: true },
+            owner_passport_copy: { required: true, fileSize: true, fileExtension: true },
+            pms_cheque_copy: { required: true, fileSize: true, fileExtension: true },
+            title_deed: { required: true, fileSize: true, fileExtension: true },
+            kyc_form: { required: true, fileSize: true, fileExtension: true },
+            screening: { required: true, fileSize: true, fileExtension: true },
+            owner_eid_copy: { fileSize: true, fileExtension: true },
+            poa_pp: { fileSize: true, fileExtension: true },
+            poa_copy: { fileSize: true, fileExtension: true },
+            key_hand_over_form: { fileSize: true, fileExtension: true },
+            screening_comments: { alphanum_special: true, maxlength: 255 }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":radio")) {
+                error.appendTo(element.closest('.form-group'));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        messages: {
+            pm_end_date: { dateAfterStart: "PM End Date must be after PM Start Date" },
+            tenancy_end_date: { dateAfterStart: "Tenancy End Date must be after Tenancy Start Date" }
+        }
+    });
+
+    // Handle cheque field addition
+    let chequeCount = 1;
+    const maxChequeFields = 12;
+
+    $main('#add-cheque-row').on('click', function () {
+        const numberOfCheques = parseInt($main('#no_of_cheque').val()) || 0;
+        if (chequeCount < maxChequeFields && chequeCount < numberOfCheques) {
+            chequeCount++;
+            const newField = `
+                <div class="row form-group nav-cheque cheque-date-row-${chequeCount}">
+                    <div class="col-md-5 form-group">
+                        <label for="cheque_date_${chequeCount}">Cheque Date<span class="mandetory_field" style="color: red">*</span></label>
+                        <input type="date" id="cheque_date_${chequeCount}" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
+                        <span class="text-danger" id="cheque_date_${chequeCount}_error"></span>
+                    </div>
+                    <div class="col-md-7 form-group">
+                        <button type="button" class="btn btn-danger btn-rounded m-1 subtraction remove-cheque-btn" data-row="${chequeCount}">Remove</button>
+                    </div>
+                </div>`;
+            $main('.append-cheque-date').append(newField);
+            $main(`#cheque_date_${chequeCount}`).rules('add', { required: true, date: true });
+            $main(`#cheque_date_${chequeCount}`).datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true
+            });
+        } else if (chequeCount >= numberOfCheques) {
+            alert('Cannot add more cheque dates than specified in Number of Cheques.');
+        } else {
+            alert('Maximum 12 cheque dates allowed.');
+        }
+    });
+
+    // Handle cheque field removal
+    $main(document).on('click', '.remove-cheque-btn', function () {
+        const row = $main(this).data('row');
+        $main(`.cheque-date-row-${row}`).remove();
+        chequeCount--;
+        validateChequeDates();
+    });
+
+    // Update cheque count validation on input change
+    $main('#no_of_cheque').on('input', function () {
+        validateChequeDates();
+    });
+
+    // File input preview and validation
+    $main('input[type="file"]').on('change', function () {
+        const fieldName = $main(this).attr('name');
+        const previewElement = $main(`#${fieldName}_preview`);
+        const errorElement = $main(`#${fieldName}_error`);
+        const files = this.files;
+
+        previewElement.empty();
+        errorElement.text('');
+
+        if (files.length > 1) {
+            errorElement.text('Please select only one file.');
+            $main(this).val('');
+            return;
+        }
+
+        if (files.length === 1) {
+            const file = files[0];
+            const maxFileSize = 3 * 1024 * 1024; // 3MB
+            const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExtensions.includes(extension)) {
+                errorElement.text('Only PDF, JPG, JPEG, and PNG files are allowed.');
+                $main(this).val('');
+                return;
+            }
+
+            if (file.size > maxFileSize) {
+                errorElement.text('File size must be less than 3MB.');
+                $main(this).val('');
+                return;
+            }
+
+            previewElement.text(`Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+        }
+    });
+
+    // Form submission via AJAX
+    $main('#rental_property_form').on('submit', function (e) {
+        e.preventDefault();
+        const form = $main(this);
+        const validator = form.validate();
+
+        // Validate cheque dates for full submission
+        if (!validateChequeDates()) {
+            return false;
+        }
+
+        const allRequiredFields = [
+            'submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name',
+            'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
+            'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
+            'seller_nationality', 'agency_name', 'agent_name', 'agent_phone', 'no_of_cheque',
+            'cheque_date[]', 'total_commission', 'less_outside_commission', 'net_commission',
+            'classic', 'agent1', 'agent_name1', 'receipt_no', 'is_property_aml',
+            'pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'
+        ];
+
+        allRequiredFields.forEach(field => {
+            $main(`[name="${field}"]`).each(function () {
+                $main(this).rules('add', { required: true });
+            });
+        });
+
+        if (!form.valid()) {
+            showErrors(validator);
+            return;
+        }
+
+        const formData = new FormData(form[0]);
+
+        $main.ajax({
+            url: '/rental-properties/create/',
+            type: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRFToken': $main('input[name="csrfmiddlewaretoken"]').val()
+            },
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    $main('#successmsg').show().find('#alert-primary').text('Property created successfully!');
+                    setTimeout(() => {
+                        $main('#successmsg').hide();
+                        window.location.href = '/rental-properties/list/';
+                    }, 3000);
+                } else {
+                    let errorMsg = response.message || 'Unknown error';
+                    if (response.message && typeof response.message === 'object') {
+                        errorMsg = Object.values(response.message).join('\n');
+                    }
+                    alert('Failed to create property: ' + errorMsg);
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = xhr.responseJSON?.message || 'Unknown error';
+                if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
+                    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                }
+                alert('Error creating property: ' + errorMsg);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

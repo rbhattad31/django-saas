@@ -1,0 +1,20 @@
+.nav-link.active {
+  background-color: #e9ecef !important; /* Ensure override */
+  color: #0d6efd !important;
+  font-weight: bold !important;
+  border-radius: 4px !important;
+}
+
+.btn-purple {
+  background-color: #6f42c1 !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.5rem 1.2rem !important;
+  border-radius: 5px !important;
+  font-weight: 500 !important;
+}
+
+.btn-purple:hover {
+  background-color: #5a32a3 !important;
+  color: white !important;
+}

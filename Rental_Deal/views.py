@@ -935,47 +935,4 @@ def create_rental_deal_view(request):
 
 
 
-# @api_view(['POST'])
-# def  temp_upload_file(request):
-#     uploaded_file = request.FILES.getlist("file")  # Use getlist to handle multiple files
-#     print("uploaded_file", uploaded_file)
-#     field_name = request.POST.get("field_name")  # optional
-#     print("field_name", field_name)
-
-    
-
-#     if not uploaded_file:
-#         return Response({"error": "No file uploaded"}, status=400)
-    
-
-#     # # ✅ Save file as-is (any type, binary-safe)
-#     for file in uploaded_file:
-#         if not file.name.endswith(('.png', '.jpg', '.jpeg', '.pdf', '.docx', '.xlsx')):
-#             return Response({"error": "Unsupported file type"}, status=400)
-#         path = f"{field_name}/{file.name}"
-#         saved_path = default_storage.save(path, ContentFile(file.read()))
-#         file_url = default_storage.url(saved_path)
-
-#     return Response({
-#         "message": "File uploaded successfully",
-#         "file_url": file_url,
-#         "file_name": file.name,
-#         "field_name": field_name
-#     })
-
-# not used 
-# @api_view(['POST'])
-# def delete_temp_file(request):
-#     file_name = request.data.get("filename") 
-#     field_name = request.data.get("fieldName")
-
-#     if not field_name:
-#         return Response({"error": "No file path provided"}, status=400)
-    
-#     # Remove the file from storage
-#     if default_storage.exists(field_name + "/" + file_name):
-#         default_storage.delete(field_name + "/" + file_name)
-#         # default_storage
-#         return Response({"message": "File deleted successfully"})
-#     else:
-#         return Response({"error": "File not found"}, status=404)
+ 

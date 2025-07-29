@@ -28,10 +28,11 @@ from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_del
 from Rental_Deal import urls 
 from core import urls
 urlpatterns = [
-    path('', index, name='home'),
+    path('', include('core.urls'), name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('Rental_Deal.urls')),
     path('', include('Sales_Deals_Management.urls')),
+    path('', include('property_management_deals.urls')), 
     path('third_party_receipts/', include('Third_Party_Receipts.urls')),
     path('receipt/',include('core.urls')),
     path("rental/filter",views.Rental_DealViewSet_filter),

@@ -1,0 +1,367 @@
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    for (let cookie of document.cookie.split(";")) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+function getTypeFromURL() {
+  const lastPart = window.location.pathname
+    .split("/")
+    .filter(Boolean)
+    .slice(-1)[0];
+
+  const mapping = {
+    list: "All",
+    draft: "draft",
+    approved: "approved",
+    pending: "pending",
+    waiting: "waiting",
+    rejected: "rejected",
+    "entered-finance": "entered-finance",
+    "waiting-finance": "waiting-finance",
+  };
+    
+  
+  // const result = mapping[lastPart] || null;
+  //  // Debug line
+
+  // return result;
+  return mapping[lastPart] || null;
+}
+
+
+
+// $(document).ready(function () {
+ 
+//   const type = getTypeFromURL();
+//   let headingText = (type ? type[0].toUpperCase() + type.slice(1) : '') + 'Properties';
+//   $('#propertyheading').text(headingText);
+
+   
+// });
+$(document).ready(function () {
+  let headingText = 'Properties';
+  console.log("Heading text set to:", headingText);
+
+  $('#propertyheading').text(headingText);
+});
+
+
+$(document).ready(function () {
+  
+  console.log(getTypeFromURL());
+  const table = $("#myTable").DataTable({
+    
+    processing: true,
+    serverSide: true,
+    ordering: true,
+    order: [[1, 'asc']], // Default sort on the second column (optional)
+    ajax: {
+      // url: "/api/rental-deals/filter",
+      url: "/rental-properties/filter/",
+      type: "POST",
+      processData: false,
+      
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      contentType: "application/json",
+      data: function (d) {
+        d.draw = d.draw;
+        d.start = d.start;
+        d.length = d.length;
+        d.order = d.order; // Add this to send ordering information
+        d.type =  getTypeFromURL();
+        console.log("🔍 Order data before sending:", JSON.stringify(d.order, null, 2)); // Debug order
+        console.log("🔍 d.type:", d.type);
+        const formData = $('#filterForm').serializeArray();
+        formData.forEach(field => {
+           if (field.name === 'type'){
+              console.log("TYPE IN SIDE POINT x1") 
+              return;
+           }            
+           if (field.name === 'from_date' || field.name === 'to_date') {
+            // Format manually to YYYY-MM-DD if value is present
+            if (field.value) {
+              const date = new Date(field.value);
+              const formatted = date.toISOString().split('T')[0]; // YYYY-MM-DD
+              d[field.name] = formatted;
+            }
+          } else {
+            d[field.name] = field.value;
+          }
+        });
+       
+        console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
+        return JSON.stringify(d);
+      },
+       dataSrc: function (json) {
+        console.log("Full JSON response:", json); // 🔍 all data
+        console.log("Only table rows:", json.data); // 🔍 just the rows
+        return json.data; // required — tells DataTables where the table rows are
+      }, 
+      error: function (xhr, status, error) {
+        console.error("❌ AJAX Error:", status, error, xhr.responseText); // Log AJAX errors
+      },
+      
+    },
+      success: function (data) {
+        console.log("✅ Success:", data);
+      },
+    columns: [
+      {
+        data: null,
+        title: "Actions",
+        orderable: false,
+        render: function (data, type, row, meta) {
+          console.log(data);
+          //           return `
+          //                 <a href="/rental-deals/view/${row.id}/" class="text-primary"><i class="fas fa-eye"></i></a>
+          //                 <a href="/rental-deals/update/${row.id}/" class="text-warning mx-2" id="editDealBtn" data-deal-id="${row.id}"><i class="fas fa-edit"></i></a>
+ 
+          //                 <a href="#" class="text-danger delete-btn" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+          //   <i class="fas fa-trash"></i>
+          // </a>
+          //               `;
+          let actionsHtml =""
+          if(row.can_view){
+            console.log("in hte can _view")
+          actionsHtml += `
+                                <a href="/rental-properties/${row.id}/view/" class="text-primary"><i class="fas fa-eye"></i></a>
+                            `;
+          }
+          // Conditionally add the Edit button
+          if (row.can_edit) {
+            actionsHtml += `
+                                     <a href="/rental-properties/${row.id}/edit/" class="text-warning mx-2"><i class="fas fa-edit"></i></a>
+                                `;
+          } else {
+            // Optionally, show a disabled/tooltip for why it's not editable
+            //  actionsHtml += `<span class="text-gray-400 mx-2 action-btn cursor-not-allowed" title="Not editable"><i class="fas fa-edit"></i></span> `;
+          }
+ 
+          // Conditionally add the Delete button
+          if (row.can_delete) {
+            actionsHtml += `
+                                   <a href="#" class="text-danger delete-link" data-id="${row.id}"><i class="fas fa-trash"></i></a>
+                                `;
+          } else {
+            // Optionally, show a disabled/tooltip for why it's not deletable
+            // actionsHtml += `<span class="text-gray-400 action-btn cursor-not-allowed" title="Not deletable"><i class="fas fa-trash"></i></span>`;
+          }
+ 
+          return actionsHtml;
+        }
+      },
+      { data: "id", title: "Property Id" },
+      { data: "reference_number", title: "Reference Number", className: "editable" },
+      { data: "deal_date", title: "Deal Date" },
+      { data: "unit_details", title: "Unit No", className: "editable" },
+      { data: "building_name", title: "Building Name", className: "editable" },
+      { data: "project_name", title: "Project Name", className: "editable" },
+      { data: "pms_price", title: "PMS Price", className: "editable" },
+      { data: "pm_start_date", title: "PM Start Date" },
+      { data: "pm_end_date", title: "PM End Date" },
+      { data: "tenancy_start_date", title: "Tenancy Start Date" },
+      { data: "tenancy_end_date", title: "Tenancy End Date" },
+      // { data: "submitted_date", title: "Submitted Date"},
+      {
+        data: "submitted_date",
+        title: "Submitted Date",
+        render: data => new Date(data).toLocaleDateString()
+      },
+      { data: "status", title: "Status" },
+
+      
+    ],
+  });
+  let selectedDealId = null;
+
+  // When trash icon or delete link is clicked
+  $(document).on("click", ".delete-link", function (e) {
+    e.preventDefault();
+    selectedDealId = $(this).data("id");
+    $("#deleteModal").modal("show");
+  });
+
+  // When user confirms deletion in modal
+  $("#confirmDeleteBtn").on("click", function () {
+    if (!selectedDealId) return;
+
+    $.ajax({
+      url: `/rental-properties/${selectedDealId}/delete/`,
+      //type: "POST", // or "DELETE" if your backend expects that
+      type: "DELETE",
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      success: function () {
+        $("#deleteModal").modal("hide");
+        alert("Property deleted successfully.");
+        $("#myTable").DataTable().ajax.reload(null, false); // Refresh DataTable
+      },
+      error: function (xhr) {
+        alert("Error deleting property: " + (xhr.responseJSON?.message || "Unknown error"));
+      },
+    });
+  });
+
+
+ 
+   $('#filterForm').on('submit', function (e) {
+    e.preventDefault(); // Prevent page reload
+    table.ajax.reload(); // Reload DataTable with new filters
+  });
+  
+});
+
+
+// $(document).ready(function () {
+//   // Get current URL path
+//   const path = window.location.pathname;
+//   console.log("Current path:", path);
+
+//   // Check if current URL is under /rental-deals/
+//   if (path.startsWith("/rental-properties/")) {
+//     // Expand the submenu
+//     $("#rentalPropertySubmenu").addClass("show");
+
+//     // Highlight the parent nav link (optional for styling)
+//     $("[href='#rentalPropertySubmenu']").removeClass("collapsed");
+
+//     // Highlight the correct submenu item
+//     $("#rentalPropertySubmenu a").each(function () {
+//       if ($(this).attr("href") === path) {
+//        $(this).parent("li").addClass("active");
+
+//       }
+//     });
+//   }
+// });
+console.log("Entering into path")
+// $(document).ready(function () {
+//   const path = window.location.pathname.replace(/\/$/, "");
+//   console.log("Current path:", path);
+
+//   if (path.startsWith("/rental-properties")) {
+//     $("#rentalPropertySubmenu").addClass("show");
+//     $("[href='#rentalPropertySubmenu']").removeClass("collapsed");
+
+//     $("#rentalPropertySubmenu a").each(function () {
+//       const linkHref = $(this).attr("href").replace(/\/$/, "");
+//       if (linkHref === path) {
+//         $(this).parent("li").addClass("active");
+//       }
+//     });
+//   }
+// });
+// $(document).ready(function () {
+//   const path = window.location.pathname.replace(/\/$/, ""); // remove trailing slash
+//   console.log("🔍 Current path:", path);
+
+//   if (path.startsWith("/rental-properties")) {
+//     $("#rentalPropertySubmenu").addClass("show");
+//     $("[href='#rentalPropertySubmenu']").removeClass("collapsed");
+
+//     $("#rentalPropertySubmenu a").each(function () {
+//       const linkHref = $(this).attr("href").replace(/\/$/, "");
+//       if (linkHref === path) {
+//         // ✅ Highlight <a> directly
+//         $(this).addClass("active");
+
+//         // ✅ Also highlight parent <li> if it exists
+//         $(this).parent("li").addClass("active");
+//       }
+//     });
+//   }
+// });
+$(document).ready(function () {
+  const path = window.location.pathname.replace(/\/$/, ""); // remove trailing slash
+  console.log("🔍 Current path:", path);
+
+  if (path.startsWith("/rental-properties")) {
+    console.log("🏠 Property Management path matched.");
+    
+    // Expand the submenu
+    $("#propertySubmenu").addClass("show");
+    $("[href='#propertySubmenu']").removeClass("collapsed").attr("aria-expanded", "true");
+    console.log("📂 Submenu #propertySubmenu opened.");
+
+    // Loop through links inside submenu
+    $("#propertySubmenu a").each(function () {
+      const linkHref = $(this).attr("href").replace(/\/$/, "");
+      console.log("🔗 Found submenu link:", linkHref);
+
+      if (linkHref === path) {
+        console.log("✅ Match found for:", linkHref);
+
+        // Highlight the link and parent <li>
+        $(this).addClass("active-item");
+        $(this).parent("li").addClass("active-item");
+      } else {
+        console.log("❌ No match for:", linkHref);
+      }
+    });
+
+  }
+});
+
+
+
+
+//Delete Script
+
+let selectedDealId = null;
+ 
+// When user clicks the trash icon — open modal
+$(document).on("click", ".delete-btn", function () {
+  selectedDealId = $(this).data("id");
+  $("#deleteModal").modal("show");
+});
+ 
+// When user confirms delete in modal
+
+
+
+function loadAgentDropdown(requestdata) {
+  $.ajax({
+    url: "/api/agents/dropdown/",
+    type: "GET",
+    success: function (agents) {
+      populateAgentDropdown(
+        "#submitted_by_agent",
+        agents,
+        requestdata.submitted_by_agent
+      );
+      populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
+      populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
+      populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
+    },
+    error: function () {
+      console.error("Failed to load agents.");
+    },
+  });
+}
+
+// populate the user data based on requriement
+
+function populateAgentDropdown(selector, data, selectedId = null) {
+  const $dropdown = $(selector);
+  $dropdown.empty().append('<option value="">Select Agent</option>');
+
+  data.forEach(function (agent) {
+    const isSelected = selectedId == agent.id ? "selected" : "";
+    $dropdown.append(
+      `<option value="${agent.id}" ${isSelected}>${agent.name}</option>`
+    );
+  });
+}
+

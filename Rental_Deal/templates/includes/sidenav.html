@@ -31,14 +31,90 @@
           <span><i class="fas fa-building"></i> Property Management Deals</span> <span class="chevron">&#x276F;</span>
         </a>
         <div class="collapse" id="propertySubmenu">
-          <ul class="list-group ms-3">
-            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">View Properties</a></li>
+         <ul class="list-group ms-3">
+              
+
+            {% comment %} {% if user|has_group:"Admin" or user|has_group:"Manager" %} {% endcomment %}
+            {% if perms.core.property_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-list' %}" class="text-decoration-none">
+                  <i class="fas fa-users me-2"></i> All Properties
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.draft_rentalproperties %}
+            {% comment %} {% if user|has_group:"Agent" %} {% endcomment %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-draft' %}" class="text-decoration-none">
+                  <i class="fas fa-user me-2"></i> My Drafts
+                </a>
+              </li>
+            {% endif %}
+
+            {% comment %} {% if user|has_group:"Admin" or user|has_group:"Approver" %} {% endcomment %}
+            {% if perms.core.approved_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-approved' %}" class="text-decoration-none">
+                  <i class="fas fa-random me-2"></i> Approved Properties
+                </a>
+              </li>
+              {% if perms.core.rejected_properties_rentalproperties %}
+                <li class="list-group-item border-0 px-3 py-1">
+                  <a href="{% url 'rental-property-rejected' %}" class="text-decoration-none">
+                    <i class="fas fa-thumbs-up me-2"></i> Rejected Properties
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if perms.core.pending_properties_rentalproperties %}
+                <li class="list-group-item border-0 px-3 py-1">
+                  <a href="{% url 'rental-property-pending' %}" class="text-decoration-none">
+                    <i class="fas fa-thumbs-down me-2"></i> Pending Properties
+                  </a>
+                </li>
+              {% endif %}
+            {% endif %}
+
+            {% if perms.core.waiting_for_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-waiting' %}" class="text-decoration-none">
+                  <i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Properties
+                </a>
+              </li>
+            {% endif %}
+            
+            {% comment %} {% if perms.entered_finance_properties_rentalproperties %} {% endcomment %}
+            {% if perms.core.entered_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-entered-finance' %}" class="text-decoration-none">
+                  <i class="fas fa-user-times me-2"></i> Entered Finance Properties
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.pending_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-waiting-finance' %}" class="text-decoration-none">
+                  <i class="fas fa-user-plus me-2"></i> Pending Finance Properties
+                </a>
+              </li>
+            {% endif %}
+            <!-- Management Receipts -->
+            <li class="list-group-item border-0 px-3 py-1">
+              <a href="{% url 'management_receipts_manager' %}" class="text-decoration-none">
+                <i class="fas fa-file-invoice-dollar me-2"></i> Management Receipts
+              </a>
+            </li>
+
           </ul>
         </div>
       </li>
 
       <!-- Third Party Receipts -->
-      <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-receipt"></i> Third Party Receipts</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'third_party_receipts_list' %}">
+          <i class="fas fa-receipt"></i> Third Party Receipts
+        </a></li>
 
       <!-- Settings -->
       <li class="nav-item">
@@ -208,6 +284,8 @@
 
     </ul>
   </div>
+
+  <h1> gopi dammu </h1>
 </nav>
 {% comment %} <nav aria-label="breadcrumb">
   <ol class="breadcrumb" id="breadcrumb">

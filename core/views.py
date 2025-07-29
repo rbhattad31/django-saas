@@ -59,7 +59,6 @@ from .models import Receipts
 
 # Create your views here.
 
-
 # recipts mOdel to handel Edit create view 
 class Receipts_ViewSet(viewsets.ModelViewSet):
     queryset = Receipts.objects.all() # Define base queryset for the ViewSet
@@ -326,4 +325,236 @@ def download_receipt_pdf(request, receipt_id):
     response['Content-Disposition'] = f'{disposition}; filename="receipt_{receipt.receipt_number}.pdf"'
     return response
     
+
+
+
+
+# thsiis  dashbroad  
+
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
+from django.contrib import messages
+
+from django_filters import rest_framework as filters
+from django.template import loader
+from django import template
+
+
+from django.db.models import Sum , Count, Q, DateField
+from django.db.models.functions import TruncDate,TruncMonth
+
+
+from core.models import RentalDeals,Users,SalesDeals, RentalProperties,Receipts
+# from core.forms import DatafieldForm
+
+from datetime import datetime,date
+from rest_framework.decorators       import api_view, permission_classes
+from rest_framework.permissions      import IsAuthenticated
+from rest_framework.response         import Response
+
+
+
+@login_required(login_url="/login/")
+def index(request):
+
+    return render(request,'home/index.html')
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def agent_list(request):
+    agents=Users.objects.all().order_by('name')
+    data=[{'id':u.id, 'name':u.name} for u in agents]
+    return Response(data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def total_commission_stats(request):
+    fd_str=request.GET.get('from','2019-01-01')
+    td_str = request.GET.get('to', date.today().strftime('%Y-%m-%d'))
+    ag_id = request.GET.get('select_agent', '')
+    deal_type = request.GET.get('select_deal_type', 'Sale')
+
+    fd=td=None
+    if fd_str:
+        try: fd=datetime.strptime(fd_str,'%Y-%m-%d').date()
+        except:fd=date(2019,1,1)
+    if td_str:
+        try: td = datetime.strptime(td_str, '%Y-%m-%d').date()
+        except: td=date.today()
+
+    if deal_type.lower() == 'rental':
+        qs=RentalDeals.objects.filter(is_deleted='N')
+        date_field="date"
+    elif deal_type.lower()=='property':
+        qs=RentalProperties.objects.filter(is_deleted='N')
+        date_field="submitted_date"
+    else:
+        qs=SalesDeals.objects.filter(is_deleted='N')
+        date_field="date"
+
+    qs=qs.filter(**{
+        f"{date_field}__gte":fd,
+        f"{date_field}__lte":td
+    })
+
+    if ag_id:
+        try:
+            qs=qs.filter(submitted_by_user_id=int(ag_id))
+        except ValueError:
+            pass
+        
+    total_gross = qs.aggregate(Sum("total_commission"))["total_commission__sum"] or 0
+    total_net   = qs.aggregate(Sum("net_commission"))["net_commission__sum"] or 0
+
+    monthly=(
+        qs
+        .annotate(month=TruncMonth(date_field))
+        .values("month")
+        .annotate(total=Sum("total_commission"))
+        .order_by("month")
+    )
+
+    series=[
+        {"label" :m['month'].strftime("%b %Y"), "value":m['total']} for m in monthly
+    ]
+
+    data={
+        'gross':total_gross,
+        "net":total_net,
+        "from":fd.strftime("%Y-%m-%d"),
+        "to":td.strftime("%Y-%m-%d"),
+        "deal_type":deal_type,
+        "series":series,
+    }
+
+    return Response(data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dashboard_stats(request):
+    fd_str = request.GET.get('from', '')
+    td_str = request.GET.get('to',   '')
+    ag_id  = request.GET.get('select_agent', '')
+
+    # base querysets
+    user_q   = Users.objects.all()
+    rental_q = RentalDeals.objects.filter(is_deleted='N')
+    sales_q  = SalesDeals.objects.filter(is_deleted='N')
+    prop_q   = RentalProperties.objects.filter(is_deleted='N')
+    rec_q    = Receipts.objects.all()
+
+    fd=td=None
+    if fd_str:
+        try:  fd=datetime.strptime(fd_str,'%Y-%m-%d').date()
+        except:pass
+    if td_str:
+        try:    td = datetime.strptime(td_str, '%Y-%m-%d').date()
+        except: pass
+
+
+    if fd:
+        user_q=user_q.filter(created_at__date__gte=fd)
+        rental_q=rental_q.filter(created_at__date__gte=fd)
+        sales_q=sales_q.filter(created_at__date__gte=fd)
+        prop_q=prop_q.filter(submitted_date__gte=fd)
+        rec_q=rec_q.filter(date__gte=fd)
+    if td:
+        user_q=user_q.filter(created_at__date__lte=td)
+        rental_q=rental_q.filter(date__lte=td)
+        sales_q=sales_q.filter(date__lte=td)
+        prop_q=prop_q.filter(submitted_date__lte=td)
+        rec_q=rec_q.filter(date__lte=td)
+    if ag_id:
+        try:
+            ag_int = int(ag_id)
+            agent = Users.objects.get(pk=ag_int)
+            user_q   = user_q.filter(id=ag_int)
+            rental_q = rental_q.filter(submitted_by_user_id=ag_int)
+            sales_q  = sales_q.filter(submitted_by_user_id=ag_int)
+            prop_q   = prop_q.filter(submitted_by_user_id=ag_int)
+            rec_q    = rec_q.filter(agent_name__iexact=agent.name)
+        except: pass
+    
+
+    data = {
+      'users': {
+        'Total Users':    user_q.count(),
+        'Active Users':   user_q.filter(is_active=True).count(),
+        'Inactive Users': user_q.filter(is_active=False).count(),
+      },
+      'rentals': {
+        'All Rental Deals':      rental_q.count(),
+        'My Rental Drafts':      rental_q.filter(
+                                   is_approved_rejected='P',
+                                   submitted_by_user_id=request.user.id
+                                 ).count(),
+        'Approved Rental Deals': rental_q.filter(is_approved_rejected='A').count(),
+        'Pending Rental Deals':  rental_q.filter(is_approved_rejected='P').count(),
+        'Rejected Rental Deals': rental_q.filter(is_approved_rejected='R').count(),
+        'Waiting For Finance Deals' : rental_q.filter(is_approved_rejected='F', is_entered_in_finance_system='0').count(),
+        'Pending For Finance Deals' : rental_q.filter(~Q(is_approved_rejected='F'), is_entered_in_finance_system='0').count(),
+        'Entered Finance Rental Deals' : rental_q.filter(is_entered_in_finance_system='1').count(),
+
+        'Total Gross Commission Rental Deals' : rental_q.aggregate(Sum('total_commission'))['total_commission__sum'] or 0,
+        'Total Net Commission Rental Deals' : rental_q.aggregate(Sum('net_commission'))['net_commission__sum'] or 0,
+
+      },
+      'sales': {
+        'All Sale Deals':       sales_q.count(),
+        'My Sale Drafts':       sales_q.filter(
+                                   is_approved_rejected='P',
+                                   submitted_by_user_id=request.user.id
+                                 ).count(),
+        'Approved Sale Deals':  sales_q.filter(is_approved_rejected='A').count(),
+        'Pending Sale Deals':   sales_q.filter(is_approved_rejected='P').count(),
+        'Rejected Sale Deals':  sales_q.filter(is_approved_rejected='R').count(),
+
+     'Waiting For Finance Deals' : sales_q.filter(is_approved_rejected='F', is_entered_in_finance_system='0').count(),
+     'Pending For Finance Deals' : sales_q.filter(~Q(is_approved_rejected='F'), is_entered_in_finance_system='0').count(),
+     'Entered Finance Rental Deals' : sales_q.filter(is_entered_in_finance_system='1').count(),
+
+     'Total Gross Commission Rental Deals' : sales_q.aggregate(Sum('total_commission'))['total_commission__sum'] or 0,
+     'Total Net Commission Rental Deals' : sales_q.aggregate(Sum('net_commission'))['net_commission__sum'] or 0,
+
+      },
+      'property': {
+        'All Property':         prop_q.count(),
+        'My Property Drafts':   prop_q.filter(
+                                   is_approved_rejected='P',
+                                   submitted_by_user_id=request.user.id
+                                 ).count(),
+        'Approved Properties':  prop_q.filter(is_approved_rejected='A').count(),
+        'Pending Properties':   prop_q.filter(is_approved_rejected='P').count(),
+        'Rejected Properties':  prop_q.filter(is_approved_rejected='R').count(),
+
+     'Waiting for Finance Properties':prop_q.filter(is_approved_rejected='F', is_entered_in_finance_system='0').count(),
+     'Pending Finance Properties':prop_q.filter(~Q(is_approved_rejected='F'), is_entered_in_finance_system='0').count(),
+     'Entered Finance Properties' : prop_q.filter(is_entered_in_finance_system='1').count(),
+     'Total Gross Commission Rental Deals': prop_q.aggregate(Sum('total_commission'))['total_commission__sum'] or 0,
+     'Total Net Commission Rental Deals' : prop_q.aggregate(Sum('net_commission'))['net_commission__sum'] or 0,
+
+      },
+      'receipts': {
+        'Receipts':       rec_q.count(),
+        'Third Party Receipts': rec_q.filter(
+                                   Q(deal_type__iexact='Rental')|
+                                   Q(deal_type__iexact='Sale')
+                                 ).count(),
+        'Management Receipts':  rec_q.exclude(
+                                   Q(deal_type__iexact='Rental')|
+                                   Q(deal_type__iexact='Sale')
+                                 ).count(),
+      },
+    }
+    return Response(data)
+   
     

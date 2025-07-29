@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'Rental_Deal',
     "Sales_Deals_Management",
     "Third_Party_Receipts",
+    "property_management_deals",
     'django_multitenant',
 
     #rest_framework

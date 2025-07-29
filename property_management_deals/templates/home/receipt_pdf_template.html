@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Receipt</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .header, .footer {
+        text-align: center;
+      }
+      .header h1 {
+        color: #d38d00;
+        font-size: 24px;
+        margin: 10px 0;
+      }
+      .company-details {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 12px;
+      }
+      .company-details .company-info {
+        display: inline-block;
+        text-align: left;
+      }
+      .company-details .company-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .company-logo {
+        width: 100px;
+        vertical-align: top;
+        margin-right: 10px;
+      }
+      .flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      .right {
+        text-align: right;
+      }
+      .arabic {
+        font-family: Arial, sans-serif;
+        direction: rtl;
+        font-size: 18px;
+      }
+      .amount-box {
+        border: 2px solid black;
+        width: 120px;
+        text-align: center;
+        padding: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td, th {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+      }
+      .field {
+        margin: 5px 0;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .note {
+        font-size: 12px;
+        color: #000;
+        margin-top: 20px;
+      }
+      .highlight-red {
+        color: red;
+        font-weight: bold;
+      }
+      .bordered {
+        border-top: 1px dashed #999;
+        margin-top: 30px;
+        padding-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Receipt</h1>
+    </div>
+
+    <div class="company-details">
+      <img src="/static/assets/img/brand/image.png" alt="Classic Properties Logo" class="company-logo">
+      <div class="company-info">
+        <div class="company-name">CLASSIC PROPERTIES REAL ESTATE MANAGEMENT</div>
+        <div>P.O.Box: 15862, Properties Office: Suite No. 509 & 510, Clover Bay Tower, Business Bay, Dubai, UAE</div>
+        <div>ORN No.29471</div>
+        <div>+97143366844 +97142711128 <a href="mailto:pm@classicproperties.ae">pm@classicproperties.ae</a> <a href="https://www.classicproperties.ae">www.classicproperties.ae</a></div>
+      </div>
+    </div>
+
+    <div class="flex">
+      <div class="amount-box">
+        <table>
+          <tr>
+            <th>Dhs.</th>
+            <th>Fils</th>
+          </tr>
+          <tr>
+            <td>325</td>
+            <td>00</td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <span class="arabic bold">سند القبض</span>
+        <div class="bold">Receipt Voucher</div>
+      </div>
+
+      <div class="right">
+        <div class="bold">No: <span class="highlight-red">1376</span></div>
+        <div>Date: 26-07-2025</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="field">
+        <strong>Received From Mr./Ms./M/s:</strong> Kivanc Vural
+        <span class="arabic">من السيد/السيدة/الشركة: كيفانش فورال</span>
+      </div>
+      <div class="field">
+        <strong>The Sum of Dhs:</strong> Three Hundred Twenty Five Only
+        <span class="arabic">المبلغ: ثلاثمائة وخمسة وعشرون فقط</span>
+      </div>
+      <div class="field">
+        <strong>Cash / Cheque No:</strong> Cash <strong>Bank:</strong>
+        <span class="arabic">نقدًا / الشيك رقم: نقدي البنك:</span>
+      </div>
+      <div class="field">
+        <strong>Date:</strong> 26-07-2025
+        <span class="arabic">التاريخ: 26-07-2025</span>
+      </div>
+      <div class="field">
+        <strong>Being:</strong> Ejari Fee for Unit 276, Zinnia, Madinat Hind 4
+        <span class="arabic">بخصوص: رسوم الإجارة للوحدة 276، زينيا، مادينات هند 4</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="note">
+        <strong>Note:</strong><br />
+        Cheque bounce charges will be AED 105.00 inclusive of VAT.
+        <span class="arabic">ملاحظة: رسوم الشيك المرتد ستكون AED 105.00 شاملة الضريبة</span>
+      </div>
+
+      <div class="note bordered">
+        This is a computer generated receipt and doesn't require signature.
+        <span class="arabic">هذه إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا</span>
+      </div>
+    </div>
+  </body>
+</html>

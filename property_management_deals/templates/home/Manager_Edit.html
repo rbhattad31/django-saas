@@ -1,0 +1,398 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Edit Management Receipt {% endblock title %}
+
+{% block content %}
+<div class="main-content pt-4">
+  <style>
+    .cheque_no, .bank_name { display: none; }
+    .cheque-field { display: none; }
+    .cheque-field.show { display: block; }
+  </style>
+  <div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary" id="alert-primary">
+      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <h4 class="pb-2">
+      Edit Management Receipt Details
+      <span class="float-right">
+        <a class="btn btn-primary btn-rounded" href="{% url 'management_receipts_manager' %}">Cancel</a>
+      </span>
+    </h4>
+    <div class="card mb-5">
+      <div class="card-body">
+        <form id="management_receipt_form" novalidate="novalidate">
+          {% csrf_token %}
+          <div class="row">
+            <input type="hidden" name="id" id="id" value="{{ receipt.id }}">
+            <input type="hidden" name="account_id" id="account_id" value="{{ receipt.account_id }}">
+            <input type="hidden" name="deal_refer_no" id="deal_refer_no" value="{{ receipt.deal_refer_no }}">
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="date">Receipt Date <span style="color: red">*</span></label>
+              <input type="date" name="date" class="form-control" id="date" value="{{ receipt.date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="receipt_number">Receipt Number <span style="color: red">*</span></label>
+              <input type="text" name="receipt_number" class="form-control" id="receipt_number" value="{{ receipt.receipt_number }}" readonly style="background-color: #f8f9fa">
+              <span class="error text-danger" id="receipt_number_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="received_from">Received From <span style="color: red">*</span></label>
+              <input type="text" name="received_from" class="form-control" id="received_from" value="{{ receipt.received_from|default_if_none:'' }}">
+              <span class="error text-danger" id="received_from_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="dhs">Dhs <span style="color: red">*</span></label>
+              <input type="text" name="dhs" class="form-control" id="dhs" value="{{ receipt.dhs }}">
+              <span class="error text-danger" id="dhs_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="fils">Fils <span style="color: red">*</span></label>
+              <input type="text" name="fils" class="form-control" id="fils" value="{{ receipt.fils }}">
+              <span class="error text-danger" id="fils_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="sum_of_dhs">The Sum Of Dhs <span style="color: red">*</span></label>
+              <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" value="{{ receipt.sum_of_dhs }}">
+              <span class="error text-danger" id="sum_of_dhs_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="payment_type">Payment Type <span style="color: red">*</span></label>
+              <select name="payment_type" class="form-control" id="payment_type">
+                <option value="">Select Payment Type</option>
+                <option value="Cash" {% if receipt.payment_type == 'Cash' %}selected{% endif %}>Cash</option>
+                <option value="Cheque" {% if receipt.payment_type == 'Cheque' %}selected{% endif %}>Cheque</option>
+                <option value="Bank Transfer" {% if receipt.payment_type == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+              </select>
+              <span class="error text-danger" id="payment_type_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3 cheque-field">
+              <label for="cheque_no">Cheque No <span class="cheque_no" style="color: red">*</span></label>
+              <input type="text" name="cheque_no" class="form-control" id="cheque_no" value="{{ receipt.cheque_no|default_if_none:'' }}">
+              <span class="error text-danger" id="cheque_no_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="bank">Bank Name <span class="bank_name" style="color: red">*</span></label>
+              <input type="text" name="bank" class="form-control" id="bank" value="{{ receipt.bank|default_if_none:'' }}">
+              <span class="error text-danger" id="bank_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="sec_date">Payment Date <span style="color: red">*</span></label>
+              <input type="date" name="sec_date" class="form-control" id="sec_date" value="{{ receipt.sec_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="sec_date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="being">Being <span style="color: red">*</span></label>
+              <input type="text" name="being" class="form-control" id="being" value="{{ receipt.being }}">
+              <span class="error text-danger" id="being_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="status">Status <span style="color: red">*</span></label>
+              <input type="text" name="status" class="form-control" id="status" value="{{ receipt.status }}" readonly>
+              <span class="error text-danger" id="status_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="deal_type">Type <span style="color: red">*</span></label>
+              <select name="deal_type" class="form-control" id="deal_type">
+                <option value="">Select Type</option>
+                <option value="Management Fee" {% if receipt.deal_type == 'Management Fee' %}selected{% endif %}>Management Fee</option>
+                <option value="Ejari Fee" {% if receipt.deal_type == 'Ejari Fee' %}selected{% endif %}>Ejari Fee</option>
+              </select>
+              <span class="error text-danger" id="deal_type_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="agent_name">Agent Name <span style="color: red">*</span></label>
+              <input type="text" name="agent_name" class="form-control" id="agent_name" value="{{ receipt.agent_name }}">
+              <span class="error text-danger" id="agent_name_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="project_name">Project Name <span style="color: red">*</span></label>
+              <input type="text" name="project_name" class="form-control" id="project_name" value="{{ receipt.project_name }}">
+              <span class="error text-danger" id="project_name_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="building_name">Building Name <span style="color: red">*</span></label>
+              <input type="text" name="building_name" class="form-control" id="building_name" value="{{ receipt.building_name }}">
+              <span class="error text-danger" id="building_name_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="unit_number">Unit Number <span style="color: red">*</span></label>
+              <input type="text" name="unit_number" class="form-control" id="unit_number" value="{{ receipt.unit_number }}">
+              <span class="error text-danger" id="unit_number_error"></span>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-12 btn-center text-center">
+              <button type="submit" id="submit-btn" class="btn btn-primary btn-rounded m-1">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    if (typeof jQuery === 'undefined') {
+        console.error("jQuery failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/jquery-3.6.0.min.js" %}"><\/script>');
+    } else {
+        console.log("jQuery loaded, version:", $.fn.jquery);
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script>
+    var $j = jQuery.noConflict(true);
+    if (typeof $j.validator === 'undefined') {
+        console.error("jQuery Validate failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/jquery.validate.min.js" %}"><\/script>');
+    } else {
+        console.log("jQuery Validate loaded");
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    if (typeof bootstrap === 'undefined') {
+        console.error("Bootstrap JS failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/bootstrap.bundle.min.js" %}"><\/script>');
+    } else {
+        console.log("Bootstrap JS loaded");
+    }
+</script>
+
+<script>
+$j(document).ready(function() {
+    const receiptId = {{ receipt.id }};
+    //const apiUrl = `/api/management-receipts/${receiptId}/`;
+    const apiUrl = `/api/management-receipts/${receiptId}/edit/`;
+
+    // Toggle cheque_no field based on payment_type
+    function toggleChequeField() {
+        const paymentType = $j('#payment_type').val();
+        if (paymentType === 'Cheque') {
+            $j('.cheque-field').addClass('show');
+            $j('.cheque_no').show();
+            $j('.bank_name').show();
+            $j('#cheque_no').prop('required', true);
+            $j('#bank').prop('required', true);
+        } else {
+            $j('.cheque-field').removeClass('show');
+            $j('.cheque_no').hide();
+            $j('.bank_name').hide();
+            $j('#cheque_no').prop('required', false).val('');
+            $j('#bank').prop('required', false).val('');
+        }
+    }
+
+    $j('#payment_type').on('change', toggleChequeField);
+    toggleChequeField(); // Run on page load
+
+    // Format date for input
+    function formatDateForInput(dateString) {
+        if (!dateString || typeof dateString !== 'string') return '';
+        const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(dateString.trim());
+        if (isoMatch) return dateString.trim();
+        const parts = dateString.trim().split('-');
+        if (parts.length !== 3) return '';
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        if (isNaN(day) || isNaN(month) || isNaN(year)) return '';
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
+    // Load receipt data
+    function loadReceiptData() {
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                // Populate form fields
+                Object.keys(data).forEach(key => {
+                    const field = $j(`[name="${key}"]`);
+                    if (field.length) {
+                        if (field.is('input[type="date"]')) {
+                            field.val(formatDateForInput(data[key]));
+                        } else if (field.is('select')) {
+                            field.val(data[key]);
+                        } else {
+                            field.val(data[key] || '');
+                        }
+                    }
+                });
+                toggleChequeField();
+            },
+            error: function(xhr) {
+                console.error('Error fetching receipt:', xhr.responseText);
+                alert('Error fetching receipt data: ' + (xhr.responseJSON ? JSON.stringify(xhr.responseJSON) : xhr.responseText));
+            }
+        });
+    }
+
+    // Validation rules
+    $j.validator.addMethod("lettersonly", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+    }, "Letters and allowed special characters only");
+
+    $j.validator.addMethod("numeric", function(value, element) {
+        return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers");
+
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+    }, "Enter only letters, numbers, and special characters");
+
+    // Form validation
+    $j('#management_receipt_form').validate({
+        rules: {
+            date: { required: true },
+            receipt_number: { required: true, numeric: true },
+            received_from: { required: true, lettersonly: true },
+            dhs: { required: true, numeric: true },
+            fils: { required: true, numeric: true },
+            sum_of_dhs: { required: true, lettersonly: true },
+            payment_type: { required: true },
+            cheque_no: { 
+                required: function() { return $j('#payment_type').val() === 'Cheque'; },
+                numeric: true 
+            },
+            bank: { 
+                required: function() { return $j('#payment_type').val() === 'Cheque'; },
+                lettersonly: true 
+            },
+            sec_date: { required: true },
+            being: { required: true, alphanum_special: true },
+            status: { required: true, lettersonly: true },
+            deal_type: { required: true },
+            agent_name: { required: true, lettersonly: true },
+            project_name: { required: true, lettersonly: true },
+            building_name: { required: true, lettersonly: true },
+            unit_number: { required: true, numeric: true }
+        },
+        messages: {
+            date: "Please select a receipt date",
+            receipt_number: "Please enter a valid receipt number",
+            received_from: "Please enter a valid name",
+            dhs: "Please enter a valid Dhs amount",
+            fils: "Please enter a valid Fils amount",
+            sum_of_dhs: "Please enter the sum in words",
+            payment_type: "Please select a payment type",
+            cheque_no: "Please enter a valid cheque number",
+            bank: "Please enter a valid bank name",
+            sec_date: "Please select a payment date",
+            being: "Please enter a valid description",
+            status: "Please enter a valid status",
+            deal_type: "Please select a deal type",
+            agent_name: "Please enter a valid agent name",
+            project_name: "Please enter a valid project name",
+            building_name: "Please enter a valid building name",
+            unit_number: "Please enter a valid unit number"
+        },
+        errorPlacement: function(error, element) {
+            error.appendTo($j("#" + element.attr("id") + "_error"));
+        },
+        submitHandler: function(form) {
+            submitForm();
+        },
+        invalidHandler: function(event, validator) {
+            console.log("Form validation failed:", validator.errorList);
+        }
+    });
+
+    // Submit form via AJAX
+    function submitForm() {
+        const formData = new FormData($j('#management_receipt_form')[0]);
+        const submitBtn = $j('#submit-btn');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(data) {
+                console.log("Receipt updated successfully:", data);
+                alert('Receipt updated successfully!');
+                window.location.href = "{% url 'management_receipts_manager' %}";
+            },
+            error: function(xhr) {
+                console.error('Error updating receipt:', xhr.responseText);
+                alert('Error updating receipt: ' + (xhr.responseJSON ? JSON.stringify(xhr.responseJSON) : xhr.responseText));
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Warn on unsaved changes
+    let formChanged = false;
+    $j('#management_receipt_form').on('change input', 'input, select', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    // Confirm cancel
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Load initial data
+    loadReceiptData();
+});
+</script>
+{% endblock content %}

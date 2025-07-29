@@ -1,0 +1,968 @@
+{% extends 'layouts/base.html' %}
+
+{% comment %} {% extends 'layouts/base.html' %}
+{% block title %} List of Properties {% endblock title %}
+{% block content %}
+<div class="">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>List of <span id="propertyheading">Properties</span> </h3>
+    <button class="btn btn-primary"> Create Property</button>
+  </div> 
+
+  <!-- Bootstrap CSS -->
+  <div>
+  <form id="createPropertyForm" class="m-0 border rounded p-3 bg-light" method="POST" action="/create-property/">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Create Property</h4>
+      <button type="button" class="btn btn-purple" onclick="window.history.back();">Cancel</button>
+    </div>
+    <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="property-details-tab" data-bs-toggle="tab" href="#property-details" role="tab" aria-controls="property-details" aria-selected="true">Property Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="owner-details-tab" data-bs-toggle="tab" href="#owner-details" role="tab" aria-controls="owner-details" aria-selected="false">Owner Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="owner-agency-details-tab" data-bs-toggle="tab" href="#owner-agency-details" role="tab" aria-controls="owner-agency-details" aria-selected="false">Owner Agency Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="cheque-details-tab" data-bs-toggle="tab" href="#cheque-details" role="tab" aria-controls="cheque-details" aria-selected="false">Cheque Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="revenue-details-tab" data-bs-toggle="tab" href="#revenue-details" role="tab" aria-controls="revenue-details" aria-selected="false">Revenue Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="upload-documents-tab" data-bs-toggle="tab" href="#upload-documents" role="tab" aria-controls="upload-documents" aria-selected="false">Upload Documents</a>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="propertyTabContent">
+      <!-- Property Details -->
+      <div class="tab-pane fade show active" id="property-details" role="tabpanel" aria-labelledby="property-details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Deal Submitted By Agent<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="deal_submitted_by" placeholder="Select Agent Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Reference Number<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="reference_number" placeholder="Reference No" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Building Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="building_name" placeholder="Building Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">PMS Price</label>
+              <input type="text" class="form-control" name="pms_price" placeholder="PMS Price">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">PM End Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="pm_end_date" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tenancy End Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="tenancy_end_date" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Deal Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="deal_date" value="30-06-2025" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Project Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="project_name" placeholder="Project Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Unit No</label>
+              <input type="text" class="form-control" name="unit_no" placeholder="Unit No">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">PM Start Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="pm_start_date" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tenancy Start Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="tenancy_start_date" required>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('owner-details-tab')">Next</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+
+      <!-- Owner Details -->
+      <div class="tab-pane fade" id="owner-details" role="tabpanel" aria-labelledby="owner-details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="owner_name" placeholder="Owner Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mobile<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="owner_mobile" placeholder="Owner Mobile" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nationality<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="owner_nationality" placeholder="Owner Nationality" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Source<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="owner_source" placeholder="Select Owner Source" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email<span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="owner_email" placeholder="Owner Email" required>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('property-details-tab')">Previous</button>
+          <button type="button" class="btn btn-purple" onclick="switchTab('owner-agency-details-tab')">Next</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+
+      <!-- Owner Agency Details -->
+      <div class="tab-pane fade" id="owner-agency-details" role="tabpanel" aria-labelledby="owner-agency-details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Agency Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="agency_name" placeholder="Agency Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent Brn</label>
+              <input type="text" class="form-control" name="agent_brn" placeholder="Agent Brn">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Agent Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="agent_name" placeholder="Agent Name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent Phone<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="agent_phone" placeholder="Agent Phone" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent Email</label>
+              <input type="email" class="form-control" name="agent_email" placeholder="Agent Email">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('owner-details-tab')">Previous</button>
+          <button type="button" class="btn btn-purple" onclick="switchTab('cheque-details-tab')">Next</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+
+      <!-- Cheque Details -->
+      <div class="tab-pane fade" id="cheque-details" role="tabpanel" aria-labelledby="cheque-details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Number Of Cheque (Max: 12)<span class="text-danger">*</span></label>
+              <input type="number" class="form-control" name="number_of_cheque" min="1" max="12" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Cheque Date<span class="text-danger">*</span></label>
+              <input type="date" class="form-control" name="cheque_date" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <button type="button" class="btn btn-purple" id="addChequeBtn">Add</button>
+            <p class="text-muted">Note: Date of cheque might be varying so additional rows must be added respectively (maximum up to 12)</p>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('owner-agency-details-tab')">Previous</button>
+          <button type="button" class="btn btn-purple" onclick="switchTab('revenue-details-tab')">Next</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+
+      <!-- Revenue Details -->
+      <div class="tab-pane fade" id="revenue-details" role="tabpanel" aria-labelledby="revenue-details-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Total Commission<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="total_commission" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Net Commission<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="net_commission" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent1<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="agent1_commission" placeholder="Select Agent" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent2</label>
+              <input type="text" class="form-control" name="agent2_commission" placeholder="Select Agent">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent3</label>
+              <input type="text" class="form-control" name="agent3_commission" placeholder="Select Agent">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Comment by Agent</label>
+              <input type="text" class="form-control" name="agent_comments">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Receipt No<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="receipt_no" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Less Outside Commission<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="less_outside_commission" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Classic<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="classic" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent1 Commission</label>
+              <input type="text" class="form-control" name="agent1_commission_value">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent2</label>
+              <input type="text" class="form-control" name="agent2_commission_value">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Agent3</label>
+              <input type="text" class="form-control" name="agent3_commission_value">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Comments by Admin</label>
+              <input type="text" class="form-control" name="admin_comments">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">KYC Number</label>
+              <input type="text" class="form-control" name="kyc_number">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">AML<span class="text-danger">*</span></label>
+              <div class="form-check">
+                <input type="radio" class="form-check-input" name="aml" value="Yes" required> Yes
+                <input type="radio" class="form-check-input" name="aml" value="No" required> No
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Approve/Reject<span class="text-danger">*</span></label>
+              <div class="form-check">
+                <input type="radio" class="form-check-input" name="approve_reject" value="Approve" required> Approve
+                <input type="radio" class="form-check-input" name="approve_reject" value="Reject" required> Reject
+                <input type="radio" class="form-check-input" name="approve_reject" value="Waiting for Finance" required> Waiting for Finance
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('cheque-details-tab')">Previous</button>
+          <button type="button" class="btn btn-purple" onclick="switchTab('upload-documents-tab')">Next</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+
+      <!-- Upload Documents -->
+      <div class="tab-pane fade" id="upload-documents" role="tabpanel" aria-labelledby="upload-documents-tab">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">PMS Contract</label>
+              <input type="file" class="form-control" name="pms_contract">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Title Deed*</label>
+              <input type="file" class="form-control" name="title_deed" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Poa Copy</label>
+              <input type="file" class="form-control" name="poa_copy">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">KYC Form*</label>
+              <input type="file" class="form-control" name="kyc_form" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Owner Passport Copy*</label>
+              <input type="file" class="form-control" name="owner_passport_copy" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">PMS Cheque Copy*</label>
+              <input type="file" class="form-control" name="pms_cheque_copy" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Poa Pp</label>
+              <input type="file" class="form-control" name="poa_pp">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Key Hand Over Form</label>
+              <input type="file" class="form-control" name="key_hand_over_form">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Screening*</label>
+              <input type="file" class="form-control" name="screening" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Screening Comments</label>
+              <input type="text" class="form-control" name="screening_comments">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" class="btn btn-purple" onclick="switchTab('revenue-details-tab')">Previous</button>
+          <button type="submit" class="btn btn-purple" name="create_property">Create Property</button>
+          <button type="button" class="btn btn-purple" onclick="saveAsDraft()">Save As Draft</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  </div>
+
+  <!-- Original Filter Form -->
+  <form id="filterForm" class="m-0 border rounded p-3 bg-light ">
+    <!-- Filter Toggle -->
+    <div class="d-flex align-items-center mb-2">
+      <strong class="me-2">Filters By:</strong>
+      <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-chevron-down"></i> click here
+      </a>
+    </div>
+
+    <!-- Collapsible Filter Fields -->
+    <div class="collapse" id="filterCollapse">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Reference No</label>
+            <input type="text" class="form-control" name="reference_number" placeholder="Reference No">
+          </div>
+          <input type="hidden" name="type" value="">
+
+          <div class="mb-3">
+            <label class="form-label">Building Name</label>
+            <input type="text" class="form-control" name="building_name" placeholder="Building Name">
+          </div>
+         
+          <div class="mb-3">
+            <label class="form-label">Deal Date From</label>
+            <input type="date" class="form-control" name="Deal_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">PM Date From</label>
+            <input type="date" class="form-control" name="PM_from_date">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date From</label>
+            <input type="date" class="form-control" name="Tenancy_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+              <option value="">Please Select</option>
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+              <option value="About to Expire">About to Expire</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Approval Status</label>
+            <select class="form-select" name="Approval_status">
+              <option value="">Please Select</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Waiting for Finance">Waiting for Finance</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Unit No</label>
+            <input type="text" class="form-control" name="unit_details" placeholder="Unit No">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Name</label>
+            <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Deal Date To</label>
+            <input type="date" class="form-control" name="deal_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">PM Date To</label>
+            <input type="date" class="form-control" name="PM_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date To</label>
+            <input type="date" class="form-control" name="Tenancy_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Property Id</label>
+            <input type="number" class="form-control" name="Property Id">
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="row mt-2">
+        <div class="col-md-12 d-flex gap-3">
+          <button type="submit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Filter</button>
+          <button type="reset" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visually OUTSIDE collapse but INSIDE form -->
+    <div class="row mt-3">
+      <div class="col-md-12 d-flex align-items-center">
+        <label class="me-2">Show</label>
+        <select name="length" class="form-select w-auto">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <label class="ms-2">entries</label>
+      </div>
+    </div>
+  </form>
+
+  <table id="myTable" class="display">
+    <thead>
+      <tr>
+        <!-- Table headers can be added as needed -->
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this deal?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.nav-link').forEach(tab => tab.classList.remove('active'));
+    document.querySelector(`#${tabId}`).classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+    document.querySelector(`#${tabId.replace('-tab', '')}`).classList.add('show', 'active');
+  }
+
+  function saveAsDraft() {
+    document.getElementById('createPropertyForm').action = '/save-draft/';
+    document.getElementById('createPropertyForm').submit();
+  }
+
+  document.getElementById('addChequeBtn').addEventListener('click', function() {
+    // Logic to add more cheque fields can be implemented here
+    alert('Add cheque functionality to be implemented');
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+{% comment %} {% block title %} List of Properties {% endblock title %}
+{% block content %}
+<div class="">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>List of <span id="propertyheading">Properties</span> </h3>
+    
+    <a href="{% url 'rental-property-create-form' %}" class="btn btn-primary"> Create Property</a>
+
+  </div> 
+
+  <!-- Bootstrap CSS -->
+  <div>
+  <form id="filterForm" class="m-0 border rounded p-3 bg-light ">
+    <!-- Filter Toggle -->
+    <div class="d-flex align-items-center mb-2">
+      <strong class="me-2">Filters By:</strong>
+      <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-chevron-down"></i> click here
+      </a>
+    </div>
+
+    <!-- Collapsible Filter Fields -->
+    <div class="collapse" id="filterCollapse">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Reference No</label>
+            <input type="text" class="form-control" name="reference_number" placeholder="Reference No">
+          </div>
+          <input type="hidden" name="type" value="">
+
+          <div class="mb-3">
+            <label class="form-label">Building Name</label>
+            <input type="text" class="form-control" name="building_name" placeholder="Building Name">
+          </div>
+         
+          <div class="mb-3">
+            <label class="form-label">Deal Date From</label>
+            <input type="date" class="form-control" name="Deal_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">PM Date From</label>
+            <input type="date" class="form-control" name="PM_from_date">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date From</label>
+            <input type="date" class="form-control" name="Tenancy_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+              <option value="">Please Select</option>
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+              <option value="About to Expire">About to Expire</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Approval Status</label>
+            <select class="form-select" name="Approval_status">
+              <option value="">Please Select</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Waiting for Finance">Waiting for Finance</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Unit No</label>
+            <input type="text" class="form-control" name="unit_details" placeholder="Unit No">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Name</label>
+            <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Deal Date To</label>
+            <input type="date" class="form-control" name="deal_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">PM Date To</label>
+            <input type="date" class="form-control" name="PM_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date To</label>
+            <input type="date" class="form-control" name="Tenancy_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Property Id</label>
+            <input type="number" class="form-control" name="Property Id">
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="row mt-2">
+        <div class="col-md-12 d-flex gap-3">
+          <button type="submit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Filter</button>
+          <button type="reset" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visually OUTSIDE collapse but INSIDE form -->
+    <div class="row mt-3">
+      <div class="col-md-12 d-flex align-items-center">
+        <label class="me-2">Show</label>
+        <select name="length" class="form-select w-auto">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <label class="ms-2">entries</label>
+      </div>
+    </div>
+  </form>
+
+  <table id="myTable" class="display">
+    <thead>
+      <tr>
+        <th>Actions</th>
+        <th>Property Id</th>
+        <th>Reference Number</th>
+        <th>Deal Date</th>
+        <th>Unit No</th>
+        <th>Building Name</th>
+        <th>Project Name</th>
+        <th>PMS Price</th>
+        <th>PM Start Date</th>
+        <th>PM End Date</th>
+        <th>Tenancy Start Date</th>
+        <th>Tenancy End Date</th>
+        <th>Submitted Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Table data will be populated dynamically -->
+      <tr>
+        <td><i class="bi bi-eye"></i> <i class="bi bi-pencil"></i></td>
+        <td>1</td>
+        <td>12-10-...</td>
+        <td>Al Ramth</td>
+        <td>-</td>
+        <td>-</td>
+        <td>14-01-...</td>
+        <td>13-01-...</td>
+        <td>26-01-...</td>
+        <td>25-01-...</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this deal?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Basic table initialization (you may need DataTables library for full functionality)
+  $(document).ready(function() {
+    $('#myTable').DataTable();
+  });
+</script>
+{% endblock %} {% endcomment %}
+
+
+{% block title %} List of Properties {% endblock title %}
+{% block content %}
+<div class="">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>List of <span id="propertyheading">Properties</span> </h3>
+    
+    <a href="{% url 'rental-property-create-form' %}" class="btn btn-primary"> Create Property</a>
+
+  </div> 
+
+  <!-- Bootstrap CSS -->
+  <div>
+  <form id="filterForm" class="m-0 border rounded p-3 bg-light " action="{% url 'rental-property-filter' %}" method="post">
+    {% csrf_token %}
+    <!-- Filter Toggle -->
+    <div class="d-flex align-items-center mb-2">
+      <strong class="me-2">Filters By:</strong>
+      <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
+        <i class="bi bi-chevron-down"></i> click here
+      </a>
+    </div>
+
+    <!-- Collapsible Filter Fields -->
+    <div class="collapse" id="filterCollapse">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Reference No</label>
+            <input type="text" class="form-control" name="reference_number" placeholder="Reference No">
+          </div>
+          <input type="hidden" name="type" value="">
+
+          <div class="mb-3">
+            <label class="form-label">Building Name</label>
+            <input type="text" class="form-control" name="building_name" placeholder="Building Name">
+          </div>
+         
+          <div class="mb-3">
+            <label class="form-label">Deal Date From</label>
+            <input type="date" class="form-control" name="Deal_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">PM Date From</label>
+            <input type="date" class="form-control" name="PM_from_date">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date From</label>
+            <input type="date" class="form-control" name="Tenancy_from_date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status">
+              <option value="">Please Select</option>
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+              <option value="About to Expire">About to Expire</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Approval Status</label>
+            <select class="form-select" name="Approval_status">
+              <option value="">Please Select</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Waiting for Finance">Waiting for Finance</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Unit No</label>
+            <input type="text" class="form-control" name="unit_details" placeholder="Unit No">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Name</label>
+            <input type="text" class="form-control" name="project_name" placeholder="Project Name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Deal Date To</label>
+            <input type="date" class="form-control" name="deal_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">PM Date To</label>
+            <input type="date" class="form-control" name="PM_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tenancy Date To</label>
+            <input type="date" class="form-control" name="Tenancy_to_date">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Property Id</label>
+            <input type="number" class="form-control" name="Property Id">
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="row mt-2">
+        <div class="col-md-12 d-flex gap-3">
+          <button type="submit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Filter</button>
+          <button type="reset" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visually OUTSIDE collapse but INSIDE form -->
+    <div class="row mt-3">
+      <div class="col-md-12 d-flex align-items-center">
+        <label class="me-2">Show</label>
+        <select name="length" class="form-select w-auto">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+        <label class="ms-2">entries</label>
+      </div>
+    </div>
+  </form>
+
+  <table id="myTable" class="display">
+    <thead>
+      <tr>
+        <th>Actions</th>
+        <th>Property Id</th>
+        <th>Reference Number</th>
+        <th>Deal Date</th>
+        <th>Unit No</th>
+        <th>Building Name</th>
+        <th>Project Name</th>
+        <th>PMS Price</th>
+        <th>PM Start Date</th>
+        <th>PM End Date</th>
+        <th>Tenancy Start Date</th>
+        <th>Tenancy End Date</th>
+        <th>Submitted Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamically populate table with properties -->
+      {% comment %} {% for property in properties %}
+      <tr>
+        <td><a href="{% url 'rental-property-view' property.pk %}" class="bi bi-eye"></a> <a href="{% url 'rental-property-edit' property.pk %}" class="bi bi-pencil"></a></td>
+        <td>{{ property.property_id }}</td>
+        <td>{{ property.reference_number }}</td>
+        <td>{{ property.deal_date|date:"d-m-Y" }}</td>
+        <td>{{ property.unit_details|default:"-" }}</td>
+        <td>{{ property.building_name|default:"-" }}</td>
+        <td>{{ property.project_name|default:"-" }}</td>
+        <td>{{ property.pms_price|default:"-" }}</td>
+        <td>{{ property.pm_start_date|date:"d-m-Y"|default:"-" }}</td>
+        <td>{{ property.pm_end_date|date:"d-m-Y"|default:"-" }}</td>
+        <td>{{ property.tenancy_start_date|date:"d-m-Y"|default:"-" }}</td>
+        <td>{{ property.tenancy_end_date|date:"d-m-Y"|default:"-" }}</td>
+        <td>{{ property.submitted_date|date:"d-m-Y"|default:"-" }}</td>
+        <td>{{ property.form_status|default:"Inactive" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="14">No properties found.</td>
+      </tr>
+      {% endfor %} {% endcomment %}
+    </tbody>
+  </table>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this deal?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="/static/assets/vendor/jquery/dist/jquery.min.js"></script>
+  <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+  <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+  <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/static/assets/js/datatables.min.js"></script>
+  <script src="/static/assets/js/Propertiescustom.js"></script>
+ 
+
+
+{% comment %} <script>
+  // Basic table initialization with DataTables
+  $(document).ready(function() {
+    $('#myTable').DataTable({
+      "pageLength": parseInt($('select[name="length"]').val()),
+      "lengthMenu": [10, 25, 50],
+      "responsive": true,
+      "order": [[1, "asc"]] // Order by Property Id by default
+    });
+
+    // Update page length when the select changes
+    $('select[name="length"]').on('change', function() {
+      $('#myTable').DataTable().page.len(parseInt($(this).val())).draw();
+    });
+
+    // Handle filter form submission with AJAX
+    $('#filterForm').on('submit', function(e) {
+      e.preventDefault();
+      $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+          $('#myTable tbody').empty();
+          $.each(response.data, function(index, property) {
+            $('#myTable tbody').append(
+              `<tr>
+                <td><a href="{% url 'rental-property-view' 0 %}".replace('0', property.property_id) class="bi bi-eye"></a> <a href="{% url 'rental-property-edit' 0 %}".replace('0', property.property_id) class="bi bi-pencil"></a></td>
+                <td>${property.property_id}</td>
+                <td>${property.reference_number}</td>
+                <td>${property.deal_date}</td>
+                <td>${property.unit_details || '-'}</td>
+                <td>${property.building_name || '-'}</td>
+                <td>${property.project_name || '-'}</td>
+                <td>${property.pms_price || '-'}</td>
+                <td>${property.pm_start_date || '-'}</td>
+                <td>${property.pm_end_date || '-'}</td>
+                <td>${property.tenancy_start_date || '-'}</td>
+                <td>${property.tenancy_end_date || '-'}</td>
+                <td>${property.submitted_date || '-'}</td>
+                <td>${property.form_status || 'Inactive'}</td>
+              </tr>`
+            );
+          });
+          if (response.data.length === 0) {
+            $('#myTable tbody').append('<tr><td colspan="14">No properties found.</td></tr>');
+          }
+          $('#myTable').DataTable().destroy().DataTable({
+            "pageLength": parseInt($('select[name="length"]').val()),
+            "lengthMenu": [10, 25, 50],
+            "responsive": true,
+            "order": [[1, "asc"]]
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error filtering properties:', error);
+        }
+      });
+    });
+  });
+</script> {% endcomment %}
+{% endblock %}

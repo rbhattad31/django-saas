@@ -1,0 +1,978 @@
+
+{% extends "layouts/base.html" %}
+{% comment %} <!DOCTYPE html>
+<html>
+<head>
+    <title>View Property</title>
+    <!-- Add Bootstrap CSS if not already included -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tab-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .tab-content td {
+            padding: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .tab-content td:first-child {
+            text-align: left;
+            width: 50%;
+            font-weight: bold;
+        }
+        .tab-content td:last-child {
+            text-align: right;
+            width: 50%;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #fff;
+            border-bottom: 2px solid purple;
+        }
+    </style>
+</head>
+<body>
+    <h2>View Property</h2>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="/rental-properties/" class="btn btn-secondary me-2">Back</a>
+        <button class="btn btn-secondary">Download Receipt</button>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="property-details-tab" data-bs-toggle="tab" href="#property-details">Property Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="owner-details-tab" data-bs-toggle="tab" href="#owner-details">Owner Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="owner-agency-details-tab" data-bs-toggle="tab" href="#owner-agency-details">Owner Agency Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="cheque-details-tab" data-bs-toggle="tab" href="#cheque-details">Cheque Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="revenue-details-tab" data-bs-toggle="tab" href="#revenue-details">Revenue Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="documents-tab" data-bs-toggle="tab" href="#documents">Documents</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="status-comments-tab" data-bs-toggle="tab" href="#status-comments">Status & Comments</a>
+        </li>
+    </ul>
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+            <table class="w-100">
+                <tr><td><strong>Deal Date</strong></td><td>{{ property.deal_date }}</td></tr>
+                <tr><td><strong>Reference Number</strong></td><td>{{ property.reference_number }}</td></tr>
+                <tr><td><strong>Project Name</strong></td><td>{{ property.project_name }}</td></tr>
+                <tr><td><strong>Building Name</strong></td><td>{{ property.building_name }}</td></tr>
+                <tr><td><strong>Unit No</strong></td><td>{{ property.unit_details }}</td></tr>
+            </table>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+            <table class="w-100">
+                <tr><td><strong>PMS Price</strong></td><td>{{ property.pms_price }}</td></tr>
+                <tr><td><strong>PM Start Date</strong></td><td>{{ property.pm_start_date }}</td></tr>
+                <tr><td><strong>PM End Date</strong></td><td>{{ property.pm_end_date }}</td></tr>
+                <tr><td><strong>Tenancy Start Date</strong></td><td>{{ property.tenancy_start_date }}</td></tr>
+                <tr><td><strong>Tenancy End Date</strong></td><td>{{ property.tenancy_end_date }}</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="property-details">
+         
+            <div class="d-flex justify-content-center mt-3">
+                <button class="btn" style="background-color: purple; color: white;">Next</button>
+
+            </div>
+            
+        </div>
+        <div class="tab-pane fade" id="owner-details">
+            <!-- Add Owner Details content if needed -->
+        </div>
+        <div class="tab-pane fade" id="owner-agency-details">
+            <!-- Add Owner Agency Details content if needed -->
+        </div>
+        <div class="tab-pane fade" id="cheque-details">
+            <!-- Add Cheque Details content if needed -->
+        </div>
+        <div class="tab-pane fade" id="revenue-details">
+            <!-- Add Revenue Details content if needed -->
+        </div>
+        <div class="tab-pane fade" id="documents">
+            <!-- Add Documents content if needed -->
+        </div>
+        <div class="tab-pane fade" id="status-comments">
+            <!-- Add Status & Comments content if needed -->
+        </div>
+    </div>
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> {% endcomment %}
+
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card mt-2 mb-4">
+                <div class="card-header bg-transparent">
+                    <h4 class="p-2">View Property
+                        <span class="float-right">
+                            <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/rental-property/list">Back</a>
+                            <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/management_receipts/downloadReceiptPDF/1321">Download Receipt</a>
+                        </span>
+                    </h4>
+                </div>
+                <div class="card-body m-1">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active show" id="nav-property-tab" data-toggle="tab" href="#nav-property" role="tab" aria-controls="nav-property" aria-selected="true">Property Details</a>
+                            <a class="nav-item nav-link" id="nav-source-tab" data-toggle="tab" href="#nav-source" role="tab" aria-controls="nav-source" aria-selected="false">Owner Details</a>
+                            <a class="nav-item nav-link" id="nav-agency-tab" data-toggle="tab" href="#nav-agency" role="tab" aria-controls="nav-agency" aria-selected="false">Owner Agency Details</a>
+                            <a class="nav-item nav-link" id="nav-cheque-tab" data-toggle="tab" href="#nav-cheque" role="tab" aria-controls="nav-cheque" aria-selected="false">Cheque Details</a>
+                            <a class="nav-item nav-link" id="nav-revenue-tab" data-toggle="tab" href="#nav-revenue" role="tab" aria-controls="nav-revenue" aria-selected="false">Revenue Details</a>
+                            <a class="nav-item nav-link" id="nav-documents-tab" data-toggle="tab" href="#nav-documents" role="tab" aria-controls="nav-documents" aria-selected="false">Documents</a>
+                            <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#nav-comments" role="tab" aria-controls="nav-comments" aria-selected="false">Status & Comments</a>
+                        </div>
+                    </nav>
+                    <input type="hidden" value="231" name="view_id" id="view_id">
+                    <div class="tab-content ul-tab__content" id="nav-tabContent">
+                        <div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Deal Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{ property.deal_date }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Reference Number</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.reference_number }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Project Name</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.project_name }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Unit No</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.unit_details }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Building Name</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.building_name }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">PMS Price</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.pms_price }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">PM Start Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.pm_start_date }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">PM End Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.pm_end_date }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Tenancy Start Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.tenancy_start_date }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Tenancy End Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.tenancy_end_date }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToSource" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Owner Name</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.owner_first_name }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Source</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.owner_source }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Mobile</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.owner_mobile }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Email</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.owner_email }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab1" style="float:right;color: white">Previous</a>
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToAgency" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agency Name</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.agency_name }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent Name</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent_name }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent Brn</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent_brn }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent Phone</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent_phone }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent Email</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent_email }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab2" style="float:right;color: white">Previous</a>
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToCheque" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-cheque" role="tabpanel" aria-labelledby="nav-cheque-tab">
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Number Of Cheque</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.no_of_cheque }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Cheque Date</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.cheque_date|linebreaksbr }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab3" style="float:right;color: white">Previous</a>
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToRevenue" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab">
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Total Commission</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.total_commission }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Less Outside Commission</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.less_outside_commission }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Net Commission</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.net_commission }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Classic</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.classic }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent1</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent1 }}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                            <label for=""><h6 class="value">{{ property.agent_name1 }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent2</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent2 }}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                            <label for=""><h6 class="value">{{ property.agent_name2 }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Agent3</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{ property.agent3 }}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                            <label for=""><h6 class="value">{{ property.agent_name3 }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.receipt_no }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">KYC Number</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.kyc_number }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab4" style="float:right;color: white">Previous</a>
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToDocuments" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">PMS Contract</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="buyers_passport_copy_list"></div>
+                                            <span class="text-danger" id="buyers_passport_copy_error"></span>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.pms_contract_link }}" target="_new">{{ property.pms_contract }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Owner Passport Copy</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="owner_passport_copy_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.owner_passport_copy_link }}" target="_new">{{ property.owner_passport_copy }}</a>
+                                            </div>
+                                            <span class="text-danger" id="owner_passport_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Owner Eid Copy</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="owner_eid_copy_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.owner_eid_copy_link }}" target="_new">{{ property.owner_eid_copy }}</a>
+                                            </div>
+                                            <span class="text-danger" id="owner_eid_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">PMS Cheque Copy</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="pms_cheque_copy_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.pms_cheque_copy_link }}" target="_new">{{ property.pms_cheque_copy }}</a>
+                                            </div>
+                                            <span class="text-danger" id="pms_cheque_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Title Deed</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="title_deed_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.title_deed_link }}" target="_new">{{ property.title_deed }}</a>
+                                            </div>
+                                            <span class="text-danger" id="title_deed_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Poa Pp</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="poa_pp_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.poa_pp_link }}" target="_new">{{ property.poa_pp }}</a>
+                                            </div>
+                                            <span class="text-danger" id="poa_pp_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Poa Copy</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="poa_copy_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.poa_copy_link }}" target="_new">{{ property.poa_copy }}</a>
+                                            </div>
+                                            <span class="text-danger" id="poa_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Key Hand Over Form</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="key_hand_over_form_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.key_hand_over_form_link }}" target="_new">{{ property.key_hand_over_form }}</a>
+                                            </div>
+                                            <span class="text-danger" id="key_hand_over_form_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">KYC Form</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="kyc_form_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.kyc_form_link }}" target="_new">{{ property.kyc_form }}</a>
+                                            </div>
+                                            <span class="text-danger" id="kyc_form_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Screening</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="screening_list"></div>
+                                            <div class="upload_prev">
+                                                <a href="{{ property.screening_link }}" target="_new">{{ property.screening }}</a>
+                                            </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Screening Comments</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.screening_comments }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab5" style="float:right;color: white">Previous</a>
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToComments" style="float:right; color: white">Next</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
+
+                            <div class="row comments-section">
+                                <div class="col-md-6 form-group mb-4">
+                                    <label><h5>Status</h5></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Approve/Reject</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{ property.status }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">AML</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{ property.aml }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for=""><h6 class="labelname">Is Entered In Finance System</h6></label>
+                                    </div>
+                                    <div class="col-1"></div>
+                                    <div class="col-6">
+                                        <label for=""><h6 class="value">{{ property.is_entered_in_finance }}</h6></label>
+                                        <input type="button" id="enterFinance" value="Enter in Finance" class="btn btn-sm btn-info ml-3 status-finance" name="property">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row comments-section">
+                                <div class="col-md-6 form-group mb-4">
+                                    <label><h5>Comments</h5></label>
+                                </div>
+                            </div>
+                            <div class="form-group row comments-section">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Comment by Agent</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.comment_by_agent }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Comment by Admin</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.comment_by_admin }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row comments-section">
+                                <div class="col-md-2">
+                                    <label for=""><h6 class="labelname">Comment by Finance</h6></label>
+                                </div>
+                                <div class="col-md-1">:</div>
+                                <div class="col-md-6">
+                                    <form id="finance_comment_form" enctype="multipart/form-data" novalidate="novalidate">
+                                        <div class="form-group mb-3 edit_comments_finance" hidden>
+                                            <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments"></textarea>
+                                            <br>
+                                            <input type="button" id="addComment" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" name="property">
+                                        </div>
+                                        <div>
+                                            <div class="format-value">
+                                                <label for=""><h6 class="value editComment">{{ property.comment_by_finance }}</h6></label>
+                                            </div>
+                                            <input type="button" value="Add Comment" class="btn btn-sm btn-info ml-3 editComment" style="margin-top:-15px">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab6" style="float:right;color: white">Previous</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Array of tab IDs
+    const tabs = [
+        '#nav-property',
+        '#nav-source',
+        '#nav-agency',
+        '#nav-cheque',
+        '#nav-revenue',
+        '#nav-documents',
+        '#nav-comments'
+    ];
+
+    // Function to show a specific tab
+    function showTab(index) {
+        if (index >= 0 && index < tabs.length) {
+            $('.nav-link').removeClass('active');
+            $('.tab-pane').removeClass('active show');
+
+            // Activate correct tab link
+            $('[data-toggle="tab"]').eq(index).addClass('active');
+
+            // Activate correct pane
+            $(tabs[index]).addClass('active show');
+
+            // Use Bootstrap's tab() function
+            $('[data-toggle="tab"]').eq(index).tab('show');
+
+            // Show or hide comments section based on tab
+            if (index === 6) {
+                $('.comments-section').show();
+            } else {
+                $('.comments-section').hide();
+            }
+
+            // Extract dynamic data when on Owner Details tab (index 1)
+            if (index === 1) {
+                const ownerData = {
+                    owner_name: $('.tab-pane#nav-source .labelname:contains("Owner Name")').next().next().find('.value').text().trim(),
+                    mobile: $('.tab-pane#nav-source .labelname:contains("Mobile")').next().next().find('.value').text().trim()
+                };
+                const sourceData = {
+                    source: $('.tab-pane#nav-source .labelname:contains("Source")').next().next().find('.value').text().trim(),
+                    email: $('.tab-pane#nav-source .labelname:contains("Email")').next().next().find('.value').text().trim()
+                };
+                console.log('Left Data (Owner):', ownerData);
+                console.log('Right Data (Source):', sourceData);
+            }
+        }
+    }
+
+    // Map IDs to correct tab indexes
+    const nextTabMap = {
+        'changeTabToSource': 1,
+        'changeTabToAgency': 2,
+        'changeTabToCheque': 3,
+        'changeTabToRevenue': 4,
+        'changeTabToDocuments': 5,
+        'changeTabToComments': 6
+    };
+
+    const prevTabMap = {
+        'previousTab1': 0,
+        'previousTab2': 1,
+        'previousTab3': 2,
+        'previousTab4': 3,
+        'previousTab5': 4,
+        'previousTab6': 5
+    };
+
+    // Initial tab: Check which tab is active on page load
+    const activeTab = $('.nav-link.active').attr('href');
+    const currentTab = tabs.indexOf(activeTab);
+    showTab(currentTab);
+
+    // Handle direct tab clicks
+    $('[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        const targetTab = $(e.target).attr('href');
+        const tabIndex = tabs.indexOf(targetTab);
+        showTab(tabIndex);
+    });
+
+    // Next buttons
+    $('.btn[id^="changeTabTo"]').click(function() {
+        console.log("✅ Next clicked:", $(this).attr('id'));
+        const buttonId = $(this).attr('id');
+        const nextTab = nextTabMap[buttonId] ?? (currentTab + 1);
+        console.log("👉 Going to tab index:", nextTab);
+        showTab(nextTab);
+    });
+
+    // Previous buttons
+    $('.btn[id^="previousTab"]').click(function() {
+        console.log("✅ Previous clicked:", $(this).attr('id'));
+        const buttonId = $(this).attr('id');
+        const prevTab = prevTabMap[buttonId] ?? (currentTab - 1);
+        console.log("👈 Going to tab index:", prevTab);
+        showTab(prevTab);
+    });
+
+    // Add Comment button functionality
+    $('.editComment').click(function() {
+        $('.edit_comments_finance').show();
+        $(this).closest('.format-value').siblings('.edit_comments_finance').show();
+        $(this).hide();
+    });
+
+    // Save Comment button functionality
+    $('#addComment').click(function() {
+        const comment = $('#comments_finance').val();
+        console.log("Saving comment:", comment);
+        $('.edit_comments_finance').hide();
+        $('.editComment').show();
+        $('.editComment .value').text(comment);
+    });
+});
+</script>
+{% endblock content %}

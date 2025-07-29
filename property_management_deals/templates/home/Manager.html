@@ -1,0 +1,836 @@
+{% extends 'layouts/base.html' %}
+{% block title %} List of Management Receipts {% endblock title %}
+
+{% block extra_styles %}
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS (using consistent version 1.13.6) -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- jQuery UI for Datepicker -->
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+{% endblock extra_styles %}
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card o-hidden mb-4">
+                <div class="card-header">
+                    <h3 class="w-50 float-left card-title m-0">List of Management Receipts</h3>
+                    <button class="btn btn-primary btn-rounded m-1" style="float:right" id="create_receipt">Add New Management Receipt</button>
+                </div>
+                <div class="card-body">
+                    <!-- Filter Section -->
+                    <div class="row pb-2">
+                        <div class="col-md-12 mb-3 font-size">
+                            <a href="#collapseExample" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" id="filterToggle">
+                                <b style="color: black">Filters By <i class="fas fa-chevron-circle-down" id="filterArrow"></i></b> click here
+                            </a>
+                        </div>
+                    </div>
+                    <div class="collapse show" id="collapseExample">
+                        <div class="row pb-3">
+                            <div class="col-md-2">Receipt No</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="receipt_number" name="receipt_number" placeholder="Receipt No" autocomplete="off">
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">Receipt Status</div>
+                            <div class="col-md-3">
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">Please Select</option>
+                                    <option value="Used">Used</option>
+                                    <option value="Unused">Unused</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-md-2">Payment Type</div>
+                            <div class="col-md-3">
+                                <select name="payment_type" id="payment_type" class="form-control">
+                                    <option value="">Please Select</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">Type</div>
+                            <div class="col-md-3">
+                                <select name="deal_type" id="deal_type" class="form-control">
+                                    <option value="">Please Select</option>
+                                    <option value="Management Fee">Management Fee</option>
+                                    <option value="Ejari Fee">Ejari Fee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-md-2">Receipt Date From</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control hasDatepicker" id="from" name="from" placeholder="Receipt Date From" autocomplete="off">
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">Receipt Date To</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control hasDatepicker" id="to" name="to" placeholder="Receipt Date To" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-md-2">Agent Name</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="agent_name" name="agent_name" placeholder="Agent Name" autocomplete="off">
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">Unit Number</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="unit_number" name="unit_number" placeholder="Unit Number" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-md-2">Building Name</div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="building_name" name="building_name" placeholder="Building Name" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row pb-1">
+                            <div class="col-6 col-md-1">
+                                <button type="button" class="btn btn-primary btn-rounded" id="filter" name="filter">Filter</button>
+                            </div>
+                            <div class="col-6 col-md-9">
+                                <button type="button" class="btn btn-primary btn-rounded" id="reset" name="reset">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- DataTable -->
+                    <table id="receiptlist_table" class="table table-bordered text-center" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Receipt Number</th>
+                                <th>Receipt Date</th>
+                                <th>Cheque No</th>
+                                <th>Dhs</th>
+                                <th>Fils</th>
+                                <th>Payment Type</th>
+                                <th>Payment Date</th>
+                                <th>Type</th>
+                                <th>Agent Name</th>
+                                <th>Reference Number</th>
+                                <th>Project Name</th>
+                                <th>Building Name</th>
+                                <th>Unit Number</th>
+                                <th>Status</th>
+                                <th>Received From</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Create/Edit Receipt (commented out as per original) -->
+    {% comment %}
+    <div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="receiptModalLabel">Receipt Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="receiptForm">
+                        <input type="hidden" id="receipt_id">
+                        <div class="form-group">
+                            <label for="form_receipt_number">Receipt Number</label>
+                            <input type="number" class="form-control" id="form_receipt_number" name="receipt_number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_date">Receipt Date</label>
+                            <input type="text" class="form-control hasDatepicker" id="form_date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_cheque_no">Cheque No</label>
+                            <input type="text" class="form-control" id="form_cheque_no" name="cheque_no">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_dhs">Dhs</label>
+                            <input type="number" class="form-control" id="form_dhs" name="dhs" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_fils">Fils</label>
+                            <input type="number" class="form-control" id="form_fils" name="fils">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_payment_type">Payment Type</label>
+                            <select class="form-control" id="form_payment_type" name="payment_type">
+                                <option value="">Select Payment Type</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_sec_date">Payment Date</label>
+                            <input type="text" class="form-control hasDatepicker" id="form_sec_date" name="sec_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_deal_type">Type</label>
+                            <select class="form-control" id="form_deal_type" name="deal_type">
+                                <option value="">Select Type</option>
+                                <option value="Management Fee">Management Fee</option>
+                                <option value="Ejari Fee">Ejari Fee</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_agent_name">Agent Name</label>
+                            <input type="text" class="form-control" id="form_agent_name" name="agent_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_deal_refer_no">Reference Number</label>
+                            <input type="text" class="form-control" id="form_deal_refer_no" name="deal_refer_no">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_project_name">Project Name</label>
+                            <input type="text" class="form-control" id="form_project_name" name="project_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_building_name">Building Name</label>
+                            <input type="text" class="form-control" id="form_building_name" name="building_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_unit_number">Unit Number</label>
+                            <input type="text" class="form-control" id="form_unit_number" name="unit_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="form_status">Status</label>
+                            <select class="form-control" id="form_status" name="status">
+                                <option value="">Select Status</option>
+                                <option value="Used">Used</option>
+                                <option value="Unused">Unused</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_received_from">Received From</label>
+                            <input type="text" class="form-control" id="form_received_from" name="received_from">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save_receipt">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endcomment %}
+
+    <!-- Modal for View Receipt (commented out as per original) -->
+    {% comment %}
+    <div class="modal fade" id="viewReceiptModal" tabindex="-1" role="dialog" aria-labelledby="viewReceiptModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewReceiptModalLabel">Receipt Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="view_receipt_content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endcomment %}
+
+    {% comment %} <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery UI (for datepicker) -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- js-cookie for argon.js -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <!-- DataTables core + Bootstrap integration -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <!-- DataTables Export Buttons -->
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <!-- Custom argon.js (assuming it's your file, adjust path if needed) -->
+    <script src="/static/js/argon.js?v=1.2.0"></script>
+
+    <!-- JavaScript -->
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                for (let cookie of document.cookie.split(";")) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        $(document).ready(function() {
+            // Initialize Datepicker for filter and form date fields
+            $("#from, #to, #form_date, #form_sec_date").datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true
+            });
+
+            // Toggle filter arrow icon
+            $('#filterToggle').on('click', function (e) {
+                e.preventDefault();
+                $('#collapseExample').collapse('toggle');
+            });
+
+            // Change arrow direction on collapse show/hide
+            $('#collapseExample').on('shown.bs.collapse', function () {
+                $('#filterArrow').removeClass('fa-chevron-circle-down').addClass('fa-chevron-circle-up');
+            });
+            $('#collapseExample').on('hidden.bs.collapse', function () {
+                $('#filterArrow').removeClass('fa-chevron-circle-up').addClass('fa-chevron-circle-down');
+            });
+
+            $('#create_receipt').on('click', function () {
+                window.location.href = '/management-receipts/create-form/';
+            });
+            // Initialize DataTable
+            var table = $('#receiptlist_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                order: [[1, 'asc']],
+                //contentType: 'application/json',
+                ajax: {
+                    url: '{% url "managerdatatablefilter" %}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    data: function(d) {
+                        console.log("🔍 Preparing data:", d);
+                        d.draw = d.draw;
+                        d.start = d.start;
+                        d.length = d.length;
+                        // Add filter inputs (match your HTML IDs)
+                        d.receipt_number = $('#receipt_number').val();
+                        d.status = $('#status').val();
+                        d.payment_type = $('#payment_type').val();
+                        d.deal_type = $('#deal_type').val();
+                        d.from = $('#from').val();
+                        d.to = $('#to').val();
+                        d.agent_name = $('#agent_name').val();
+                        d.unit_number = $('#unit_number').val();
+                        d.building_name = $('#building_name').val();
+                        console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
+                        //return JSON.stringify(d);
+                        return d;
+                    },
+                    dataSrc: function(json) {
+                        console.log("Full JSON response:", json); // 🔍 All data
+                        console.log("Only table rows:", json.data); // 🔍 Just the rows
+                        return json.data; // Tell DataTables where the rows are
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("❌ DataTable AJAX Error:", status, error);
+                        console.error("❌ Server Response:", xhr.responseText);
+                    },
+                    
+                    error: function(xhr, status, error) {
+                        console.error("DataTable AJAX Error:", status, error, xhr.responseText);
+                    }
+                },
+                columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+
+                            console.log("Render called. Data:", data);
+                            console.log("Row object:", row);
+                            let id = (row && row.id) ? row.id : (data && data.id ? data.id : 'undefined');
+                            console.log("Row ID extracted:", id);
+                            console.log("Row ID:", row.id);
+                            let actionsHtml = '';
+                            //if (row.can_view) {
+                                //actionsHtml += `
+                                //    <button class="btn btn-sm btn-link text-primary view-receipt" data-id="${data}">
+                                //        <i class="fa fa-eye"></i>
+                                //    </button>
+                              //  `;
+                           // }
+                           // if (row.can_edit) {
+                            //   actionsHtml += `
+                            //        <button class="btn btn-link text-primary mr-2 edit-receipt" data-id="${row.id}" data-toggle="tooltip" title="Edit Receipt">
+                            //            <i class="fa fa-pencil-alt"></i>
+                            //        </button>
+                            //    `;
+                           // }
+                            actionsHtml += `
+                                <a href="/management-receipts/${row.id}/view-receipt/" class="btn btn-sm btn-link text-primary" title="View Receipt">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            `;
+
+                            // Edit button
+                            actionsHtml += `
+                                <a href="/management-receipts/${row.id}/edit-receipt/" class="btn btn-link text-primary mr-2" title="Edit Receipt">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                            `;
+                            // Replace delete with download
+                            actionsHtml += `
+                                <a href="/management-receipts/${row.id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            `;
+                            return actionsHtml;
+                        }
+                    },
+                    { data: 'receipt_number' },
+                    { data: 'date' },
+                    { data: 'cheque_no' },
+                    { data: 'dhs' },
+                    { data: 'fils' },
+                    { data: 'payment_type' },
+                    { data: 'sec_date' },
+                    { data: 'deal_type' },
+                    { data: 'agent_name' },
+                    { data: 'deal_refer_no' },
+                    { data: 'project_name' },
+                    { data: 'building_name' },
+                    { data: 'unit_number' },
+                    { data: 'status' },
+                    { data: 'received_from' }
+                ],
+                dom: 'lBfrtip',
+                buttons: [
+                    'excelHtml5',
+                    'pdfHtml5'
+                ],
+                scrollX: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100, 125, -1],
+                lengthMenuText: { '-1': 'All' }
+            });
+            console.log("DataTable initialized:", table);
+
+            // Filter button
+            $('#filter').on('click', function(e) {
+                e.preventDefault();
+                table.ajax.reload();
+            });
+
+            // Reset button
+            $('#reset').on('click', function(e) {
+                e.preventDefault();
+                $('#receipt_number, #status, #payment_type, #deal_type, #from, #to, #agent_name, #unit_number, #building_name').val('');
+                table.ajax.reload();
+            });
+
+            // Edit receipt
+            $(document).on('click', '.edit-receipt', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '{% url "management_receipts_view" pk=0 %}/' + id + '/view/',
+                    type: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    success: function(response) {
+                        console.log("Edit AJAX Response:", response);
+                        if (response.status === 'success') {
+                            var data = response.data;
+                            $('#receiptModalLabel').text('Edit Receipt');
+                            $('#receipt_id').val(data.id);
+                            $('#form_receipt_number').val(data.receipt_number);
+                            $('#form_date').val(data.date);
+                            $('#form_cheque_no').val(data.cheque_no);
+                            $('#form_dhs').val(data.dhs);
+                            $('#form_fils').val(data.fils);
+                            $('#form_payment_type').val(data.payment_type);
+                            $('#form_sec_date').val(data.sec_date);
+                            $('#form_deal_type').val(data.deal_type);
+                            $('#form_agent_name').val(data.agent_name);
+                            $('#form_deal_refer_no').val(data.deal_refer_no);
+                            $('#form_project_name').val(data.project_name);
+                            $('#form_building_name').val(data.building_name);
+                            $('#form_unit_number').val(data.unit_number);
+                            $('#form_status').val(data.status);
+                            $('#form_received_from').val(data.received_from);
+                            $('#receiptModal').modal('show');
+                        } else {
+                            alert('Error fetching receipt data');
+                        }
+                    },
+                    error: function() {
+                        alert('Error fetching receipt data');
+                    }
+                });
+            });
+
+            // View receipt
+            $(document).on('click', '.view-receipt', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '{% url "management_receipts_view" pk=0 %}/' + id + '/view/',
+                    type: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    success: function(response) {
+                        console.log("View AJAX Response:", response);
+                        if (response.status === 'success') {
+                            var data = response.data;
+                            var content = `
+                                <p><strong>Receipt Number:</strong> ${data.receipt_number}</p>
+                                <p><strong>Receipt Date:</strong> ${data.date}</p>
+                                <p><strong>Cheque No:</strong> ${data.cheque_no || ''}</p>
+                                <p><strong>Dhs:</strong> ${data.dhs}</p>
+                                <p><strong>Fils:</strong> ${data.fils || ''}</p>
+                                <p><strong>Payment Type:</strong> ${data.payment_type || ''}</p>
+                                <p><strong>Payment Date:</strong> ${data.sec_date || ''}</p>
+                                <p><strong>Type:</strong> ${data.deal_type || ''}</p>
+                                <p><strong>Agent Name:</strong> ${data.agent_name || ''}</p>
+                                <p><strong>Reference Number:</strong> ${data.deal_refer_no || ''}</p>
+                                <p><strong>Project Name:</strong> ${data.project_name || ''}</p>
+                                <p><strong>Building Name:</strong> ${data.building_name || ''}</p>
+                                <p><strong>Unit Number:</strong> ${data.unit_number || ''}</p>
+                                <p><strong>Status:</strong> ${data.status || ''}</p>
+                                <p><strong>Received From:</strong> ${data.received_from || ''}</p>
+                            `;
+                            $('#view_receipt_content').html(content);
+                            $('#viewReceiptModal').modal('show');
+                        } else {
+                            alert('Error fetching receipt data');
+                        }
+                    },
+                    error: function() {
+                        alert('Error fetching receipt data');
+                    }
+                });
+            });
+
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // jQuery serializeObject plugin (optional, can use serializeArray instead)
+            $.fn.serializeObject = function() {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function() {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        });
+    </script> {% endcomment %}
+
+
+
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery UI (for datepicker) -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<!-- Bootstrap Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- js-cookie for argon.js -->
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<!-- DataTables core + Bootstrap integration -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<!-- DataTables Export Buttons -->
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<!-- Custom argon.js (assuming it's your file, adjust path if needed) -->
+<script src="/static/js/argon.js?v=1.2.0"></script>
+
+<!-- CSS for DataTables and Bootstrap (add to <head> if not already present) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+<!-- JavaScript -->
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            for (let cookie of document.cookie.split(";")) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $(document).ready(function() {
+        // Initialize Datepicker for filter and form date fields
+        $("#from, #to, #form_date, #form_sec_date").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        // Toggle filter arrow icon
+        $('#filterToggle').on('click', function (e) {
+            e.preventDefault();
+            $('#collapseExample').collapse('toggle');
+        });
+
+        // Change arrow direction on collapse show/hide
+        $('#collapseExample').on('shown.bs.collapse', function () {
+            $('#filterArrow').removeClass('fa-chevron-circle-down').addClass('fa-chevron-circle-up');
+        });
+        $('#collapseExample').on('hidden.bs.collapse', function () {
+            $('#filterArrow').removeClass('fa-chevron-circle-up').addClass('fa-chevron-circle-down');
+        });
+
+        $('#create_receipt').on('click', function () {
+            window.location.href = '/management-receipts/create-form/';
+        });
+
+        // Initialize DataTable
+        var table = $('#receiptlist_table').DataTable({
+            processing: true,
+            serverSide: true,
+            //serverSide:false,
+            ordering: true,
+            order: [[1, 'asc']], // Default sort on the second column (receipt_number)
+            ajax: {
+                url: '{% url "managerdatatablefilter" %}',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: function(d) {
+                    console.log("🔍 Preparing data:", d);
+                    d.draw = d.draw;
+                    d.start = d.start;
+                    d.length = d.length;
+                    d.order = d.order; // Ensure order parameter is sent for server-side sorting
+                    // Add filter inputs (match your HTML IDs)
+                    d.receipt_number = $('#receipt_number').val();
+                    d.status = $('#status').val();
+                    d.payment_type = $('#payment_type').val();
+                    d.deal_type = $('#deal_type').val();
+                    d.from = $('#from').val();
+                    d.to = $('#to').val();
+                    d.agent_name = $('#agent_name').val();
+                    d.unit_number = $('#unit_number').val();
+                    d.building_name = $('#building_name').val();
+                    console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
+                    return d;
+                },
+                dataSrc: function(json) {
+                    console.log("Full JSON response:", json); // 🔍 All data
+                    console.log("Only table rows:", json.data); // 🔍 Just the rows
+                    return json.data; // Tell DataTables where the rows are
+                },
+                error: function(xhr, status, error) {
+                    console.error("❌ DataTable AJAX Error:", status, error);
+                    console.error("❌ Server Response:", xhr.responseText);
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row) {
+                        console.log("Render called. Data:", data);
+                        console.log("Row object:", row);
+                        let id = (row && row.id) ? row.id : (data && data.id ? data.id : 'undefined');
+                        console.log("Row ID extracted:", id);
+                        let actionsHtml = `
+                            <a href="/management-receipts/${row.id}/view-receipt/" class="btn btn-sm btn-link text-primary" title="View Receipt">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="/management-receipts/${row.id}/edit-receipt/" class="btn btn-link text-primary mr-2" title="Edit Receipt">
+                                <i class="fa fa-pencil-alt"></i>
+                            </a>
+                            <a href="/management-receipts/${row.id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
+                                <i class="fa fa-download"></i>
+                            </a>
+                        `;
+                        return actionsHtml;
+                    }
+                },
+                { data: 'receipt_number', orderable: true },
+                { data: 'date', orderable: true },
+                { data: 'cheque_no', orderable: true },
+                { data: 'dhs', orderable: true },
+                { data: 'fils', orderable: true },
+                { data: 'payment_type', orderable: true },
+                { data: 'sec_date', orderable: true },
+                { data: 'deal_type', orderable: true },
+                { data: 'agent_name', orderable: true },
+                { data: 'deal_refer_no', orderable: true },
+                { data: 'project_name', orderable: true },
+                { data: 'building_name', orderable: true },
+                { data: 'unit_number', orderable: true },
+                { data: 'status', orderable: true },
+                { data: 'received_from', orderable: true }
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5'
+            ],
+            scrollX: true,
+            pageLength: 10,
+            lengthMenu: [10, 25, 50, 75, 100, 125, -1],
+            lengthMenuText: { '-1': 'All' }
+        });
+        console.log("DataTable initialized:", table);
+
+        // Filter button
+        $('#filter').on('click', function(e) {
+            e.preventDefault();
+            table.ajax.reload();
+        });
+
+        // Reset button
+        $('#reset').on('click', function(e) {
+            e.preventDefault();
+            $('#receipt_number, #status, #payment_type, #deal_type, #from, #to, #agent_name, #unit_number, #building_name').val('');
+            table.ajax.reload();
+        });
+
+        // Edit receipt
+        $(document).on('click', '.edit-receipt', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '{% url "management_receipts_view" pk=0 %}/' + id + '/view/',
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    console.log("Edit AJAX Response:", response);
+                    if (response.status === 'success') {
+                        var data = response.data;
+                        $('#receiptModalLabel').text('Edit Receipt');
+                        $('#receipt_id').val(data.id);
+                        $('#form_receipt_number').val(data.receipt_number);
+                        $('#form_date').val(data.date);
+                        $('#form_cheque_no').val(data.cheque_no);
+                        $('#form_dhs').val(data.dhs);
+                        $('#form_fils').val(data.fils);
+                        $('#form_payment_type').val(data.payment_type);
+                        $('#form_sec_date').val(data.sec_date);
+                        $('#form_deal_type').val(data.deal_type);
+                        $('#form_agent_name').val(data.agent_name);
+                        $('#form_deal_refer_no').val(data.deal_refer_no);
+                        $('#form_project_name').val(data.project_name);
+                        $('#form_building_name').val(data.building_name);
+                        $('#form_unit_number').val(data.unit_number);
+                        $('#form_status').val(data.status);
+                        $('#form_received_from').val(data.received_from);
+                        $('#receiptModal').modal('show');
+                    } else {
+                        alert('Error fetching receipt data');
+                    }
+                },
+                error: function() {
+                    alert('Error fetching receipt data');
+                }
+            });
+        });
+
+        // View receipt
+        $(document).on('click', '.view-receipt', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '{% url "management_receipts_view" pk=0 %}/' + id + '/view/',
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    console.log("View AJAX Response:", response);
+                    if (response.status === 'success') {
+                        var data = response.data;
+                        var content = `
+                            <p><strong>Receipt Number:</strong> ${data.receipt_number}</p>
+                            <p><strong>Receipt Date:</strong> ${data.date}</p>
+                            <p><strong>Cheque No:</strong> ${data.cheque_no || ''}</p>
+                            <p><strong>Dhs:</strong> ${data.dhs}</p>
+                            <p><strong>Fils:</strong> ${data.fils || ''}</p>
+                            <p><strong>Payment Type:</strong> ${data.payment_type || ''}</p>
+                            <p><strong>Payment Date:</strong> ${data.sec_date || ''}</p>
+                            <p><strong>Type:</strong> ${data.deal_type || ''}</p>
+                            <p><strong>Agent Name:</strong> ${data.agent_name || ''}</p>
+                            <p><strong>Reference Number:</strong> ${data.deal_refer_no || ''}</p>
+                            <p><strong>Project Name:</strong> ${data.project_name || ''}</p>
+                            <p><strong>Building Name:</strong> ${data.building_name || ''}</p>
+                            <p><strong>Unit Number:</strong> ${data.unit_number || ''}</p>
+                            <p><strong>Status:</strong> ${data.status || ''}</p>
+                            <p><strong>Received From:</strong> ${data.received_from || ''}</p>
+                        `;
+                        $('#view_receipt_content').html(content);
+                        $('#viewReceiptModal').modal('show');
+                    } else {
+                        alert('Error fetching receipt data');
+                    }
+                },
+                error: function() {
+                    alert('Error fetching receipt data');
+                }
+            });
+        });
+
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // jQuery serializeObject plugin (optional, can use serializeArray instead)
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    });
+</script>
+
+{% endblock content %}
