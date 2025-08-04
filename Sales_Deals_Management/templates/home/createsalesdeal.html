@@ -6,7 +6,7 @@
 <div class="main-content pt-4">
     <div class="row">
         <div class="col-md-12" id="successmsg" style="display: none">
-            <div class="alert alert-primary" id="alert-primary">
+            <div class="alert alert-primary main-header" id="alert-primary">
                 <button class="btn-close float-end" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -44,8 +44,8 @@
                         </div>
                     </nav>
 
-                    <form id="deal_form" enctype="multipart/form-data" novalidate="novalidate">
-                        {% csrf_token %}
+                    <form id="deal_form"    >
+                   
                         <input type="hidden" value="2" name="account_id" id="account_id">
                         <input type="hidden" value="" name="save_as" id="save_as">
                         <div class="tab-content ul-tab__content" id="nav-tabContent">
@@ -68,7 +68,7 @@
                                     </div> -->
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
-                                        <input type="date" name="submitted_date" class="form-control" id="submitted_date" required>
+                                        <input type="text" name="submitted_date" class="form-control" id="submitted_date" readonly >
                                         <span class="error text-danger" id="submitted_date_error"></span>
                                     </div>
 
@@ -351,13 +351,13 @@
                                 <div class="row form-group nav-revenue">
                                     <div class="col-md-6 form-group">
                                         <label for="total_commission">Total Commission<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" required>
+                                        <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" >
                                         <span class="text-danger" id="total_commission_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label for="less_outside_commission">Less Outside Commission<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="text" name="less_outside_commission" class="form-control" id="less_outside_commission" placeholder="Less Outside Commission">
-                                        <span class="text-danger" id="less_outside_commission_error"></span>
+                                        <label for="less_outsude_commission">Less Outside Commission<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="less_outsude_commission" class="form-control" id="less_outsude_commission" placeholder="Less Outside Commission">
+                                        <span class="text-danger" id="less_outsude_commission_error"></span>
                                     </div>
                                 </div>
                                 <div class="row form-group nav-revenue">
@@ -385,94 +385,7 @@
                                             <option value="1">Rahul B</option>
                                             <option value="11">Anirudh</option>
                                             <option value="12">Sonia</option>
-                                            <option value="13">Anusha</option>
-                                            <option value="16">Majid</option>
-                                            <option value="17">Rakesh Saldhana</option>
-                                            <option value="18">Jamil Mirza</option>
-                                            <option value="19">Asad Lohar</option>
-                                            <option value="20">Ashwin Radhakrishnan</option>
-                                            <option value="21">Seema</option>
-                                            <option value="22">Richard Ileogben</option>
-                                            <option value="23">SHAHBAZ</option>
-                                            <option value="25">Satish</option>
-                                            <option value="27">ganesh@classicproperties.ae</option>
-                                            <option value="28">Vikas Pamnani</option>
-                                            <option value="29">Yazan Abbar</option>
-                                            <option value="30">Yervant</option>
-                                            <option value="31">Sheryl Santos</option>
-                                            <option value="32">vivek@classicproperties.ae</option>
-                                            <option value="33">Leon Peter Zindi</option>
-                                            <option value="34">Kiran Shetty</option>
-                                            <option value="35">Vatche Saghdejian</option>
-                                            <option value="36">Lavin</option>
-                                            <option value="37">Hagop</option>
-                                            <option value="39">Utkurbek</option>
-                                            <option value="40">Heba</option>
-                                            <option value="41">Rohit Lohia</option>
-                                            <option value="42">Suneer</option>
-                                            <option value="43">Anuraag Bhattad</option>
-                                            <option value="44">David Melki</option>
-                                            <option value="45">Faizan Ahmed</option>
-                                            <option value="46">James</option>
-                                            <option value="47">Maya D</option>
-                                            <option value="48">Karan</option>
-                                            <option value="49">Hitesh</option>
-                                            <option value="50">Lata</option>
-                                            <option value="51">abhijeet</option>
-                                            <option value="52">Rehan</option>
-                                            <option value="53">Sarah Beshir</option>
-                                            <option value="54">Jayaram Raju</option>
-                                            <option value="59">Hagop Ghazarian</option>
-                                            <option value="63">Peter Anisseh Boutrous</option>
-                                            <option value="64">Sameera Priyadharshana Weerappulige</option>
-                                            <option value="65">Niranjan</option>
-                                            <option value="66">Mahar Ali Shah</option>
-                                            <option value="67">Bharath  Gumparthi</option>
-                                            <option value="68">Madhav Yogesh Jakhotia</option>
-                                            <option value="70">Sakina Ahammad</option>
-                                            <option value="71">Tarit Kumar Arnab</option>
-                                            <option value="72">Kapil Naik</option>
-                                            <option value="73">Paniz Jourabchian</option>
-                                            <option value="74">Marlyn Arellano</option>
-                                            <option value="75">Zeenat  Raza Sayed</option>
-                                            <option value="76">Dievesh Sirae</option>
-                                            <option value="77">Dane Strydom</option>
-                                            <option value="78">Rudolf Joseph</option>
-                                            <option value="79">Nawaz</option>
-                                            <option value="80">Ullas</option>
-                                            <option value="81">Rohan Tank</option>
-                                            <option value="82">Huda amir</option>
-                                            <option value="83">Lawrence</option>
-                                            <option value="84">Training Account</option>
-                                            <option value="85">Anusha New</option>
-                                            <option value="88">Sehrish Atta</option>
-                                            <option value="89">Nisha Bisht Shovan Singh Bisht</option>
-                                            <option value="90">Rayan Ghouse</option>
-                                            <option value="91">Shally Tyagi</option>
-                                            <option value="92">Rana Sami Jawad Al Dajani</option>
-                                            <option value="98">Maher Fares Sharrouf</option>
-                                            <option value="99">AbhishekRahul</option>
-                                            <option value="100">Raghav Sharma</option>
-                                            <option value="102">hasini</option>
-                                            <option value="103">Layla Murad Alsayeh</option>
-                                            <option value="104">Abhishek Ojha</option>
-                                            <option value="108" selected="">Subal Khera Tarun Khera</option>
-                                            <option value="109">Dawood Mueen Shaik</option>
-                                            <option value="110">Rajat Mukesh Ahuja</option>
-                                            <option value="111">Pranav Tuli</option>
-                                            <option value="113">Jobin George George Thomas</option>
-                                            <option value="114">Swaraj Sanjay Bhutada</option>
-                                            <option value="115">Varun Baswani</option>
-                                            <option value="116">Mantaj Kang</option>
-                                            <option value="117">CUSTOMER CARE DEPARTMENT</option>
-                                            <option value="118">Sujith CS</option>
-                                            <option value="119">Rakel Ghazarian</option>
-                                            <option value="120">Shriram Somani</option>
-                                            <option value="121">Payal Pravin Ragoowansi</option>
-                                            <option value="122">Hrag Geukjian</option>
-                                            <option value="123">Shruti Agarwal</option>
-                                            <option value="124">Shubh Sarda</option>
-                                            <option value="125">Hitesh Aswani</option>
+                                            
                                             <option value="126">Kalash Malani</option>
                                         </select>
                                         <span class="text-danger" id="agent_name1_error"></span>
@@ -523,10 +436,7 @@
                                     <div class="col-md-6 form-group">
                                         <label for="receipt_no">Receipt No<span class="mandetory_field" style="color: red">*</span></label>
                                         <select name="receipt_no" class="form-control" id="receipt_no">
-                                            <option value="" hidden>Select Receipt No</option>
-                                            <option value="1">456456</option>
-                                            <option value="2">789789</option>
-                                            <option value="3">123212</option>
+                                           
                                         </select>
                                         <span class="text-danger" id="receipt_no_error"></span>
                                     </div>
@@ -780,613 +690,58 @@
         <div class="sidebar-overlay open"></div>
     </div>
 
+
+    <!-- ✅ jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        if (typeof jQuery === 'undefined') {
-            console.error("jQuery failed to load from CDN, attempting local fallback");
-            document.write('<script src="{% static "js/jquery-3.6.0.min.js" %}"><\/script>');
-        } else {
-            console.log("jQuery loaded, version:", $.fn.jquery);
-        }
+
+    <!-- ✅ Bootstrap and related -->
+    <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+    <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    {% comment %} <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script> {% endcomment %}
+
+    <!-- ✅ jQuery UI (datepicker etc.) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- ✅ Datatables -->
+    <script src="/static/assets/js/datatables.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- ✅ jQuery Validation plugin -->
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+  
+     
+   
+
+  <script>
+      var site_url = "http://dealsaws.classicproperties.ae";
+
+      var lang = "";
+      if (lang == "ar") {
+        var oLanguage = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+        var msg = "الرجاء ملء الحقل الإلزامي";
+      } else {
+        var oLanguage = "";
+        var msg = "Please fill mandatory field";
+      }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script>
-        // Store jQuery in a local variable to avoid conflicts
-        var $j = jQuery.noConflict(true);
-        if (typeof $j.validator === 'undefined') {
-            console.error("jQuery Validate failed to load from CDN, attempting local fallback");
-            document.write('<script src="{% static "js/jquery.validate.min.js" %}"><\/script>');
-        } else {
-            console.log("jQuery Validate loaded, version:", $j.validator.version || "1.19.5");
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        
-    </script>
-    <script>
-        if (typeof bootstrap === 'undefined') {
-            console.error("Bootstrap JS failed to load from CDN, attempting local fallback");
-            document.write('<script src="{% static "js/bootstrap.bundle.min.js" %}"><\/script>');
-        } else {
-            console.log("Bootstrap JS loaded");
-        }
-    </script>
+
+
+
+
  
     <script>
          var sales_data = JSON.parse('{{ sales_data|escapejs }}'); // Parse JSON string safely
          // var sales_data = JSON.parse('{{ sales_data|escapejs }}');
         // Use local jQuery variable to avoid conflicts
-        (function($) {
-            // Function to initialize form validation
-            function initializeValidation() {
-                if (typeof $.validator === 'undefined') {
-                    console.error("jQuery Validate is not available, skipping validation initialization");
-                    $('#deal_form').on('submit', function(e) {
-                        e.preventDefault();
-                        console.log("Submitting form without validation due to missing plugin");
-                        submitForm();
-                    });
-                    return;
-                }
- 
-                console.log("Initializing form validation");
- 
-                // Custom validation methods
-                // $.validator.addMethod("date_format", function(value, element) {
-                //     var isValid = this.optional(element) || /^\d{2}-\d{2}-\d{4}$/.test(value);
-                //     console.log(`Validating date_format for ${element.name}: ${value}, Result: ${isValid}`);
-                //     return isValid;
-                // }, "Please enter a valid date in DD-MM-YYYY format.");
-               $.validator.addMethod("date_format", function(value, element) {
-                    return this.optional(element) || /^\d{4}-\d{2}-\d{2}$/.test(value);
-                }, "Please enter a valid date in YYYY-MM-DD format.");
+        console.log($("#submitted_by_agent").val( ));
+         
+        
 
 
-
- 
-                $.validator.addMethod("only_text", function(value, element) {
-                    var isValid = this.optional(element) || /^[a-zA-Z][a-zA-Z\s\/-]*$/.test(value);
-                    console.log(`Validating only_text for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter a valid name (letters, spaces, hyphens, or slashes only).");
- 
-                $.validator.addMethod("custom_email", function(value, element) {
-                    var regEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
-                    var isValid = this.optional(element) || regEx.test(value);
-                    console.log(`Validating custom_email for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter a valid email address.");
- 
-                $.validator.addMethod("alpha_numeric", function(value, element) {
-                    var isValid = this.optional(element) || /^[a-zA-Z0-9\s\/-]+$/.test(value);
-                    console.log(`Validating alpha_numeric for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter a valid reference number (alphanumeric, spaces, hyphens, or slashes only).");
- 
-                $.validator.addMethod("numeric", function(value, element) {
-                    var isValid = this.optional(element) || /^[0-9,.]+$/.test(value);
-                    console.log(`Validating numeric for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter a valid number.");
- 
-                $.validator.addMethod("alphanum_special", function(value, element) {
-                    var isValid = this.optional(element) || /^[A-Za-z0-9\s,.:;_\/!@#$%^&*()\-\[\]]+$/.test(value);
-                    console.log(`Validating alphanum_special for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter valid characters (letters, numbers, or special characters).");
- 
-                $.validator.addMethod("mobile_number", function(value, element) {
-                    var isValid = this.optional(element) || /^[+0-9\s-]+$/.test(value);
-                    console.log(`Validating mobile_number for ${element.name}: ${value}, Result: ${isValid}`);
-                    return isValid;
-                }, "Please enter a valid phone number.");
- 
-                $.validator.addMethod("file_size_type", function(value, element) {
-                    if (element.files.length === 0) {
-                        var isRequired = $(element).prop('required');
-                        console.log(`Validating file_size_type for ${element.name}: No file uploaded, Required: ${isRequired}`);
-                        return !isRequired;
-                    }
-                    var file = element.files[0];
-                    var isValidType = /(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.name);
-                    var isValidSize = file.size <= 3000000; // 3MB limit
-                    console.log(`Validating file_size_type for ${element.name}: Type: ${file.name}, Size: ${file.size}, Valid Type: ${isValidType}, Valid Size: ${isValidSize}`);
-                    return isValidType && isValidSize;
-                }, "Please upload a valid file (JPG, JPEG, PNG, or PDF, <3MB).");
-                
-
-                // ✅ Forcefully block tab switching if invalid fields exist in current tab
-                // document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                //     tab.addEventListener('show.bs.tab', function (e) {
-                //         const currentTab = document.querySelector('.tab-pane.active');
-                //         if (currentTab && currentTab.querySelector(':invalid')) {
-                //             e.preventDefault();
-                //             console.warn("🔒 Tab switching prevented due to invalid fields");
-                //         }
-                //     });
-                // });
-                let bypassTabValidation = false;
-                document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-                    tab.addEventListener('show.bs.tab', function (e) {
-                        const currentTab = document.querySelector('.tab-pane.active');
-                        if (!bypassTabValidation && currentTab && currentTab.querySelector(':invalid')) {
-                            e.preventDefault();
-                            console.warn("🔒 Tab switching prevented due to invalid fields");
-                        }
-                    });
-                });
-
-                $.validator.setDefaults({
-                    ignore: ":hidden:not(select)" // validate hidden fields except hidden selects
-                });
-
-
-                document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('show.bs.tab', function (e) {
-                const currentTab = document.querySelector('.tab-pane.active');
-                if (currentTab && currentTab.querySelector(':invalid')) {
-                    e.preventDefault();
-                    console.warn("🔒 Tab switching prevented due to invalid fields");
-                }
-            });
-        });
-
-        $("#deal_form").validate({
-            rules: {
-                submitted_by_agent: { required: true },
-                submitted_date: { required: true, date_format: true },
-                reference_number: { required: true, alpha_numeric: true },
-                unit_details: { required: true, alphanum_special: true },
-                builduing_name: { required: true, alphanum_special: true },
-                project_name: { required: true, alphanum_special: true },
-                deal_amount: { required: false, numeric: true },
-                seller_name: { required: true, only_text: true },
-                seller_source: { required: true },
-                selller_mobile: { required: true, mobile_number: true },
-                seller_email: { required: true, custom_email: true },
-                seller_nationality: { required: true, only_text: true },
-                buyer_name: { required: true, only_text: true },
-                buyer_source: { required: true },
-                buyer_mobile: { required: true, mobile_number: true },
-                buyer_email: { required: true, custom_email: true },
-                buyer_nationality: { required: true, only_text: true },
-                seller_agency: { required: true, alphanum_special: true },
-                seller_agent_name: { required: true, only_text: true },
-                seller_agency_brn: { required: false, alphanum_special: true },
-                seller_agent_phone: { required: true, mobile_number: true },
-                seller_agent_email: { required: false, custom_email: true },
-                buyer_agency: { required: true, alphanum_special: true },
-                buyer_agent_name: { required: true, only_text: true },
-                buyer_agency_brn: { required: false, alphanum_special: true },
-                buyer_agent_phone: { required: true, mobile_number: true },
-                buyer_agent_email: { required: false, custom_email: true },
-                mediating_agency: { required: false, alphanum_special: true },
-                mediating_agent_name: { required: false, only_text: true },
-                mediating_agency_brn: { required: false, alphanum_special: true },
-                mediating_agent_phone: { required: false, mobile_number: true },
-                mediating_agent_email: { required: false, custom_email: true },
-                total_commission: { required: true, numeric: true },
-                less_outside_commission: { required: true, numeric: true },
-                net_commission: { required: true, numeric: true },
-                classic: { required: true, numeric: true },
-                agent1: { required: true, numeric: true },
-                agent_name1: { required: false },
-                agent2: { required: false, numeric: true },
-                agent_name2: { required: false },
-                agent3: { required: false, numeric: true },
-                agent_name3: { required: false },
-                agent_comment: { required: false, alphanum_special: true },
-                comments: { required: false, alphanum_special: true },
-                receipt_no: { required: true },
-                kyc_number: { required: false, alphanum_special: true },
-                is_sale_aml: { required: true },
-                signed_mou: { required: true, file_size_type: true },
-                new_title_deed: { required: true, file_size_type: true },
-                old_title_deed: { required: true, file_size_type: true },
-                owners_passport_copy: { required: true, file_size_type: true },
-                owner_eid_copy: { required: false, file_size_type: true },
-                buyers_passport_copy: { required: true, file_size_type: true },
-                buyers_deposit_cheque_copy: { required: true, file_size_type: true },
-                buyer_eid: { required: false, file_size_type: true },
-                sellers_deposit_cheque_copy: { required: false, file_size_type: true },
-                seller_poa_passport_copy: { required: false, file_size_type: true },
-                buyer_poa_passport_copy: { required: false, file_size_type: true },
-                buyer_poa_copy: { required: false, file_size_type: true },
-                seller_poa_copy: { required: false, file_size_type: true },
-                buyer_poa_eid: { required: false, file_size_type: true },
-                seller_poa_eid: { required: false, file_size_type: true },
-                sale_kyc_number: { required: true, file_size_type: true },
-                screening: { required: true, file_size_type: true },
-                screening_comments: { required: false, alphanum_special: true },
-                manager_cheque_copy: { required: true, file_size_type: true }
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        initializeValidation();
-    });
- 
-                
- 
-            // Wait for jQuery Validate to be ready
-            function waitForValidator(callback, maxAttempts = 50, attempt = 1) {
-                if (typeof $.validator !== 'undefined') {
-                    console.log("jQuery Validate is ready, version:", $.validator.version || "1.19.5");
-                    callback();
-                } else {
-                    if (attempt > maxAttempts) {
-                        console.error("jQuery Validate failed to load after", maxAttempts, "attempts, skipping validation");
-                        $('#deal_form').on('submit', function(e) {
-                            e.preventDefault();
-                            console.log("Submitting form without validation due to missing plugin");
-                            submitForm();
-                        });
-                        return;
-                    }
-                    console.log("Waiting for jQuery Validate to load (attempt", attempt, ")");
-                    setTimeout(function() {
-                        waitForValidator(callback, maxAttempts, attempt + 1);
-                    }, 100);
-                }
-            }
- 
-            // // Validate only mandatory fields in the current tab
-            // function validateTab(tabClass) {
-            //     console.log(`Validating tab: ${tabClass}`);
-            //     var isValid = true;
-            //     if (typeof $.validator === 'undefined') {
-            //         console.error("Validator not available, cannot validate tab");
-            //         return false; // Block tab switching if validator is unavailable
-            //     }
- 
-            //     var validator = $("#deal_form").validate();
-            //     var invalidFields = [];
- 
-            //     $(tabClass + ' :input').each(function() {
-            //         var name = $(this).attr('name');
-            //         if (name && validator.settings.rules[name]) {
-            //             var rules = validator.settings.rules[name];
-            //             var isRequired = rules.required === true || (typeof rules.required === 'function' && rules.required(this));
-            //             if (isRequired) {
-            //                 console.log(`Checking required field ${name}: Value=${$(this).val()}`);
-            //                 if (!validator.element(this)) {
-            //                     console.log(`Validation failed for ${name}`);
-            //                     invalidFields.push(name);
-            //                     isValid = false;
-            //                 }
-            //             }
-            //         }
-            //     });
- 
-            //     if (!isValid) {
-            //         console.log("Tab validation failed, invalid fields:", invalidFields);
-            //         validator.form(); // Trigger validation to show errors
-            //         // Focus on the first invalid field
-            //         var firstInvalidElement = $(tabClass + ' :input[name="' + invalidFields[0] + '"]');
-            //         $('html, body').animate({
-            //             scrollTop: firstInvalidElement.offset().top - 100
-            //         }, 500);
-            //         firstInvalidElement.focus();
-            //     } else {
-            //         console.log("Tab validation passed");
-            //     }
-            //     return isValid;
-            // }
-            function validateTab(tabClass) {
-                console.log(`Validating tab: ${tabClass}`);
-                var isValid = true;
- 
-                if (typeof $.validator === 'undefined') {
-                    console.error("Validator not available, cannot validate tab");
-                    return false;
-                }
- 
-                var validator = $("#deal_form").validate();
- 
-                // ✅ Validate all inputs — not just ones with JS-defined rules
-                $(tabClass + ' :input').each(function () {
-                    if (!validator.element(this)) {
-                        isValid = false;
-                    }
-                });
- 
-                if (!isValid) {
-                    console.log("Tab validation failed, some fields are invalid");
- 
-                    // Scroll to first invalid field
-                    var firstError = $(tabClass + ' :input').filter(function () {
-                        return !validator.element(this);
-                    }).first();
- 
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 100
-                    }, 500);
- 
-                    firstError.focus();
-                } else {
-                    console.log("Tab validation passed");
-                }
- 
-                return isValid;
-            }
- 
- 
-            // Initialize when document is ready
-            $(document).ready(function() {
-                $("#deal_form").validate({
-                    rules: {
-                        submitted_date: { required: true, date_format: true }
-                    },
-                    errorPlacement: function(error, element) {
-                        element.closest('.form-group').find('.text-danger').text(error.text()).show();
-                    },
-                    success: function(label, element) {
-                        $(element).closest('.form-group').find('.text-danger').text('').hide();
-                    }
-                });
-                console.log("Document ready, checking for jQuery Validate");
-                waitForValidator(initializeValidation);
- 
-                // Tab navigation with validation for "Next" buttons
-                // $('#changeTabToSource').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Next button clicked for Property to Source");
-                //     if (validateTab('.nav-property')) {
-                //         console.log("Switching to Source tab");
-                //         $('#nav-source-tab').tab('show');
-                //     } else {
-                //         console.log("Cannot switch to Source tab: validation failed");
-                //     }
-                // });
-
-                $('#changeTabToSource').click(function(e) {
-                    e.preventDefault();
-                    console.log("Next button clicked for Property to Source");
-
-                    if (validateTab('.nav-property')) {
-                        console.log("Switching to Source tab");
-
-                        const tabTrigger = document.querySelector('#nav-source-tab');
-                        const tab = new bootstrap.Tab(tabTrigger);
-                        tab.show();
-
-                    } else {
-                        console.log("Validation failed. Staying on Property tab.");
-                        const firstInvalid = document.querySelector('.nav-property [required]:invalid');
-                        if (firstInvalid) {
-                            firstInvalid.focus();
-                            firstInvalid.reportValidity(); // shows tooltip error
-                        }
-                    }
-                });
-
-                // $('#changeTabToAgency').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Next button clicked for Source to Agency");
-                //     if (validateTab('.nav-source')) {
-                //         console.log("Switching to Agency tab");
-                //         $('#nav-agency-tab').tab('show');
-                //     } else {
-                //         console.log("Cannot switch to Agency tab: validation failed");
-                //     }
-                // });
-                $('#changeTabToAgency').click(function(e) {
-                    e.preventDefault();
-                    console.log("Next button clicked for Source to Agency");
-
-                    if (validateTab('.nav-source')) {
-                        console.log("Switching to Agency tab");
-
-                        const tabTrigger = document.querySelector('#nav-agency-tab');
-                        const tab = new bootstrap.Tab(tabTrigger);
-                        tab.show();
-
-                    } else {
-                        console.log("Cannot switch to Agency tab: validation failed");
-                    }
-                });
-
-                $('#changeTabToRevenue').click(function(e) {
-                    e.preventDefault();
-                    console.log("Next button clicked for Agency to Revenue");
-
-                    if (validateTab('.nav-agency')) {
-                        console.log("Switching to Revenue tab");
-
-                        const tabTrigger = document.querySelector('#nav-revenue-tab');
-                        const tab = new bootstrap.Tab(tabTrigger);
-                        tab.show();
-
-                    } else {
-                        console.log("Cannot switch to Revenue tab: validation failed");
-                    }
-                });
-
-                $('#changeTabToDocuments').click(function(e) {
-                    e.preventDefault();
-                    console.log("Next button clicked for Revenue to Documents");
-
-                    if (validateTab('.nav-revenue')) {
-                        console.log("Switching to Documents tab");
-
-                        const tabTrigger = document.querySelector('#nav-documents-tab');
-                        const tab = new bootstrap.Tab(tabTrigger);
-                        tab.show();
-
-                    } else {
-                        console.log("Cannot switch to Documents tab: validation failed");
-                    }
-                });
-
-                // Previous buttons (no validation)
-                // $('#previousTab1').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Previous button clicked, switching to Property tab");
-                //     $('#nav-property-tab').tab('show');
-                // });
-                // $('#previousTab2').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Previous button clicked, switching to Source tab");
-                //     $('#nav-source-tab').tab('show');
-                // });
-                // $('#previousTab3').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Previous button clicked, switching to Agency tab");
-                //     $('#nav-agency-tab').tab('show');
-                // });
-                // $('#previousTab4').click(function(e) {
-                //     e.preventDefault();
-                //     console.log("Previous button clicked, switching to Revenue tab");
-                //     $('#nav-revenue-tab').tab('show');
-                // });
-
-                $('#previousTab1').click(function (e) {
-                    e.preventDefault();
-                    console.log("Previous button clicked, switching to Property tab");
-                    bypassTabValidation = true;
-                    const tabTrigger = document.querySelector('#nav-property-tab');
-                    const tab = new bootstrap.Tab(tabTrigger);
-                    tab.show();
-                    setTimeout(() => { bypassTabValidation = false; }, 100);
-                });
-
-                $('#previousTab2').click(function (e) {
-                    e.preventDefault();
-                    console.log("Previous button clicked, switching to Source tab");
-                    bypassTabValidation = true;
-                    const tabTrigger = document.querySelector('#nav-source-tab');
-                    const tab = new bootstrap.Tab(tabTrigger);
-                    tab.show();
-                    setTimeout(() => { bypassTabValidation = false; }, 100);
-                });
-
-                $('#previousTab3').click(function (e) {
-                    e.preventDefault();
-                    console.log("Previous button clicked, switching to Agency tab");
-                    bypassTabValidation = true;
-                    const tabTrigger = document.querySelector('#nav-agency-tab');
-                    const tab = new bootstrap.Tab(tabTrigger);
-                    tab.show();
-                    setTimeout(() => { bypassTabValidation = false; }, 100);
-                });
-
-                $('#previousTab4').click(function (e) {
-                    e.preventDefault();
-                    console.log("Previous button clicked, switching to Revenue tab");
-                    bypassTabValidation = true;
-                    const tabTrigger = document.querySelector('#nav-revenue-tab');
-                    const tab = new bootstrap.Tab(tabTrigger);
-                    tab.show();
-                    setTimeout(() => { bypassTabValidation = false; }, 100);
-                });
-
- 
-                // Save As Draft with tab-specific validation
-                $('#saveAsDraftProperty, #saveAsDraftSource, #saveAsDraftAgency, #saveAsDraftRevenue, #saveDeal').click(function(e) {
-                    e.preventDefault();
-
-                    var currentTab = $(this).closest('.tab-pane').attr('id');
-                    console.log(`Save As Draft clicked in tab: ${currentTab}`);
-
-                    var tabClass;
-                    switch (currentTab) {
-                        case 'nav-property': tabClass = '.nav-property'; break;
-                        case 'nav-source': tabClass = '.nav-source'; break;
-                        case 'nav-agency': tabClass = '.nav-agency'; break;
-                        case 'nav-revenue': tabClass = '.nav-revenue'; break;
-                        case 'nav-documents': tabClass = '.nav-documents'; break;
-                    }
-
-                    console.log(`Validating tab ${tabClass} for Save As Draft`);
-
-                    const isDraft = $(this).attr('id').includes('saveAsDraft');
-                    $('#form_status').val(isDraft ? 'Incomplete' : 'Complete'); // ✅ Django looks for 'form_status'
-
-                    if (validateTab(tabClass)) {
-                        console.log("Calling submitForm()");
-                        submitForm();
-                    }
-                });
-
- 
-                // Form submission function
-                function submitForm() {
-                    console.log("Submitting form via AJAX to {% url 'sales-deals-create-page' %}");
-                    $.ajax({
-                        url: '{% url "sales-deals-create-page" %}',
-                        type: 'POST',
-                        data: new FormData($('#deal_form')[0]),
-                        processData: false,
-                        contentType: false,
-                        headers: {
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        beforeSend: function() {
-                            console.log("AJAX request started");
-                        },
-                        success: function(response) {
-                            console.log("AJAX success:", response);
-                            if (response.status === 'success') {
-                                $('#alert-primary').text(response.message);
-                                $('#successmsg').show();
-                                console.log("Showing success message, redirecting to:", response.redirect_url);
-                                $('html, body').animate({
-                                    scrollTop: $('.main-header').offset().top
-                                }, 1000);
-                                setTimeout(function() {
-                                    $('#successmsg').fadeOut();
-                                    console.log("Redirecting now");
-                                    window.location.href = response.redirect_url;
-                                }, 3000);
-                            }
-                        },
-                        error: function(xhr) {
-                            console.log("AJAX error:", xhr);
-                            let errorMsg = 'Error occurred while saving the deal.';
-                            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                errorMsg = 'Form errors: ' + JSON.stringify(xhr.responseJSON.errors);
-                                console.log("Server-side validation errors:", xhr.responseJSON.errors);
-                                if (typeof $.validator !== 'undefined') {
-                                    var validator = $("#deal_form").validate();
-                                    validator.showErrors(xhr.responseJSON.errors);
-                                }
-                            } else if (xhr.responseText) {
-                                errorMsg = 'Error: ' + xhr.responseText;
-                            }
-                            $('#alert-primary').text(errorMsg);
-                            $('#successmsg').show();
-                            console.log("Showing error message:", errorMsg);
-                            setTimeout(function() {
-                                $('#successmsg').fadeOut();
-                                console.log("Hiding error message");
-                            }, 3000);
-                        }
-                    });
-                }
- 
-                // Form submission for Create Deal
-                $('#deal_form').on('submit', function(e) {
-                    e.preventDefault();
-                    console.log("Create Deal form submitted");
-                    if (typeof $.validator !== 'undefined' && $(this).valid()) {
-                        console.log("Form is valid, setting save_as to empty");
-                        $('#save_as').val('');
-                        submitForm();
-                    } else {
-                        console.log("Form is invalid or validator not loaded, triggering validation or submitting anyway");
-                        if (typeof $.validator !== 'undefined') {
-                            $(this).validate().form();
-                        } else {
-                            submitForm(); // Fallback submission without validation
-                        }
-                    }
-                });
-
-
-                  loadAgentDropdown();
-                //   loadReceiptDropdown();
+                loadAgentDropdown();
+                loadReceiptDropdown();
 
                 function loadAgentDropdown() {
                     agents = sales_data.agents;
@@ -1415,64 +770,832 @@
                     }
 
                 }
+ 
+                function loadReceiptDropdown() {
+                receipts = sales_data.receipts;
+
+                populateReceiptDropdown("#receipt_no", receipts);
+
+                console.log("loaded teh reciepts");
+                // Add more dropdowns if needed, e.g.:
+                // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+            }
+
+            // Helper function to populate the receipt dropdown
+            function populateReceiptDropdown(selector, data) {
+                console.log(selector, "recipt selector");
+                console.log(data, "receipt data");
+
+                const $dropdown = $(selector);
+                $dropdown.empty().append('<option value="">Select Receipt</option>');
+
+                data.forEach(function (receipt) {
+                $dropdown.append(
+                    `<option value="${receipt.id}">${receipt.receipt_number}</option>`
+                );
+                });
+            }
 
 
  
                 // File input change handler
-                $('.imageUploadInput').on('change', function() {
-                    var file = this.files[0];
-                    var id = this.id;
-                    console.log(`File input changed for ${id}`);
-                    if (file) {
-                        if (!/(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.name)) {
-                            console.log(`Invalid file type for ${id}: ${file.name}`);
-                            $("#" + id + '_error').text('Please upload a valid file (JPG, JPEG, PNG, or PDF).').show();
-                            $(this).val('');
-                        } else if (file.size > 3000000) {
-                            console.log(`File too large for ${id}: ${file.size} bytes`);
-                            $("#" + id + '_error').text('File size should be less than 3 MB.').show();
-                            $(this).val('');
-                        } else {
-                            console.log(`Valid file uploaded for ${id}: ${file.name}, Size: ${file.size}`);
-                            $("#" + id + '_error').text('').hide();
-                        }
-                    } else {
-                        console.log(`No file selected for ${id}`);
-                    }
-                });
-            });
-        })($j); // Pass local jQuery to avoid conflicts
-    //     loadAgentDropdown();
-    // //   loadReceiptDropdown();
+                 
+            
 
-    //   function loadAgentDropdown() {
-    //     agents = sales_data.agents;
-    //     console.log(agents);
-
-    //     populateAgentDropdown("#submitted_by_agent", agents);
-    //     populateAgentDropdown("#agent_name1", agents);
-    //     populateAgentDropdown("#agent_name2", agents);
-    //     populateAgentDropdown("#agent_name3", agents);
-    //   }
-
-    //   function populateAgentDropdown(selector, data) {
-    //     console.log("Populating dropdown for:", selector, "with data:", data);
-    //     const $dropdown = $j(selector);
-    //     $dropdown.empty().append('<option value="">Select Agent</option>');
-    //     if (Array.isArray(data)) {
-    //         console.log("Data is an array, proceeding to populate dropdown");
-    // data.forEach(function(agent) {
-    //   const option = $j('<option></option>')
-    //     .val(agent.id) // or agent.user_id or whatever field you use
-    //     .text(agent.name); // or agent.full_name or agent.username
-
-    //   $dropdown.append(option);
-    //   console.log("Added option:", agent.name, "with value:", agent.id);
-    //      });
-    //     }
-
-    //   }
     </script>
+
+
+    <script type="text/javascript">
+//$(document).ready(function(){ 
+ function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          for (let cookie of document.cookie.split(";")) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+              cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      
+      $(document).on('click', '#changeTabToSource,#saveAsDraftProperty', function(event) {
+            var buttonName=$(this).attr('id')
+            
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="screening"]').each(function () {
+            $(this).rules('add','required');
+      });
+
+
+            $('[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="seller_agent_phone"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="seller_agency"],[name="seller_agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="buyer_agent_phone"],[name="agent_name1"]').each(function () {
+            $(this).rules('remove','required');
+      });
+
+            if($('#deal_form').valid()){  
+
+           $('#nav-tab a[href="#nav-source"]').tab('show');
+
+         }else{
+            $('.nav-source').closest('.form-group').find('label.error').remove();
+            $('.nav-agency').closest('.form-group').find('label.error').remove();
+            $('.nav-revenue').closest('.form-group').find('label.error').remove();
+            $('.nav-documents').closest('.form-group').find('label.error').hide();
+            $('html, body').animate({
+              scrollTop: $('.main-header').offset().top
+            }, 1000);
+
+            var validator = $("#deal_form").validate();
+            showErrors(validator);
+        }
+      });
+
+      //code for previous tab
+      $('#previousTab1').on('click', function() {
+         $('#nav-tab a[href="#nav-property"]').tab('show');
+          
+      });
+
+      $(document).on('click', '#changeTabToAgency,#saveAsDraftSource', function(event) {
+
+            var buttonName=$(this).attr('id');
+            
+            $('[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="seller_nationality"],[name="buyer_nationality"]').each(function () {
+            $(this).rules('add','required');
+        });
+
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="buyer_agent_phone"],[name="agent_name1"],[name="screening"]').each(function () {
+            $(this).rules('remove','required');
+      });
+
+            if($('#deal_form').valid()){  
+
+           $('#nav-tab a[href="#nav-agency"]').tab('show');
+
+         }else{
+            $('.nav-property').closest('.form-group').find('label.error').remove();
+            $('.nav-agency').closest('.form-group').find('label.error').remove();
+            $('.nav-revenue').closest('.form-group').find('label.error').remove();
+            $('.nav-documents').closest('.form-group').find('label.error').hide();
+            $('html, body').animate({
+              scrollTop: $('.main-header').offset().top
+            }, 1000);
+
+            var validator = $("#deal_form").validate();
+            showErrors(validator);
+        }
+      });
+
+
+      $('#previousTab2').on('click', function() {
+            $('#nav-tab a[href="#nav-source"]').tab('show');
+      });
+
+
+      $(document).on('click', '#changeTabToRevenue,#saveAsDraftAgency', function(event) {
+
+            var buttonName=$(this).attr('id');
+            if (buttonName=='changeTabToRevenue') {
+                  $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"]').each(function () {
+                  $(this).rules('add','required');
+            });
+            }
+            else{
+                  $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"]').each(function () {
+                  $(this).rules('remove','required');
+            });
+
+            }
+
+            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="reference_number"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="screening"]').each(function () {
+              $(this).rules('remove','required');
+            });
+
+            if($('#deal_form').valid()){  
+
+           $('#nav-tab a[href="#nav-revenue"]').tab('show');
+
+         }else{
+            $('.nav-property').closest('.form-group').find('label.error').remove();
+            $('.nav-source').closest('.form-group').find('label.error').remove();
+            $('.nav-revenue').closest('.form-group').find('label.error').remove();
+            $('.nav-documents').closest('.form-group').find('label.error').hide();
+            $('html, body').animate({
+              scrollTop: $('.main-header').offset().top
+            }, 1000);
+
+            var validator = $("#deal_form").validate();
+            showErrors(validator);
+        }
+      });
+
+
+      $('#previousTab3').on('click', function() {
+            $('#nav-tab a[href="#nav-agency"]').tab('show');
+      });
+
+
+      $(document).on('click', '#changeTabToDocuments,#saveAsDraftRevenue', function(event) {
+
+            var buttonName=$(this).attr('id');
+            
+            if (buttonName=='changeTabToDocuments') {
+                  $('[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"]').each(function () {
+                  $(this).rules('add','required');
+                   });
+
+            }
+            else{
+                  $('[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"]').each(function () {
+                  $(this).rules('remove','required');
+                  });
+            }
+
+            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="reference_number"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="screening"]').each(function () {
+            $(this).rules('remove','required');
+            });
+
+            if($('#deal_form').valid()){  
+
+           $('#nav-tab a[href="#nav-documents"]').tab('show');
+
+         }else{
+            $('.nav-property').closest('.form-group').find('label.error').remove();
+            $('.nav-agency').closest('.form-group').find('label.error').remove();
+            $('.nav-documents').closest('.form-group').find('span.text-danger').hide();
+            $('.nav-source').closest('.form-group').find('label.error').remove();
+            $('html, body').animate({
+              scrollTop: $('.main-header').offset().top
+            }, 1000);
+
+            var validator = $("#deal_form").validate();
+            showErrors(validator);
+        }
+      });
+
+
+      $('#previousTab4').on('click', function() {
+          $('#nav-tab a[href="#nav-revenue"]').tab('show');
+      });
+
+      $(document).ready(function(){
+      $("#submitted_date").datepicker({
+          dateFormat: "dd-mm-yy",
+          changeMonth: true,
+          changeYear: true,
+          autoclosed:true,        
+          maxDate:0,
+          yearRange: "-100:+10"
+      });
+
+      $('#submitted_date').datepicker('setDate', '+0');
+      $('#submitted_date').attr('readOnly', true);
+   });
+
+$(document).on('click', '.remove_file', function() {
+    var name = $(this).data("name");
+    var value = $(this).attr("id");
+    var existingType = $(this).data("existing");
+    if ($('#' + name + '_removed').val().length == 0) {
+        $('#' + name + '_removed').val(value);
+    } else {
+        $('#' + name + '_removed').val($('#' + name + '_removed').val() + ', ' + value);
+    }
+    if (existingType == "old") {
+        $('#' + name + '_existing_count').val(parseInt($('#' + name + '_existing_count').val()) - 1);
+    } else {
+        $('#' + name + '_new_removed_count').val(parseInt($('#' + name + '_new_removed_count').val()) - 1);
+    }
+    $(this).parent('div').remove();
+    $(this).parents('span').remove();
+});
+$('input[type="file"]').on('change', function() {
+    
+    var  namedata =$(this).attr("id");
+      $('.'+namedata+'_list').empty();              
+      $('#'+namedata+'_new_removed_count').val(this.files.length);   
+            
+     if(this.files.length >0){        
+        var filename = this.files[0].name;
+        var lastIndex = filename.lastIndexOf("\\");
+        if (lastIndex >= 0) {
+            filename = filename.substring(lastIndex + 1);
+        }
+    
+        $('#yt'+$(this).attr("id")).val("");
+        filesize=0;
+        var fileCount=4;
+        if($('#'+$(this).attr("id")+'_existing_count').val()){
+          fileCount=fileCount-parseInt($('#'+$(this).attr("id")+'_existing_count').val());
+        } 
+     
+        files=this.files;    
+        var result_array=Array.from(files);
+        var added=false;      
+        for(let i=0; i<this.files.length; i++){        
+             filesize = parseFloat(filesize+this.files[i].size);
+             var name=files[i].name
+          $.map(result_array, function(name) {
+           if (name!== filename) {
+            var added=true;
+           }
+          })
+          if (!added) {
+              $('.'+namedata+'_list').append('<div class="upload_prev">'+'<a class="filenameupload">'+this.files[i].name+'</a>'+'<p class="remove_file" id="'+this.files[i].name+'" data-name="'+namedata+'"'+'>X</p></div>');
+          }
+        }
+  
+        if(filesize/1024/1024 > 3){
+  
+          $("#"+$(this).attr("id")+"_error").html("File size should be less than 3 mb").show();
+          $('#'+$(this).attr("id")).val("");
+          $('.'+namedata+'_list').empty();
+          $('#'+namedata+'_new_removed_count').val('0');  
+        }
+        else if(this.files.length>fileCount) {
+            alert("Length exceeded. Please select no more than 4 files");
+            $('#'+$(this).attr("id")).val("");    
+            $('.'+namedata+'_list').empty();
+            $('#'+namedata+'_new_removed_count').val('0');
+          } 
+        else {
+          $('#yt'+$(this).attr("id")).val("true");      
+          $("#"+$(this).attr("id")+"_error").html('').hide();
+          $("#"+$(this).attr("id")+"-error").html('').hide();
+        }
+      }
+  });
+
+
+
+
+
+  $.validator.addMethod("only_text", function(value, element) {
+  return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
+  },"Enter valid Name");
+		
+			
+$.validator.addMethod("custom_email", function (value, element) {
+      		var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        	return this.optional(element) || regEx.test(value);
+    		}, "Enter a valid email address.");
+
+$.validator.addMethod("alpha_numeric", function (value, element, param) {
+       return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+    }, "Enter valid Profile Id");
+
+$.validator.addMethod("numeric", function (value, element, param) {
+    	 return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers.");
+$.validator.addMethod("text_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+     },"Enter only letters and special characters.");
+$.validator.addMethod("alphanum_special", function(value, element) {
+    return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+ },"Enter only letters, numbers and special characters.");
+$.validator.addMethod("lettersonly", function(value, element) {
+  return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+}, "Letters only please")
+
+
+$('#deal_form').validate({
+   ignore: "",
+  rules: {
+           submitted_date: {
+               required: true,
+           },
+          submitted_by_agent: {
+            required: true,
+          },
+           reference_number: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 20,
+           },
+           screening: {
+               required: true,
+               alphanum_special: true,
+           },
+              unit_details: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 15,
+           },
+           builduing_name: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           deal_amount: {
+             numeric:true,
+            maxlength: 10,
+           },
+           seller_name: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           seller_source: {
+               required: true,
+           },
+           selller_mobile: {
+               required: true,
+               numeric: true,
+               minlength: 6,
+               maxlength: 15,
+           },
+           seller_email: {
+            required: true,
+            custom_email: true,
+            maxlength: 100,
+           },
+           buyer_name: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           buyer_source: {
+               required: true,
+           },
+           seller_nationality: {
+               required: true,
+           },
+           buyer_nationality: {
+               required: true,
+           },
+           buyer_mobile: {
+               required: true,
+               numeric: true,
+               minlength: 6,
+               maxlength: 15,
+           },
+           buyer_email: {
+            required: true,
+            custom_email: true,
+            maxlength: 100,
+           },
+           seller_agency: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           seller_agent_name: {
+            required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           seller_agency_brn: {
+             
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           seller_agent_phone: {
+            required: true,
+             numeric: true,
+             minlength: 6,
+                maxlength: 15,
+           },
+           seller_agent_email: {
+            
+            custom_email: true,
+            maxlength: 100,
+           },
+           buyer_agency: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           buyer_agent_name: {
+            required: true,
+             alphanum_special: true,
+               maxlength: 255,
+           },
+           buyer_agency_brn: {
+              
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           buyer_agent_phone: {
+            required: true,
+             numeric: true,
+             minlength: 6,
+             maxlength: 15,
+           },
+           buyer_agent_email: {           
+            custom_email: true,
+            maxlength: 100,
+           },
+           project_name: {
+            required: true,
+               maxlength: 255,
+           },
+           mediating_agency: {
+               
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           mediating_agent_name: {
+            
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           mediating_agency_brn: {
+               
+               alphanum_special: true,
+               maxlength: 255,
+           },
+           mediating_agent_phone: {          
+             numeric: true,
+             minlength: 6,
+                maxlength: 15,
+           },
+           mediating_agent_email: {
+            
+            custom_email: true,
+            maxlength: 100,
+           },
+           total_commission: {
+            required: true,
+             numeric: true,
+              maxlength: 10,
+           },
+           less_outsude_commission: {
+               required: true,
+               alphanum_special: true,
+               maxlength: 100,
+           },
+           net_commission: {
+            required: true,
+             numeric: true,
+               maxlength: 10,
+           },
+           classic: {
+            required: true,
+             numeric: true,
+               maxlength: 10,
+           },
+           agent1: {
+            required: true,
+            numeric:true,
+               maxlength: 10,
+           },
+           agent_name1: {
+            required: true,                          
+           },
+           agent2: {          
+            numeric:true,
+               maxlength: 10,
+           },         
+           agent3: {          
+            numeric:true,
+            maxlength: 10,
+           },
+           agent_comment: {            
+               alphanum_special: true
+            },
+           comments: {           
+               alphanum_special: true
+            }, 
+           receipt_no: {
+            required: true,
+            alphanum_special: true,
+            maxlength: 100,
+           },
+          
+           is_sale_aml: {
+            required: true,              
+           },   
+           kyc_number: {            
+            numeric:true,
+            maxlength: 45,
+           },
+            branch: {
+            required: false,              
+           }, 
+       },
+         errorPlacement: function (error, element) {
+       if (element.attr("type") == "radio") {
+         var id = element.attr("id")
+         $('#' + id + "_error").css('margin-right','200px');
+         error.addClass('field_error');
+         error.insertAfter('#' + id + "_error");
+       } else {
+         error.insertAfter(element);
+       }
+     }
+   });      
+
+            $(document).on('click', '#submitDeal', function(event) {  
+            event.preventDefault(); 
+                          
+           $('[name="submitted_by_agent"],[name="seller_agency"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="seller_nationality"],[name="buyer_nationality"],[name="buyer_email"],[name="receipt_no"],[name="is_sale_aml"],[name="screening"]').each(function () {
+                 $(this).rules('add','required');
+             }); 
+        
+            if($('#deal_form').valid() & countMultipleFiles('manager_cheque_copy') & countMultipleFiles('owners_passport_copy') & countMultipleFiles('old_title_deed') & countMultipleFiles('buyers_passport_copy') & countMultipleFiles('signed_mou')  & countMultipleFiles('new_title_deed') & countMultipleFiles('title_deed') & countMultipleFiles('screening') & countMultipleFiles('buyers_deposit_cheque_copy') & checkKyc()){                   
+                        $('#save_as').val("create-deal"); 
+                        var url="/list";                 
+                        storefunctionality(url);
+           
+                  }else{
+
+                        $('html, body').animate({
+                         scrollTop: $('.main-header').offset().top
+                      }, 1000);
+                      
+                  var validator = $("#deal_form").validate();
+                        showErrors(validator);
+                  }
+            });
+
+            $(document).on('click', '#saveDeal', function(event) {  
+                event.preventDefault();
+
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="screening"]').each(function () {
+                 $(this).rules('add','required');
+             });
+
+            $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agent_phone"],[name="seller_agency_brn"],[name="agent_name1"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agency_brn"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="manager_cheque_copy[]"],[name="signed_mou[]"],[name="new_title_deed[]"],[name="old_title_deed[]"],[name="owners_passport_copy[]"],[name="buyers_passport_copy[]"],[name="Buyers Deposit Cheque Copy[]"],[name="buyers_deposit_cheque_copy[]"],[name="is_sale_aml"]').each(function () {
+                  $(this).rules('remove','required');
+                  });
+
+                  $('.nav-documents').closest('.form-group').find('span.text-danger').hide();
+
+                  if($('#deal_form').valid() & countMultipleFiles('screening')){    
+                    $('#save_as').val("save-draft");  
+                    var url="draft/";             
+                    storefunctionality(url);
+                   }
+                   else{
+                        $('html, body').animate({
+                        scrollTop: $('.main-header').offset().top
+                      }, 1000);
+
+                      var validator = $("#deal_form").validate();
+                        showErrors(validator);
+                  }     
+                
+             });
+            function countMultipleFiles(feild){     
+                    var result=true;        
+                    
+                    if($('#'+feild+'_new_removed_count').val() < 1){         
+                      result =false;             
+                     var  feildvalue= feild;
+                      $('#'+feild+'_error').html("This field is required.").show();    
+                      $('.nav-documents').closest('.form-group').find('span.text-danger').show();      
+                   }
+                 return result;
+             }
+                  function checkKyc(){
+                  var result=true;
+                  $('#sale_kyc_number_error').empty();
+                   $('#kyc_number_error').empty();
+                     var existing_count=parseInt($('#sale_kyc_number_existing_count').val());
+                     var removed_count=parseInt($('#sale_kyc_number_new_removed_count').val());
+                        if($('#sale_kyc_number_new_removed_count').val() == ''){
+                           var removed_count=0;
+                        }
+                     if((existing_count < 1) && (removed_count < 1) && ($('#kyc_number').val()=='')){
+                       result =false;
+                       $('#sale_kyc_number_error').html("Either KYC Form or KYC Number is required!").show();
+                       $('#kyc_number_error').html("Either KYC Form or KYC Number is required!").show();
+                        $(document).on("keyup", "input[name='kyc_number']", function(e){
+                          $("#"+'kyc_number'+"_error").hide();
+                       });
+                     }
+                     return result;
+            } 
+   
+                  function  storefunctionality(urls){
+                $('#save_draft_deal').attr('disabled',true);
+                  $('.loadscreen').show();
+                  $('html, body').animate({
+                    scrollTop: $('.main-header').offset().top
+                  }, 1000);
+                  if(document.getElementById('submitted_date').disabled == true)
+				 	      document.getElementById('submitted_date').removeAttribute('disabled');
+                  $.ajax({
+                      method: "POST",
+                      headers: {
+                           "X-CSRFToken": getCookie("csrftoken"), 
+                      },  
+                      url: "/api/sales-deals/create/",
+                      data:new FormData($("#deal_form")[0]),
+                      contentType: false,
+                      processData: false,
+                    })
+                  .done(function( data, textStatus, xhr, Response) {
+                      $('.loadscreen').hide();
+                      $('#save_draft_deal').removeAttr('disabled',true);
+                      if(xhr.status== 200){
+
+                       scrollTop();
+                      $("#alert-primary").text("Sales Deal Created Successfully");
+                         $("#successmsg").show();
+                       // $("#deal_form")[0].reset();
+                         setTimeout(function() {
+                         window.location.href = "/sales-deals/"+urls;
+                        }, 3000); 
+                        
+                      }
+                       else if(data.status=='validation_error'){
+
+                        var messages = '';
+                        $.each(data.data, function (index, value) {
+                          messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+                        });
+                        swal("Please fill mandatory field",messages);
+                          $.each(data.data, function (key, val) {
+                              $("#"+key+"_error").text(val[0]);
+                              $("#"+key+"_error").show();
+                              $(document).on("keyup", "input[name='"+key+"']", function(e){
+                                    $("#"+key+"_error").hide();
+                              });
+                              $(document).on("change", "select[name='"+key+"']", function(e) {
+                                    $("#"+key+"_error").hide();
+                              });
+                          });
+                                
+                      }
+                        else{
+                           if(data.data == "DUF500"){
+                              $("#alert-primary").text('Document Upload Failed! Please Try Again.');
+                              $("#successmsg").show();
+                              setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                           }
+                           else{
+                              $("#alert-primary").text('Something Went Wrong!');
+                              $("#successmsg").show();
+                              setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                           }
+                      }
+                      
+                  })
+                  .fail(function (xhr, textStatus, errorThrown, Response) {
+            // This block runs for HTTP error responses (4xx or 5xx status codes)
+            console.log("AJAX Request Failed!");
+            console.log("HTTP Status Code:", xhr.status);
+            console.log("Text Status:", textStatus);
+            console.log("Error Thrown:", errorThrown);
+            console.log("Error Thrown:", xhr.responseJSON);
+
+            let errorMessage = "An unknown error occurred.";
+
+            if (xhr.status === 400) {
+              // This is your "Bad Request" error
+              console.log("Bad Request details:", xhr.responseJSON);
+              scrollTop();
+
+              // Attempt to extract specific error messages from the backend
+              if (xhr.responseJSON) {
+                if (typeof xhr.responseJSON === "object") {
+                  // If backend sends an object with error details (common in DRF)
+                  const errors = [];
+                  for (const key in xhr.responseJSON) {
+                    if (Object.hasOwnProperty.call(xhr.responseJSON, key)) {
+                      const element = xhr.responseJSON[key];
+                      if (Array.isArray(element)) {
+                        errors.push(`${key}: ${element.join(", ")}`);
+                      } else {
+                        errors.push(`${key}: ${element}`);
+                      }
+                    }
+                  }
+                  errorMessage = "Bad Request: " + errors.join("; ");
+                } else {
+                  // If backend sends a simple string message
+                  errorMessage = "Bad Request: " + xhr.responseJSON;
+                }
+              } else {
+                errorMessage = "Bad Request: Invalid data provided.";
+              }
+            }
+
+            // Display the error message to the user
+            // Make sure you have an element with id="alert-danger" in your HTML
+            //$("#alert-danger").text(errorMessage).show();
+            $("#alert-primary").text(errorMessage);
+            $("#successmsg").show();
+            setTimeout(function () {
+              $("#successmsg").fadeOut();
+            }, 3000);
+
+            // Hide error message after a few seconds // Display errors a bit longer
+          });;
+           }
+
+
+            $('#property').on('change',function() {
+       var id = $(this).find(':selected').val();
+      $.ajax({
+        method:"POST",
+        url:"http://dealsaws.classicproperties.ae/",
+        data:{
+              "_token": "g8hfpW4JNIgJzPPtxt9j5B8vknyTvX2F6ZJvFmvJ",
+              "id"    : id
+          },
+      })
+      .done(function( data ) {
+         
+        if(data.status=='success'){
+          $('#project_name-error').hide()
+          $('#reference_number-error').hide()
+          $('#builduing_name-error').hide()
+          
+          $('#reference_number').val(data.data.bayut_property_ref_no)
+          $('#project_name').val(data.data.property_title)
+          $('#builduing_name').val(data.data.tower_name)
+         $('#deal_amount').val(data.data.price)
+         
+         
+        }
+        else if(data.status=='fail'){
+          $("#alert-primary").text('Data not Found!');
+          $("#successmsg").show();
+          $('html, body').animate({
+            scrollTop: $('.main-header').offset().top
+          }, 1000);
+          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+        }
+      })
+  }) 
+function showErrors(validator){
+    var messages = '';
+    $.each(validator.errorMap, function (index, value) {
+      
+      if (lang == "ar") {
+        for (var key in form_fields) {
+          var val = form_fields[key];
+        
+            if (key==index) {
+              messages +=val + ' : ' + value+'\n';
+            }
+            else{
+            // messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+          }
+        }
+      }else{
+        messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+      }
+    });
+    swal(msg,messages);
+}     
+
+function scrollTop() {
+  $("html, body").animate(
+    {
+      scrollTop: $(".main-header").offset().top
+    },
+    1000
+  );
+}
+
+
+</script>
+
     <script>
         // 'sales_data' is already declared above, so just log it here
         console.log("Sales Data:", sales_data);

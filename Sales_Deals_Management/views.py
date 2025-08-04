@@ -1,21 +1,27 @@
+import datetime
+import re
+import time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
 import json
-from core.models import SalesDeals
+from django.conf import settings
+from Rental_Deal.serializers import ReceiptDropdownSerilizer
+from core.models import Receipts, SalesDeals
 from core.models import Users 
 from rest_framework.decorators import action
-from .serializers import SalesDealSerializer , filterSerializer, AgentDropdownSerializer
+from .serializers import SalesDealSerializer, SalesDealSerializerForDraft , filterSerializer, AgentDropdownSerializer
 from django.db.models import Q
 from django.template import loader
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-# from .forms import SalesDealsForm 
+from .forms import SalesDealsForm 
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
+from Rental_Deal.Utilities import upload_file_to_full_s3_url, delete_from_s3
 
 
 # Create your views here.
@@ -55,42 +61,394 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='view')
     def view_sales_deal(self, request, pk=None):
         sales_deal = get_object_or_404(SalesDeals, pk=pk)
+        print("Sales Deal:", sales_deal)
         serializer = SalesDealSerializer(sales_deal)
         # return HttpResponse("hello this is view page")
         aws_url = settings.AWS_URL
 
+        receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
+        print(receipt_no, "this is receipt id ")
 
-        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data,'aws_base_url': aws_url})
-    
-    @action(detail=False, methods=['get','post'], url_path='update')
-    def update_sales_deal(self, request,pk=None):
-        pk = pk
-        sales_deal = get_object_or_404(SalesDeals, pk=pk)
-        serializer = SalesDealSerializer(sales_deal,   partial=True)
+        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": receipt_no})
+
+
+    @action(detail=False, methods=['post'], url_path='create-sale-deal')
+    def create_sale_deal(self, request):
+
+
+        updated_files = {}
+        base_field_name = ""
+        removed_clean_dict = {}
+        print(request.data)
+        mutable_data = request.data.copy()
+        print(request.user)
+        print(request.user.id)
+        print(mutable_data)
+
+                # userobj = Users.objects.filter(pk = request.user.id)
+
+        print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
+        if mutable_data.get('save_as') == "create-deal":
+            mutable_data['form_status'] = "Complete"
+        else:
+            mutable_data['form_status'] = "Incomplete"
+        print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
+        print(f"DEBUG: mutable_data before serializer: {mutable_data}") 
+
+
+
         
-        return render(request, 'home/editsalesdeal.html', {'salesdeal': serializer.data})
-    
+        # adding reference number to the table of recipts 
+        try:
+            receipt_id = int(mutable_data.get("receipt_no", "").strip())
+            Receipts.objects.filter(id=receipt_id).update(deal_refer_no=mutable_data['reference_number'])
+            print(f"Updated receipt_no {receipt_id} with reference_number {mutable_data['reference_number']}")
+        except (ValueError, TypeError):
+            print("Invalid receipt_no or not provided, skipping update.")
+        
 
-               # if serializer.is_valid():
-        #     serializer.save()
-            # return Response(serializer.data, status=status.HTTP_200_OK)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # @action(detail=False, methods=['post'], url_path='all')
-    # def create_sales_deal(self, request, pk=None):
-    #     pk=pk
-    #     sales_deal=get_object_or_404(SalesDeals, pk=pk)
-    #     serializer = SalesDealSerializer(sales_deal, partial=True)
-    #     return render(request, 'home/createsalesdeal.html', {'salesdeal': serializer.data})
+        mutable_data['submitted_by_user'] = request.user.id
+        mutable_data['account'] = request.user.account_id
+        mutable_data['created_by'] = request.user.id
+       
+           
+
+
+        if 'submitted_date' in mutable_data and mutable_data['submitted_date']:
+            dmy_date = mutable_data['submitted_date']  # e.g. "01-08-2025"
+            day, month, year = dmy_date.split("-")
+            ymd_date = f"{year}-{month}-{day}" 
+            
+            mutable_data['submitted_date'] = ymd_date  # becomes "2025-08-01"
+
+        mutable_data['date'] = mutable_data.get("submitted_date") or timezone.now().date()
+
+       
+
+
+
+        print(f"multable data  acoount_id {mutable_data['account']}")
+        if mutable_data['form_status']  == "Complete":
+            serializer = self.get_serializer(data=mutable_data, partial=True)
+        else:
+            serializer = SalesDealSerializerForDraft(data=mutable_data ,partial=True)
+
+        serializer.is_valid(raise_exception=True)
+       
+
+
+
+        # rental_deal = get_object_or_404(RentalDeals, pk=pk)
+        path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+        for key in request.FILES.keys():
+            base_field_name = key.rstrip("[]")  # Remove [] suffix if present
+            print("base_field_name", base_field_name)
+            files = request.FILES.getlist(key)
+
+        
+
+            # Get existing value from the DB field (comma-separated filenames)
+            # existing_value = getattr(rental_deal, base_field_name, "")
+            # existing_files = existing_value.split(",") if existing_value else []
+
+            
+            for file in files:
+                timestamp = int(time.time())
+                cleaned_name = re.sub(r"[,]+", " ", file.name)
+                filename = f"{base_field_name}{timestamp} {cleaned_name}"
+                filepath = f"{path}/{filename}"
+
+                # is_uploaded = upload_file_to_full_s3_url(file, filepath)
+
+                # if is_uploaded:
+                    # new_file_names.append(filename)
+
+
+                if base_field_name not in updated_files:
+                    updated_files[base_field_name] = []
+                updated_files[base_field_name].append(filename)
+
+                print("updated_files", updated_files)
+            
+        final_updated_values = {}
+
+        all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
+
+        for base_field_name in all_field_keys:
+            reference_number = mutable_data.get("reference_number")
+            path_folder = f"rental/referencenumber_CP/{reference_number}"
+
+       
+
+            # ✅ Add new files
+            new_file_names = []
+            for file in request.FILES.getlist(base_field_name + "[]"):
+                timestamp = int(time.time())
+                cleaned_name = re.sub(r"[,]+", " ", file.name)
+                filename = f"{base_field_name}{timestamp} {cleaned_name}"
+                relative_path = f"{path_folder}/{filename}"
+
+                is_uploaded = upload_file_to_full_s3_url(file, relative_path)
+                if is_uploaded:
+                    new_file_names.append(filename)
+
+            # ✅ Combine and update mutable_data + DB dict
+            combined_files =   new_file_names
+            combined_str = ",".join(combined_files)
+
+            # mutable_data[base_field_name] = combined_str
+            final_updated_values[base_field_name] = combined_str
+
+
+
+        for base_field_name, combined_str in final_updated_values.items():
+            mutable_data[base_field_name] = combined_str 
+            print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
+
+            
+
+
+        
+
+        
+
+        if mutable_data['form_status']  == "Complete":
+            serializer = self.get_serializer(data=mutable_data)
+        else:
+            serializer = SalesDealSerializerForDraft(data=mutable_data )
+
+        serializer.is_valid(raise_exception=True)
+
+        
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
     
+    @action(detail=False, methods=['get','put'], url_path='update')
+    def update_sales_deal(self, request,pk=None):
+
+        if request.method == 'GET':
+            pk = pk
+            sales_deal = get_object_or_404(SalesDeals, pk=pk)
+            serializer = SalesDealSerializer(sales_deal,   partial=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            # return render(request, 'home/editsalesdeal.html', {'salesdeal': serializer.data})
+        elif request.method == 'PUT':
+            print("request data", request.data)
+            print("✅ Files:", request.FILES) 
+            # print("Keys in request.data:", request.data.keys())
+            print("Files:", request.FILES.keys())
+            sales_deal = get_object_or_404(SalesDeals, pk=pk)
+            declared_file_fields = request.POST.get('__file_fields__', '').split(',')
+            print("Declared file fields:", declared_file_fields)
+
+            print("sales_deal", sales_deal)
+
+            #
+            removed_fields = {
+                key[:-8]: value.strip()
+                for key, value in request.POST.items()
+                if key.endswith('_removed') and value.strip()
+}
+            print("Removed fields:", removed_fields)
+
+            mutable_data = request.data.copy()
+            file_name_to_remove_list = []
+            existing_files = []
+            new_file_names = []
+            updated_files = {}
+            base_field_name = ""
+            removed_clean_dict = {}
+
+
+            for base_field_name in removed_fields:
+                existing_value_from_db = getattr(sales_deal, base_field_name, "")
+                print("existing_value_from_db", existing_value_from_db )
+                existing_files_names_from_db = existing_value_from_db.split(",") if existing_value_from_db else []
+                print("existing_files_names_from_db", existing_files_names_from_db)
+                removed_clean_list = [f.strip() for f in removed_fields[base_field_name].split(",")]
+                print("removed_clean_list", removed_clean_list)
+                removed_clean_dict = {
+                key: [f.strip() for f in value.split(",") if f.strip()]
+                    for key, value in removed_fields.items()
+                }
+                print()
+                print("removed_clean_dict", removed_clean_dict)
+
+                for file_name in existing_files_names_from_db:
+                    file_name_clean = file_name.strip()
+                    
+                    
+                    print("file_name repr:", repr(file_name_clean))
+                    print("removed_list repr:", [repr(f) for f in removed_clean_list])
+                    print("file_name", file_name)
+                    value = file_name in removed_clean_list
+                    print("Checking if file_name is in removed_fields:", file_name, "in", removed_fields[base_field_name])
+                    print("value", value)
+                    if value:
+                        # Remove the file from S3
+                        filepath = f"/rental/referencenumber_CP/{sales_deal.reference_number}/{file_name}"
+
+                        # is_deleted= delete_from_s3(filepath)
+                        # print( "filepath", filepath)
+                        # print("is_deleted", is_deleted)
+
+                        # if is_deleted:
+                            # existing_files_names_from_db.remove(file_name)
+                        print(f"✅ Deleted from S3: file {file_name} at  ")
+                        print("after removing file_names", existing_files_names_from_db)
+                        print()
+                        print(file_name)
+
+                        file_name_to_remove_list.append(file_name)
+
+                        print("file_name_to_remove_list", file_name_to_remove_list)
+
+
+                        
+
+    # Loop through all uploaded file fields
+    # add data 
+            path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+            for key in request.FILES.keys():
+                base_field_name = key.rstrip("[]")  # Remove [] suffix if present
+                print("base_field_name", base_field_name)
+                files = request.FILES.getlist(key)
+ 
+            
+
+                # Get existing value from the DB field (comma-separated filenames)
+                # existing_value = getattr(rental_deal, base_field_name, "")
+                # existing_files = existing_value.split(",") if existing_value else []
+
+                
+                for file in files:
+                    timestamp = int(time.time())
+                    cleaned_name = re.sub(r"[,]+", " ", file.name)
+                    filename = f"{base_field_name}{timestamp} {cleaned_name}"
+                    filepath = f"{path}/{filename}"
+
+                    # is_uploaded = upload_file_to_full_s3_url(file, filepath)
+
+                    # if is_uploaded:
+                        # new_file_names.append(filename)
+
+
+                    if base_field_name not in updated_files:
+                        updated_files[base_field_name] = []
+                    updated_files[base_field_name].append(filename)
+
+                    print("updated_files", updated_files)
+                    
+                # Merge old and new file names
+            for file_name_to_remove in file_name_to_remove_list:
+                if file_name_to_remove in existing_files:
+                    existing_files.remove(file_name_to_remove)
+
+            combined_files = existing_files + new_file_names
+
+            combined_str = ",".join(filter(None, combined_files))
+            print("combined_str", combined_str)
+
+            common_keys = list(set(removed_clean_dict.keys()) & set(updated_files.keys()))
+
+            print("✅ common_keys", common_keys)
+
+
+                # Set updated string into request.data copy
+            # mutable_data[base_field_name] = combined_str
+
+             
+            # // new code 
+            final_updated_values = {}
+
+            all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
+
+            for base_field_name in all_field_keys:
+                reference_number = mutable_data.get("reference_number")
+                path_folder = f"rental/referencenumber_CP/{reference_number}"
+
+                existing_value = getattr(sales_deal, base_field_name, "")
+                existing_files = existing_value.split(",") if existing_value else []
+
+                updated_existing_files = []
+
+                # ✅ Remove files if present in removed_clean_dict
+                files_to_remove = removed_clean_dict.get(base_field_name, [])
+                for file_name in existing_files:
+                    file_name = file_name.strip()
+                    if file_name in files_to_remove:
+                        relative_path = f"{path_folder}/{file_name}"
+                        is_deleted = delete_from_s3(relative_path)
+                        if not is_deleted:
+                            updated_existing_files.append(file_name)  # keep if deletion failed
+                    else:
+                        updated_existing_files.append(file_name)
+
+                # ✅ Add new files
+                new_file_names = []
+                for file in request.FILES.getlist(base_field_name + "[]"):
+                    timestamp = int(time.time())
+                    cleaned_name = re.sub(r"[,]+", " ", file.name)
+                    filename = f"{base_field_name}{timestamp} {cleaned_name}"
+                    relative_path = f"{path_folder}/{filename}"
+
+                    is_uploaded = upload_file_to_full_s3_url(file, relative_path)
+                    if is_uploaded:
+                        new_file_names.append(filename)
+
+                # ✅ Combine and update mutable_data + DB dict
+                combined_files = updated_existing_files + new_file_names
+                combined_str = ",".join(combined_files)
+
+                # mutable_data[base_field_name] = combined_str
+                final_updated_values[base_field_name] = combined_str
+
+
+
+            for base_field_name, combined_str in final_updated_values.items():
+                mutable_data[base_field_name] = combined_str 
+                print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
+
+
+
+                 
+                 
+                       
+
+            print("mutable_data", mutable_data)
+            # Now pass this updated data to serializer
+            serializer = self.get_serializer(sales_deal, data=mutable_data, partial=True)
+
+            # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
+
+                # ✅ Update data from form
+                # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
+                
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data ,status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+ 
     @action(detail=False, methods=['post'], url_path='filter')
     def datatable_filter(self, request):
         data = filterSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         validated = data.validated_data
         print("Validated Data:", validated) 
+        print(request.data)
+        print(request.data.get("order") ,"togetordering")
+        user = Users.objects.get(email = request.user)
+        print(request.user)
+        account_id = user.account_id
+        print( "account_from_request",request.user.account_id)
 
-        queryset = SalesDeals.objects.all()
+        queryset = SalesDeals.objects.filter(is_deleted="N", account_id = account_id )
         print("Initial Queryset:", queryset)  # Debugging line
 
         # Global search
@@ -122,23 +480,49 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(**filter_kwargs)
 
         # Deal Type Filter
-        type = validated.get("type")
-        if type == "All":
-            queryset = queryset.filter(form_status="Complete")
-        elif type == "draft":
-            queryset = queryset.filter(form_status="Incomplete")
-        elif type == "approved":
-            queryset = queryset.filter(is_approved_rejected="A")
-        elif type == "rejected":
-            queryset = queryset.filter(is_approved_rejected="R")
-        elif type == "waiting-for-finance":
-            queryset = queryset.filter(is_approved_rejected="F")
-        elif type == "pending":
-            queryset = queryset.filter(is_approved_rejected="P")
-        elif type == "pending-finance":
-            queryset = queryset.filter(is_entered_in_finance_system="0")
-        elif type == "entered-finance":
-            queryset = queryset.filter(is_entered_in_finance_system="1")
+        type_filter = validated.get("type")
+        role = user.groups.first().name if user.groups.exists() else ""
+        print(role)
+        if type_filter:
+            if type_filter == 'pending':
+                if account_id:
+                    if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser: 
+                        print("inside the if condition of pending")
+                        queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
+                    else:
+                        queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
+
+            elif type_filter == 'approved':
+                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+                    queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
+                else:
+                    queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
+
+            elif type_filter == 'rejected':
+                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+                    queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
+                else:
+                     queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
+                
+
+
+            elif type_filter == "waiting-finance" :
+                queryset = queryset.filter(is_approved_rejected='F')
+
+            elif type_filter == 'entered-finance':
+                queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
+
+            elif type_filter == "pending-finance" :
+                queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
+
+            elif type_filter == 'draft':
+                queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
+        
+            elif type_filter == "All" :
+                queryset = queryset.filter(form_status = "Complete")  
+
+            if role == 'Admin' and type_filter == 'draft':
+                queryset = queryset.filter(created_by=user.email)
 
         # Date range filter
         if validated.get("from_date"):
@@ -159,102 +543,49 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             "data": serializer.data,
         }
         return Response(response_data)
-
-
-SalesDealViewSet_filter = SalesDealViewSet.as_view({
-    'post': 'datatable_filter'
-})
-
-
-
-def login_view(request):
-    form = LoginForm(request.POST or None)
-
-    msg = None
-
-    if request.method == "POST":
-
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:
-                msg = 'Invalid credentials'
-        else:
-            msg = 'Error validating the form'
-
-    return render(request, "accounts/login.html", {"form": form, "msg": msg})
-
-
-def register_user(request):
-    msg = None
-    success = False
-
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-
-            msg = 'User created - please <a href="/login">login</a>.'
-            success = True
-
-            # return redirect("/login/")
-
-        else:
-            msg = 'Form is not valid'
-    else:
-        form = SignUpForm()
-
-    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
+    
 
 
 
 
 
+    def update_single_field(self, request):
+        if request.method == 'PUT':
+            try:
+                print("Request data for single field update:", request.body)
+                data =  request.data
+                obj_id = data.get('object_id')
+                field_name = data.get('field_name')
+                value = data.get('value')
+                print("Data received for update:", data)
+
+                # Make sure field is valid
+                if field_name not in [f.name for f in SalesDeals._meta.get_fields()]:
+                    print("inside the ifcconditionof sale deaks ")
+                    return Response({'status': 'error', 'message': 'Invalid field name'}, status=400)
+
+# Update directly in DB
+                SalesDeals.objects.filter(id=obj_id).update(**{field_name: value})
+
+                updated_deal = SalesDeals.objects.get(id=obj_id)
+
+                return Response({'status': 'success',"updated_value":  getattr(updated_deal, field_name) })
+
+            except Exception as e:
+                return Response({'status': 'error', 'message': str(e)}, status=400)
+
+        return Response({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+SalesDealViewSet_filter = SalesDealViewSet.as_view({'post': 'datatable_filter'})
+SalesDealViewSet_update = SalesDealViewSet.as_view({'put': 'update_sales_deal', 'get': 'update_sales_deal'})
+Sales_DealViewSet_update_single_field = SalesDealViewSet.as_view({'put': 'update_single_field'})
+SalesDealViewSet_create = SalesDealViewSet.as_view({'post': 'create_sale_deal'})
 
 
 
 
-@login_required(login_url="/login/")
-def index(request):
-    context = {'segment': 'index'}
-
-    html_template = loader.get_template('home/index.html')
-    return HttpResponse(html_template.render(context, request))
-
-
-@login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-
-        load_template = request.path.split('/')[-1]
-
-        if load_template == 'admin':
-            return HttpResponseRedirect(reverse('admin:index'))
-        context['segment'] = load_template
-
-        html_template = loader.get_template('home/' + load_template)
-        return HttpResponse(html_template.render(context, request))
-
-    except template.TemplateDoesNotExist:
-
-        html_template = loader.get_template('home/page-404.html')
-        return HttpResponse(html_template.render(context, request))
-
-    except:
-        html_template = loader.get_template('home/page-500.html')
-        return HttpResponse(html_template.render(context, request))
-
-
+ 
 @login_required(login_url="/login/")
 def all_sales_deals(request):
     """
@@ -275,46 +606,68 @@ from django.utils import timezone
 @login_required(login_url="/login/")
 
 def create_sales_deal_page(request):
-    sales_data = {}
-    agents=Users.objects.filter(is_active=True)
+   
+    agents=Users.objects.filter(is_active=True,account_id=request.user.account_id)
     agents=AgentDropdownSerializer(agents,many=True).data
+
+    reciepts_db = Receipts.objects.all()
+    receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
     sales_data={
                'agents': agents,
+                'receipts': receipts
            }
     print("Agents Data:", agents)
-    if request.method == 'POST':
-        print(request.POST)
-        form = SalesDealsForm(request.POST, request.FILES, user=request.user)
+     
 
-        if form.is_valid():
-            print("Form is valid")
-            sales_deal = form.save(commit=False)
+    return render(request, 'home/createsalesdeal.html', {'sales_data' : json.dumps(sales_data)})
 
-            form_status = request.POST.get("form_status", "Complete")
-            print("Form Status:", form_status)
-            sales_deal.form_status = form_status
 
-            
-            
 
-            # ✅ Set values not in the form
-            sales_deal.submitted_by_user = request.user
-            sales_deal.created_by = request.user.username
-            sales_deal.is_deleted = '0'
-            sales_deal.is_approved_rejected = 'N'
-            sales_deal.is_entered_in_finance_system = 'N'
-            sales_deal.date = timezone.now()
 
-            sales_deal.save()
-            for agent in agents:
-                # You can process each agent here if needed
-                pass
+# render html page of Edit Sale Deal 
 
-            if form_status == "Incomplete":
-                return redirect('Sales-deal-draft')
-            else:
-                return redirect('Sales-deal')
-    else:
-        form = SalesDealsForm(user=request.user)
+@login_required(login_url="/login/")
+def edit_sales_deal_page(request, pk):
+    sales_deal = get_object_or_404(SalesDeals, pk=pk)
+    aws_url = settings.AWS_URL
+    print("AWS URL:", aws_url)
+    serializer = SalesDealSerializer(sales_deal, partial=True)
+    agents = Users.objects.filter(is_active=True)
+    agents = AgentDropdownSerializer(agents, many=True).data
 
-    return render(request, 'home/createsalesdeal.html', {'form': form,'sales_data' : json.dumps(sales_data)})
+    reciepts_db = Receipts.objects.all()
+    receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
+
+    sales_data = {
+        'agents': agents,
+        'receipts': receipts
+    }
+
+    return render(request, 'home/editsalesdeal.html', {'deal_id': pk, 'aws_url': aws_url, 'reference_number': sales_deal.reference_number ,'sales_data': json.dumps(sales_data)})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

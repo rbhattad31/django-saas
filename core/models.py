@@ -1082,16 +1082,25 @@ class SalesDeals(models.Model):
     sellers_deposit_cheque_copy = models.TextField(blank=True, null=True)
     seller_poa_passport_copy = models.TextField(blank=True, null=True)
     buyer_poa_passport_copy = models.TextField(blank=True, null=True)
-    total_commission = models.TextField()
-    less_outsude_commission = models.TextField()
+    total_commission = models.TextField(blank=True, null=True)
+    less_outsude_commission = models.TextField(blank=True, null=True)
     net_commission = models.TextField()
     classic = models.TextField()
     agent1 = models.TextField()
     agent2 = models.TextField(blank=True, null=True)
     agent3 = models.TextField(blank=True, null=True)
-    is_approved_rejected = models.CharField(max_length=1)
+    is_approved_rejected = models.CharField(
+    max_length=1,
+    choices=[
+        ('P', 'Pending'),
+        ('F', 'Waiting Finance'),
+        ('A', 'Approved'),
+        ('R', 'Rejected')
+    ],
+    default='P'
+) 
     approved_rejected_by = models.TextField(blank=True, null=True)
-    is_entered_in_finance_system = models.CharField(max_length=1)
+    is_entered_in_finance_system = models.CharField(max_length=1,choices=[('0', 'No'), ('1', 'Yes')], default='0')
     comments = models.TextField(blank=True, null=True)
     deal_amount = models.TextField(blank=True, null=True)
     owner_eid_copy = models.TextField(blank=True, null=True)
@@ -1105,9 +1114,9 @@ class SalesDeals(models.Model):
     buyer_poa_copy = models.TextField(blank=True, null=True)
     buyer_poa_eid = models.TextField(blank=True, null=True)
     seller_poa_eid = models.TextField(blank=True, null=True)
-    form_status = models.CharField(max_length=10, blank=True, null=True)
+    form_status = models.CharField(max_length=10, choices=[('Complete', 'Complete'), ('Incomplete', 'Incomplete')], blank=True, null=True)
     sale_kyc_number = models.TextField(blank=True, null=True)
-    is_sale_aml = models.CharField(max_length=3, blank=True, null=True)
+    is_sale_aml = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], blank=True, null=True)
     kyc_number = models.TextField(blank=True, null=True)
     comments_finance = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
@@ -1117,16 +1126,16 @@ class SalesDeals(models.Model):
     account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True,default=True)
     property = models.ForeignKey(Properties, models.DO_NOTHING, blank=True, null=True)
     # branch = models.ForeignKey(Branches, models.DO_NOTHING, blank=True, null=True)
-    is_deleted = models.CharField(max_length=1)
+    is_deleted = models.CharField(max_length=1,default="N", choices=[('Y', 'Y'), ('N', 'N')])
     deal_agent = models.CharField(max_length=191, blank=True, null=True)
-    receipt_id = models.CharField(max_length=191)
+    receipt_id = models.CharField(max_length=191 , default=0)
     submitted_by_agent = models.IntegerField()
     screening = models.CharField(max_length=191)
     screening_comments = models.TextField()
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
     manager_cheque_copy = models.TextField()
-    manager_approved_rejected = models.CharField(max_length=1)
+    manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
 
     class Meta:
         managed = False

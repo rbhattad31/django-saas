@@ -92,25 +92,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         user = request.user
 
-       
-        # # Superusers see everything
-        # if user.is_superuser:
-        #     query = RentalDeals.objects.filter(is_deleted="N")
-         
-
-        # elif user.groups.filter(name="Manager").exists():
-        #     # Managers see all approved and rejected deals
-        #     query = RentalDeals.objects.filter(is_approved_rejected ="A")
-
-        # elif user.groups.filter(name="Finance").exists():
-        #     # Finance sees only deals entered into the system
-        #     query = RentalDeals.objects.filter(is_entered_in_finance_system="1")
- 
-      
-        # else:  
-        #     query = RentalDeals.objects.filter(submitted_by_user = user.id )
-
-        # print(queryset)
+        
 
 
 

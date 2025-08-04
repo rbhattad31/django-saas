@@ -21,3 +21,6 @@ table.dataTable thead > tr > th.sorting_desc:after {
     top: 50% !important;
     margin-top: -8px !important; /* Adjust if icon size varies */
 }
+.remove_file{
+    cursor: pointer;
+}

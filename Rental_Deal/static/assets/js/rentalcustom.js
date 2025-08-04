@@ -485,6 +485,8 @@ $(document).ready(function () {
 
   // 🔹 Submit form via POST
   $("#create_deal").click(function (e) {
+
+    if ($("#deal_form").valid()) {
     console.log("Submitting form for deal ID:", dealId);
     e.preventDefault();
     const form = $("#deal_form").get(0);
@@ -534,7 +536,7 @@ $(document).ready(function () {
             $("#alert-primary").text("Rental Deal Updated Successfully");
               $("#successmsg").show();
                setTimeout(function () {
-                window.location.href = "/rental-deals/Approved" ;
+                window.location.href = "/rental-deals/approved/" ;
               }, 5000);
        alert("Rental deal updated successfully!");
 
@@ -591,6 +593,9 @@ $(document).ready(function () {
         console.error(err);
       },
     });
+
+  }
+
   });
 });
 
@@ -1228,7 +1233,7 @@ $(document).on("click", "#create_deal", function (event) {
       countMultipleFiles("key_hand_over_form") &
       checkKyc()
     ) {
-      updatefunctionality(url);
+      // updatefunctionality(url);
     }
   } else {
     $("html, body").animate(
