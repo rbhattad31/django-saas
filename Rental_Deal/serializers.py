@@ -410,6 +410,20 @@ class DealSerializer(serializers.ModelSerializer):
             parts.append(hundred_and_below)
 
         return " ".join(parts)
+    
+    def validate_reference_number(self, value):
+        """
+        Ensure reference_number is unique, even during update.
+        """
+        # If creating new record
+        if self.instance is None:
+            if RentalDeals.objects.filter(reference_number=value).exists():
+                raise serializers.ValidationError("This reference number is already taken.")
+        else:
+            # Updating existing record — exclude current instance
+            if RentalDeals.objects.exclude(pk=self.instance.pk).filter(reference_number=value).exists():
+                raise serializers.ValidationError("This reference number is already taken.")
+        return value
 
 class SearchSerializer(serializers.Serializer):
     value = serializers.CharField(required=False, allow_blank=True)

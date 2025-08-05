@@ -1,10 +1,10 @@
-from django.db import models
+# from django.db import models
 
-#this import files related to custom user logic
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import Group
-from django.contrib.auth.models import Permission
+# #this import files related to custom user logic
+# from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+# from django.utils.translation import gettext_lazy as _
+# from django.contrib.auth.models import Group
+# from django.contrib.auth.models import Permission
 
 
 #custom user imports completed.

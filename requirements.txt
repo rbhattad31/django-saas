@@ -6,3 +6,4 @@ mysqlclient
 django-multitenant
 Weasyprint
 boto3
+python-dotenv 

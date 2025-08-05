@@ -406,8 +406,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         
         # adding reference number to the table of recipts 
-        Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no = mutable_data['reference_number'])
-        Receipts.objects.filter(id=mutable_data['receipt_no']).update(status = "Used")
+        if mutable_data.get('receipt_no'):
+            print("this is the receipt no", mutable_data['receipt_no'])
+            Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+            Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
         
 
 
@@ -612,8 +614,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
                  
-                 
-                       
+            # if mutable_data.get('save_as') == "update-deal":
+            #     mutable_data['form_status'] = "Complete"
+            # else:
+            #     mutable_data['form_status'] = "Incomplete"
+            # print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer
@@ -868,7 +873,7 @@ def edit_rental_deal_view(request, pk):
     agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.all()
+    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id , status= "Unused")
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     rental_data = {
@@ -898,10 +903,10 @@ def create_rental_deal_view(request):
     agents = Users.objects.filter(is_active=True , account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.all()
+    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id ,status= "Unused")
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
-    rental_data = {
+    rental_data = { 
         'agents': agents,
         'receipts': receipts
     }

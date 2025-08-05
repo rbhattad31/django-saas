@@ -8,6 +8,7 @@ import re
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+print("UTILS STORAGE INIT:", type(default_storage))
 
 def upload_file_to_full_s3_url(file_obj, url):
     saved_path = default_storage.save(f"{url}", ContentFile(file_obj.read()))

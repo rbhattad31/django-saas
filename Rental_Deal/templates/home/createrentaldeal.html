@@ -1981,6 +1981,7 @@
                       style="float: right; color: white"
                       >Create Deal</a
                     >
+                    {% if perms.core.create_draft_rental_deals %}{% endif %}
                     <a
                       class="txt-color btn btn-primary btn-rounded m-1"
                       id="saveDeal"
@@ -2682,7 +2683,9 @@
           onSelect: function (date) {
             var date2 = $("#deal_start_date").datepicker("getDate");
             $("#deal_end_date").datepicker("option", "minDate", date2);
+
             appendDate();
+           
             $("#deal_end_date").datepicker("option", "yearRange", "-100:+50");
           },
         });
@@ -3049,6 +3052,54 @@
             // Hide error message after a few seconds // Display errors a bit longer
           });
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+      function appendDate(){
+   $('#deal_start_date-error').hide();
+   $('#deal_end_date-error').hide();
+    var deal_start_date=$('#deal_start_date').val();
+
+    if (deal_start_date !='' && deal_start_date!=null) {
+      
+        var inputval = deal_start_date.split("-");
+
+        var date = new Date(inputval[2]+","+inputval[1]+","+inputval[0]);
+        var res = new Date(inputval[2]+","+inputval[1]+","+inputval[0]);
+        res.setDate(res.getDate() + 364);
+        console.log(date)
+        console.log(res)
+        var d = date.getDate();
+        
+        if (date.getDate() != d) {
+          date.setDate(0);
+        }
+        var dd = res.getDate();
+        var mm = res.getMonth()+1; // 0 is January, so we must add 1
+        var yyyy = res.getFullYear();
+        var month=mm;
+        var day=dd;
+        
+        if(mm<10){
+          month="0"+mm;
+        }
+        if(dd<10){
+          day="0"+dd;
+        }
+        var dateString = day + "-" + month + "-" + yyyy;
+        $('#deal_end_date').val(dateString)
+      }
+ }
 
       $("#property").on("change", function () {
         var id = $(this).find(":selected").val();

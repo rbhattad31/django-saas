@@ -696,114 +696,114 @@ $(document).ready(function () {
   });
 
   // 🔹 Submit form via POST
-  $("#create_deal").click(function (e) {
-    console.log("Submitting form for deal ID:", dealId);
-    e.preventDefault();
-    const form = $("#sales_form").get(0);
-    const $form = $("#sales_form"); // Use the form ID, not the button ID
-    // Replace with actual form ID (not the button)
+  // $("#create_deal").click(function (e) {
+  //   console.log("Submitting form for deal ID:", dealId);
+  //   e.preventDefault();
+  //   const form = $("#sales_form").get(0);
+  //   const $form = $("#sales_form"); // Use the form ID, not the button ID
+  //   // Replace with actual form ID (not the button)
 
-    const formData = new FormData(form); // Use FormData to handle file uploads
+  //   const formData = new FormData(form); // Use FormData to handle file uploads
 
-    console.log("Form data before submission:", formData);
+  //   console.log("Form data before submission:", formData);
 
-    const amlCheckbox = $form.find("input[name='is_sale_aml']")[0];
-    if (amlCheckbox) {
-      const value = amlCheckbox.checked ? "Yes" : "No";
-      formData.set("is_sale_aml", value);
-      console.log("✅ is_sale_aml sending:", value);
-    } else {
-      console.warn("⚠️ Checkbox is_sale_aml not found in form!");
-    }
-    // Include checkbox values manually
-    $form.find("input[type=checkbox]").each(function () {
-      const fieldName = this.name;
-      if (fieldName === "is_sale_aml") {
-        formData.set(fieldName, this.checked ? "Yes" : "No");
-      } else {
-        // Default fallback: true/false as strings
-        formData.set(fieldName, this.checked ? "true" : "false");
-      }
-      console.log(`${fieldName} = ${formData.get(fieldName)}`);
-    });
+  //   const amlCheckbox = $form.find("input[name='is_sale_aml']")[0];
+  //   if (amlCheckbox) {
+  //     const value = amlCheckbox.checked ? "Yes" : "No";
+  //     formData.set("is_sale_aml", value);
+  //     console.log("✅ is_sale_aml sending:", value);
+  //   } else {
+  //     console.warn("⚠️ Checkbox is_sale_aml not found in form!");
+  //   }
+  //   // Include checkbox values manually
+  //   $form.find("input[type=checkbox]").each(function () {
+  //     const fieldName = this.name;
+  //     if (fieldName === "is_sale_aml") {
+  //       formData.set(fieldName, this.checked ? "Yes" : "No");
+  //     } else {
+  //       // Default fallback: true/false as strings
+  //       formData.set(fieldName, this.checked ? "true" : "false");
+  //     }
+  //     console.log(`${fieldName} = ${formData.get(fieldName)}`);
+  //   });
 
-    $.ajax({
-      url: `/api/sales-deals/update/${dealId}/`,
-      method: "PUT",
-      data: formData,
-      processData: false,
-      contentType: false,
-      headers: {
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
+  //   $.ajax({
+  //     url: `/api/sales-deals/update/${dealId}/`,
+  //     method: "PUT",
+  //     data: formData,
+  //     processData: false,
+  //     contentType: false,
+  //     headers: {
+  //       "X-CSRFToken": getCookie("csrftoken"),
+  //     },
 
-      // ✅ Required to send FormData
+  //     // ✅ Required to send FormData
 
-      success: function (data) {
-        // $("#save_draft_deal").removeAttr("disabled");
-        console.log(data.status);
-         scrollTop();
-            $("#alert-primary").text("Rental Deal Updated Successfully");
-              $("#successmsg").show();
-               setTimeout(function () {
-                window.location.href = "/rental-deals/approved/" ;
-              }, 5000);
-       alert("Rental deal updated successfully!");
+  //     success: function (data) {
+  //       // $("#save_draft_deal").removeAttr("disabled");
+  //       console.log(data.status);
+  //        scrollTop();
+  //           $("#alert-primary").text("Rental Deal Updated Successfully");
+  //             $("#successmsg").show();
+  //              setTimeout(function () {
+  //               window.location.href = "/rental-deals/approved/" ;
+  //             }, 5000);
+  //      alert("Rental deal updated successfully!");
 
-        if (data.status === "success") {
-          alert("Rental deal updated successfully!");
-          location.reload(); // Or redirect if needed
-        }
-      },
+  //       if (data.status === "success") {
+  //         alert("Rental deal updated successfully!");
+  //         location.reload(); // Or redirect if needed
+  //       }
+  //     },
 
-      error: function (err) {
-        if (err.status === 400) {
-          const data = err.responseJSON;
-          let messages = "";
+  //     error: function (err) {
+  //       if (err.status === 400) {
+  //         const data = err.responseJSON;
+  //         let messages = "";
 
-          $.each(data, function (field, errors) {
-            const msg = Array.isArray(errors) ? errors[0] : errors;
-            messages += `${field}: ${msg}\n`;
+  //         $.each(data, function (field, errors) {
+  //           const msg = Array.isArray(errors) ? errors[0] : errors;
+  //           messages += `${field}: ${msg}\n`;
 
-            $.each(data.data, function (index, value) {
-              messages +=
-                index.charAt(0).toUpperCase() +
-                index.slice(1) +
-                " : " +
-                value +
-                "\n";
-            });
+  //           $.each(data.data, function (index, value) {
+  //             messages +=
+  //               index.charAt(0).toUpperCase() +
+  //               index.slice(1) +
+  //               " : " +
+  //               value +
+  //               "\n";
+  //           });
 
-            swal("Please fill mandatory field", messages);
+  //           swal("Please fill mandatory field", messages);
 
-            // Show field-wise error messages
-            $.each(data.data, function (key, val) {
-              $("#" + key + "_error")
-                .text(val[0])
-                .show();
+  //           // Show field-wise error messages
+  //           $.each(data.data, function (key, val) {
+  //             $("#" + key + "_error")
+  //               .text(val[0])
+  //               .show();
 
-              $(document).on("keyup", "input[name='" + key + "']", function () {
-                $("#" + key + "_error").hide();
-              });
+  //             $(document).on("keyup", "input[name='" + key + "']", function () {
+  //               $("#" + key + "_error").hide();
+  //             });
 
-              $(document).on(
-                "change",
-                "select[name='" + key + "']",
-                function () {
-                  $("#" + key + "_error").hide();
-                }
-              );
-            });
-          });
-        } else {
-          const alertmsg = data.message || "Something went wrong!";
-          swal("Error", alertmsg, "error");
-        }
-        // alert("Update failed.");
-        console.error(err);
-      },
-    });
-  });
+  //             $(document).on(
+  //               "change",
+  //               "select[name='" + key + "']",
+  //               function () {
+  //                 $("#" + key + "_error").hide();
+  //               }
+  //             );
+  //           });
+  //         });
+  //       } else {
+  //         const alertmsg = data.message || "Something went wrong!";
+  //         swal("Error", alertmsg, "error");
+  //       }
+  //       // alert("Update failed.");
+  //       console.error(err);
+  //     },
+  //   });
+  // });
 });
 
 
@@ -1369,6 +1369,156 @@ $.validator.addMethod(
           }
           });
 
+
+
+
+           
+          $(document).on('click', '#create_deal', function(event) {  
+            $('[name="submitted_by_agent"],[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="receipt_no"],[name="is_sale_aml"]').each(function () {
+                  $(this).rules('add','required');
+              });       
+           if($('#sales_form').valid()){  
+             $('#save_as').val("update-deal"); 
+             var url="/list";
+             if(countMultipleFiles('manager_cheque_copy') & countMultipleFiles('owners_passport_copy') & countMultipleFiles('old_title_deed') & countMultipleFiles('buyers_passport_copy') & countMultipleFiles('signed_mou')  & countMultipleFiles('new_title_deed') & countMultipleFiles('screening') & countMultipleFiles('title_deed') & countMultipleFiles('buyers_deposit_cheque_copy') & checkKyc()){               
+               updatefunctionality(url);
+            }
+           }else{
+             $('html, body').animate({
+                 scrollTop: $('.main-header').offset().top
+               }, 1000);
+        }
+        });
+          $(document).on('click', '#update_draft', function(event) {    
+            $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="receipt_no"],[name="is_sale_aml"]').each(function () {
+                  $(this).rules('remove','required');
+              });      
+              if($('#sales_form').valid() & countMultipleFiles('screening')){  
+                var url="draft/";   
+                $('#save_as').val("update-draft");                         
+                updatefunctionality(url);
+               }else{
+               $('html, body').animate({
+                     scrollTop: $('.main-header').offset().top
+                   }, 1000);
+            }
+              
+           });
+          function checkKyc(){
+            var result=true;
+            $('#sale_kyc_number_error').empty();
+          $('#kyc_number_error').empty();
+            var existing_count=parseInt($('#sale_kyc_number_existing_count').val());
+            var removed_count=parseInt($('#sale_kyc_number_new_removed_count').val());
+            if($('#sale_kyc_number_new_removed_count').val() == ''){
+                  var removed_count=0;
+                }
+            if((existing_count < 1) && (removed_count < 1) && ($('#kyc_number').val()=='')){
+              result =false;
+              $('#sale_kyc_number_error').html("Either KYC Form or KYC Number is required!").show();
+              $('#kyc_number_error').html("Either KYC Form or KYC Number is required!").show();
+            }
+            return result; 
+          } 
+             function countMultipleFiles(feild){      
+               var result=true;              
+               if(($('#'+feild+'_existing_count').val() < 1) && ($('#'+feild+'_new_removed_count').val() < 1)){          
+                 result =false;              
+            var  feildvalue= feild;
+                 $('#'+feild+'_error').html("This field is required.").show();          
+          }
+            return result;
+        } 
+            function updatefunctionality(urls){
+              const dealId = $("#dealMeta").data("deal-id");
+                  const form = $("#sales_form").get(0);
+    const $form = $("#sales_form"); // Use the form ID, not the button ID
+    // Replace with actual form ID (not the button)
+
+    const formData = new FormData(form); // Use FormData to handle file uploads
+
+    console.log("Form data before submission:", formData);
+
+    const amlCheckbox = $form.find("input[name='is_sale_aml']")[0];
+    if (amlCheckbox) {
+      const value = amlCheckbox.checked ? "Yes" : "No";
+      formData.set("is_sale_aml", value);
+      console.log("✅ is_sale_aml sending:", value);
+    } else {
+      console.warn("⚠️ Checkbox is_sale_aml not found in form!");
+    }
+    // Include checkbox values manually
+    $form.find("input[type=checkbox]").each(function () {
+      const fieldName = this.name;
+      if (fieldName === "is_sale_aml") {
+        formData.set(fieldName, this.checked ? "Yes" : "No");
+      } else {
+        // Default fallback: true/false as strings
+        formData.set(fieldName, this.checked ? "true" : "false");
+      }
+    });
+    $('#create_deal').attr('disabled',true);
+    $('.loadscreen').show();
+    $('html, body').animate({
+      scrollTop: $('.main-header').offset().top
+    }, 1000);
+         if(document.getElementById('submitted_date').disabled == true)
+          document.getElementById('submitted_date').removeAttribute('disabled');
+                 $.ajax({
+                     method: "POST",
+                     headers: {
+                         'X-CSRF-TOKEN': getCookie('csrftoken'),
+                     },
+                     url: `/api/sales-deals/update/${dealId}/`,
+                     data: formData,
+                     contentType: false,
+                     processData: false,
+                   })
+                 .done(function( data ) {
+                     $('.loadscreen').hide();
+                     $('#create_deal').removeAttr('disabled',true);
+                     if(data.status== 'success'){
+                       scrollTop();
+                       $("#alert-primary").text("Sales Deal Updated Successfully");
+                          $("#successmsg").show();
+                       $("#sales_form")[0].reset();
+                       setTimeout(function() {    
+                        if (urls=='/list') {
+                            window.location.href = document.referrer;
+                          }else{                                      
+                         window.location.href = " /sales-deals/"+urls;
+                       }
+                    }, 3000);
+                   
+                     }
+                      else if(data.status=='validation_error'){
+                         $.each(data.data, function (key, val) {
+                             $("#"+key+"_error").text(val[0]);
+                             $("#"+key+"_error").show();
+                             $(document).on("keyup", "input[name='"+key+"']", function(e){
+                                   $("#"+key+"_error").hide();
+                             });
+                             $(document).on("change", "select[name='"+key+"']", function(e) {
+                                   $("#"+key+"_error").hide();
+                             });
+                         });
+                     }
+                     else{
+                        if(data.data == "DUF500"){
+                           $("#alert-primary").text('Document Upload Failed! Please Try Again.');
+                           $("#successmsg").show();
+                           setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                        }
+                        else{
+                           $("#alert-primary").text('Something Went Wrong!');
+                           $("#successmsg").show();
+                           setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                        }
+                     }
+                     
+                 });
+
+            }
 
 
 

@@ -484,11 +484,17 @@ $(document).ready(function () {
   });
 
   // 🔹 Submit form via POST
-  $("#create_deal").click(function (e) {
+
+ 
+}); 
+
+function updatefunctionality(url) {
+ 
 
     if ($("#deal_form").valid()) {
+    var dealId = $("#dealMeta").data("deal-id");
     console.log("Submitting form for deal ID:", dealId);
-    e.preventDefault();
+    // e.preventDefault();
     const form = $("#deal_form").get(0);
     const $form = $("#deal_form"); // Use the form ID, not the button ID
     // Replace with actual form ID (not the button)
@@ -536,7 +542,7 @@ $(document).ready(function () {
             $("#alert-primary").text("Rental Deal Updated Successfully");
               $("#successmsg").show();
                setTimeout(function () {
-                window.location.href = "/rental-deals/approved/" ;
+                window.location.href = "/rental-deals/"+url ;
               }, 5000);
        alert("Rental deal updated successfully!");
 
@@ -595,9 +601,15 @@ $(document).ready(function () {
     });
 
   }
+  else{
+         const alertmsg = "form Is not valid  ";
+          swal("Error", alertmsg, "error");
 
-  });
-});
+  }
+
+  
+
+};
 
 
 function scrollTop() {
@@ -1233,7 +1245,7 @@ $(document).on("click", "#create_deal", function (event) {
       countMultipleFiles("key_hand_over_form") &
       checkKyc()
     ) {
-      // updatefunctionality(url);
+      updatefunctionality(url);
     }
   } else {
     $("html, body").animate(
@@ -1244,6 +1256,30 @@ $(document).on("click", "#create_deal", function (event) {
     );
   }
 });
+
+
+
+$(document).on('click', '#update_draft', function(event) {    
+            $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="receipt_no"],[name="is_sale_aml"]').each(function () {
+                  $(this).rules('remove','required');
+              });      
+              if($('#deal_form').valid() & countMultipleFiles('screening')){  
+                var url="draft/";   
+                $('#save_as').val("update-draft");                         
+                updatefunctionality(url);
+               }else{
+               $('html, body').animate({
+                     scrollTop: $('.main-header').offset().top
+                   }, 1000);
+            }
+              
+           });
+
+
+
+
+
+
 
 // count noof files in each file input field
 function countMultipleFiles(feild) {

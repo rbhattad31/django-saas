@@ -127,7 +127,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
        
 
 
-
+        #  check for the  non fiel field  if they are valid then update the serializer 
         print(f"multable data  acoount_id {mutable_data['account']}")
         if mutable_data['form_status']  == "Complete":
             serializer = self.get_serializer(data=mutable_data, partial=True)
@@ -414,6 +414,15 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
 
 
+            
+
+            if mutable_data.get('save_as') == "update-deal":
+                mutable_data['form_status'] = "Complete"
+            else:
+                mutable_data['form_status'] = "Incomplete"
+            print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
+
+
 
                  
                  
@@ -610,7 +619,7 @@ def create_sales_deal_page(request):
     agents=Users.objects.filter(is_active=True,account_id=request.user.account_id)
     agents=AgentDropdownSerializer(agents,many=True).data
 
-    reciepts_db = Receipts.objects.all()
+    reciepts_db = Receipts.objects.filter(account_id=request.user.account_id, status="Unused")
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
     sales_data={
                'agents': agents,
@@ -635,7 +644,7 @@ def edit_sales_deal_page(request, pk):
     agents = Users.objects.filter(is_active=True)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.all()
+    reciepts_db = Receipts.objects.filter(account_id=request.user.account_id, status="Unused")
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     sales_data = {

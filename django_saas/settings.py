@@ -12,9 +12,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
     #filters
     'django_filters',
     # 'silk',  # Django Silk for profiling and monitoring
+    'storages'
 ]
 
 MIDDLEWARE = [ 
@@ -143,16 +148,35 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
+ 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
      
     
 }
+
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+print( f"AWS_ACCESS_KEY_ID: {AWS_ACCESS_KEY_ID}")  # Debugging line to check if the key is loaded
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_BUCKET')
+AWS_S3_REGION_NAME = os.getenv('AWS_DEFAULT_REGION')  # default to Mumbai
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# This is the key line: switch from local to S3 for media files
+
+# Optional: where media files are stored within the bucket
+MEDIA_LOCATION = os.getenv('MEDIA_LOCATION', 'media')
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+print("STORAGE USED:", DEFAULT_FILE_STORAGE)
 
 
 LOGIN_REDIRECT_URL = '/'
@@ -170,7 +194,7 @@ AUTH_USER_MODEL = 'core.Users'
 
 # AWS S3 settings
 
-AWS_URL = os.path.join(MEDIA_URL, 'rental/referencenumber_CP/')
+AWS_URL = '/media/rental/referencenumber_CP/'
 
 
 ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"
