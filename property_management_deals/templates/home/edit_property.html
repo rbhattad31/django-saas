@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load static %}
+{% load custom_tags %}
+ 
 
 {% block title %} Edit Property {% endblock title %}
 
@@ -20,6 +22,17 @@
     .cheque-dates {
       margin-right: 500px;
     } 
+    .remove_file {
+      display: inline-block !important;
+      cursor: pointer !important;
+      color: red !important;
+      padding: 4px;
+      font-weight: bold;
+      z-index: 9999 !important;
+      position: relative !important;
+      background: #fff;
+      border: 1px solid #ccc;
+    }
   </style>
   <div class="col-md-12" id="successmsg" style="display: none">
     <div class="alert alert-primary" id="alert-primary">
@@ -40,8 +53,6 @@
         <form id="rental_property_form" enctype="multipart/form-data" novalidate="novalidate">
           {% csrf_token %}
           <div class="row">
-            {% comment %} <input type="hidden" name="csrf-token" id="token"> {% endcomment %}
-            
             <input type="hidden" name="id" id="id" value="{{ property.id }}">
             <input type="hidden" name="account_id" id="account_id">
             <input type="hidden" name="comments_finance" id="comments_finance">
@@ -160,10 +171,10 @@
                 Source <span class="mandetory_field" style="color: red">*</span>
               </label>
               <select class="form-control" name="owner_source" id="owner_source">
-                <option value="">Select source</option>  <!-- will trigger error if still selected -->
+                <option value="">Select source</option>
                 <option value="Referral">Referral</option>
                 <option value="Walk-in">Walk-in</option>
-                <option value="N">N</option> <!-- if N is a valid source -->
+                <option value="N">N</option>
               </select>                
             </div>
           </div>
@@ -258,7 +269,6 @@
             </div>
           </div>
 
-          <!-- Placeholder for dynamically generated cheque date rows -->
           <div class="row form-group nav-cheque append-cheque-date"></div>
 
           <div class="row form-group nav-cheque cheque-date">
@@ -318,14 +328,6 @@
               <input class="form-control" type="number" step="0.01" id="agent1" name="agent1" value="{{ property.agent1 }}">
               <span class="text-danger" id="agent1_error"></span>
             </div>    
-            {% comment %} <div class="col-md-6 form-group">
-              <label for="agent_name1"></label>                   
-              <select name="agent_name1" class="form-control" id="agent_name1">  
-                <option value="">Select Agent</option>
-                <option value="10">Rahul B</option>
-              </select>
-              <span class="text-danger" id="agent_name1_error"></span>
-            </div> {% endcomment %}
             <div class="col-md-6 form-group">
               <label for="agent_name1">
                 Agent Name 1 <span class="mandetory_field" style="color:red">*</span>
@@ -391,8 +393,6 @@
             {% endif %}     
           </div>
           <div class="row">
-            
-            
             <div class="col-md-6 form-group">
               <label for="receipt_no">
                 Receipt No <span class="mandetory_field" style="color:red">*</span>
@@ -434,9 +434,8 @@
               </div>
             {% endif %}
 
-           {% for group in request.user.groups.all %}
+           {% comment %} {% for group in request.user.groups.all %}
               {% if "manager" in group.name|lower %}
-                <!-- Manager Approval section -->
                 <div class="form-group">
                   <label for="manager_approved_rejected">Manager Approval <span style="color:red">*</span></label><br>
                   <div class="form-check form-check-inline">
@@ -450,28 +449,43 @@
                     <label class="form-check-label">Rejected</label>
                   </div>
                 </div>
-                
+              {% endif %}
+            {% endfor %}  {% endcomment %}
+
+           {% for group in request.user.groups.all %}
+              {% if "manager" in group.name|lower %}
+                <div class="form-group">
+                  <label for="manager_approved_rejected">Manager Approval <span style="color:red">*</span></label><br>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="manager_approved" name="manager_approved_rejected" value="A"
+                          {% if property.manager_approved_rejected == 'A' %}checked{% endif %}>
+                    <label class="form-check-label" for="manager_approved">Approved</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="manager_rejected" name="manager_approved_rejected" value="R"
+                          {% if property.manager_approved_rejected == 'R' %}checked{% endif %}>
+                    <label class="form-check-label" for="manager_rejected">Rejected</label>
+                  </div>
+                </div>
               {% endif %}
             {% endfor %}
 
 
-
             {% if perms.core.admin_properties_fields_rentalproperties %}
-
-                <div class="col-md-6 form-group">
-                  <label for="is_property_aml">
-                    AML <span class="mandetory_field" style="color:red">*</span>
-                  </label><br>
-                  <div class="row">
-                    <div class="col-3">
-                      <input value="Yes" class="" name="is_property_aml" id="is_property_aml" type="radio" {% if property.is_property_aml == 'Yes' %}checked{% endif %}> Yes
-                    </div>
-                    <div class="col-5" style="margin-left: -80px">
-                      <input value="No" class="ml-1" name="is_property_aml" id="is_property_aml" type="radio" {% if property.is_property_aml == 'No' %}checked{% endif %}> No
-                    </div><br>
-                    <span class="text-danger" id="is_property_aml_error"></span>
+              <div class="col-md-6 form-group">
+                <label for="is_property_aml">
+                  AML <span class="mandetory_field" style="color:red">*</span>
+                </label><br>
+                <div class="row">
+                  <div class="col-3">
+                    <input value="Yes" class="" name="is_property_aml" id="is_property_aml" type="radio" {% if property.is_property_aml == 'Yes' %}checked{% endif %}> Yes
                   </div>
+                  <div class="col-5" style="margin-left: -80px">
+                    <input value="No" class="ml-1" name="is_property_aml" id="is_property_aml" type="radio" {% if property.is_property_aml == 'No' %}checked{% endif %}> No
+                  </div><br>
+                  <span class="text-danger" id="is_property_aml_error"></span>
                 </div>
+              </div>
             {% endif %}
           </div>    
                 
@@ -489,11 +503,15 @@
               <input multiple="multiple" class="imageUploadInput" id="pms_contract" type="file" name="pms_contract[]">
               <div class="upload_prev">
                 {% if property.pms_contract %}
-                  <a href="{{ property.pms_contract.url }}" target="_new">pms_contract 1</a>
-                  <p class="remove_file" id="{{ property.pms_contract.url }}" data-name="pms_contract" data-existing="old">X</p>
+                  {% for file in property.pms_contract|split:"," %}
+                    <a href="{{ file.url }}" target="_new">pms_contract {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="pms_contract" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="pms_contract_existing_count" name="pms_contract_existing_count" value="{% if property.pms_contract %}1{% else %}0{% endif %}">
+              <input type="hidden" id="pms_contract_existing_count" name="pms_contract_existing_count" value="{% if property.pms_contract %}{{ property.pms_contract|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="pms_contract_existing_values" name="pms_contract_existing_values">
               <input type="hidden" id="pms_contract_removed" name="pms_contract_mou_removed">
               <input type="hidden" id="pms_contract_new_removed_count" name="pms_contract_new_removed_count">
@@ -508,11 +526,15 @@
               <input multiple="multiple" class="imageUploadInput" id="owner_passport_copy" type="file" name="owner_passport_copy[]">
               <div class="upload_prev">
                 {% if property.owner_passport_copy %}
-                  <a href="{{ property.owner_passport_copy.url }}" target="_new">owner_passport_copy 1</a>
-                  <p class="remove_file" id="{{ property.owner_passport_copy.url }}" data-name="owner_passport_copy" data-existing="old">X</p>
+                  {% for file in property.owner_passport_copy|split:"," %}
+                    <a href="{{ file.url }}" target="_new">owner_passport_copy {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="owner_passport_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="owner_passport_copy_existing_count" name="owner_passport_copy_existing_count" value="{% if property.owner_passport_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="owner_passport_copy_existing_count" name="owner_passport_copy_existing_count" value="{% if property.owner_passport_copy %}{{ property.owner_passport_copy|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="owner_passport_copy_existing_values" name="owner_passport_copy_existing_values">
               <input type="hidden" id="owner_passport_copy_removed" name="owner_passport_copy_mou_removed">
               <input type="hidden" id="owner_passport_copy_new_removed_count" name="owner_passport_copy_new_removed_count">
@@ -527,11 +549,15 @@
               <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file" name="owner_eid_copy[]">
               <div class="upload_prev">
                 {% if property.owner_eid_copy %}
-                  <a href="{{ property.owner_eid_copy.url }}" target="_new">owner_eid_copy 1</a>
-                  <p class="remove_file" id="{{ property.owner_eid_copy.url }}" data-name="owner_eid_copy" data-existing="old">X</p>
+                  {% for file in property.owner_eid_copy|split:"," %}
+                    <a href="{{ file.url }}" target="_new">owner_eid_copy {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="owner_eid_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="owner_eid_copy_existing_count" name="owner_eid_copy_existing_count" value="{% if property.owner_eid_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="owner_eid_copy_existing_count" name="owner_eid_copy_existing_count" value="{% if property.owner_eid_copy %}{{ property.owner_eid_copy|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="owner_eid_copy_existing_values" name="owner_eid_copy_existing_values">
               <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_mou_removed">
               <input type="hidden" id="owner_eid_copy_new_removed_count" name="owner_eid_copy_new_removed_count">
@@ -546,11 +572,15 @@
               <input multiple="multiple" class="imageUploadInput" id="pms_cheque_copy" type="file" name="pms_cheque_copy[]">
               <div class="upload_prev">
                 {% if property.pms_cheque_copy %}
-                  <a href="{{ property.pms_cheque_copy.url }}" target="_new">pms_cheque_copy 1</a>
-                  <p class="remove_file" id="{{ property.pms_cheque_copy.url }}" data-name="pms_cheque_copy" data-existing="old">X</p>
+                  {% for file in property.pms_cheque_copy|split:","%}
+                    <a href="{{ file.url }}" target="_new">pms_cheque_copy {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="pms_cheque_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="pms_cheque_copy_existing_count" name="pms_cheque_copy_existing_count" value="{% if property.pms_cheque_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="pms_cheque_copy_existing_count" name="pms_cheque_copy_existing_count" value="{% if property.pms_cheque_copy %}{{ property.pms_cheque_copy|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="pms_cheque_copy_existing_values" name="pms_cheque_copy_existing_values">
               <input type="hidden" id="pms_cheque_copy_removed" name="pms_cheque_copy_mou_removed">
               <input type="hidden" id="pms_cheque_copy_new_removed_count" name="pms_cheque_copy_removed_count">
@@ -560,35 +590,70 @@
           </div>
 
           <div class="row">  
-            <div class="col-md-6 form-group">
+            {% comment %} <div class="col-md-6 form-group">
               <label for="title_deed">
                 Title Deed <span class="mandetory_field" style="color:red">*</span>
               </label><br>
               <input multiple="multiple" class="imageUploadInput" id="title_deed" type="file" name="title_deed[]">
               <div class="upload_prev">
                 {% if property.title_deed %}
-                  <a href="{{ property.title_deed.url }}" target="_new">title_deed 1</a>
-                  <p class="remove_file" id="{{ property.title_deed.url }}" data-name="title_deed" data-existing="old">X</p>
+                  {% for file in property.title_deed|split:","%}
+                    <a href="{{ file.url }}" target="_new">title_deed {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="title_deed" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="{% if property.title_deed %}1{% else %}0{% endif %}">
+              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="{% if property.title_deed %}{{ property.title_deed|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="title_deed_existing_values" name="title_deed_existing_values">
               <input type="hidden" id="title_deed_removed" name="title_deed_mou_removed">
               <input type="hidden" id="title_deed_new_removed_count" name="title_deed_new_removed_count">
               <div id="upload_prevss" class="title_deed_list"></div>                 
               <span class="text-danger" id="title_deed_error"></span>
-            </div>                                       
+            </div>                                        {% endcomment %}
+            
+            <div class="col-md-6 form-group">
+              <label for="title_deed">
+                Title Deed <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="title_deed" type="file" name="title_deed[]">
+              <div class="upload_prev title_deed_list">
+                {% if property.title_deed %}
+                  {% for file in property.title_deed|split:"," %}
+                    <div class="file-preview" data-url="{{ file }}">
+                      <a href="{{ file }}" target="_new">title_deed {{ forloop.counter }}</a>
+                      <span class="remove_file" id="{{ file }}" data-name="title_deed" data-existing="old" style="cursor:pointer; color:red; font-weight:bold; margin-left:10px;">X</span>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
+                {% endif %}
+              </div>
+              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="{% if property.title_deed %}{{ property.title_deed|split:','|length }}{% else %}0{% endif %}">
+              <input type="hidden" id="title_deed_existing_values" name="title_deed_existing_values">
+              <input type="hidden" id="title_deed_removed" name="title_deed_removed">
+              <input type="hidden" id="title_deed_new_removed_count" name="title_deed_new_removed_count">
+              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="1">
+              <div id="upload_prevss" class="title_deed_list"></div>
+              <span class="text-danger" id="title_deed_error"></span>
+            </div>
 
             <div class="col-md-6 form-group">
               <label for="poa_pp">Poa Pp</label><br>
               <input multiple="multiple" class="imageUploadInput" id="poa_pp" type="file" name="poa_pp[]">
+              {% comment %} <input multiple="multiple" class="imageUploadInput" id="poa_pp" type="file" name="poa_pp"> {% endcomment %}
               <div class="upload_prev">
                 {% if property.poa_pp %}
-                  <a href="{{ property.poa_pp.url }}" target="_new">poa_pp 1</a>
-                  <p class="remove_file" id="{{ property.poa_pp.url }}" data-name="poa_pp" data-existing="old">X</p>
+                  {% for file in property.poa_pp|split:"," %}
+                    <a href="{{ file.url }}" target="_new">poa_pp {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="poa_pp" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="poa_pp_existing_count" name="poa_pp_existing_count" value="{% if property.poa_pp %}1{% else %}0{% endif %}">
+              <input type="hidden" id="poa_pp_existing_count" name="poa_pp_existing_count" value="{% if property.poa_pp %}{{ property.poa_pp|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="poa_pp_existing_values" name="poa_pp_existing_values">
               <input type="hidden" id="poa_pp_removed" name="poa_pp_mou_removed">
               <input type="hidden" id="poa_pp_new_removed_count" name="poa_pp_new_removed_count">
@@ -601,13 +666,18 @@
             <div class="col-md-6 form-group">
               <label for="poa_copy">Poa Copy</label><br>
               <input multiple="multiple" class="imageUploadInput" id="poa_copy" type="file" name="poa_copy[]">
+              {% comment %} <input multiple="multiple" class="imageUploadInput" id="poa_copy" type="file" name="poa_copy"> {% endcomment %}
               <div class="upload_prev">
                 {% if property.poa_copy %}
-                  <a href="{{ property.poa_copy.url }}" target="_new">poa_copy 1</a>
-                  <p class="remove_file" id="{{ property.poa_copy.url }}" data-name="poa_copy" data-existing="old">X</p>
+                  {% for file in property.poa_copy|split:","%}
+                    <a href="{{ file.url }}" target="_new">poa_copy {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="poa_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="poa_copy_existing_count" name="poa_copy_existing_count" value="{% if property.poa_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="poa_copy_existing_count" name="poa_copy_existing_count" value="{% if property.poa_copy %}{{ property.poa_copy|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="poa_copy_existing_values" name="poa_copy_existing_values">
               <input type="hidden" id="poa_copy_removed" name="poa_copy_mou_removed">
               <input type="hidden" id="poa_copy_new_removed_count" name="poa_copy_new_removed_count">
@@ -620,11 +690,15 @@
               <input multiple="multiple" class="imageUploadInput" id="key_hand_over_form" type="file" name="key_hand_over_form[]">
               <div class="upload_prev">
                 {% if property.key_hand_over_form %}
-                  <a href="{{ property.key_hand_over_form.url }}" target="_new">key_hand_over_form 1</a>
-                  <p class="remove_file" id="{{ property.key_hand_over_form.url }}" data-name="key_hand_over_form" data-existing="old">X</p>
+                  {% for file in property.key_hand_over_form|split:","%}
+                    <a href="{{ file.url }}" target="_new">key_hand_over_form {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="key_hand_over_form" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
               </div>
-              <input type="hidden" id="key_hand_over_form_existing_count" name="key_hand_over_form_existing_count" value="{% if property.key_hand_over_form %}1{% else %}0{% endif %}">
+              <input type="hidden" id="key_hand_over_form_existing_count" name="key_hand_over_form_existing_count" value="{% if property.key_hand_over_form %}{{ property.key_hand_over_form|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="key_hand_over_form_existing_values" name="key_hand_over_form_existing_values">
               <input type="hidden" id="key_hand_over_form_removed" name="key_hand_over_form_mou_removed">
               <input type="hidden" id="key_hand_over_form_new_removed_count" name="key_hand_over_form_new_removed_count">
@@ -640,12 +714,9 @@
               </label><br>
               <input multiple="multiple" class="imageUploadInput" id="kyc_form" type="file" name="kyc_form[]">
               <div class="upload_prev">
-                {% if property.kyc_form %}
-                  <a href="{{ property.kyc_form.url }}" target="_new">kyc_form 1</a>
-                  <p class="remove_file" id="{{ property.kyc_form.url }}" data-name="kyc_form" data-existing="old">X</p>
-                {% endif %}
+                
               </div>
-              <input type="hidden" id="kyc_form_existing_count" name="kyc_form_existing_count" value="{% if property.kyc_form %}1{% else %}0{% endif %}">
+              <input type="hidden" id="kyc_form_existing_count" name="kyc_form_existing_count" value="{% if property.kyc_form %}{{ property.kyc_form|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="kyc_form_existing_values" name="kyc_form_existing_values">
               <input type="hidden" id="kyc_form_removed" name="kyc_form_mou_removed">
               <input type="hidden" id="kyc_form_new_removed_count" name="kyc_form_new_removed_count">
@@ -656,14 +727,36 @@
               <label for="screening">
                 Screening <span class="mandetory_field" style="color:red">*</span>
               </label><br>
+                  
+
               <input multiple="multiple" class="imageUploadInput" id="screening" type="file" name="screening[]">
               <div class="upload_prev">
+             
                 {% if property.screening %}
-                  <a href="{{ property.screening.url }}" target="_new">screening 1</a>
-                  <p class="remove_file" id="{{ property.screening.url }}" data-name="screening" data-existing="old">X</p>
+                  {% for file in property.screening|split:","%}
+                  
+                     
+                  {% endfor %}
+                {% else %}
+                  No file chosen
                 {% endif %}
-              </div>
-              <input type="hidden" id="screening_existing_count" name="screening_existing_count" value="{% if property.screening %}1{% else %}0{% endif %}">
+              </div> 
+              {% comment %} <div class="upload_prev">
+                {% load static %}
+                {% get_media_prefix as media_prefix %}
+                {% if property.screening %}
+                  {% for file in property.screening|split:"," %}
+                    <a href="{{ media_prefix }}{{ file }}" target="_blank">
+                      screening {{ forloop.counter }}
+                    </a>
+                    <p class="remove_file" id="{{ file }}" data-name="screening" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
+                {% endif %}
+              </div> {% endcomment %}
+
+              <input type="hidden" id="screening_existing_count" name="screening_existing_count" value="{% if property.screening %}{{ property.screening|split:","|length }}{% else %}0{% endif %}">
               <input type="hidden" id="screening_existing_values" name="screening_existing_values">
               <input type="hidden" id="screening_removed" name="screening_mou_removed">
               <input type="hidden" id="screening_new_removed_count" name="screening_new_removed_count">
@@ -719,124 +812,87 @@
 </script>
 
 {% comment %} <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const removedFiles = [];
+
+  document.querySelectorAll('.remove_file').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const filePreview = this.closest('.file-preview');
+      const fileUrl = filePreview.getAttribute('data-url');
+
+      // Add to removed files list
+      removedFiles.push(fileUrl);
+      document.getElementById('removed_title_deeds').value = removedFiles.join(',');
+
+      // Remove from UI
+      filePreview.remove();
+    });
+  });
+});
+</script> {% endcomment %}
+
+{% comment %} <script>
 $j(document).ready(function() {
+    const mediaPrefix = '{% get_media_prefix %}';
     const propertyId = {{ property.id }};
     const apiUrl = `/api/rental-properties/${propertyId}/`;
 
-    // Format date from dd-mm-yyyy to YYYY-MM-DD
-function formatDateForInput(dateString) {
-    if (!dateString || typeof dateString !== 'string') {
-        console.warn('Invalid or empty dateString:', dateString);
-        return '';
+    function formatDateForInput(dateString) {
+        if (!dateString || typeof dateString !== 'string') {
+            console.warn('Invalid or empty dateString:', dateString);
+            return '';
+        }
+
+        const parts = dateString.trim().split('-');
+        if (parts.length !== 3) {
+            console.warn('Invalid date format, expected dd-mm-yyyy:', dateString);
+            return '';
+        }
+
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Adjust month (0-11 for Date object)
+        const year = parseInt(parts[2], 10);
+
+        if (isNaN(day) || isNaN(month) || isNaN(year) || month < 0 || month > 11) {
+            console.warn('Invalid date components:', { day, month, year });
+            return '';
+        }
+
+        const date = new Date(year, month, day);
+        if (isNaN(date.getTime())) {
+            console.warn('Invalid date object created:', dateString);
+            return '';
+        }
+
+        return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     }
 
-    // Already in yyyy-MM-dd format?
-    const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(dateString.trim());
-    if (isoMatch) return dateString.trim();
+    function populateChequeDates(chequeDates, noOfCheques) {
+        $j('.append-cheque-date').empty();
+        const maxCheques = parseInt(noOfCheques) || 0;
+        console.log('Populating cheque dates:', { chequeDates, noOfCheques, maxCheques });
 
-    // dd-MM-yyyy format
-    const parts = dateString.trim().split('-');
-    if (parts.length !== 3) {
-        console.warn('Invalid date format, expected dd-MM-yyyy:', dateString);
-        return '';
-    }
+        // Handle both array and space-separated string formats
+        chequeDates = Array.isArray(chequeDates) ? chequeDates : (chequeDates ? chequeDates.split(' ').filter(d => d && d.trim()) : []);
+        console.log('Processed chequeDates:', chequeDates);
 
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10);
-    const year = parseInt(parts[2], 10);
+        // Ensure we don't exceed no_of_cheque
+        chequeDates = chequeDates.slice(0, maxCheques);
 
-    if (isNaN(day) || isNaN(month) || isNaN(year)) {
-        console.warn('Invalid date components:', { day, month, year });
-        return '';
-    }
+        if (chequeDates.length === 0 && maxCheques > 0) {
+            console.warn('No cheque dates available, but no_of_cheque is', maxCheques);
+            for (let i = 0; i < maxCheques; i++) {
+                chequeDates.push(''); // Add empty dates to match no_of_cheque
+            }
+        }
 
-    // Format to yyyy-MM-dd
-    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-    // Load data into form
-    function loadPropertyData() {
-        $j.ajax({
-            url: apiUrl,
-            type: 'GET',
-            success: function(data) {
-                loadAgentDropdown(data);
-
-                // Fill standard fields (skip no_of_cheque for now)
-                Object.keys(data).forEach(key => {
-                    const field = $j(`[name="${key}"]`);
-                    console.log(`Filling field: name="${key}" with value:`, data[key]);
-                    if (field.length) {
-                        if (field.is('input[type="date"]')) {
-                            field.val(formatDateForInput(data[key]));
-                        } else if (field.is('select')) {
-                            field.val(data[key]);
-                        } else if (field.is('textarea')) {
-                            field.val(data[key]);
-                        } else if (key !== 'no_of_cheque') {
-                            field.val(data[key]);
-                        }
-                    }
-                });
-
-                // Handle cheque_date
-                let chequeDates = data.cheque_date;
-                if (typeof chequeDates === 'string') {
-                    chequeDates = chequeDates.split(' ').filter(date => date);
-                }
-                if (chequeDates && Array.isArray(chequeDates)) {
-                    $j('.append-cheque-date').empty();
-                    chequeDates.forEach((dateStr, index) => {
-                        const formattedDate = formatDateForInput(dateStr);
-                        const rowHtml = `
-                            <div class="row delete-cheque-date-row${index}">
-                                <div class="col-md-6 form-group">
-                                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" readonly style="background-color:white;">
-                                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
-                                </div>
-                                <div class="col-md-2 form-group" style="top:20px;">
-                                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
-                                </div>
-                            </div>`;
-                        $j('.append-cheque-date').append(rowHtml);
-                    });
-                    $j('#no_of_cheque').val(chequeDates.length);
-                } else {
-                    $j('.append-cheque-date').empty();
-                    $j('#no_of_cheque').val(0);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('❌ Error updating property:');
-                console.log('Status:', status);          // e.g. "error"
-                console.log('Error:', error);            // e.g. "Bad Request"
-                console.log('Response Text:', xhr.responseText);  // raw text
-                console.log('Response JSON:', xhr.responseJSON);  // parsed JSON if available
-
-                let errorMsg = 'Error updating property.';
-                if (xhr.responseJSON) {
-                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
-                } else {
-                    errorMsg += '\n' + xhr.responseText;
-                }
-
-                alert(errorMsg);
-            },
-        });
-    }
-
-    // Add new cheque date row
-    $j('#add-cheque-row').on('click', function() {
-        const currentCount = $j('.delete-cheque-date-row').length;
-        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
-        if (currentCount < maxCheques || maxCheques === 0) {
-            const index = currentCount;
+        chequeDates.forEach((dateStr, index) => {
+            const formattedDate = formatDateForInput(dateStr) || '';
             const rowHtml = `
-                <div class="row delete-cheque-date-row${index}">
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
                     <div class="col-md-6 form-group">
-                        <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
                         <span class="error text-danger" id="cheque_date_error_${index}"></span>
                     </div>
                     <div class="col-md-2 form-group" style="top:20px;">
@@ -844,32 +900,166 @@ function formatDateForInput(dateString) {
                     </div>
                 </div>`;
             $j('.append-cheque-date').append(rowHtml);
-            $j('#no_of_cheque').val(currentCount + 1);
+            console.log(`Added cheque date ${index + 1}:`, formattedDate);
+        });
+
+        // Update no_of_cheque to reflect actual number of cheque dates
+        $j('#no_of_cheque').val(chequeDates.length);
+        console.log('Updated no_of_cheque to:', chequeDates.length);
+    }
+
+    function loadPropertyData() {
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                console.log('API response:', data);
+                loadAgentDropdown(data);
+
+                Object.keys(data).forEach(key => {
+                    const field = $j(`[name="${key}"]`);
+                    if (field.length) {
+                        if (field.is('input[type="date"]')) {
+                            field.val(formatDateForInput(data[key]));
+                        } else if (field.is('select')) {
+                            field.val(data[key]);
+                        } else if (field.is('textarea')) {
+                            field.val(data[key]);
+                        } else if (key !== 'no_of_cheque' && key !== 'cheque_date') {
+                            field.val(data[key]);
+                        }
+                    }
+                });
+
+                // Handle document fields
+                const documentFields = ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'];
+                documentFields.forEach(field => {
+                    const fileString = data[field] || '';
+                    const files = fileString.split(',').filter(f => f.trim());
+                    const $uploadPrev = $j(`#${field}`).siblings('.upload_prev').empty();
+                    files.forEach((file, index) => {
+                        const fileUrl = file.trim();
+                        $uploadPrev.append(`
+                            <div>
+                                <a href="${mediaPrefix}${fileUrl}" target="_new">${field} ${index + 1}</a>
+                                <p class="remove_file" id="${fileUrl}" data-name="${field}" data-existing="old">X</p>
+                            </div>
+                        `);
+                    });
+                    $j(`#${field}_existing_count`).val(files.length);
+                    console.log(`Set ${field}_existing_count to ${files.length}`);
+                    console.log(`Existing files for ${field}:`, files);
+                });
+
+                // Handle cheque dates
+                const chequeDates = data.cheque_date || [];
+                const noOfCheques = data.no_of_cheque || 0;
+                console.log('Cheque data from API:', { chequeDates, noOfCheques });
+                populateChequeDates(chequeDates, noOfCheques);
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ Error fetching property:', xhr.responseText);
+                let errorMsg = 'Error fetching property data.';
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                }
+                alert(errorMsg);
+            }
+        });
+    }
+
+    // Update cheque date fields when no_of_cheque changes
+    $j('#no_of_cheque').on('change', function() {
+        const maxCheques = parseInt($j(this).val()) || 0;
+        const currentCount = $j('.delete-cheque-date-row').length;
+
+        if (maxCheques < currentCount) {
+            // Remove excess cheque date fields
+            $j('.delete-cheque-date-row').slice(maxCheques).remove();
+        } else if (maxCheques > currentCount) {
+            // Add new cheque date fields up to maxCheques
+            for (let i = currentCount; i < maxCheques; i++) {
+                const rowHtml = `
+                    <div class="row delete-cheque-date-row delete-cheque-date-row${i}">
+                        <div class="col-md-6 form-group">
+                            <label>Cheque Date ${i + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                            <input type="date" name="cheque_date[${i}]" class="form-control cheque-dates" id="cheque_dates_${i}" style="background-color:white;">
+                            <span class="error text-danger" id="cheque_date_error_${i}"></span>
+                        </div>
+                        <div class="col-md-2 form-group" style="top:20px;">
+                            <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                        </div>
+                    </div>`;
+                $j('.append-cheque-date').append(rowHtml);
+            }
         }
+        console.log(`no_of_cheque changed to ${maxCheques}, current count: ${$j('.delete-cheque-date-row').length}`);
     });
 
-    // Remove cheque date row
-    $j(document).on('click', '.remove-cheque-date-row', function() {
-        $j(this).closest('.delete-cheque-date-row').remove();
-        const count = $j('.delete-cheque-date-row').length;
-        $j('#no_of_cheque').val(count);
-    });
-
-    // Validation rules
-    function ValidateSizeadd(file, id, i) {
-        if (!/(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.value)) {
-            alert("Invalid image/pdf file type.");
-            $j('#' + id).val('');
-            return false;
-        }
-        var FileSize = file.files[0].size;
-        if (FileSize > 3000000) {
-            $j("#" + id + '_error').html('File size should be less than 3 MB').show();
-            $j('#' + id).val('');
-            return false;
+    $j('#add-cheque-row').on('click', function() {
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        const currentCount = $j('.delete-cheque-date-row').length;
+        if (currentCount < maxCheques || maxCheques === 0) {
+            const index = currentCount;
+            const rowHtml = `
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
+                    <div class="col-md-6 form-group">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" style="background-color:white;">
+                        <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                    </div>
+                    <div class="col-md-2 form-group" style="top:20px;">
+                        <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                    </div>
+                </div>`;
+            $j('.append-cheque-date').append(rowHtml);
+            if (maxCheques === 0) {
+                $j('#no_of_cheque').val(currentCount + 1);
+            }
         } else {
-            $j("#" + id + '_error').hide();
+            alert(`Cannot add more cheque dates. Maximum is ${maxCheques}.`);
         }
+        console.log(`Add clicked, current count: ${currentCount}, maxCheques: ${maxCheques}`);
+    });
+
+    $j(document).on('click', '.remove-cheque-date-row', function() {
+        $j(this).closest('.row').remove();
+        // Update no_of_cheque to reflect current number of cheque dates
+        const currentCount = $j('.delete-cheque-date-row').length;
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        if (currentCount < maxCheques) {
+            $j('#no_of_cheque').val(currentCount);
+        }
+        console.log(`Remove clicked, updated count: ${currentCount}`);
+    });
+
+    $j('.imageUploadInput').on('change', function() {
+        ValidateSizeadd(this, this.id, 0);
+    });
+
+    function ValidateSizeadd(file, id, i) {
+        const $error = $j(`#${id}_error`);
+        if (!file.files || file.files.length === 0) {
+            $error.html('Please select a file.').show();
+            return false;
+        }
+        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        for (let f of file.files) {
+            if (!validTypes.includes(f.type)) {
+                $error.html(`Invalid file type for ${f.name}. Only JPG, PNG, or PDF allowed.`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+            const maxSize = 3 * 1024 * 1024;
+            if (f.size > maxSize) {
+                $error.html(`File ${f.name} size should be less than 3 MB`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+        }
+        $error.hide();
+        console.log(`✅ Valid files selected for ${id}:`, Array.from(file.files).map(f => `${f.name} (Size: ${f.size} bytes, Type: ${f.type})`));
+        return true;
     }
 
     $j.validator.addMethod("only_text", function(value, element) {
@@ -902,7 +1092,7 @@ function formatDateForInput(dateString) {
     }, "Letters only please");
 
     $j.validator.addMethod("mobile_number", function(value, element, param) {
-        return this.optional(element) || /^[+0 9+ ]*?[0-9-+ ]+$/.test(value);
+        return this.optional(element) || /^[+0-9 ]*?[0-9-+ ]+$/.test(value);
     }, "Enter valid Phone number.");
 
     $j.validator.addMethod("geopoints_latitude", function(value, element, param) {
@@ -913,7 +1103,6 @@ function formatDateForInput(dateString) {
         return this.optional(element) || /^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/.test(value);
     }, "Longitude format is invalid.");
 
-    // Form validation
     $j('#rental_property_form').validate({
         rules: {
             submitted_by_agent: { required: true },
@@ -921,7 +1110,7 @@ function formatDateForInput(dateString) {
             reference_number: { required: true, alphanum_special: true },
             project_name: { required: true, only_text: true },
             building_name: { required: true, only_text: true },
-            unit_details: { required: true, only_text: true },
+            unit_details: { required: true, numeric: true },
             pms_price: { required: true, numeric: true },
             pm_start_date: { required: true },
             pm_end_date: { required: true },
@@ -935,7 +1124,7 @@ function formatDateForInput(dateString) {
             agency_name: { required: true, only_text: true },
             agent_name: { required: true, lettersonly: true },
             agent_phone: { required: true, mobile_number: true },
-            no_of_cheque: { required: true, numeric: true },
+            no_of_cheque: { required: true, numeric: true, min: 0 },
             total_commission: { required: true, numeric: true },
             less_outside_commission: { required: true, numeric: true },
             net_commission: { required: true, numeric: true },
@@ -944,12 +1133,55 @@ function formatDateForInput(dateString) {
             agent_name1: { required: true },
             receipt_no: { required: true },
             is_property_aml: { required: true },
-            pms_contract: { required: true },
-            owner_passport_copy: { required: true },
-            pms_cheque_copy: { required: true },
-            title_deed: { required: true },
-            kyc_form: { required: true },
-            screening: { required: true }
+            'pms_contract[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
+                    const files = $j('#pms_contract').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'owner_passport_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
+                    const files = $j('#owner_passport_copy').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'pms_cheque_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
+                    const files = $j('#pms_cheque_copy').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'title_deed[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
+                    const files = $j('#title_deed').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'kyc_form[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
+                    const files = $j('#kyc_form').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'screening[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#screening_existing_count').val()) || 0;
+                    const files = $j('#screening').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'cheque_date[]': { 
+                required: function(element) {
+                    const noOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
+                    const chequeDates = $j('.cheque-dates').filter(function() { return $j(this).val(); }).length;
+                    return noOfCheques > 0 && chequeDates === 0;
+                }
+            }
         },
         messages: {
             submitted_by_agent: "Please select an agent",
@@ -980,33 +1212,31 @@ function formatDateForInput(dateString) {
             agent_name1: "Please select an agent",
             receipt_no: "Please select a receipt number",
             is_property_aml: "Please select AML status",
-            pms_contract: "Please upload PMS contract",
-            owner_passport_copy: "Please upload owner passport copy",
-            pms_cheque_copy: "Please upload PMS cheque copy",
-            title_deed: "Please upload title deed",
-            kyc_form: "Please upload KYC form",
-            screening: "Please upload screening"
+            'pms_contract[]': "Please upload PMS contract",
+            'owner_passport_copy[]': "Please upload owner passport copy",
+            'pms_cheque_copy[]': "Please upload PMS cheque copy",
+            'title_deed[]': "Please upload title deed",
+            'kyc_form[]': "Please upload KYC form",
+            'screening[]': "Please upload screening",
+            'cheque_date[]': "Please provide at least one cheque date if number of cheques is greater than 0"
         },
         errorPlacement: function(error, element) {
-            error.appendTo($j("#" + element.attr("id") + "_error"));
+            if (element.attr('name').startsWith('cheque_date[')) {
+                const index = element.attr('name').match(/\[(\d+)\]/)[1];
+                error.appendTo($j(`#cheque_date_error_${index}`));
+            } else {
+                error.appendTo($j(`#${element.attr('id')}_error`));
+            }
         },
-        
         submitHandler: function(form) {
             console.log("✅ submitHandler triggered - validation passed");
             submitForm();
         },
         invalidHandler: function(event, validator) {
-            console.log("❌ Form validation failed.");
-            console.log("Errors:", validator.errorList);
+            console.log("❌ Form validation failed:", validator.errorList);
         }
     });
 
-    // File size validation on change
-    $j('.imageUploadInput').on('change', function() {
-        ValidateSizeadd(this, this.id, 0);
-    });
-
-    // Date auto-fill (1 year from start date)
     function appendDate() {
         var deal_start_date = $j('#deal_date').val();
         if (deal_start_date) {
@@ -1050,15 +1280,16 @@ function formatDateForInput(dateString) {
             }
         }
     });
-    console.log("Use submit button.")
 
-    // Submit form via AJAX
     function submitForm() {
         $j('#is_deleted').val('N');
         const formData = new FormData($j('#rental_property_form')[0]);
         const submitBtn = $j('#create_deal');
-        console.log("Starting form submission...");
-        console.log("API URL:", apiUrl);
+        console.log("Starting form submission to:", apiUrl);
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`FormData: ${key} = ${value instanceof File ? value.name : value}`);
+        }
 
         submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
 
@@ -1068,7 +1299,6 @@ function formatDateForInput(dateString) {
                 const cookies = document.cookie.split(';');
                 for (let i = 0; i < cookies.length; i++) {
                     const cookie = cookies[i].trim();
-                    // Does this cookie string begin with the name we want?
                     if (cookie.startsWith(name + '=')) {
                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
@@ -1079,7 +1309,7 @@ function formatDateForInput(dateString) {
         }
 
         const csrftoken = getCookie('csrftoken');
-        console.log("CSRF Token from cookie:", csrftoken);
+        console.log("CSRF Token:", csrftoken);
 
         $j.ajax({
             url: apiUrl,
@@ -1089,17 +1319,17 @@ function formatDateForInput(dateString) {
             contentType: false,
             headers: {
                 'X-CSRFToken': csrftoken
-
             },
             success: function(data) {
+                console.log("✅ Property updated successfully:", data);
                 alert('Property updated successfully!');
                 window.location.href = "{% url 'rental-property-list' %}";
             },
-            error: function(error) {
-                console.error('Error updating property:', error);
+            error: function(xhr, status, error) {
+                console.error('❌ Error updating property:', xhr.responseText);
                 let errorMsg = 'Error updating property.';
-                if (error.responseJSON) {
-                    errorMsg += '\n' + JSON.stringify(error.responseJSON, null, 2);
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
                 }
                 alert(errorMsg);
             },
@@ -1109,10 +1339,8 @@ function formatDateForInput(dateString) {
         });
     }
 
-    // Load initial data
     loadPropertyData();
 
-    // Warn on unsaved changes
     let formChanged = false;
     $j('#rental_property_form').on('change input', 'input, select, textarea', function() {
         formChanged = true;
@@ -1125,7 +1353,586 @@ function formatDateForInput(dateString) {
         }
     });
 
-    // Confirm cancel
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+});
+
+function loadAgentDropdown(requestdata) {
+    $j.ajax({
+        url: "/api/agents/dropdown/",
+        type: "GET",
+        success: function(agents) {
+            populateAgentDropdown("#submitted_by_agent", agents, requestdata.submitted_by_agent);
+            populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
+            populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
+            populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
+        },
+        error: function() {
+            console.error("Failed to load agents.");
+        },
+    });
+}
+
+function populateAgentDropdown(selector, data, selectedId = null) {
+    const $dropdown = $j(selector);
+    $dropdown.empty().append('<option value="">Select Agent</option>');
+    data.forEach(function(agent) {
+        const isSelected = selectedId == agent.id ? "selected" : "";
+        $dropdown.append(`<option value="${agent.id}" ${isSelected}>${agent.name}</option>`);
+    });
+}
+
+function scrollTop() {
+    $j('html, body').animate({
+        scrollTop: $j('.main-header').offset().top
+    }, 1000);
+    setTimeout(function() {
+        $j('#successmsg').fadeOut();
+    }, 3000);
+}
+
+function permute(input, permArr, usedChars) {
+    var i, ch;
+    for (i = 0; i < input.length; i++) {
+        ch = input.splice(i, 1)[0];
+        usedChars.push(ch);
+        if (input.length === 0) {
+            permArr.push(usedChars.slice());
+        }
+        permute(input, permArr, usedChars);
+        input.splice(i, 0, ch);
+        usedChars.pop();
+    }
+    return permArr;
+}
+</script> {% endcomment %}
+
+{% comment %} <script>
+$j(document).ready(function() {
+    const mediaPrefix = '{% get_media_prefix %}';
+    const propertyId = {{ property.id }};
+    const apiUrl = `/api/rental-properties/${propertyId}/`;
+
+    function formatDateForInput(dateString) {
+        if (!dateString || typeof dateString !== 'string') {
+            console.warn('Invalid or empty dateString:', dateString);
+            return '';
+        }
+
+        // Handle dd-mm-yyyy format
+        let parts = dateString.trim().split('-');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1; // 0-based month
+            const year = parseInt(parts[2], 10);
+            if (!isNaN(day) && !isNaN(month) && !isNaN(year) && month >= 0 && month <= 11) {
+                const date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) {
+                    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                }
+            }
+        }
+        console.warn('Invalid date format, expected dd-mm-yyyy:', dateString);
+        return '';
+    }
+
+    function populateChequeDates(chequeDates, noOfCheques) {
+        $j('.append-cheque-date').empty();
+        const maxCheques = parseInt(noOfCheques) || 0;
+        console.log('Populating cheque dates:', { chequeDates, noOfCheques, maxCheques });
+
+        // Normalize chequeDates to an array
+        let datesArray = [];
+        if (Array.isArray(chequeDates)) {
+            datesArray = chequeDates.filter(d => d && d.trim());
+        } else if (typeof chequeDates === 'string' && chequeDates.trim()) {
+            // Handle space-separated or comma-separated strings
+            datesArray = chequeDates.split(/[,\s]+/).filter(d => d && d.trim());
+        }
+        console.log('Normalized chequeDates:', datesArray);
+
+        // Adjust datesArray to match maxCheques
+        if (datesArray.length < maxCheques) {
+            // Pad with empty strings if fewer dates than no_of_cheque
+            datesArray = datesArray.concat(Array(maxCheques - datesArray.length).fill(''));
+        } else if (datesArray.length > maxCheques) {
+            // Trim excess dates
+            datesArray = datesArray.slice(0, maxCheques);
+        }
+
+        // Generate input fields for each cheque date
+        datesArray.forEach((dateStr, index) => {
+            const formattedDate = formatDateForInput(dateStr) || '';
+            const rowHtml = `
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
+                    <div class="col-md-6 form-group">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                        <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                    </div>
+                    <div class="col-md-2 form-group" style="top:20px;">
+                        <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                    </div>
+                </div>`;
+            $j('.append-cheque-date').append(rowHtml);
+            console.log(`Added cheque date ${index + 1}:`, { dateStr, formattedDate });
+        });
+
+        // Update no_of_cheque to reflect actual number of cheque dates
+        $j('#no_of_cheque').val(datesArray.length);
+        console.log('Updated no_of_cheque to:', datesArray.length);
+    }
+
+    function loadPropertyData() {
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                console.log('API response:', data);
+                loadAgentDropdown(data);
+
+                Object.keys(data).forEach(key => {
+                    const field = $j(`[name="${key}"]`);
+                    if (field.length) {
+                        if (field.is('input[type="date"]')) {
+                            field.val(formatDateForInput(data[key]));
+                        } else if (field.is('select')) {
+                            field.val(data[key]);
+                        } else if (field.is('textarea')) {
+                            field.val(data[key]);
+                        } else if (key !== 'no_of_cheque' && key !== 'cheque_date') {
+                            field.val(data[key]);
+                        }
+                    }
+                });
+
+                // Handle document fields
+                const documentFields = ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'];
+                documentFields.forEach(field => {
+                    const fileString = data[field] || '';
+                    const files = fileString.split(',').filter(f => f.trim());
+                    const $uploadPrev = $j(`#${field}`).siblings('.upload_prev').empty();
+                    files.forEach((file, index) => {
+                        const fileUrl = file.trim();
+                        $uploadPrev.append(`
+                            <div>
+                                <a href="${mediaPrefix}${fileUrl}" target="_new">${field} ${index + 1}</a>
+                                <p class="remove_file" id="${fileUrl}" data-name="${field}" data-existing="old">X</p>
+                            </div>
+                        `);
+                    });
+                    $j(`#${field}_existing_count`).val(files.length);
+                    console.log(`Set ${field}_existing_count to ${files.length}`);
+                    console.log(`Existing files for ${field}:`, files);
+                });
+
+                // Handle cheque dates
+                const chequeDates = data.cheque_date || '';
+                const noOfCheques = data.no_of_cheque || 0;
+                console.log('Cheque data from API:', { chequeDates, noOfCheques });
+                populateChequeDates(chequeDates, noOfCheques);
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ Error fetching property:', xhr.responseText);
+                let errorMsg = 'Error fetching property data.';
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                }
+                alert(errorMsg);
+            }
+        });
+    }
+
+    // Update cheque date fields when no_of_cheque changes
+    $j('#no_of_cheque').on('change', function() {
+        const maxCheques = parseInt($j(this).val()) || 0;
+        const currentCount = $j('.delete-cheque-date-row').length;
+
+        if (maxCheques < currentCount) {
+            // Remove excess cheque date fields
+            $j('.delete-cheque-date-row').slice(maxCheques).remove();
+        } else if (maxCheques > currentCount) {
+            // Add new cheque date fields up to maxCheques
+            for (let i = currentCount; i < maxCheques; i++) {
+                const rowHtml = `
+                    <div class="row delete-cheque-date-row delete-cheque-date-row${i}">
+                        <div class="col-md-6 form-group">
+                            <label>Cheque Date ${i + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                            <input type="date" name="cheque_date[${i}]" class="form-control cheque-dates" id="cheque_dates_${i}" style="background-color:white;">
+                            <span class="error text-danger" id="cheque_date_error_${i}"></span>
+                        </div>
+                        <div class="col-md-2 form-group" style="top:20px;">
+                            <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                        </div>
+                    </div>`;
+                $j('.append-cheque-date').append(rowHtml);
+            }
+        }
+        console.log(`no_of_cheque changed to ${maxCheques}, current count: ${$j('.delete-cheque-date-row').length}`);
+    });
+
+    $j('#add-cheque-row').on('click', function() {
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        const currentCount = $j('.delete-cheque-date-row').length;
+        if (currentCount < maxCheques || maxCheques === 0) {
+            const index = currentCount;
+            const rowHtml = `
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
+                    <div class="col-md-6 form-group">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" style="background-color:white;">
+                        <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                    </div>
+                    <div class="col-md-2 form-group" style="top:20px;">
+                        <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                    </div>
+                </div>`;
+            $j('.append-cheque-date').append(rowHtml);
+            if (maxCheques === 0) {
+                $j('#no_of_cheque').val(currentCount + 1);
+            }
+        } else {
+            alert(`Cannot add more cheque dates. Maximum is ${maxCheques}.`);
+        }
+        console.log(`Add clicked, current count: ${currentCount}, maxCheques: ${maxCheques}`);
+    });
+
+    $j(document).on('click', '.remove-cheque-date-row', function() {
+        $j(this).closest('.row').remove();
+        // Update no_of_cheque to reflect current number of cheque dates
+        const currentCount = $j('.delete-cheque-date-row').length;
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        if (currentCount < maxCheques) {
+            $j('#no_of_cheque').val(currentCount);
+        }
+        console.log(`Remove clicked, updated count: ${currentCount}`);
+    });
+
+    $j('.imageUploadInput').on('change', function() {
+        ValidateSizeadd(this, this.id, 0);
+    });
+
+    function ValidateSizeadd(file, id, i) {
+        const $error = $j(`#${id}_error`);
+        if (!file.files || file.files.length === 0) {
+            $error.html('Please select a file.').show();
+            return false;
+        }
+        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        for (let f of file.files) {
+            if (!validTypes.includes(f.type)) {
+                $error.html(`Invalid file type for ${f.name}. Only JPG, PNG, or PDF allowed.`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+            const maxSize = 3 * 1024 * 1024;
+            if (f.size > maxSize) {
+                $error.html(`File ${f.name} size should be less than 3 MB`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+        }
+        $error.hide();
+        console.log(`✅ Valid files selected for ${id}:`, Array.from(file.files).map(f => `${f.name} (Size: ${f.size} bytes, Type: ${f.type})`));
+        return true;
+    }
+
+    $j.validator.addMethod("only_text", function(value, element) {
+        return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
+    }, "Enter valid Name");
+
+    $j.validator.addMethod("custom_email", function(value, element) {
+        var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        return this.optional(element) || regEx.test(value);
+    }, "Enter a valid email address.");
+
+    $j.validator.addMethod("alpha_numeric", function(value, element, param) {
+        return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+    }, "Enter valid Profile Id");
+
+    $j.validator.addMethod("numeric", function(value, element, param) {
+        return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers.");
+
+    $j.validator.addMethod("text_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+    }, "Enter only letters and special characters.");
+
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+    }, "Enter only letters, numbers and special characters.");
+
+    $j.validator.addMethod("lettersonly", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+    }, "Letters only please");
+
+    $j.validator.addMethod("mobile_number", function(value, element, param) {
+        return this.optional(element) || /^[+0-9 ]*?[0-9-+ ]+$/.test(value);
+    }, "Enter valid Phone number.");
+
+    $j.validator.addMethod("geopoints_latitude", function(value, element, param) {
+        return this.optional(element) || /^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/.test(value);
+    }, "Latitude format is invalid.");
+
+    $j.validator.addMethod("geopoints_longitude", function(value, element, param) {
+        return this.optional(element) || /^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/.test(value);
+    }, "Longitude format is invalid.");
+
+    $j('#rental_property_form').validate({
+        rules: {
+            submitted_by_agent: { required: true },
+            deal_date: { required: true },
+            reference_number: { required: true, alphanum_special: true },
+            project_name: { required: true, only_text: true },
+            building_name: { required: true, only_text: true },
+            unit_details: { required: true, numeric: true },
+            pms_price: { required: true, numeric: true },
+            pm_start_date: { required: true },
+            pm_end_date: { required: true },
+            tenancy_start_date: { required: true },
+            tenancy_end_date: { required: true },
+            owner_first_name: { required: true, lettersonly: true },
+            owner_source: { required: true },
+            owner_mobile: { required: true, mobile_number: true },
+            owner_email: { required: true, custom_email: true },
+            seller_nationality: { required: true, lettersonly: true },
+            agency_name: { required: true, only_text: true },
+            agent_name: { required: true, lettersonly: true },
+            agent_phone: { required: true, mobile_number: true },
+            no_of_cheque: { required: true, numeric: true, min: 0 },
+            total_commission: { required: true, numeric: true },
+            less_outside_commission: { required: true, numeric: true },
+            net_commission: { required: true, numeric: true },
+            classic: { required: true, alphanum_special: true },
+            agent1: { required: true, numeric: true },
+            agent_name1: { required: true },
+            receipt_no: { required: true },
+            is_property_aml: { required: true },
+            'pms_contract[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
+                    const files = $j('#pms_contract').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'owner_passport_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
+                    const files = $j('#owner_passport_copy').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'pms_cheque_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
+                    const files = $j('#pms_cheque_copy').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'title_deed[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
+                    const files = $j('#title_deed').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'kyc_form[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
+                    const files = $j('#kyc_form').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'screening[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#screening_existing_count').val()) || 0;
+                    const files = $j('#screening').get(0).files.length;
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'cheque_date[]': { 
+                required: function(element) {
+                    const noOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
+                    const chequeDates = $j('.cheque-dates').filter(function() { return $j(this).val(); }).length;
+                    return noOfCheques > 0 && chequeDates === 0;
+                }
+            }
+        },
+        messages: {
+            submitted_by_agent: "Please select an agent",
+            deal_date: "Please select a deal date",
+            reference_number: "Please enter a valid reference number",
+            project_name: "Please enter a valid project name",
+            building_name: "Please enter a valid building name",
+            unit_details: "Please enter a valid unit number",
+            pms_price: "Please enter a valid PMS price",
+            pm_start_date: "Please select a PM start date",
+            pm_end_date: "Please select a PM end date",
+            tenancy_start_date: "Please select a tenancy start date",
+            tenancy_end_date: "Please select a tenancy end date",
+            owner_first_name: "Please enter a valid owner name",
+            owner_source: "Please select a source",
+            owner_mobile: "Please enter a valid mobile number",
+            owner_email: "Please enter a valid email",
+            seller_nationality: "Please enter a valid nationality",
+            agency_name: "Please enter a valid agency name",
+            agent_name: "Please enter a valid agent name",
+            agent_phone: "Please enter a valid phone number",
+            no_of_cheque: "Please enter a valid number of cheques",
+            total_commission: "Please enter a valid total commission",
+            less_outside_commission: "Please enter a valid less outside commission",
+            net_commission: "Please enter a valid net commission",
+            classic: "Please enter a valid classic value",
+            agent1: "Please enter a valid agent commission",
+            agent_name1: "Please select an agent",
+            receipt_no: "Please select a receipt number",
+            is_property_aml: "Please select AML status",
+            'pms_contract[]': "Please upload PMS contract",
+            'owner_passport_copy[]': "Please upload owner passport copy",
+            'pms_cheque_copy[]': "Please upload PMS cheque copy",
+            'title_deed[]': "Please upload title deed",
+            'kyc_form[]': "Please upload KYC form",
+            'screening[]': "Please upload screening",
+            'cheque_date[]': "Please provide at least one cheque date if number of cheques is greater than 0"
+        },
+        errorPlacement: function(error, element) {
+            if (element.attr('name').startsWith('cheque_date[')) {
+                const index = element.attr('name').match(/\[(\d+)\]/)[1];
+                error.appendTo($j(`#cheque_date_error_${index}`));
+            } else {
+                error.appendTo($j(`#${element.attr('id')}_error`));
+            }
+        },
+        submitHandler: function(form) {
+            console.log("✅ submitHandler triggered - validation passed");
+            submitForm();
+        },
+        invalidHandler: function(event, validator) {
+            console.log("❌ Form validation failed:", validator.errorList);
+        }
+    });
+
+    function appendDate() {
+        var deal_start_date = $j('#deal_date').val();
+        if (deal_start_date) {
+            var inputval = deal_start_date.split('-');
+            var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+            var res = new Date(date);
+            res.setFullYear(res.getFullYear() + 1);
+            var dd = String(res.getDate()).padStart(2, '0');
+            var mm = String(res.getMonth() + 1).padStart(2, '0');
+            var yyyy = res.getFullYear();
+            $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
+            $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
+        }
+    }
+
+    $j('#deal_date, #pm_start_date, #tenancy_start_date').on('change', function() {
+        if (this.id === 'deal_date') appendDate();
+        else if (this.id === 'pm_start_date') {
+            var pm_start_date = $j('#pm_start_date').val();
+            if (pm_start_date) {
+                var inputval = pm_start_date.split('-');
+                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+                var res = new Date(date);
+                res.setFullYear(res.getFullYear() + 1);
+                var dd = String(res.getDate()).padStart(2, '0');
+                var mm = String(res.getMonth() + 1).padStart(2, '0');
+                var yyyy = res.getFullYear();
+                $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
+            }
+        } else if (this.id === 'tenancy_start_date') {
+            var tenancy_start_date = $j('#tenancy_start_date').val();
+            if (tenancy_start_date) {
+                var inputval = tenancy_start_date.split('-');
+                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+                var res = new Date(date);
+                res.setFullYear(res.getFullYear() + 1);
+                var dd = String(res.getDate()).padStart(2, '0');
+                var mm = String(res.getMonth() + 1).padStart(2, '0');
+                var yyyy = res.getFullYear();
+                $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
+            }
+        }
+    });
+
+    function submitForm() {
+        $j('#is_deleted').val('N');
+        const formData = new FormData($j('#rental_property_form')[0]);
+        const submitBtn = $j('#create_deal');
+        console.log("Starting form submission to:", apiUrl);
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`FormData: ${key} = ${value instanceof File ? value.name : value}`);
+        }
+
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        console.log("CSRF Token:", csrftoken);
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(data) {
+                console.log("✅ Property updated successfully:", data);
+                alert('Property updated successfully!');
+                window.location.href = "{% url 'rental-property-list' %}";
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ Error updating property:', xhr.responseText);
+                let errorMsg = 'Error updating property.';
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                }
+                alert(errorMsg);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit Property');
+            }
+        });
+    }
+
+    loadPropertyData();
+
+    let formChanged = false;
+    $j('#rental_property_form').on('change input', 'input, select, textarea', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
     $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
         if (formChanged) {
             if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
@@ -1186,127 +1993,151 @@ function permute(input, permArr, usedChars) {
 </script> {% endcomment %}
 
 
-<script>
-{% comment %} $j(document).ready(function() {
-    const propertyId = {{ property.id }};
-    const apiUrl = `/api/rental-properties/${propertyId}/`; // Original URL preserved
 
-    // Format date from dd-mm-yyyy to YYYY-MM-DD
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Object to track removed files for each field
+  const removedFiles = {
+    pms_contract: [],
+    owner_passport_copy: [],
+    owner_eid_copy: [],
+    pms_cheque_copy: [],
+    title_deed: [],
+    poa_pp: [],
+    poa_copy: [],
+    key_hand_over_form: [],
+    kyc_form: [],
+    screening: []
+  };
+
+$j(document).on('click', '.remove_file', function () {
+    
+    var name = $j(this).data("name");
+    var value = $j(this).attr("id");
+    var existingType = $j(this).data("existing");
+
+    console.log("➡️ File URL (id):", value);
+    console.log("➡️ Field Name:", name);
+    console.log("➡️ Is Existing (Old) File:", existingType === "old");
+
+    // Append to the removed list
+    var removedField = $j('#' + name + '_removed');
+    if (removedField.val().length == 0) {
+        removedField.val(value);
+    } else {
+        removedField.val(removedField.val() + ', ' + value);
+    }
+
+    console.log("📦 Updated '" + name + "_removed' value:", removedField.val());
+
+    // Decrease count
+    if (existingType == "old") {
+        var countField = $j('#' + name + '_existing_count');
+        console.log("Before",countField.val());
+        countField.val(parseInt(countField.val()) - 1);
+        console.log("🔢 Updated '" + name + "_existing_count' to:", countField.val());
+    } else {
+        var newCountField = $j('#' + name + '_new_removed_count');
+        newCountField.val(parseInt(newCountField.val()) - 1);
+        console.log("🔢 Updated '" + name + "_new_removed_count' to:", newCountField.val());
+    }
+
+    // Visually remove preview block
+    var previewDiv = $j(this).closest('.upload_prev');
+    if (previewDiv.length > 0) {
+        previewDiv.remove();
+        console.log("✅ Visually removed preview block.");
+    } else {
+        console.warn("⚠️ Could not find preview element to remove.");
+    }
+
+    console.log("✅ File successfully marked as removed.");
+});
+
+
+  // Handle new file selection and preview
+  $j('.imageUploadInput').on('change', function () {
+    const fieldName = this.id;
+    const files = this.files;
+    const $list = $j(`.${fieldName}_list`);
+
+    console.log(`🟦 Files selected for '${fieldName}':`, files);
+
+    // Clear previous previews
+    $list.empty();
+    console.log(`🧹 Cleared existing previews for '${fieldName}'`);
+
+    // Add previews for selected files
+    Array.from(files).forEach((file, index) => {
+      const fileId = `${fieldName}_new_${index}_${Date.now()}`;
+      console.log(`➕ Adding preview for file:`, file.name, "→ ID:", fileId);
+
+      $list.append(`
+        <div class="file-preview" data-url="${fileId}">
+          <span>${file.name}</span>
+          <p class="remove_file" id="${fileId}" data-name="${fieldName}" data-existing="new" style="cursor:pointer;color:red;font-weight:bold;margin-left:10px;">X</p>
+        </div>
+      `);
+    });
+  });
+});
+
+$j(document).ready(function() {
+    const mediaPrefix = '{% get_media_prefix %}';
+    const propertyId = {{ property.id }};
+    const apiUrl = `/api/rental-properties/${propertyId}/`;
+
+    // Log initial state of manager_approved_rejected
+    console.log("Initial Manager Approval Value:", $j('[name="manager_approved_rejected"]:checked').val() || "Not selected");
+    console.log("Initial Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
+
     function formatDateForInput(dateString) {
         if (!dateString || typeof dateString !== 'string') {
             console.warn('Invalid or empty dateString:', dateString);
             return '';
         }
-
-        // Already in yyyy-MM-dd format?
-        const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(dateString.trim());
-        if (isoMatch) return dateString.trim();
-
-        // dd-MM-yyyy format
-        const parts = dateString.trim().split('-');
-        if (parts.length !== 3) {
-            console.warn('Invalid date format, expected dd-MM-yyyy:', dateString);
-            return '';
+        let parts = dateString.trim().split('-');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1; // 0-based month
+            const year = parseInt(parts[2], 10);
+            if (!isNaN(day) && !isNaN(month) && !isNaN(year) && month >= 0 && month <= 11) {
+                const date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) {
+                    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                }
+            }
         }
-
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const year = parseInt(parts[2], 10);
-
-        if (isNaN(day) || isNaN(month) || isNaN(year)) {
-            console.warn('Invalid date components:', { day, month, year });
-            return '';
-        }
-
-        // Format to yyyy-MM-dd
-        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        console.warn('Invalid date format, expected dd-mm-yyyy:', dateString);
+        return '';
     }
 
-    // Load data into form
-    function loadPropertyData() {
-        $j.ajax({
-            url: apiUrl,
-            type: 'GET',
-            success: function(data) {
-                loadAgentDropdown(data);
+    function populateChequeDates(chequeDates, noOfCheques) {
+        $j('.append-cheque-date').empty();
+        const maxCheques = parseInt(noOfCheques) || 0;
+        console.log('Populating cheque dates:', { chequeDates, noOfCheques, maxCheques });
 
-                // Fill standard fields (skip no_of_cheque for now)
-                Object.keys(data).forEach(key => {
-                    const field = $j(`[name="${key}"]`);
-                    console.log(`Filling field: name="${key}" with value:`, data[key]);
-                    if (field.length) {
-                        if (field.is('input[type="date"]')) {
-                            field.val(formatDateForInput(data[key]));
-                        } else if (field.is('select')) {
-                            field.val(data[key]);
-                        } else if (field.is('textarea')) {
-                            field.val(data[key]);
-                        } else if (key !== 'no_of_cheque') {
-                            field.val(data[key]);
-                        }
-                    }
-                });
+        let datesArray = [];
+        if (Array.isArray(chequeDates)) {
+            datesArray = chequeDates.filter(d => d && d.trim());
+        } else if (typeof chequeDates === 'string' && chequeDates.trim()) {
+            datesArray = chequeDates.split(/[,\s]+/).filter(d => d && d.trim());
+        }
+        console.log('Normalized chequeDates:', datesArray);
 
-                // Handle cheque_date
-                let chequeDates = data.cheque_date;
-                if (typeof chequeDates === 'string') {
-                    chequeDates = chequeDates.split(' ').filter(date => date);
-                }
-                if (chequeDates && Array.isArray(chequeDates)) {
-                    $j('.append-cheque-date').empty();
-                    chequeDates.forEach((dateStr, index) => {
-                        const formattedDate = formatDateForInput(dateStr);
-                        const rowHtml = `
-                            <div class="row delete-cheque-date-row${index}">
-                                <div class="col-md-6 form-group">
-                                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" readonly style="background-color:white;">
-                                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
-                                </div>
-                                <div class="col-md-2 form-group" style="top:20px;">
-                                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
-                                </div>
-                            </div>`;
-                        $j('.append-cheque-date').append(rowHtml);
-                    });
-                    $j('#no_of_cheque').val(chequeDates.length);
-                } else {
-                    $j('.append-cheque-date').empty();
-                    $j('#no_of_cheque').val(0);
-                }
+        if (datesArray.length < maxCheques) {
+            datesArray = datesArray.concat(Array(maxCheques - datesArray.length).fill(''));
+        } else if (datesArray.length > maxCheques) {
+            datesArray = datesArray.slice(0, maxCheques);
+        }
 
-                // Set existing file counts for validation
-                ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].forEach(field => {
-                    const files = data[field] ? data[field].split(',').filter(f => f) : [];
-                    $j(`#${field}_existing_count`).val(files.length);
-                    console.log(`Set ${field}_existing_count to ${files.length}`);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('❌ Error fetching property:', xhr.responseText);
-                console.log('Status:', status);
-                console.log('Error:', error);
-                console.log('Response JSON:', xhr.responseJSON);
-                let errorMsg = 'Error fetching property data.';
-                if (xhr.responseJSON) {
-                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
-                }
-                alert(errorMsg);
-            },
-        });
-    }
-
-    // Add new cheque date row
-    $j('#add-cheque-row').on('click', function() {
-        const currentCount = $j('.delete-cheque-date-row').length;
-        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
-        if (currentCount < maxCheques || maxCheques === 0) {
-            const index = currentCount;
+        datesArray.forEach((dateStr, index) => {
+            const formattedDate = formatDateForInput(dateStr) || '';
             const rowHtml = `
-                <div class="row delete-cheque-date-row${index}">
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
                     <div class="col-md-6 form-group">
-                        <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
                         <span class="error text-danger" id="cheque_date_error_${index}"></span>
                     </div>
                     <div class="col-md-2 form-group" style="top:20px;">
@@ -1314,446 +2145,23 @@ function permute(input, permArr, usedChars) {
                     </div>
                 </div>`;
             $j('.append-cheque-date').append(rowHtml);
-            $j('#no_of_cheque').val(currentCount + 1);
-        }
-    });
-
-    // Remove cheque date row
-    $j(document).on('click', '.remove-cheque-date-row', function() {
-        $j(this).closest('.delete-cheque-date-row').remove();
-        const count = $j('.delete-cheque-date-row').length;
-        $j('#no_of_cheque').val(count);
-    });
-
-    // File validation
-    function ValidateSizeadd(file, id, i) {
-        const $error = $j(`#${id}_error`);
-        if (!file.files || file.files.length === 0) {
-            $error.html('Please select a file.').show();
-            return false;
-        }
-        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-        const fileType = file.files[0].type;
-        if (!validTypes.includes(fileType)) {
-            $error.html('Invalid file type. Only JPG, PNG, or PDF allowed.').show();
-            $j(`#${id}`).val('');
-            return false;
-        }
-        const maxSize = 3 * 1024 * 1024; // 3MB
-        const fileSize = file.files[0].size;
-        if (fileSize > maxSize) {
-            $error.html('File size should be less than 3 MB').show();
-            $j(`#${id}`).val('');
-            return false;
-        }
-        $error.hide();
-        console.log(`✅ Valid file selected for ${id}: ${file.files[0].name}, Size: ${fileSize} bytes, Type: ${fileType}`);
-        return true;
-    }
-
-    // Validation rules
-    $j.validator.addMethod("only_text", function(value, element) {
-        return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
-    }, "Enter valid Name");
-
-    $j.validator.addMethod("custom_email", function(value, element) {
-        var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
-        return this.optional(element) || regEx.test(value);
-    }, "Enter a valid email address.");
-
-    $j.validator.addMethod("alpha_numeric", function(value, element, param) {
-        return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
-    }, "Enter valid Profile Id");
-
-    $j.validator.addMethod("numeric", function(value, element, param) {
-        return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
-    }, "Enter only numbers.");
-
-    $j.validator.addMethod("text_special", function(value, element) {
-        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
-    }, "Enter only letters and special characters.");
-
-    $j.validator.addMethod("alphanum_special", function(value, element) {
-        return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
-    }, "Enter only letters, numbers and special characters.");
-
-    $j.validator.addMethod("lettersonly", function(value, element) {
-        return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
-    }, "Letters only please");
-
-    $j.validator.addMethod("mobile_number", function(value, element, param) {
-        return this.optional(element) || /^[+0-9 ]*?[0-9-+ ]+$/.test(value);
-    }, "Enter valid Phone number.");
-
-    $j.validator.addMethod("geopoints_latitude", function(value, element, param) {
-        return this.optional(element) || /^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/.test(value);
-    }, "Latitude format is invalid.");
-
-    $j.validator.addMethod("geopoints_longitude", function(value, element, param) {
-        return this.optional(element) || /^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/.test(value);
-    }, "Longitude format is invalid.");
-
-    // Form validation
-    $j('#rental_property_form').validate({
-        rules: {
-            submitted_by_agent: { required: true },
-            deal_date: { required: true },
-            reference_number: { required: true, alphanum_special: true },
-            project_name: { required: true, only_text: true },
-            building_name: { required: true, only_text: true },
-            unit_details: { required: true, only_text: true },
-            pms_price: { required: true, numeric: true },
-            pm_start_date: { required: true },
-            pm_end_date: { required: true },
-            tenancy_start_date: { required: true },
-            tenancy_end_date: { required: true },
-            owner_first_name: { required: true, lettersonly: true },
-            owner_source: { required: true },
-            owner_mobile: { required: true, mobile_number: true },
-            owner_email: { required: true, custom_email: true },
-            seller_nationality: { required: true, lettersonly: true },
-            agency_name: { required: true, only_text: true },
-            agent_name: { required: true, lettersonly: true },
-            agent_phone: { required: true, mobile_number: true },
-            no_of_cheque: { required: true, numeric: true },
-            total_commission: { required: true, numeric: true },
-            less_outside_commission: { required: true, numeric: true },
-            net_commission: { required: true, numeric: true },
-            classic: { required: true, alphanum_special: true },
-            agent1: { required: true, numeric: true },
-            agent_name1: { required: true },
-            receipt_no: { required: true },
-            is_property_aml: { required: true },
-            'pms_contract[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
-                    const files = $j('#pms_contract').get(0).files.length;
-                    console.log(`pms_contract validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            },
-            'owner_passport_copy[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
-                    const files = $j('#owner_passport_copy').get(0).files.length;
-                    console.log(`owner_passport_copy validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            },
-            'pms_cheque_copy[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
-                    const files = $j('#pms_cheque_copy').get(0).files.length;
-                    console.log(`pms_cheque_copy validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            },
-            'title_deed[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
-                    const files = $j('#title_deed').get(0).files.length;
-                    console.log(`title_deed validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            },
-            'kyc_form[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
-                    const files = $j('#kyc_form').get(0).files.length;
-                    console.log(`kyc_form validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            },
-            'screening[]': { 
-                required: function(element) {
-                    const existingCount = parseInt($j('#screening_existing_count').val()) || 0;
-                    const files = $j('#screening').get(0).files.length;
-                    console.log(`screening validation: existingCount=${existingCount}, files=${files}`);
-                    return existingCount === 0 && files === 0;
-                }
-            }
-        },
-        messages: {
-            submitted_by_agent: "Please select an agent",
-            deal_date: "Please select a deal date",
-            reference_number: "Please enter a valid reference number",
-            project_name: "Please enter a valid project name",
-            building_name: "Please enter a valid building name",
-            unit_details: "Please enter a valid unit number",
-            pms_price: "Please enter a valid PMS price",
-            pm_start_date: "Please select a PM start date",
-            pm_end_date: "Please select a PM end date",
-            tenancy_start_date: "Please select a tenancy start date",
-            tenancy_end_date: "Please select a tenancy end date",
-            owner_first_name: "Please enter a valid owner name",
-            owner_source: "Please select a source",
-            owner_mobile: "Please enter a valid mobile number",
-            owner_email: "Please enter a valid email",
-            seller_nationality: "Please enter a valid nationality",
-            agency_name: "Please enter a valid agency name",
-            agent_name: "Please enter a valid agent name",
-            agent_phone: "Please enter a valid phone number",
-            no_of_cheque: "Please enter a valid number of cheques",
-            total_commission: "Please enter a valid total commission",
-            less_outside_commission: "Please enter a valid less outside commission",
-            net_commission: "Please enter a valid net commission",
-            classic: "Please enter a valid classic value",
-            agent1: "Please enter a valid agent commission",
-            agent_name1: "Please select an agent",
-            receipt_no: "Please select a receipt number",
-            is_property_aml: "Please select AML status",
-            'pms_contract[]': "Please upload PMS contract",
-            'owner_passport_copy[]': "Please upload owner passport copy",
-            'pms_cheque_copy[]': "Please upload PMS cheque copy",
-            'title_deed[]': "Please upload title deed",
-            'kyc_form[]': "Please upload KYC form",
-            'screening[]': "Please upload screening"
-        },
-        errorPlacement: function(error, element) {
-            error.appendTo($j("#" + element.attr("id") + "_error"));
-        },
-        submitHandler: function(form) {
-            console.log("✅ submitHandler triggered - validation passed");
-            submitForm();
-        },
-        invalidHandler: function(event, validator) {
-            console.log("❌ Form validation failed:", validator.errorList);
-        }
-    });
-
-    // File size validation on change
-    $j('.imageUploadInput').on('change', function() {
-        ValidateSizeadd(this, this.id, 0);
-    });
-
-    // Date auto-fill (1 year from start date)
-    function appendDate() {
-        var deal_start_date = $j('#deal_date').val();
-        if (deal_start_date) {
-            var inputval = deal_start_date.split('-');
-            var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
-            var res = new Date(date);
-            res.setFullYear(res.getFullYear() + 1);
-            var dd = String(res.getDate()).padStart(2, '0');
-            var mm = String(res.getMonth() + 1).padStart(2, '0');
-            var yyyy = res.getFullYear();
-            $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
-            $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
-        }
-    }
-
-    $j('#deal_date, #pm_start_date, #tenancy_start_date').on('change', function() {
-        if (this.id === 'deal_date') appendDate();
-        else if (this.id === 'pm_start_date') {
-            var pm_start_date = $j('#pm_start_date').val();
-            if (pm_start_date) {
-                var inputval = pm_start_date.split('-');
-                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
-                var res = new Date(date);
-                res.setFullYear(res.getFullYear() + 1);
-                var dd = String(res.getDate()).padStart(2, '0');
-                var mm = String(res.getMonth() + 1).padStart(2, '0');
-                var yyyy = res.getFullYear();
-                $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
-            }
-        } else if (this.id === 'tenancy_start_date') {
-            var tenancy_start_date = $j('#tenancy_start_date').val();
-            if (tenancy_start_date) {
-                var inputval = tenancy_start_date.split('-');
-                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
-                var res = new Date(date);
-                res.setFullYear(res.getFullYear() + 1);
-                var dd = String(res.getDate()).padStart(2, '0');
-                var mm = String(res.getMonth() + 1).padStart(2, '0');
-                var yyyy = res.getFullYear();
-                $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
-            }
-        }
-    });
-
-    // Submit form via AJAX
-    function submitForm() {
-        $j('#is_deleted').val('N');
-        const formData = new FormData($j('#rental_property_form')[0]);
-        const submitBtn = $j('#create_deal');
-        console.log("Starting form submission to:", apiUrl);
-
-        // Log form data for debugging
-        for (let [key, value] of formData.entries()) {
-            console.log(`FormData: ${key} = ${value instanceof File ? value.name : value}`);
-        }
-
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        const csrftoken = getCookie('csrftoken');
-        console.log("CSRF Token:", csrftoken);
-
-        $j.ajax({
-            url: apiUrl,
-            type: 'PUT',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRFToken': csrftoken
-            },
-            success: function(data) {
-                console.log("✅ Property updated successfully:", data);
-                alert('Property updated successfully!');
-                window.location.href = "{% url 'rental-property-list' %}";
-            },
-            error: function(xhr, status, error) {
-                console.error('❌ Error updating property:', xhr.responseText);
-                console.log('Status:', status);
-                console.log('Error:', error);
-                console.log('Response JSON:', xhr.responseJSON);
-                let errorMsg = 'Error updating property.';
-                if (xhr.responseJSON) {
-                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
-                }
-                alert(errorMsg);
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Submit Property');
-            }
+            console.log(`Added cheque date ${index + 1}:`, { dateStr, formattedDate });
         });
+
+        $j('#no_of_cheque').val(datesArray.length);
+        console.log('Updated no_of_cheque to:', datesArray.length);
     }
 
-    // Load initial data
-    loadPropertyData();
-
-    // Warn on unsaved changes
-    let formChanged = false;
-    $j('#rental_property_form').on('change input', 'input, select, textarea', function() {
-        formChanged = true;
-    });
-
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-        }
-    });
-
-    // Confirm cancel
-    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
-        if (formChanged) {
-            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                e.preventDefault();
-            }
-        }
-    });
-});
-
-function loadAgentDropdown(requestdata) {
-    $j.ajax({
-        url: "/api/agents/dropdown/",
-        type: "GET",
-        success: function(agents) {
-            populateAgentDropdown("#submitted_by_agent", agents, requestdata.submitted_by_agent);
-            populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
-            populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
-            populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
-        },
-        error: function() {
-            console.error("Failed to load agents.");
-        },
-    });
-}
-
-function populateAgentDropdown(selector, data, selectedId = null) {
-    const $dropdown = $j(selector);
-    $dropdown.empty().append('<option value="">Select Agent</option>');
-    data.forEach(function(agent) {
-        const isSelected = selectedId == agent.id ? "selected" : "";
-        $dropdown.append(`<option value="${agent.id}" ${isSelected}>${agent.name}</option>`);
-    });
-}
-
-function scrollTop() {
-    $j('html, body').animate({
-        scrollTop: $j('.main-header').offset().top
-    }, 1000);
-    setTimeout(function() {
-        $j('#successmsg').fadeOut();
-    }, 3000);
-}
-
-function permute(input, permArr, usedChars) {
-    var i, ch;
-    for (i = 0; i < input.length; i++) {
-        ch = input.splice(i, 1)[0];
-        usedChars.push(ch);
-        if (input.length === 0) {
-            permArr.push(usedChars.slice());
-        }
-        permute(input, permArr, usedChars);
-        input.splice(i, 0, ch);
-        usedChars.pop();
-    }
-    return permArr;
-} {% endcomment %}
-
-
-$j(document).ready(function() {
-    const propertyId = {{ property.id }};
-    const apiUrl = `/api/rental-properties/${propertyId}/`; // Original URL preserved
-    //const apiUrl = `/api/rental-properties/${propertyId}/update/`
-
-    // Format date from dd-mm-yyyy to YYYY-MM-DD
-    function formatDateForInput(dateString) {
-        if (!dateString || typeof dateString !== 'string') {
-            console.warn('Invalid or empty dateString:', dateString);
-            return '';
-        }
-
-        const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(dateString.trim());
-        if (isoMatch) return dateString.trim();
-
-        const parts = dateString.trim().split('-');
-        if (parts.length !== 3) {
-            console.warn('Invalid date format, expected dd-MM-yyyy:', dateString);
-            return '';
-        }
-
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const year = parseInt(parts[2], 10);
-
-        if (isNaN(day) || isNaN(month) || isNaN(year)) {
-            console.warn('Invalid date components:', { day, month, year });
-            return '';
-        }
-
-        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    }
-
-    // Load data into form
     function loadPropertyData() {
         $j.ajax({
             url: apiUrl,
             type: 'GET',
             success: function(data) {
+                console.log('API response:', data);
                 loadAgentDropdown(data);
 
                 Object.keys(data).forEach(key => {
                     const field = $j(`[name="${key}"]`);
-                    console.log(`Filling field: name="${key}" with value:`, data[key]);
                     if (field.length) {
                         if (field.is('input[type="date"]')) {
                             field.val(formatDateForInput(data[key]));
@@ -1761,74 +2169,86 @@ $j(document).ready(function() {
                             field.val(data[key]);
                         } else if (field.is('textarea')) {
                             field.val(data[key]);
-                        } else if (key !== 'no_of_cheque') {
+                        } else if (key !== 'no_of_cheque' && key !== 'cheque_date') {
                             field.val(data[key]);
                         }
                     }
                 });
 
-                let chequeDates = data.cheque_date;
-                if (typeof chequeDates === 'string') {
-                    chequeDates = chequeDates.split(' ').filter(date => date);
-                }
-                if (chequeDates && Array.isArray(chequeDates)) {
-                    $j('.append-cheque-date').empty();
-                    chequeDates.forEach((dateStr, index) => {
-                        const formattedDate = formatDateForInput(dateStr);
-                        const rowHtml = `
-                            <div class="row delete-cheque-date-row${index}">
-                                <div class="col-md-6 form-group">
-                                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                                    
-                                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                // Log manager_approved_rejected after loading
+                console.log("Loaded Manager Approval Value:", $j('[name="manager_approved_rejected"]:checked').val() || "Not selected");
+                console.log("Loaded Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
 
-                                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
-                                </div>
-                                <div class="col-md-2 form-group" style="top:20px;">
-                                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
-                                </div>
-                            </div>`;
-                        $j('.append-cheque-date').append(rowHtml);
+                const documentFields = ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'];
+                documentFields.forEach(field => {
+                    const fileString = data[field] || '';
+                    const files = fileString.split(',').filter(f => f.trim());
+                    const $uploadPrev = $j(`#${field}`).siblings('.upload_prev').empty();
+                    files.forEach((file, index) => {
+                        const fileUrl = file.trim();
+                        $uploadPrev.append(`
+                            <div>
+                                <a href="${mediaPrefix}${fileUrl}" target="_new">${field} ${index + 1}</a>
+                                <p class="remove_file" id="${fileUrl}" data-name="${field}" data-existing="old">X</p>
+                            </div>
+                        `);
                     });
-                    $j('#no_of_cheque').val(chequeDates.length);
-                } else {
-                    $j('.append-cheque-date').empty();
-                    $j('#no_of_cheque').val(0);
-                }
-
-                // Set existing file counts for validation
-                ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].forEach(field => {
-                    const files = data[field] ? data[field].split(',').filter(f => f) : [];
                     $j(`#${field}_existing_count`).val(files.length);
                     console.log(`Set ${field}_existing_count to ${files.length}`);
                     console.log(`Existing files for ${field}:`, files);
                 });
+
+                const chequeDates = data.cheque_date || '';
+                const noOfCheques = data.no_of_cheque || 0;
+                console.log('Cheque data from API:', { chequeDates, noOfCheques });
+                populateChequeDates(chequeDates, noOfCheques);
             },
             error: function(xhr, status, error) {
                 console.error('❌ Error fetching property:', xhr.responseText);
-                console.log('Status:', status);
-                console.log('Error:', error);
-                console.log('Response JSON:', xhr.responseJSON);
                 let errorMsg = 'Error fetching property data.';
                 if (xhr.responseJSON) {
                     errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
                 }
                 alert(errorMsg);
-            },
+            }
         });
     }
 
-    // Add new cheque date row
-    $j('#add-cheque-row').on('click', function() {
+    $j('#no_of_cheque').on('change', function() {
+        const maxCheques = parseInt($j(this).val()) || 0;
         const currentCount = $j('.delete-cheque-date-row').length;
+
+        if (maxCheques < currentCount) {
+            $j('.delete-cheque-date-row').slice(maxCheques).remove();
+        } else if (maxCheques > currentCount) {
+            for (let i = currentCount; i < maxCheques; i++) {
+                const rowHtml = `
+                    <div class="row delete-cheque-date-row delete-cheque-date-row${i}">
+                        <div class="col-md-6 form-group">
+                            <label>Cheque Date ${i + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                            <input type="date" name="cheque_date[${i}]" class="form-control cheque-dates" id="cheque_dates_${i}" style="background-color:white;">
+                            <span class="error text-danger" id="cheque_date_error_${i}"></span>
+                        </div>
+                        <div class="col-md-2 form-group" style="top:20px;">
+                            <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                        </div>
+                    </div>`;
+                $j('.append-cheque-date').append(rowHtml);
+            }
+        }
+        console.log(`no_of_cheque changed to ${maxCheques}, current count: ${$j('.delete-cheque-date-row').length}`);
+    });
+
+    $j('#add-cheque-row').on('click', function() {
         const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        const currentCount = $j('.delete-cheque-date-row').length;
         if (currentCount < maxCheques || maxCheques === 0) {
             const index = currentCount;
             const rowHtml = `
-                <div class="row delete-cheque-date-row${index}">
+                <div class="row delete-cheque-date-row delete-cheque-date-row${index}">
                     <div class="col-md-6 form-group">
-                        <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
+                        <label>Cheque Date ${index + 1} <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" style="background-color:white;">
                         <span class="error text-danger" id="cheque_date_error_${index}"></span>
                     </div>
                     <div class="col-md-2 form-group" style="top:20px;">
@@ -1836,17 +2256,29 @@ $j(document).ready(function() {
                     </div>
                 </div>`;
             $j('.append-cheque-date').append(rowHtml);
-            $j('#no_of_cheque').val(currentCount + 1);
+            if (maxCheques === 0) {
+                $j('#no_of_cheque').val(currentCount + 1);
+            }
+        } else {
+            alert(`Cannot add more cheque dates. Maximum is ${maxCheques}.`);
         }
+        console.log(`Add clicked, current count: ${currentCount}, maxCheques: ${maxCheques}`);
     });
 
-    // Remove cheque date row
-    
     $j(document).on('click', '.remove-cheque-date-row', function() {
         $j(this).closest('.row').remove();
+        const currentCount = $j('.delete-cheque-date-row').length;
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        if (currentCount < maxCheques) {
+            $j('#no_of_cheque').val(currentCount);
+        }
+        console.log(`Remove clicked, updated count: ${currentCount}`);
     });
 
-    // File validation
+    $j('.imageUploadInput').on('change', function() {
+        ValidateSizeadd(this, this.id, 0);
+    });
+
     function ValidateSizeadd(file, id, i) {
         const $error = $j(`#${id}_error`);
         if (!file.files || file.files.length === 0) {
@@ -1860,7 +2292,7 @@ $j(document).ready(function() {
                 $j(`#${id}`).val('');
                 return false;
             }
-            const maxSize = 3 * 1024 * 1024; // 3MB
+            const maxSize = 3 * 1024 * 1024;
             if (f.size > maxSize) {
                 $error.html(`File ${f.name} size should be less than 3 MB`).show();
                 $j(`#${id}`).val('');
@@ -1872,7 +2304,36 @@ $j(document).ready(function() {
         return true;
     }
 
-    // Validation rules
+   
+
+    $j(function () {
+    console.log("Binding delegated radio input handler");
+
+    $j(document).on('change', 'input[name="manager_approved_rejected"]', function () {
+        var id = $j(this).attr('id');
+        let fixedValue = '';
+
+        if (id === 'manager_approved') {
+            fixedValue = 'A';
+        } else if (id === 'manager_rejected') {
+            fixedValue = 'R';
+        }
+
+        $j(this).val(fixedValue); // forcefully set correct value
+        console.log("Forced value set to:", fixedValue);
+    });
+
+    // Just for logging initial state
+    $j('input[name="manager_approved_rejected"]').each(function () {
+        console.log("ID:", $j(this).attr('id'), "Value:", $j(this).val(), "Visible:", $j(this).is(':visible'));
+    });
+});
+
+    // Log changes to is_approved_rejected
+    $j('[name="is_approved_rejected"]').on('change', function() {
+        console.log("Admin Approval Changed to:", $j(this).val());
+    });
+
     $j.validator.addMethod("only_text", function(value, element) {
         return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
     }, "Enter valid Name");
@@ -1914,7 +2375,10 @@ $j(document).ready(function() {
         return this.optional(element) || /^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/.test(value);
     }, "Longitude format is invalid.");
 
-    // Form validation
+    $j.validator.addMethod("valid_approval_status", function(value, element) {
+        return this.optional(element) || ['A', 'R'].indexOf(value) !== -1;
+    }, "Please select either Approved or Rejected.");
+
     $j('#rental_property_form').validate({
         rules: {
             submitted_by_agent: { required: true },
@@ -1936,7 +2400,7 @@ $j(document).ready(function() {
             agency_name: { required: true, only_text: true },
             agent_name: { required: true, lettersonly: true },
             agent_phone: { required: true, mobile_number: true },
-            no_of_cheque: { required: true, numeric: true },
+            no_of_cheque: { required: true, numeric: true, min: 0 },
             total_commission: { required: true, numeric: true },
             less_outside_commission: { required: true, numeric: true },
             net_commission: { required: true, numeric: true },
@@ -1945,11 +2409,21 @@ $j(document).ready(function() {
             agent_name1: { required: true },
             receipt_no: { required: true },
             is_property_aml: { required: true },
+            manager_approved_rejected: {
+                required: function(element) {
+                    return $j('[name="manager_approved_rejected"]').length > 0;
+                },
+                valid_approval_status: true
+            },
+            is_approved_rejected: {
+                required: function(element) {
+                    return $j('[name="is_approved_rejected"]').length > 0;
+                }
+            },
             'pms_contract[]': { 
                 required: function(element) {
                     const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
                     const files = $j('#pms_contract').get(0).files.length;
-                    console.log(`pms_contract validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
                 }
             },
@@ -1957,7 +2431,6 @@ $j(document).ready(function() {
                 required: function(element) {
                     const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
                     const files = $j('#owner_passport_copy').get(0).files.length;
-                    console.log(`owner_passport_copy validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
                 }
             },
@@ -1965,7 +2438,6 @@ $j(document).ready(function() {
                 required: function(element) {
                     const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
                     const files = $j('#pms_cheque_copy').get(0).files.length;
-                    console.log(`pms_cheque_copy validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
                 }
             },
@@ -1973,7 +2445,6 @@ $j(document).ready(function() {
                 required: function(element) {
                     const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
                     const files = $j('#title_deed').get(0).files.length;
-                    console.log(`title_deed validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
                 }
             },
@@ -1981,7 +2452,6 @@ $j(document).ready(function() {
                 required: function(element) {
                     const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
                     const files = $j('#kyc_form').get(0).files.length;
-                    console.log(`kyc_form validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
                 }
             },
@@ -1989,8 +2459,14 @@ $j(document).ready(function() {
                 required: function(element) {
                     const existingCount = parseInt($j('#screening_existing_count').val()) || 0;
                     const files = $j('#screening').get(0).files.length;
-                    console.log(`screening validation: existingCount=${existingCount}, files=${files}`);
                     return existingCount === 0 && files === 0;
+                }
+            },
+            'cheque_date[]': { 
+                required: function(element) {
+                    const noOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
+                    const chequeDates = $j('.cheque-dates').filter(function() { return $j(this).val(); }).length;
+                    return noOfCheques > 0 && chequeDates === 0;
                 }
             }
         },
@@ -2023,15 +2499,25 @@ $j(document).ready(function() {
             agent_name1: "Please select an agent",
             receipt_no: "Please select a receipt number",
             is_property_aml: "Please select AML status",
+            manager_approved_rejected: "Please select Manager Approval status (Approved or Rejected)",
+            is_approved_rejected: "Please select Approve/Reject status",
             'pms_contract[]': "Please upload PMS contract",
             'owner_passport_copy[]': "Please upload owner passport copy",
             'pms_cheque_copy[]': "Please upload PMS cheque copy",
             'title_deed[]': "Please upload title deed",
             'kyc_form[]': "Please upload KYC form",
-            'screening[]': "Please upload screening"
+            'screening[]': "Please upload screening",
+            'cheque_date[]': "Please provide at least one cheque date if number of cheques is greater than 0"
         },
         errorPlacement: function(error, element) {
-            error.appendTo($j("#" + element.attr("id") + "_error"));
+            if (element.attr('name').startsWith('cheque_date[')) {
+                const index = element.attr('name').match(/\[(\d+)\]/)[1];
+                error.appendTo($j(`#cheque_date_error_${index}`));
+            } else if (element.attr('name') === 'manager_approved_rejected') {
+                error.appendTo($j('#manager_approved_rejected_error'));
+            } else {
+                error.appendTo($j(`#${element.attr('id')}_error`));
+            }
         },
         submitHandler: function(form) {
             console.log("✅ submitHandler triggered - validation passed");
@@ -2042,12 +2528,6 @@ $j(document).ready(function() {
         }
     });
 
-    // File input change handler
-    $j('.imageUploadInput').on('change', function() {
-        ValidateSizeadd(this, this.id, 0);
-    });
-
-    // Date auto-fill (1 year from start date)
     function appendDate() {
         var deal_start_date = $j('#deal_date').val();
         if (deal_start_date) {
@@ -2092,16 +2572,69 @@ $j(document).ready(function() {
         }
     });
 
-    // Submit form via AJAX
+    
+
+
     function submitForm() {
+        console.log("submitForm: Starting form submission process");
         $j('#is_deleted').val('N');
         const formData = new FormData($j('#rental_property_form')[0]);
         const submitBtn = $j('#create_deal');
-        console.log("Starting form submission to:", apiUrl);
 
-        // Log form data for debugging
+        // Collect cheque dates
+        const chequeDates = [];
+        $j('.cheque-dates').each(function(index) {
+            const dateValue = $j(this).val();
+            console.log(`submitForm: Processing cheque_date[${index}] = ${dateValue}`);
+            if (dateValue) {
+                // Convert yyyy-mm-dd to dd-mm-yyyy for backend
+                const parts = dateValue.split('-');
+                if (parts.length === 3) {
+                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    chequeDates.push(formattedDate);
+                    console.log(`submitForm: Formatted cheque_date[${index}] = ${formattedDate}`);
+                } else {
+                    console.warn(`submitForm: Invalid date format for cheque_date[${index}]: ${dateValue}`);
+                }
+            }
+        });
+
+        // Log collected cheque dates
+        console.log("submitForm: Collected cheque dates:", chequeDates);
+
+        // Remove individual cheque_date[] fields from FormData
+        for (let [key] of formData.entries()) {
+            if (key.startsWith('cheque_date[')) {
+                console.log(`submitForm: Removing FormData key: ${key}`);
+                formData.delete(key);
+            }
+        }
+
+        // Append cheque_date as a JSON stringified list
+        if (chequeDates.length > 0) {
+            const chequeDateList = JSON.stringify(chequeDates);
+            formData.append('cheque_date', chequeDateList);
+            console.log(`submitForm: Appended cheque_date to FormData as JSON: ${chequeDateList}`);
+        } else {
+            formData.append('cheque_date', JSON.stringify([]));
+            console.log("submitForm: Appended empty cheque_date to FormData as JSON: []");
+        }
+
+        // Log manager_approved_rejected before submission
+        const managerApproval = $j('[name="manager_approved_rejected"]:checked').val();
+        console.log("submitForm: Manager Approval Value:", managerApproval || "Not selected");
+        console.log("submitForm: Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
+
+        // Explicitly set manager_approved_rejected if required
+        if ($j('[name="manager_approved_rejected"]').length > 0 && !managerApproval) {
+            console.warn("submitForm: No manager_approved_rejected value selected, setting default to 'A'");
+            formData.set('manager_approved_rejected', 'A');
+        }
+
+        // Log all FormData contents
+        console.log("submitForm: FormData contents:");
         for (let [key, value] of formData.entries()) {
-            console.log(`FormData: ${key} = ${value instanceof File ? value.name : value}`);
+            console.log(`  ${key}: ${value instanceof File ? value.name : value}`);
         }
 
         submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
@@ -2118,11 +2651,12 @@ $j(document).ready(function() {
                     }
                 }
             }
+            console.log(`submitForm: Retrieved CSRF token for ${name}: ${cookieValue}`);
             return cookieValue;
         }
 
         const csrftoken = getCookie('csrftoken');
-        console.log("CSRF Token:", csrftoken);
+        console.log("submitForm: CSRF Token:", csrftoken);
 
         $j.ajax({
             url: apiUrl,
@@ -2134,31 +2668,28 @@ $j(document).ready(function() {
                 'X-CSRFToken': csrftoken
             },
             success: function(data) {
-                console.log("✅ Property updated successfully:", data);
+                console.log("submitForm: ✅ Property updated successfully:", data);
+                console.log("submitForm: Backend response data:", JSON.stringify(data, null, 2));
                 alert('Property updated successfully!');
                 window.location.href = "{% url 'rental-property-list' %}";
             },
             error: function(xhr, status, error) {
-                console.error('❌ Error updating property:', xhr.responseText);
-                console.log('Status:', status);
-                console.log('Error:', error);
-                console.log('Response JSON:', xhr.responseJSON);
+                console.error("submitForm: ❌ Error updating property:", xhr.responseText);
                 let errorMsg = 'Error updating property.';
                 if (xhr.responseJSON) {
                     errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                    console.log("submitForm: Backend error details:", xhr.responseJSON);
                 }
                 alert(errorMsg);
             },
             complete: function() {
+                console.log("submitForm: AJAX request completed");
                 submitBtn.prop('disabled', false).text('Submit Property');
             }
         });
     }
-
-    // Load initial data
     loadPropertyData();
 
-    // Warn on unsaved changes
     let formChanged = false;
     $j('#rental_property_form').on('change input', 'input, select, textarea', function() {
         formChanged = true;
@@ -2171,7 +2702,6 @@ $j(document).ready(function() {
         }
     });
 
-    // Confirm cancel
     $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
         if (formChanged) {
             if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
@@ -2193,7 +2723,7 @@ function loadAgentDropdown(requestdata) {
         },
         error: function() {
             console.error("Failed to load agents.");
-        },
+        }
     });
 }
 

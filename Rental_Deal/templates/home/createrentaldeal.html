@@ -3065,7 +3065,7 @@
 
 
 
-      function appendDate(){
+  function appendDate(){
    $('#deal_start_date-error').hide();
    $('#deal_end_date-error').hide();
     var deal_start_date=$('#deal_start_date').val();
@@ -3142,6 +3142,7 @@
 
       function showErrors(validator) {
         var messages = "";
+        console.log(validator, "messages in show errors validator");
         $.each(validator.errorMap, function (index, value) {
           if (lang == "ar") {
             for (var key in form_fields) {
@@ -3150,7 +3151,7 @@
               if (key == index) {
                 messages += val + " : " + value + "\n";
               } else {
-                // messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+                 messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
               }
             }
           } else {
@@ -3160,8 +3161,11 @@
               " : " +
               value +
               "\n";
+
+              console.log(messages, "messages in show errors else");
           }
         });
+        console.log(messages);
         swal(msg, messages);
       }
 

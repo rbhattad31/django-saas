@@ -1,4 +1,4 @@
-# from django import forms
+from django import forms
 # from django.contrib.auth.models import User
 # from django.contrib.auth.forms import UserCreationForm
 
@@ -17,7 +17,7 @@
 # from django import forms
 # from django.contrib.auth.forms import UserCreationForm
 # from .models import Users
-# from .models import RentalProperties
+from core.models import RentalProperties
 
 
 # # class LoginForm(forms.Form):
@@ -69,18 +69,18 @@
 # #             # Add widgets for other fields here as needed
 # #         }
 
-# class PropertyForm(forms.ModelForm):
-#     class Meta:
-#         model = RentalProperties
-#         fields = '__all__'  # Adjust fields as needed based on your model
-#         widgets = {
-#             'deal_date': forms.DateInput(attrs={'type': 'date'}),
-#             'pm_start_date': forms.DateInput(attrs={'type': 'date'}),
-#             'pm_end_date': forms.DateInput(attrs={'type': 'date'}),
-#             'tenancy_start_date': forms.DateInput(attrs={'type': 'date'}),
-#             'tenancy_end_date': forms.DateInput(attrs={'type': 'date'}),
-#             'cheque_date': forms.DateInput(attrs={'type': 'date'}),
-#             'aml': forms.RadioSelect(choices=[('Yes', 'Yes'), ('No', 'No')]),
-#             'approve_reject': forms.RadioSelect(choices=[('Approve', 'Approve'), ('Reject', 'Reject'), ('Waiting for Finance', 'Waiting for Finance')]),
-#         }
+class PropertyForm(forms.ModelForm):
+    class Meta:
+        model = RentalProperties
+        fields = '__all__'  # Adjust fields as needed based on your model
+        widgets = {
+            'deal_date': forms.DateInput(attrs={'type': 'date'}),
+            'pm_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'pm_end_date': forms.DateInput(attrs={'type': 'date'}),
+            'tenancy_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'tenancy_end_date': forms.DateInput(attrs={'type': 'date'}),
+            'cheque_date': forms.DateInput(attrs={'type': 'date'}),
+            'aml': forms.RadioSelect(choices=[('Yes', 'Yes'), ('No', 'No')]),
+            'approve_reject': forms.RadioSelect(choices=[('Approve', 'Approve'), ('Reject', 'Reject'), ('Waiting for Finance', 'Waiting for Finance')]),
+        }
 

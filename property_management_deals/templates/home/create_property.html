@@ -37,6 +37,22 @@
     .file-preview {
         margin-top: 10px;
         font-size: 0.875rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .file-preview-item {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+    .file-preview-item .remove_file {
+        margin-left: 10px;
+        color: red;
+        cursor: pointer;
+        font-weight: bold;
     }
 </style>
 {% endblock stylesheets %}
@@ -69,24 +85,26 @@
                             <a href="#nav-documents" class="nav-item nav-link" id="nav-documents-tab" data-toggle="tab" role="tab" aria-controls="nav-documents" aria-selected="false">Upload Documents</a>
                         </div>
                     </nav>
-                    <form id="rental_property_form"   enctype="multipart/form-data" novalidate="novalidate">
-                         
+                    <form id="rental_property_form" enctype="multipart/form-data" novalidate="novalidate">
                         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                         <input type="hidden" value="2" name="account_id" id="account_id">
+                        <input type="hidden" id="is_deleted" name="is_deleted" value="N">
                         <div class="tab-content ul-tab__content" id="nav-tabContent">
                             <!-- Property Details -->
                             <div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
                                 <div class="form-group row nav-property">
-                                    <div class="col-md-6 form-group">
-                                        <label for="submitted_by_agent">Deal Submitted By Agent<span class="mandetory_field" style="color: red">*</span></label>
-                                        <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent" required>
-                                            <option value="">Select Agent Name</option>
-                                            {% for agent in agents %}
-                                            <option value="{{ agent.id }}">{{ agent.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <span class="text-danger" id="submitted_by_agent_error"></span>
-                                    </div>
+                                    {% if perms.core.admin_properties_fields_rentalproperties %}
+                                        <div class="col-md-6 form-group">
+                                            <label for="submitted_by_agent">Deal Submitted By Agent<span class="mandetory_field" style="color: red">*</span></label>
+                                            <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent" required>
+                                                <option value="">Select Agent Name</option>
+                                                {% for agent in agents %}
+                                                <option value="{{ agent.id }}">{{ agent.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <span class="text-danger" id="submitted_by_agent_error"></span>
+                                        </div>
+                                    {% endif %}
                                     <div class="col-md-6 form-group">
                                         <label for="deal_date">Deal Date<span class="mandetory_field" style="color: red">*</span></label>
                                         <input type="date" id="deal_date" name="deal_date" class="form-control" required>
@@ -142,7 +160,9 @@
                                 <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Next</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +203,9 @@
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-property')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Next</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftSource" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftSource" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +243,9 @@
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Next</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -252,7 +276,9 @@
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-revenue')">Next</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftCheque" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftCheque" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -329,11 +355,13 @@
                                         <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" placeholder="Agent Comments"></textarea>
                                         <span class="text-danger" id="agent_comment_error"></span>
                                     </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="comments">Comment by Admin</label>
-                                        <textarea class="form-control" name="comments" id="comments" rows="5" placeholder="Admin Comments"></textarea>
-                                        <span class="text-danger" id="comments_error"></span>
-                                    </div>
+                                    {% if perms.core.admin_properties_fields_rentalproperties %}
+                                        <div class="col-md-6 form-group">
+                                            <label for="comments">Comment by Admin</label>
+                                            <textarea class="form-control" name="comments" id="comments" rows="5" placeholder="Admin Comments"></textarea>
+                                            <span class="text-danger" id="comments_error"></span>
+                                        </div>
+                                    {% endif %}
                                     <div class="col-md-6 form-group">
                                         <label for="receipt_no">Receipt No<span class="mandetory_field" style="color: red">*</span></label>
                                         <select name="receipt_no" class="form-control" id="receipt_no" required>
@@ -351,106 +379,135 @@
                                         <input type="text" id="kyc_number" name="kyc_number" class="form-control" placeholder="KYC Number">
                                         <span class="text-danger" id="kyc_number_error"></span>
                                     </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="is_approved_rejected">Approve/Reject</label>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <input type="radio" name="is_approved_rejected" value="A"> Approve
+                                    {% if perms.core.admin_properties_fields_rentalproperties %}
+                                        <div class="col-md-6 form-group">
+                                            <label for="is_approved_rejected">Approve/Reject</label>
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <input type="radio" name="is_approved_rejected" value="A"> Approve
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="radio" name="is_approved_rejected" value="R"> Reject
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
+                                                </div>
                                             </div>
-                                            <div class="col-4">
-                                                <input type="radio" name="is_approved_rejected" value="R"> Reject
-                                            </div>
-                                            <div class="col-4">
-                                                <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
-                                            </div>
+                                            <span class="text-danger" id="is_approved_rejected_error"></span>
                                         </div>
-                                        <span class="text-danger" id="is_approved_rejected_error"></span>
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="is_property_aml">AML<span class="mandetory_field" style="color: red">*</span></label>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <input value="Yes" name="is_property_aml" id="is_property_aml_yes" type="radio" required> Yes
+                                    {% endif %}
+                                    {% if perms.core.admin_properties_fields_rentalproperties %}
+                                        <div class="col-md-6 form-group">
+                                            <label for="is_property_aml">AML<span class="mandetory_field" style="color: red">*</span></label>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <input value="Yes" name="is_property_aml" id="is_property_aml_yes" type="radio" required> Yes
+                                                </div>
+                                                <div class="col-6">
+                                                    <input value="No" name="is_property_aml" id="is_property_aml_no" type="radio"> No
+                                                </div>
                                             </div>
-                                            <div class="col-6">
-                                                <input value="No" name="is_property_aml" id="is_property_aml_no" type="radio"> No
-                                            </div>
+                                            <span class="text-danger" id="is_property_aml_error"></span>
                                         </div>
-                                        <span class="text-danger" id="is_property_aml_error"></span>
-                                    </div>
+                                    {% else %}
+                                        <input type="hidden" name="is_property_aml" value="No">
+                                    {% endif %}
                                 </div>
                                 <hr>
                                 <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-documents')">Next</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                             <!-- Upload Documents -->
                             <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
                                 <div class="form-group row nav-documents">
+                                    <!-- PMS Contract -->
                                     <div class="col-md-6 form-group">
                                         <label for="pms_contract">PMS Contract<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="pms_contract" type="file" name="pms_contract" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="pms_contract" type="file" name="pms_contract[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="pms_contract_preview"></div>
+                                        <input type="hidden" id="pms_contract_removed" name="pms_contract_removed">
                                         <span class="text-danger" id="pms_contract_error"></span>
                                     </div>
+                                    <!-- Owner Passport Copy -->
                                     <div class="col-md-6 form-group">
                                         <label for="owner_passport_copy">Owner Passport Copy<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="owner_passport_copy" type="file" name="owner_passport_copy" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="owner_passport_copy" type="file" name="owner_passport_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="owner_passport_copy_preview"></div>
+                                        <input type="hidden" id="owner_passport_copy_removed" name="owner_passport_copy_removed">
                                         <span class="text-danger" id="owner_passport_copy_error"></span>
                                     </div>
+                                    <!-- Owner EID Copy -->
                                     <div class="col-md-6 form-group">
                                         <label for="owner_eid_copy">Owner EID Copy</label>
-                                        <input class="imageUploadInput form-control" id="owner_eid_copy" type="file" name="owner_eid_copy" accept=".pdf,.jpg,.jpeg,.png">
+                                        <input multiple class="imageUploadInput form-control" id="owner_eid_copy" type="file" name="owner_eid_copy[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="owner_eid_copy_preview"></div>
+                                        <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_removed">
                                         <span class="text-danger" id="owner_eid_copy_error"></span>
                                     </div>
+                                    <!-- PMS Cheque Copy -->
                                     <div class="col-md-6 form-group">
                                         <label for="pms_cheque_copy">PMS Cheque Copy<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="pms_cheque_copy" type="file" name="pms_cheque_copy" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="pms_cheque_copy" type="file" name="pms_cheque_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="pms_cheque_copy_preview"></div>
+                                        <input type="hidden" id="pms_cheque_copy_removed" name="pms_cheque_copy_removed">
                                         <span class="text-danger" id="pms_cheque_copy_error"></span>
                                     </div>
+                                    <!-- Title Deed -->
                                     <div class="col-md-6 form-group">
                                         <label for="title_deed">Title Deed<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="title_deed" type="file" name="title_deed" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="title_deed" type="file" name="title_deed[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="title_deed_preview"></div>
+                                        <input type="hidden" id="title_deed_removed" name="title_deed_removed">
                                         <span class="text-danger" id="title_deed_error"></span>
                                     </div>
+                                    <!-- POA PP -->
                                     <div class="col-md-6 form-group">
                                         <label for="poa_pp">POA PP</label>
-                                        <input class="imageUploadInput form-control" id="poa_pp" type="file" name="poa_pp" accept=".pdf,.jpg,.jpeg,.png">
+                                        <input multiple class="imageUploadInput form-control" id="poa_pp" type="file" name="poa_pp[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="poa_pp_preview"></div>
+                                        <input type="hidden" id="poa_pp_removed" name="poa_pp_removed">
                                         <span class="text-danger" id="poa_pp_error"></span>
                                     </div>
+                                    <!-- POA Copy -->
                                     <div class="col-md-6 form-group">
                                         <label for="poa_copy">POA Copy</label>
-                                        <input class="imageUploadInput form-control" id="poa_copy" type="file" name="poa_copy" accept=".pdf,.jpg,.jpeg,.png">
+                                        <input multiple class="imageUploadInput form-control" id="poa_copy" type="file" name="poa_copy[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="poa_copy_preview"></div>
+                                        <input type="hidden" id="poa_copy_removed" name="poa_copy_removed">
                                         <span class="text-danger" id="poa_copy_error"></span>
                                     </div>
+                                    <!-- Key Hand Over Form -->
                                     <div class="col-md-6 form-group">
                                         <label for="key_hand_over_form">Key Hand Over Form</label>
-                                        <input class="imageUploadInput form-control" id="key_hand_over_form" type="file" name="key_hand_over_form" accept=".pdf,.jpg,.jpeg,.png">
+                                        <input multiple class="imageUploadInput form-control" id="key_hand_over_form" type="file" name="key_hand_over_form[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="key_hand_over_form_preview"></div>
+                                        <input type="hidden" id="key_hand_over_form_removed" name="key_hand_over_form_removed">
                                         <span class="text-danger" id="key_hand_over_form_error"></span>
                                     </div>
+                                    <!-- KYC Form -->
                                     <div class="col-md-6 form-group">
                                         <label for="kyc_form">KYC Form<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="kyc_form" type="file" name="kyc_form" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="kyc_form" type="file" name="kyc_form[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="kyc_form_preview"></div>
+                                        <input type="hidden" id="kyc_form_removed" name="kyc_form_removed">
                                         <span class="text-danger" id="kyc_form_error"></span>
                                     </div>
+                                    <!-- Screening -->
                                     <div class="col-md-6 form-group">
                                         <label for="screening">Screening<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input class="imageUploadInput form-control" id="screening" type="file" name="screening" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <input multiple class="imageUploadInput form-control" id="screening" type="file" name="screening[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="screening_preview"></div>
+                                        <input type="hidden" id="screening_removed" name="screening_removed">
                                         <span class="text-danger" id="screening_error"></span>
                                     </div>
+                                    <!-- Screening Comments -->
                                     <div class="col-md-6 form-group">
                                         <label for="screening_comments">Screening Comments</label>
                                         <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" placeholder="Screening Comments"></textarea>
@@ -462,7 +519,9 @@
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-revenue')">Previous</button>
                                         <button type="submit" class="btn btn-primary btn-rounded m-1" id="submitDeal">Create Property</button>
-                                        <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftDocuments" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% if perms.core.create_draft_property_rentalproperties %}
+                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftDocuments" onclick="saveAsDraft()">Save As Draft</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -485,20 +544,34 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 
 <script>
-var $main = jQuery.noConflict(true);
-window.$main = $main;
+var $j = jQuery.noConflict(true);
+window.$j = $j;
 
-console.log("Using $main version:", $main.fn.jquery);
-console.log("Validator available:", typeof $main.validator !== "undefined");
+console.log("Using $j version:", $j.fn.jquery);
+console.log("Validator available:", typeof $j.validator !== "undefined");
+
+// Object to store selected files for each input
+const selectedFiles = {
+    'pms_contract': [],
+    'owner_passport_copy': [],
+    'owner_eid_copy': [],
+    'pms_cheque_copy': [],
+    'title_deed': [],
+    'poa_pp': [],
+    'poa_copy': [],
+    'key_hand_over_form': [],
+    'kyc_form': [],
+    'screening': []
+};
 
 function showErrors(validator) {
     let messages = '';
     if (validator && Array.isArray(validator.errorList)) {
-        $main.each(validator.errorList, function (_, error) {
+        $j.each(validator.errorList, function (_, error) {
             if (!error || !error.element) return;
-            const field = $main(error.element);
+            const field = $j(error.element);
             const fieldName = field.attr('name');
-            let labelText = $main(`label[for="${field.attr('id')}"]`).text().trim();
+            let labelText = $j(`label[for="${field.attr('id')}"]`).text().trim();
             if (!labelText) {
                 labelText = field.closest('.form-group').find('label').first().text().trim() || fieldName;
             }
@@ -509,19 +582,19 @@ function showErrors(validator) {
 }
 
 function validateChequeDates() {
-    const numberOfCheques = parseInt($main('#no_of_cheque').val()) || 0;
-    const chequeDatesCount = $main('[name="cheque_date[]"]').length;
+    const numberOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
+    const chequeDatesCount = $j('[name="cheque_date[]"]').length;
     if (numberOfCheques !== chequeDatesCount) {
-        $main('#no_of_cheque_error').text(`Please add exactly ${numberOfCheques} cheque date(s).`);
+        $j('#no_of_cheque_error').text(`Please add exactly ${numberOfCheques} cheque date(s).`);
         return false;
     }
-    $main('#no_of_cheque_error').text('');
+    $j('#no_of_cheque_error').text('');
     return true;
 }
 
 function switchTab(tabId) {
     const currentTab = document.querySelector('.tab-pane.show.active')?.id;
-    const validator = $main("#rental_property_form").validate();
+    const validator = $j("#rental_property_form").validate();
 
     const tabOrder = [
         'nav-property',
@@ -538,14 +611,14 @@ function switchTab(tabId) {
         'nav-agency': ['agency_name', 'agent_name', 'agent_phone'],
         'nav-cheque': ['no_of_cheque', 'cheque_date[]'],
         'nav-revenue': ['total_commission', 'less_outside_commission', 'net_commission', 'classic', 'agent1', 'agent_name1', 'receipt_no', 'is_property_aml'],
-        'nav-documents': ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening']
+        'nav-documents': ['pms_contract[]', 'owner_passport_copy[]', 'pms_cheque_copy[]', 'title_deed[]', 'kyc_form[]', 'screening[]']
     };
 
     // Remove required rules from all fields
     Object.keys(tabFields).forEach(tab => {
         tabFields[tab].forEach(field => {
-            $main(`[name="${field}"]`).each(function () {
-                $main(this).rules('remove', 'required');
+            $j(`[name="${field}"]`).each(function () {
+                $j(this).rules('remove', 'required');
             });
         });
     });
@@ -557,12 +630,12 @@ function switchTab(tabId) {
 
     if (isNext && currentTab && tabFields[currentTab]) {
         tabFields[currentTab].forEach(field => {
-            $main(`[name="${field}"]`).each(function () {
-                $main(this).rules('add', { required: true });
+            $j(`[name="${field}"]`).each(function () {
+                $j(this).rules('add', { required: true });
             });
         });
 
-        const currentTabValid = $main(`#${currentTab}`).find(':input').valid();
+        const currentTabValid = $j(`#${currentTab}`).find(':input').valid();
         if (!currentTabValid) {
             showErrors(validator);
             return;
@@ -573,14 +646,25 @@ function switchTab(tabId) {
                 return;
             }
         }
+
+        // Validate required file fields
+        if (currentTab === 'nav-documents') {
+            const requiredFileFields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'];
+            for (let field of requiredFileFields) {
+                if (selectedFiles[field].length === 0) {
+                    $j(`#${field}_error`).text('At least one file is required.');
+                    return;
+                }
+            }
+        }
     }
 
-    $main(`#${tabId}-tab`).tab('show');
+    $j(`#${tabId}-tab`).tab('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function saveAsDraft() {
-    const form = $main('#rental_property_form');
+    const form = $j('#rental_property_form');
     const validator = form.validate();
 
     const draftFields = [
@@ -592,8 +676,8 @@ function saveAsDraft() {
 
     // Add required rules for draft fields
     draftFields.forEach(field => {
-        $main(`[name="${field}"]`).each(function () {
-            $main(this).rules('add', { required: true });
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('add', { required: true });
         });
     });
 
@@ -603,14 +687,14 @@ function saveAsDraft() {
         'cheque_date[]', 'total_commission', 'less_outside_commission', 'net_commission',
         'classic', 'agent1', 'agent_name1', 'agent2', 'agent_name2', 'agent3', 'agent_name3',
         'agent_comment', 'comments', 'receipt_no', 'kyc_number', 'is_approved_rejected',
-        'is_property_aml', 'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
-        'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form',
-        'kyc_form', 'screening', 'screening_comments'
+        'is_property_aml', 'pms_contract[]', 'owner_passport_copy[]', 'owner_eid_copy[]',
+        'pms_cheque_copy[]', 'title_deed[]', 'poa_pp[]', 'poa_copy[]', 'key_hand_over_form[]',
+        'kyc_form[]', 'screening[]', 'screening_comments'
     ];
 
     allFields.forEach(field => {
-        $main(`[name="${field}"]`).each(function () {
-            $main(this).rules('remove', 'required');
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('remove', 'required');
         });
     });
 
@@ -618,19 +702,31 @@ function saveAsDraft() {
         const formData = new FormData(form[0]);
         formData.append('save_as', 'draft');
 
-        $main.ajax({
+        // Append files from selectedFiles
+        Object.keys(selectedFiles).forEach(field => {
+            selectedFiles[field].forEach(file => {
+                formData.append(`${field}[]`, file);
+            });
+            // Append removed files
+            const removedField = $j(`#${field}_removed`).val();
+            if (removedField) {
+                formData.append(`${field}_removed`, removedField);
+            }
+        });
+
+        $j.ajax({
             url: '/rental-properties/create/',
             type: 'POST',
             data: formData,
             headers: {
-                'X-CSRFToken': $main('input[name="csrfmiddlewaretoken"]').val()
+                'X-CSRFToken': $j('input[name="csrfmiddlewaretoken"]').val()
             },
             processData: false,
             contentType: false,
             success: function (response) {
                 if (response.success) {
-                    $main('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
-                    setTimeout(() => $main('#successmsg').hide(), 3000);
+                    $j('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
+                    setTimeout(() => $j('#successmsg').hide(), 3000);
                 } else {
                     alert('Failed to save draft: ' + (response.message || 'Unknown error'));
                 }
@@ -648,50 +744,57 @@ function saveAsDraft() {
     }
 }
 
-$main(document).ready(function () {
+$j(document).ready(function () {
     // Initialize datepickers
-    $main('.startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
+    $j('.startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
         dateFormat: 'yy-mm-dd',
         changeMonth: true,
         changeYear: true
     });
 
     // Custom validation methods
-    $main.validator.addMethod("alphanum_special", function (value, element) {
+    $j.validator.addMethod("alphanum_special", function (value, element) {
         return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
     }, "Only letters, numbers, and certain special characters are allowed.");
 
-    $main.validator.addMethod("numeric", function (value, element) {
+    $j.validator.addMethod("numeric", function (value, element) {
         return this.optional(element) || /^[0-9]*$/.test(value);
     }, "Please enter a valid number.");
 
-    $main.validator.addMethod("custom_email", function (value, element) {
+    $j.validator.addMethod("custom_email", function (value, element) {
         return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
     }, "Please enter a valid email address.");
 
-    $main.validator.addMethod("dateAfterStart", function (value, element, params) {
-        const startDate = $main(params).val();
+    $j.validator.addMethod("dateAfterStart", function (value, element, params) {
+        const startDate = $j(params).val();
         if (!value || !startDate) return true;
         return new Date(value) >= new Date(startDate);
     }, "End date must be after start date.");
 
-    $main.validator.addMethod("fileSize", function (value, element) {
+    $j.validator.addMethod("fileSize", function (value, element) {
         const maxFileSize = 3 * 1024 * 1024; // 3MB
         if (element.files && element.files.length > 0) {
-            return element.files[0].size <= maxFileSize;
+            return Array.from(element.files).every(file => file.size <= maxFileSize);
         }
         return true;
-    }, "File size must be less than 3MB.");
+    }, "Each file size must be less than 3MB.");
 
-    $main.validator.addMethod("fileExtension", function (value, element) {
+    $j.validator.addMethod("fileExtension", function (value, element) {
         if (!value) return true;
         const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
-        const extension = value.split('.').pop().toLowerCase();
-        return allowedExtensions.includes(extension);
+        return Array.from(element.files).every(file => {
+            const extension = file.name.split('.').pop().toLowerCase();
+            return allowedExtensions.includes(extension);
+        });
     }, "Only PDF, JPG, JPEG, and PNG files are allowed.");
 
+    $j.validator.addMethod("atLeastOneFile", function (value, element) {
+        const fieldName = $j(element).attr('name').replace('[]', '');
+        return selectedFiles[fieldName].length > 0;
+    }, "At least one file is required.");
+
     // Initialize form validation
-    $main('#rental_property_form').validate({
+    $j('#rental_property_form').validate({
         ignore: "",
         rules: {
             submitted_by_agent: { required: true, alphanum_special: true, maxlength: 255 },
@@ -733,16 +836,16 @@ $main(document).ready(function () {
             comments: { alphanum_special: true, maxlength: 255 },
             is_approved_rejected: { required: false },
             is_property_aml: { required: true },
-            pms_contract: { required: true, fileSize: true, fileExtension: true },
-            owner_passport_copy: { required: true, fileSize: true, fileExtension: true },
-            pms_cheque_copy: { required: true, fileSize: true, fileExtension: true },
-            title_deed: { required: true, fileSize: true, fileExtension: true },
-            kyc_form: { required: true, fileSize: true, fileExtension: true },
-            screening: { required: true, fileSize: true, fileExtension: true },
-            owner_eid_copy: { fileSize: true, fileExtension: true },
-            poa_pp: { fileSize: true, fileExtension: true },
-            poa_copy: { fileSize: true, fileExtension: true },
-            key_hand_over_form: { fileSize: true, fileExtension: true },
+            'pms_contract[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'owner_passport_copy[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'pms_cheque_copy[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'title_deed[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'kyc_form[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'screening[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'owner_eid_copy[]': { fileSize: true, fileExtension: true },
+            'poa_pp[]': { fileSize: true, fileExtension: true },
+            'poa_copy[]': { fileSize: true, fileExtension: true },
+            'key_hand_over_form[]': { fileSize: true, fileExtension: true },
             screening_comments: { alphanum_special: true, maxlength: 255 }
         },
         errorPlacement: function (error, element) {
@@ -762,8 +865,8 @@ $main(document).ready(function () {
     let chequeCount = 1;
     const maxChequeFields = 12;
 
-    $main('#add-cheque-row').on('click', function () {
-        const numberOfCheques = parseInt($main('#no_of_cheque').val()) || 0;
+    $j('#add-cheque-row').on('click', function () {
+        const numberOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
         if (chequeCount < maxChequeFields && chequeCount < numberOfCheques) {
             chequeCount++;
             const newField = `
@@ -777,9 +880,9 @@ $main(document).ready(function () {
                         <button type="button" class="btn btn-danger btn-rounded m-1 subtraction remove-cheque-btn" data-row="${chequeCount}">Remove</button>
                     </div>
                 </div>`;
-            $main('.append-cheque-date').append(newField);
-            $main(`#cheque_date_${chequeCount}`).rules('add', { required: true, date: true });
-            $main(`#cheque_date_${chequeCount}`).datepicker({
+            $j('.append-cheque-date').append(newField);
+            $j(`#cheque_date_${chequeCount}`).rules('add', { required: true, date: true });
+            $j(`#cheque_date_${chequeCount}`).datepicker({
                 dateFormat: 'yy-mm-dd',
                 changeMonth: true,
                 changeYear: true
@@ -792,104 +895,203 @@ $main(document).ready(function () {
     });
 
     // Handle cheque field removal
-    $main(document).on('click', '.remove-cheque-btn', function () {
-        const row = $main(this).data('row');
-        $main(`.cheque-date-row-${row}`).remove();
+    $j(document).on('click', '.remove-cheque-btn', function () {
+        const row = $j(this).data('row');
+        $j(`.cheque-date-row-${row}`).remove();
         chequeCount--;
         validateChequeDates();
     });
 
     // Update cheque count validation on input change
-    $main('#no_of_cheque').on('input', function () {
+    $j('#no_of_cheque').on('input', function () {
         validateChequeDates();
     });
 
     // File input preview and validation
-    $main('input[type="file"]').on('change', function () {
-        const fieldName = $main(this).attr('name');
-        const previewElement = $main(`#${fieldName}_preview`);
-        const errorElement = $main(`#${fieldName}_error`);
+    $j('input[type="file"]').on('change', function () {
+        const fieldName = $j(this).attr('name').replace('[]', '');
+        const previewElement = $j(`#${fieldName}_preview`);
+        const errorElement = $j(`#${fieldName}_error`);
         const files = this.files;
+        const maxFileSize = 3 * 1024 * 1024; // 3MB
+        const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
 
         previewElement.empty();
         errorElement.text('');
 
-        if (files.length > 1) {
-            errorElement.text('Please select only one file.');
-            $main(this).val('');
-            return;
-        }
+        // Clear previous files and update with new ones
+        selectedFiles[fieldName] = Array.from(files);
 
-        if (files.length === 1) {
-            const file = files[0];
-            const maxFileSize = 3 * 1024 * 1024; // 3MB
-            const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
-            const extension = file.name.split('.').pop().toLowerCase();
+        if (files.length > 0) {
+            let valid = true;
+            Array.from(files).forEach((file, index) => {
+                const extension = file.name.split('.').pop().toLowerCase();
+                if (!allowedExtensions.includes(extension)) {
+                    errorElement.text(`File "${file.name}" has an invalid extension. Only PDF, JPG, JPEG, and PNG are allowed.`);
+                    valid = false;
+                    return;
+                }
+                if (file.size > maxFileSize) {
+                    errorElement.text(`File "${file.name}" exceeds 3MB.`);
+                    valid = false;
+                    return;
+                }
+                // Add preview with remove button
+                const previewItem = `
+                    <div class="file-preview-item" data-file-index="${index}">
+                        <span>${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
+                        <span class="remove_file" data-name="${fieldName}" data-file-index="${index}">X</span>
+                    </div>`;
+                previewElement.append(previewItem);
+            });
 
-            if (!allowedExtensions.includes(extension)) {
-                errorElement.text('Only PDF, JPG, JPEG, and PNG files are allowed.');
-                $main(this).val('');
+            if (!valid) {
+                selectedFiles[fieldName] = [];
+                previewElement.empty();
+                $j(this).val('');
                 return;
             }
 
-            if (file.size > maxFileSize) {
-                errorElement.text('File size must be less than 3MB.');
-                $main(this).val('');
-                return;
+            // Validate required fields
+            if (['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].includes(fieldName)) {
+                if (selectedFiles[fieldName].length === 0) {
+                    errorElement.text('At least one file is required.');
+                } else {
+                    errorElement.text('');
+                }
             }
-
-            previewElement.text(`Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+        } else {
+            selectedFiles[fieldName] = [];
+            if (['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].includes(fieldName)) {
+                errorElement.text('At least one file is required.');
+            }
         }
+
+        // Trigger form validation
+        $j(this).valid();
+    });
+
+    // Handle file removal
+    $j(document).on('click', '.remove_file', function () {
+        const fieldName = $j(this).data('name');
+        const fileIndex = $j(this).data('file-index');
+        const previewElement = $j(`#${fieldName}_preview`);
+        const inputElement = $j(`#${fieldName}`);
+        const errorElement = $j(`#${fieldName}_error`);
+        const removedField = $j(`#${fieldName}_removed`);
+
+        // Remove file from selectedFiles
+        const removedFile = selectedFiles[fieldName][fileIndex];
+        selectedFiles[fieldName].splice(fileIndex, 1);
+
+        // Update removed files field
+        const currentRemoved = removedField.val();
+        const removedFileName = removedFile.name;
+        if (!currentRemoved) {
+            removedField.val(removedFileName);
+        } else {
+            removedField.val(currentRemoved + ',' + removedFileName);
+        }
+
+        // Update file input
+        const dataTransfer = new DataTransfer();
+        selectedFiles[fieldName].forEach(file => dataTransfer.items.add(file));
+        inputElement[0].files = dataTransfer.files;
+
+        // Remove preview
+        $j(this).closest('.file-preview-item').remove();
+
+        // Validate required fields
+        if (['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].includes(fieldName)) {
+            if (selectedFiles[fieldName].length === 0) {
+                errorElement.text('At least one file is required.');
+            } else {
+                errorElement.text('');
+            }
+        }
+
+        // Trigger form validation
+        inputElement.valid();
     });
 
     // Form submission via AJAX
-    $main('#rental_property_form').on('submit', function (e) {
+    $j('#rental_property_form').on('submit', function (e) {
         e.preventDefault();
-        const form = $main(this);
+        const form = $j(this);
         const validator = form.validate();
 
-        // Validate cheque dates for full submission
+        // Validate cheque dates
         if (!validateChequeDates()) {
             return false;
         }
 
-        const allRequiredFields = [
-            'submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name',
-            'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
-            'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
-            'seller_nationality', 'agency_name', 'agent_name', 'agent_phone', 'no_of_cheque',
-            'cheque_date[]', 'total_commission', 'less_outside_commission', 'net_commission',
-            'classic', 'agent1', 'agent_name1', 'receipt_no', 'is_property_aml',
-            'pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'
-        ];
-
-        allRequiredFields.forEach(field => {
-            $main(`[name="${field}"]`).each(function () {
-                $main(this).rules('add', { required: true });
-            });
+        // Validate required file fields
+        const requiredFileFields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'];
+        let filesValid = true;
+        requiredFileFields.forEach(field => {
+            if (selectedFiles[field].length === 0) {
+                $j(`#${field}_error`).text('At least one file is required.');
+                filesValid = false;
+            } else {
+                $j(`#${field}_error`).text('');
+            }
         });
 
-        if (!form.valid()) {
+        if (!form.valid() || !filesValid) {
             showErrors(validator);
             return;
         }
 
         const formData = new FormData(form[0]);
 
-        $main.ajax({
+        // Remove default file inputs from FormData to avoid duplicates
+        Object.keys(selectedFiles).forEach(field => {
+            formData.delete(`${field}[]`);
+        });
+
+        // Append files from selectedFiles
+        Object.keys(selectedFiles).forEach(field => {
+            selectedFiles[field].forEach(file => {
+                formData.append(`${field}[]`, file);
+            });
+            // Append removed files
+            const removedField = $j(`#${field}_removed`).val();
+            if (removedField) {
+                formData.append(`${field}_removed`, removedField);
+            }
+        });
+
+        // Collect cheque dates
+        const chequeDates = [];
+        $j('.cheque-dates').each(function () {
+            const dateValue = $j(this).val();
+            if (dateValue) {
+                const parts = dateValue.split('-');
+                if (parts.length === 3) {
+                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert to DD-MM-YYYY
+                    chequeDates.push(formattedDate);
+                }
+            }
+        });
+
+        // Remove individual cheque_date[] fields and append as JSON
+        formData.delete('cheque_date[]');
+        formData.append('cheque_date', JSON.stringify(chequeDates));
+
+        $j.ajax({
             url: '/rental-properties/create/',
             type: 'POST',
             data: formData,
             headers: {
-                'X-CSRFToken': $main('input[name="csrfmiddlewaretoken"]').val()
+                'X-CSRFToken': $j('input[name="csrfmiddlewaretoken"]').val()
             },
             processData: false,
             contentType: false,
             success: function (response) {
                 if (response.success) {
-                    $main('#successmsg').show().find('#alert-primary').text('Property created successfully!');
+                    $j('#successmsg').show().find('#alert-primary').text('Property created successfully!');
                     setTimeout(() => {
-                        $main('#successmsg').hide();
+                        $j('#successmsg').hide();
                         window.location.href = '/rental-properties/list/';
                     }, 3000);
                 } else {

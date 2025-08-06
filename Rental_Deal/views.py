@@ -614,11 +614,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
                  
-            # if mutable_data.get('save_as') == "update-deal":
-            #     mutable_data['form_status'] = "Complete"
-            # else:
-            #     mutable_data['form_status'] = "Incomplete"
-            # print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
+            if mutable_data.get('save_as') == "update-deal":
+                mutable_data['form_status'] = "Complete"
+            else:
+                mutable_data['form_status'] = "Incomplete"
+            print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer
@@ -683,9 +683,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         serializer = DealSerializer(rental_deal,context={'request': request})
         aws_url = settings.AWS_URL
         # return HttpResponse("hello this is view page")
-
-        recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
-        print(recipt_no.id , "this is recipt id ")
+        if not rental_deal.receipt_no:
+            recipt_no = None
+        else:
+            recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
+            print(recipt_no.id , "this is recipt id ")
 
 
 

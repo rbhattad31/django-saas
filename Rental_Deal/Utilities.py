@@ -7,11 +7,15 @@ import os
 import re
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-print("UTILS STORAGE INIT:", type(default_storage))
+# from django.core.files.storage import get_storage_class
+from django.utils.module_loading import import_string
+# print("UTILS STORAGE INIT:", type(get_storage_class()))
+# print("UTILS STORAGE INIT:", )
 
 def upload_file_to_full_s3_url(file_obj, url):
-    saved_path = default_storage.save(f"{url}", ContentFile(file_obj.read()))
+    storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
+    storage = storage_class()
+    saved_path = storage.save(f"{url}", ContentFile(file_obj.read()))
 
     return saved_path
 
@@ -23,18 +27,17 @@ def delete_from_s3(file_path):
     :return: True if deleted, False if file doesn't exist
     """
     file_path = os.path.normpath(file_path.lstrip('/'))
-    full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+    full_path = os.path.join(settings.MEDIA_LOCATION, file_path)
 
-    if os.path.isfile(full_path):
-        try:
-            os.remove(full_path)
-            print(f"✅ Deleted: {full_path}")
-            return True
-        except Exception as e:
-            print(f"❌ Error deleting {full_path}: {e}")
-            return False
+    storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
+
+    storage = storage_class()
+    if storage.exists(file_path):
+        storage.delete(file_path)
+        print(f"Deleted: {file_path}")
+        return True
     else:
-        print(f"⚠️ File not found: {full_path}")
+        print(f"File not found: {file_path}")
         return False
 
 

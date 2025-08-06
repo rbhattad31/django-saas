@@ -1,0 +1,1135 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Renew Property {% endblock title %}
+
+{% block content %}
+<div class="main-content pt-4">
+  <style>
+    a.addition {
+      position: absolute;
+      margin-left: 8px !important;
+      top: 18px !important;
+    }
+    a.subtraction {
+      position: absolute;
+      display: inline-block;
+      bottom: 10px !important;
+      margin-left: -15px !important;
+    } 
+    .cheque-dates {
+      margin-right: 500px;
+    } 
+  </style>
+  <div class="col-md-12" id="successmsg" style="display: none">
+    <div class="alert alert-primary" id="alert-primary">
+      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <h4 class="pb-2">
+      Renew Property
+      <span class="float-right">
+        <a class="btn btn-primary btn-rounded" href="{% url 'rental-property-list' %}">Cancel</a>
+      </span>
+    </h4>
+    <div class="card mb-5">
+      <div class="card-body">
+        <form id="rental_property_form" enctype="multipart/form-data" novalidate="novalidate">
+          {% csrf_token %}
+          <div class="row">
+            <input type="hidden" name="id" id="id" value="{{ property.id|default_if_none:'' }}">
+            <input type="hidden" name="submitted_by_user_id" id="submitted_by_user_id">
+            <input type="hidden" name="account_id" id="account_id">
+            <input type="hidden" name="save_as" id="save_as">
+            <input type="hidden" name="is_deleted" id="is_deleted" value="N">
+            
+            <div class="col-md-6 form-group mb-3">
+              <label for="deal_date">
+                Deal Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="date" name="deal_date" class="form-control" id="deal_date" value="{{ property.deal_date|date:'Y-m-d'|default_if_none:'' }}">
+              <span class="error text-danger" id="deal_date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="reference_number">
+                Reference Number <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="reference_number" class="form-control" id="reference_number" value="{{ property.reference_number|default_if_none:'' }}">
+              <span class="error text-danger" id="reference_number_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="project_name">
+                Project Name <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="project_name" class="form-control" id="project_name" value="{{ property.project_name|default_if_none:'' }}">
+              <span class="error text-danger" id="project_name_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="building_name">
+                Building Name <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="building_name" class="form-control" id="building_name" value="{{ property.building_name|default_if_none:'' }}">
+              <span class="error text-danger" id="building_name_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="unit_details">
+                Unit No <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="unit_details" class="form-control" id="unit_details" value="{{ property.unit_details|default_if_none:'' }}">
+              <span class="error text-danger" id="unit_details_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="pms_price">
+                PMS Price <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="number" step="0.01" name="pms_price" class="form-control" id="pms_price" value="{{ property.pms_price|default_if_none:'' }}">
+              <span class="error text-danger" id="pms_price_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="pm_start_date">
+                PM Start Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="date" name="pm_start_date" class="form-control startDate" id="pm_start_date" value="{{ property.pm_start_date|date:'Y-m-d'|default_if_none:'' }}">
+              <span class="error text-danger" id="pm_start_date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="pm_end_date">
+                PM End Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="date" name="pm_end_date" class="form-control endDate" id="pm_end_date" value="{{ property.pm_end_date|date:'Y-m-d'|default_if_none:'' }}">
+              <span class="error text-danger" id="pm_end_date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="tenancy_start_date">
+                Tenancy Start Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="date" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" value="{{ property.tenancy_start_date|date:'Y-m-d'|default_if_none:'' }}">
+              <span class="error text-danger" id="tenancy_start_date_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label for="tenancy_end_date">
+                Tenancy End Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="date" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" value="{{ property.tenancy_end_date|date:'Y-m-d'|default_if_none:'' }}">
+              <span class="error text-danger" id="tenancy_end_date_error"></span>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-md-6 form-group mb-1">
+              <label><h5>Owner Details</h5></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="owner_first_name">
+                Name <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="owner_first_name" class="form-control" id="owner_first_name" value="{{ property.owner_first_name|default_if_none:'' }}">
+              <span class="error text-danger" id="owner_first_name_error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="owner_source">
+                Source <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <select class="form-control" name="owner_source" id="owner_source">
+                <option value="">Select source</option>
+                <option value="Dubizzle">Dubizzle</option>
+                <option value="Property finder">Property finder</option>
+                <option value="Classic Website">Classic Website</option>
+                <option value="YZER">YZER</option>
+                <option value="Gulfnews">Gulfnews</option>
+                <option value="Others">Others</option>
+                <option value="Reference">Reference</option>
+                <option value="Agent">Agent</option>
+                <option value="Network">Network</option>
+                <option value="Social Media">Social Media</option>
+                <option value="Walk In">Walk In</option>
+                <option value="Security">Security</option>
+                <option value="Developer">Developer</option>
+                <option value="BAYUT">BAYUT</option>
+              </select>
+              <span class="text-danger" id="owner_source_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="owner_mobile">
+                Mobile <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input class="form-control" type="text" id="owner_mobile" name="owner_mobile" value="{{ property.owner_mobile|default_if_none:'' }}">
+              <span class="text-danger" id="owner_mobile_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="owner_email">
+                Email <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input class="form-control" type="email" id="owner_email" name="owner_email" value="{{ property.owner_email|default_if_none:'' }}">
+              <span class="text-danger" id="owner_email_error"></span>
+            </div>
+          </div>
+          <hr>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-1">
+              <label><h5>Owner Agency Details</h5></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agency_name">
+                Agency Name <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="text" name="agency_name" class="form-control" id="agency_name" value="{{ property.agency_name|default_if_none:'' }}">
+              <span class="error text-danger" id="agency_name_error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="agent_name">
+                Agent Name <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="text" name="agent_name" class="form-control" id="agent_name" value="{{ property.agent_name|default_if_none:'' }}">
+              <span class="error text-danger" id="agent_name_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="brn">Agent Brn</label>
+              <input class="form-control" type="text" id="brn" name="brn" value="{{ property.brn|default_if_none:'' }}">
+              <span class="text-danger" id="brn_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="agent_phone">
+                Agent Phone <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input class="form-control" type="text" id="agent_phone" name="agent_phone" value="{{ property.agent_phone|default_if_none:'' }}">
+              <span class="text-danger" id="agent_phone_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agent_email">Agent Email</label>
+              <input class="form-control" type="email" id="agent_email" name="agent_email" value="{{ property.agent_email|default_if_none:'' }}">
+              <span class="text-danger" id="agent_email_error"></span>
+            </div>
+          </div>
+          <hr>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-1">
+              <label><h5>Cheque Details</h5></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="no_of_cheque">
+                Number Of Cheque <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="number" name="no_of_cheque" class="form-control" id="no_of_cheque" value="{{ property.no_of_cheque|default_if_none:'0' }}">
+              <span class="error text-danger" id="no_of_cheque_error"></span>
+            </div>
+          </div>
+
+          <div class="row form-group nav-cheque append-cheque-date"></div>
+
+          <div class="row form-group nav-cheque cheque-date">
+            <div class="col-md-5 form-group">
+              <a class="txt-color btn btn-primary btn-rounded m-1 addition" id="add-cheque-row" style="float:right;color: white;margin-left:5px;">Add</a>
+            </div>
+            <div class="col-md-7 form-group extra"></div>
+          </div>
+          <br><br>
+          <hr>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-1">
+              <label><h5>Revenue Details</h5></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="total_commission">
+                Total Commission <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="number" step="0.01" name="total_commission" class="form-control" id="total_commission" value="{{ property.total_commission|default_if_none:'' }}">
+              <span class="error text-danger" id="total_commission_error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="less_outside_commission">
+                Less Outside Commission <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="number" step="0.01" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission|default_if_none:'' }}">
+              <span class="error text-danger" id="less_outside_commission_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="net_commission">
+                Net Commission <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input type="number" step="0.01" name="net_commission" class="form-control" id="net_commission" value="{{ property.net_commission|default_if_none:'' }}">
+              <span class="error text-danger" id="net_commission_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="classic">
+                Classic <span class="mandetory_field">*</span>
+              </label>
+              <input class="form-control" type="text" id="classic" name="classic" value="{{ property.classic|default_if_none:'' }}">
+              <span class="text-danger" id="classic_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agent1">
+                Agent1 <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <input class="form-control" type="number" step="0.01" id="agent1" name="agent1" value="{{ property.agent1|default_if_none:'' }}">
+              <span class="text-danger" id="agent1_error"></span>
+            </div>
+            {% comment %} <div class="col-md-6 form-group">
+              <label for="agent_name1">
+                Agent Name 1 <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <select name="agent_name1" class="form-control" id="agent_name1">
+                <option value="">Select Agent</option>
+                {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if property.agent_name1 == agent.id %}selected{% endif %}>
+                    {{ agent.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="agent_name1_error"></span>
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group">
+              <label for="agent_name1">
+                Agent Name 1 <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <select name="agent_name1" class="form-control" id="agent_name1">
+                <option value="">Select Agent</option>
+                {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if agent.id|stringformat:"s" == property.agent_name1|stringformat:"s" %}selected{% endif %}>
+                    {{ agent.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="agent_name1_error"></span>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agent2">Agent2</label>
+              <input class="form-control" type="number" step="0.01" id="agent2" name="agent2" value="{{ property.agent2|default_if_none:'' }}">
+              <span class="text-danger" id="agent2_error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="agent_name2"></label>
+              <select name="agent_name2" class="form-control" id="agent_name2">
+                <option value="">Select Agent</option>
+                {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if property.agent_name2 == agent.id %}selected{% endif %}>
+                    {{ agent.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="agent_name2_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agent3">Agent3</label>
+              <input class="form-control" type="number" step="0.01" id="agent3" name="agent3" value="{{ property.agent3|default_if_none:'' }}">
+              <span class="text-danger" id="agent3_error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="agent_name3"></label>
+              <select name="agent_name3" class="form-control" id="agent_name3">
+                <option value="">Select Agent</option>
+                {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if property.agent_name3 == agent.id %}selected{% endif %}>
+                    {{ agent.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="agent_name3_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="agent_comment">Comment by Agent</label>
+              <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">{{ property.agent_comment|default_if_none:'' }}</textarea>
+              <span class="text-danger" id="agent_comment_error"></span>
+            </div>
+
+            {% comment %} <div class="col-md-6 form-group">
+              <label for="receipt_no">
+                Receipt No <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <select name="receipt_no" class="form-control" id="receipt_no">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="receipt_no_error"></span>
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group">
+              <label for="receipt_no">
+                Receipt No <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              <select name="receipt_no" class="form-control" id="receipt_no">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos %}
+                  <option value="{{ rcpt.id }}" {% if property.receipt_no|add:0 == rcpt.id %}selected{% endif %}>
+                    {{ rcpt.id }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="receipt_no_error"></span>
+            </div>
+
+
+            <div class="col-md-6 form-group">
+              <label for="kyc_number">KYC Number</label>
+              <input type="text" name="kyc_number" class="form-control" id="kyc_number" value="{{ property.kyc_number|default_if_none:'' }}">
+              <span class="error text-danger" id="kyc_number_error"></span>
+            </div>
+          </div>
+          <hr>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-1">
+              <label><h5>Documents</h5></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="pms_contract">
+                PMS Contract <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="pms_contract" type="file" name="pms_contract[]">
+              <div class="upload_prev">
+                {% if property.pms_contract %}
+                  <a href="{{ property.pms_contract.url }}" target="_new">pms_contract 1</a>
+                  <p class="remove_file" id="{{ property.pms_contract.url }}" data-name="pms_contract" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="pms_contract_existing_count" name="pms_contract_existing_count" value="{% if property.pms_contract %}1{% else %}0{% endif %}">
+              <input type="hidden" id="pms_contract_existing_values" name="pms_contract_existing_values">
+              <input type="hidden" id="pms_contract_removed" name="pms_contract_mou_removed">
+              <input type="hidden" id="pms_contract_new_removed_count" name="pms_contract_new_removed_count">
+              <div id="upload_prevss" class="pms_contract_list"></div>
+              <span class="text-danger" id="pms_contract_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="owner_passport_copy">
+                Owner Passport Copy <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="owner_passport_copy" type="file" name="owner_passport_copy[]">
+              <div class="upload_prev">
+                {% if property.owner_passport_copy %}
+                  <a href="{{ property.owner_passport_copy.url }}" target="_new">owner_passport_copy 1</a>
+                  <p class="remove_file" id="{{ property.owner_passport_copy.url }}" data-name="owner_passport_copy" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="owner_passport_copy_existing_count" name="owner_passport_copy_existing_count" value="{% if property.owner_passport_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="owner_passport_copy_existing_values" name="owner_passport_copy_existing_values">
+              <input type="hidden" id="owner_passport_copy_removed" name="owner_passport_copy_mou_removed">
+              <input type="hidden" id="owner_passport_copy_new_removed_count" name="owner_passport_copy_new_removed_count">
+              <div id="upload_prevss" class="owner_passport_copy_list"></div>
+              <span class="text-danger" id="owner_passport_copy_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="owner_eid_copy">Owner Eid Copy</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file" name="owner_eid_copy[]">
+              <div class="upload_prev">
+                {% if property.owner_eid_copy %}
+                  <a href="{{ property.owner_eid_copy.url }}" target="_new">owner_eid_copy 1</a>
+                  <p class="remove_file" id="{{ property.owner_eid_copy.url }}" data-name="owner_eid_copy" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="owner_eid_copy_existing_count" name="owner_eid_copy_existing_count" value="{% if property.owner_eid_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="owner_eid_copy_existing_values" name="owner_eid_copy_existing_values">
+              <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_mou_removed">
+              <input type="hidden" id="owner_eid_copy_new_removed_count" name="owner_eid_copy_new_removed_count">
+              <div id="upload_prevss" class="owner_eid_copy_list"></div>
+              <span class="text-danger" id="owner_eid_copy_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="pms_cheque_copy">
+                PMS Cheque Copy <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="pms_cheque_copy" type="file" name="pms_cheque_copy[]">
+              <div class="upload_prev">
+                {% if property.pms_cheque_copy %}
+                  <a href="{{ property.pms_cheque_copy.url }}" target="_new">pms_cheque_copy 1</a>
+                  <p class="remove_file" id="{{ property.pms_cheque_copy.url }}" data-name="pms_cheque_copy" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="pms_cheque_copy_existing_count" name="pms_cheque_copy_existing_count" value="{% if property.pms_cheque_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="pms_cheque_copy_existing_values" name="pms_cheque_copy_existing_values">
+              <input type="hidden" id="pms_cheque_copy_removed" name="pms_cheque_copy_mou_removed">
+              <input type="hidden" id="pms_cheque_copy_new_removed_count" name="pms_cheque_copy_new_removed_count">
+              <div id="upload_prevss" class="pms_cheque_copy_list"></div>
+              <span class="text-danger" id="pms_cheque_copy_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="title_deed">
+                Title Deed <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="title_deed" type="file" name="title_deed[]">
+              <div class="upload_prev">
+                {% if property.title_deed %}
+                  <a href="{{ property.title_deed.url }}" target="_new">title_deed 1</a>
+                  <p class="remove_file" id="{{ property.title_deed.url }}" data-name="title_deed" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="{% if property.title_deed %}1{% else %}0{% endif %}">
+              <input type="hidden" id="title_deed_existing_values" name="title_deed_existing_values">
+              <input type="hidden" id="title_deed_removed" name="title_deed_mou_removed">
+              <input type="hidden" id="title_deed_new_removed_count" name="title_deed_new_removed_count">
+              <div id="upload_prevss" class="title_deed_list"></div>
+              <span class="text-danger" id="title_deed_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="poa_pp">Poa Pp</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="poa_pp" type="file" name="poa_pp[]">
+              <div class="upload_prev">
+                {% if property.poa_pp %}
+                  <a href="{{ property.poa_pp.url }}" target="_new">poa_pp 1</a>
+                  <p class="remove_file" id="{{ property.poa_pp.url }}" data-name="poa_pp" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="poa_pp_existing_count" name="poa_pp_existing_count" value="{% if property.poa_pp %}1{% else %}0{% endif %}">
+              <input type="hidden" id="poa_pp_existing_values" name="poa_pp_existing_values">
+              <input type="hidden" id="poa_pp_removed" name="poa_pp_mou_removed">
+              <input type="hidden" id="poa_pp_new_removed_count" name="poa_pp_new_removed_count">
+              <div id="upload_prevss" class="poa_pp_list"></div>
+              <span class="text-danger" id="poa_pp_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="poa_copy">Poa Copy</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="poa_copy" type="file" name="poa_copy[]">
+              <div class="upload_prev">
+                {% if property.poa_copy %}
+                  <a href="{{ property.poa_copy.url }}" target="_new">poa_copy 1</a>
+                  <p class="remove_file" id="{{ property.poa_copy.url }}" data-name="poa_copy" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="poa_copy_existing_count" name="poa_copy_existing_count" value="{% if property.poa_copy %}1{% else %}0{% endif %}">
+              <input type="hidden" id="poa_copy_existing_values" name="poa_copy_existing_values">
+              <input type="hidden" id="poa_copy_removed" name="poa_copy_mou_removed">
+              <input type="hidden" id="poa_copy_new_removed_count" name="poa_copy_new_removed_count">
+              <div id="upload_prevss" class="poa_copy_list"></div>
+              <span class="text-danger" id="poa_copy_error"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label for="key_hand_over_form">Key Hand Over Form</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="key_hand_over_form" type="file" name="key_hand_over_form[]">
+              <div class="upload_prev">
+                {% if property.key_hand_over_form %}
+                  <a href="{{ property.key_hand_over_form.url }}" target="_new">key_hand_over_form 1</a>
+                  <p class="remove_file" id="{{ property.key_hand_over_form.url }}" data-name="key_hand_over_form" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="key_hand_over_form_existing_count" name="key_hand_over_form_existing_count" value="{% if property.key_hand_over_form %}1{% else %}0{% endif %}">
+              <input type="hidden" id="key_hand_over_form_existing_values" name="key_hand_over_form_existing_values">
+              <input type="hidden" id="key_hand_over_form_removed" name="key_hand_over_form_mou_removed">
+              <input type="hidden" id="key_hand_over_form_new_removed_count" name="key_hand_over_form_new_removed_count">
+              <div id="upload_prevss" class="key_hand_over_form_list"></div>
+              <span class="text-danger" id="key_hand_over_form_error"></span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="kyc_form">
+                KYC Form <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="kyc_form" type="file" name="kyc_form[]">
+              <div class="upload_prev">
+                {% if property.kyc_form %}
+                  <a href="{{ property.kyc_form.url }}" target="_new">kyc_form 1</a>
+                  <p class="remove_file" id="{{ property.kyc_form.url }}" data-name="kyc_form" data-existing="old">X</p>
+                {% endif %}
+              </div>
+              <input type="hidden" id="kyc_form_existing_count" name="kyc_form_existing_count" value="{% if property.kyc_form %}1{% else %}0{% endif %}">
+              <input type="hidden" id="kyc_form_existing_values" name="kyc_form_existing_values">
+              <input type="hidden" id="kyc_form_removed" name="kyc_form_mou_removed">
+              <input type="hidden" id="kyc_form_new_removed_count" name="kyc_form_new_removed_count">
+              <div id="upload_prevss" class="kyc_form_list"></div>
+              <span class="text-danger" id="kyc_form_error"></span>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-sm-12 btn-center mt-3">
+              <button type="submit" class="btn btn-primary btn-rounded m-1" name="create_deal" id="create_deal">Renew</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    if (typeof jQuery === 'undefined') {
+        console.error("jQuery failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/jquery-3.6.0.min.js" %}"><\/script>');
+    } else {
+        console.log("jQuery loaded, version:", $.fn.jquery);
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script>
+    var $j = jQuery.noConflict(true);
+    if (typeof $j.validator === 'undefined') {
+        console.error("jQuery Validate failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/jquery.validate.min.js" %}"><\/script>');
+    } else {
+        console.log("jQuery Validate loaded, version:", $j.validator.version || "1.19.5");
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    if (typeof bootstrap === 'undefined') {
+        console.error("Bootstrap JS failed to load from CDN, attempting local fallback");
+        document.write('<script src="{% static "js/bootstrap.bundle.min.js" %}"><\/script>');
+    } else {
+        console.log("Bootstrap JS loaded");
+    }
+</script>
+
+<script>
+$j(document).ready(function() {
+    const propertyId = {{ property.id|default_if_none:'0' }};
+    const apiUrl = `/api/rental-properties/${propertyId}/`;
+
+    // Format date from dd-mm-yyyy or yyyy-mm-dd to YYYY-MM-DD
+    function formatDateForInput(dateString) {
+        if (!dateString || typeof dateString !== 'string') {
+            console.warn('Invalid or empty dateString:', dateString);
+            return '';
+        }
+
+        const isoMatch = /^\d{4}-\d{2}-\d{2}$/.test(dateString.trim());
+        if (isoMatch) return dateString.trim();
+
+        const parts = dateString.trim().split('-');
+        if (parts.length !== 3) {
+            console.warn('Invalid date format, expected dd-MM-yyyy or yyyy-mm-dd:', dateString);
+            return '';
+        }
+
+        const isDDMMYYYY = parseInt(parts[0], 10) <= 31;
+        let day, month, year;
+        if (isDDMMYYYY) {
+            day = parseInt(parts[0], 10);
+            month = parseInt(parts[1], 10);
+            year = parseInt(parts[2], 10);
+        } else {
+            year = parseInt(parts[0], 10);
+            month = parseInt(parts[1], 10);
+            day = parseInt(parts[2], 10);
+        }
+
+        if (isNaN(day) || isNaN(month) || isNaN(year)) {
+            console.warn('Invalid date components:', { day, month, year });
+            return '';
+        }
+
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
+    // Load data into form
+    function loadPropertyData() {
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                loadAgentDropdown(data);
+
+                Object.keys(data).forEach(key => {
+                    const field = $j(`[name="${key}"]`);
+                    console.log(`Filling field: name="${key}" with value:`, data[key]);
+                    if (field.length) {
+                        if (field.is('input[type="date"]')) {
+                            field.val(formatDateForInput(data[key]));
+                        } else if (field.is('select')) {
+                            field.val(data[key]);
+                        } else if (field.is('textarea')) {
+                            field.val(data[key]);
+                        } else if (key !== 'no_of_cheque') {
+                            field.val(data[key]);
+                        }
+                    }
+                });
+
+                let chequeDates = data.cheque_date;
+                if (typeof chequeDates === 'string') {
+                    chequeDates = chequeDates.split(' ').filter(date => date);
+                }
+                if (chequeDates && Array.isArray(chequeDates)) {
+                    $j('.append-cheque-date').empty();
+                    chequeDates.forEach((dateStr, index) => {
+                        const formattedDate = formatDateForInput(dateStr);
+                        const rowHtml = `
+                            <div class="row delete-cheque-date-row${index}">
+                                <div class="col-md-6 form-group">
+                                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                                </div>
+                                <div class="col-md-2 form-group" style="top:20px;">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                                </div>
+                            </div>`;
+                        $j('.append-cheque-date').append(rowHtml);
+                    });
+                    $j('#no_of_cheque').val(chequeDates.length);
+                } else {
+                    $j('.append-cheque-date').empty();
+                    $j('#no_of_cheque').val(0);
+                }
+
+                // Set existing file counts for validation
+                ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form'].forEach(field => {
+                    const files = data[field] ? data[field].split(',').filter(f => f) : [];
+                    $j(`#${field}_existing_count`).val(files.length);
+                    $j(`#${field}_existing_values`).val(files.join(','));
+                    console.log(`Set ${field}_existing_count to ${files.length}`);
+                    console.log(`Existing files for ${field}:`, files);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ Error fetching property:', xhr.responseText);
+                console.log('Status:', status);
+                console.log('Error:', error);
+                console.log('Response JSON:', xhr.responseJSON);
+                let errorMsg = 'Error fetching property data.';
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                }
+                alert(errorMsg);
+            },
+        });
+    }
+
+    // Add new cheque date row
+    $j('#add-cheque-row').on('click', function() {
+        const currentCount = $j('.delete-cheque-date-row').length;
+        const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+        if (currentCount < maxCheques || maxCheques === 0) {
+            const index = currentCount;
+            const rowHtml = `
+                <div class="row delete-cheque-date-row${index}">
+                    <div class="col-md-6 form-group">
+                        <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
+                        <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                    </div>
+                    <div class="col-md-2 form-group" style="top:20px;">
+                        <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                    </div>
+                </div>`;
+            $j('.append-cheque-date').append(rowHtml);
+            $j('#no_of_cheque').val(currentCount + 1);
+        }
+    });
+
+    // Remove cheque date row
+    $j(document).on('click', '.remove-cheque-date-row', function() {
+        $j(this).closest('.row').remove();
+        $j('#no_of_cheque').val($j('.delete-cheque-date-row').length);
+    });
+
+    // File validation
+    function ValidateSizeadd(file, id, i) {
+        const $error = $j(`#${id}_error`);
+        if (!file.files || file.files.length === 0) {
+            $error.html('Please select a file.').show();
+            return false;
+        }
+        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        for (let f of file.files) {
+            if (!validTypes.includes(f.type)) {
+                $error.html(`Invalid file type for ${f.name}. Only JPG, PNG, or PDF allowed.`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+            const maxSize = 3 * 1024 * 1024; // 3MB
+            if (f.size > maxSize) {
+                $error.html(`File ${f.name} size should be less than 3 MB`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+        }
+        $error.hide();
+        console.log(`✅ Valid files selected for ${id}:`, Array.from(file.files).map(f => `${f.name} (Size: ${f.size} bytes, Type: ${f.type})`));
+        return true;
+    }
+
+    // Validation rules
+    $j.validator.addMethod("only_text", function(value, element) {
+        return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
+    }, "Enter valid Name");
+
+    $j.validator.addMethod("custom_email", function(value, element) {
+        var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        return this.optional(element) || regEx.test(value);
+    }, "Enter a valid email address.");
+
+    $j.validator.addMethod("alpha_numeric", function(value, element, param) {
+        return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+    }, "Enter valid Profile Id");
+
+    $j.validator.addMethod("numeric", function(value, element, param) {
+        return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers.");
+
+    $j.validator.addMethod("text_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+    }, "Enter only letters and special characters.");
+
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+    }, "Enter only letters, numbers and special characters.");
+
+    $j.validator.addMethod("lettersonly", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+    }, "Letters only please");
+
+    $j.validator.addMethod("mobile_number", function(value, element, param) {
+        return this.optional(element) || /^[+0-9 ]*?[0-9-+ ]+$/.test(value);
+    }, "Enter valid Phone number.");
+
+    // Form validation
+    $j('#rental_property_form').validate({
+        rules: {
+            deal_date: { required: true },
+            reference_number: { required: true, alphanum_special: true },
+            project_name: { required: true, only_text: true },
+            building_name: { required: true, only_text: true },
+            unit_details: { required: true, numeric: true },
+            pms_price: { required: true, numeric: true },
+            pm_start_date: { required: true },
+            pm_end_date: { required: true },
+            tenancy_start_date: { required: true },
+            tenancy_end_date: { required: true },
+            owner_first_name: { required: true, lettersonly: true },
+            owner_source: { required: true },
+            owner_mobile: { required: true, mobile_number: true },
+            owner_email: { required: true, custom_email: true },
+            agency_name: { required: true, only_text: true },
+            agent_name: { required: true, lettersonly: true },
+            agent_phone: { required: true, mobile_number: true },
+            no_of_cheque: { required: true, numeric: true },
+            total_commission: { required: true, numeric: true },
+            less_outside_commission: { required: true, numeric: true },
+            net_commission: { required: true, numeric: true },
+            classic: { required: true, alphanum_special: true },
+            agent1: { required: true, numeric: true },
+            agent_name1: { required: true },
+            receipt_no: { required: true },
+            'pms_contract[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
+                    const files = $j('#pms_contract').get(0).files.length;
+                    console.log(`pms_contract validation: existingCount=${existingCount}, files=${files}`);
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'owner_passport_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
+                    const files = $j('#owner_passport_copy').get(0).files.length;
+                    console.log(`owner_passport_copy validation: existingCount=${existingCount}, files=${files}`);
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'pms_cheque_copy[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
+                    const files = $j('#pms_cheque_copy').get(0).files.length;
+                    console.log(`pms_cheque_copy validation: existingCount=${existingCount}, files=${files}`);
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'title_deed[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
+                    const files = $j('#title_deed').get(0).files.length;
+                    console.log(`title_deed validation: existingCount=${existingCount}, files=${files}`);
+                    return existingCount === 0 && files === 0;
+                }
+            },
+            'kyc_form[]': { 
+                required: function(element) {
+                    const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
+                    const files = $j('#kyc_form').get(0).files.length;
+                    console.log(`kyc_form validation: existingCount=${existingCount}, files=${files}`);
+                    return existingCount === 0 && files === 0;
+                }
+            }
+        },
+        messages: {
+            deal_date: "Please select a deal date",
+            reference_number: "Please enter a valid reference number",
+            project_name: "Please enter a valid project name",
+            building_name: "Please enter a valid building name",
+            unit_details: "Please enter a valid unit number",
+            pms_price: "Please enter a valid PMS price",
+            pm_start_date: "Please select a PM start date",
+            pm_end_date: "Please select a PM end date",
+            tenancy_start_date: "Please select a tenancy start date",
+            tenancy_end_date: "Please select a tenancy end date",
+            owner_first_name: "Please enter a valid owner name",
+            owner_source: "Please select a source",
+            owner_mobile: "Please enter a valid mobile number",
+            owner_email: "Please enter a valid email",
+            agency_name: "Please enter a valid agency name",
+            agent_name: "Please enter a valid agent name",
+            agent_phone: "Please enter a valid phone number",
+            no_of_cheque: "Please enter a valid number of cheques",
+            total_commission: "Please enter a valid total commission",
+            less_outside_commission: "Please enter a valid less outside commission",
+            net_commission: "Please enter a valid net commission",
+            classic: "Please enter a valid classic value",
+            agent1: "Please enter a valid agent commission",
+            agent_name1: "Please select an agent",
+            receipt_no: "Please select a receipt number",
+            'pms_contract[]': "Please upload PMS contract",
+            'owner_passport_copy[]': "Please upload owner passport copy",
+            'pms_cheque_copy[]': "Please upload PMS cheque copy",
+            'title_deed[]': "Please upload title deed",
+            'kyc_form[]': "Please upload KYC form"
+        },
+        errorPlacement: function(error, element) {
+            error.appendTo($j("#" + element.attr("id") + "_error"));
+        },
+        submitHandler: function(form) {
+            console.log("✅ submitHandler triggered - validation passed");
+            submitForm();
+        },
+        invalidHandler: function(event, validator) {
+            console.log("❌ Form validation failed:", validator.errorList);
+        }
+    });
+
+    // File input change handler
+    $j('.imageUploadInput').on('change', function() {
+        ValidateSizeadd(this, this.id, 0);
+    });
+
+    // Date auto-fill (1 year from start date)
+    function appendDate() {
+        var deal_start_date = $j('#deal_date').val();
+        if (deal_start_date) {
+            var inputval = deal_start_date.split('-');
+            var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+            var res = new Date(date);
+            res.setFullYear(res.getFullYear() + 1);
+            var dd = String(res.getDate()).padStart(2, '0');
+            var mm = String(res.getMonth() + 1).padStart(2, '0');
+            var yyyy = res.getFullYear();
+            $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
+            $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
+        }
+    }
+
+    $j('#deal_date, #pm_start_date, #tenancy_start_date').on('change', function() {
+        if (this.id === 'deal_date') appendDate();
+        else if (this.id === 'pm_start_date') {
+            var pm_start_date = $j('#pm_start_date').val();
+            if (pm_start_date) {
+                var inputval = pm_start_date.split('-');
+                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+                var res = new Date(date);
+                res.setFullYear(res.getFullYear() + 1);
+                var dd = String(res.getDate()).padStart(2, '0');
+                var mm = String(res.getMonth() + 1).padStart(2, '0');
+                var yyyy = res.getFullYear();
+                $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
+            }
+        } else if (this.id === 'tenancy_start_date') {
+            var tenancy_start_date = $j('#tenancy_start_date').val();
+            if (tenancy_start_date) {
+                var inputval = tenancy_start_date.split('-');
+                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
+                var res = new Date(date);
+                res.setFullYear(res.getFullYear() + 1);
+                var dd = String(res.getDate()).padStart(2, '0');
+                var mm = String(res.getMonth() + 1).padStart(2, '0');
+                var yyyy = res.getFullYear();
+                $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
+            }
+        }
+    });
+
+    // Submit form via AJAX
+    function submitForm() {
+        $j('#is_deleted').val('N');
+        const formData = new FormData($j('#rental_property_form')[0]);
+        const submitBtn = $j('#create_deal');
+        console.log("Starting form submission to:", apiUrl);
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`FormData: ${key} = ${value instanceof File ? value.name : value}`);
+        }
+
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Renewing...');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        console.log("CSRF Token:", csrftoken);
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(data) {
+                console.log("✅ Property renewed successfully:", data);
+                alert('Property renewed successfully!');
+                window.location.href = "{% url 'rental-property-list' %}";
+            },
+            error: function(xhr, status, error) {
+                console.error('❌ Error renewing property:', xhr.responseText);
+                console.log('Status:', status);
+                console.log('Error:', error);
+                console.log('Response JSON:', xhr.responseJSON);
+                let errorMsg = 'Error renewing property.';
+                if (xhr.responseJSON) {
+                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+                }
+                alert(errorMsg);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Renew');
+            }
+        });
+    }
+
+    // Load initial data
+    loadPropertyData();
+
+    // Warn on unsaved changes
+    let formChanged = false;
+    $j('#rental_property_form').on('change input', 'input, select, textarea', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    // Confirm cancel
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    function loadAgentDropdown(requestdata) {
+        $j.ajax({
+            url: "/api/agents/dropdown/",
+            type: "GET",
+            success: function(agents) {
+                populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
+                populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
+                populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
+            },
+            error: function() {
+                console.error("Failed to load agents.");
+            },
+        });
+    }
+
+    function populateAgentDropdown(selector, data, selectedId = null) {
+        const $dropdown = $j(selector);
+        $dropdown.empty().append('<option value="">Select Agent</option>');
+        data.forEach(function(agent) {
+            const isSelected = selectedId == agent.id ? "selected" : "";
+            $dropdown.append(`<option value="${agent.id}" ${isSelected}>${agent.name}</option>`);
+        });
+    }
+
+    function scrollTop() {
+        $j('html, body').animate({
+            scrollTop: $j('.main-header').offset().top
+        }, 1000);
+        setTimeout(function() {
+            $j('#successmsg').fadeOut();
+        }, 3000);
+    }
+});
+</script>
+
+{% endblock content %}

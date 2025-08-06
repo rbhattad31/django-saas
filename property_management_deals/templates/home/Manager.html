@@ -20,7 +20,9 @@
             <div class="card o-hidden mb-4">
                 <div class="card-header">
                     <h3 class="w-50 float-left card-title m-0">List of Management Receipts</h3>
-                    <button class="btn btn-primary btn-rounded m-1" style="float:right" id="create_receipt">Add New Management Receipt</button>
+                    {% if perms.core.add_management_receipts_rentalproperties %}
+                        <button class="btn btn-primary btn-rounded m-1" style="float:right" id="create_receipt">Add New Management Receipt</button>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <!-- Filter Section -->
@@ -580,6 +582,15 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
+<script>
+    const userPermissions = {
+        can_view: {{ perms.core.view_management_receipts_rentalproperties|yesno:"true,false" }},
+        can_edit: {{ perms.core.edit_management_receipts_rentalproperties|yesno:"true,false" }},
+        can_download: {{ perms.core.download_management_receipts_rentalproperties|yesno:"true,false" }},
+    
+    };
+</script>
+
 <!-- JavaScript -->
 <script>
     function getCookie(name) {
@@ -673,18 +684,44 @@
                         console.log("Row object:", row);
                         let id = (row && row.id) ? row.id : (data && data.id ? data.id : 'undefined');
                         console.log("Row ID extracted:", id);
-                        let actionsHtml = `
-                            <a href="/management-receipts/${row.id}/view-receipt/" class="btn btn-sm btn-link text-primary" title="View Receipt">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                            <a href="/management-receipts/${row.id}/edit-receipt/" class="btn btn-link text-primary mr-2" title="Edit Receipt">
-                                <i class="fa fa-pencil-alt"></i>
-                            </a>
-                            <a href="/management-receipts/${row.id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
-                                <i class="fa fa-download"></i>
-                            </a>
-                        `;
-                        return actionsHtml;
+                        
+                        //let actionsHtml = `
+                        //    <a href="/management-receipts/${row.id}/view-receipt/" class="btn btn-sm btn-link text-primary" title="View Receipt">
+                        //        <i class="fa fa-eye"></i>
+                        //    </a>
+                        //    <a href="/management-receipts/${row.id}/edit-receipt/" class="btn btn-link text-primary mr-2" title="Edit Receipt">
+                        //        <i class="fa fa-pencil-alt"></i>
+                        //    </a>
+                        //    <a href="/management-receipts/${row.id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
+                        //        <i class="fa fa-download"></i>
+                        //    </a>
+                        //`;
+                        //return actionsHtml;
+                        let actionsHtml = '';
+                        if (userPermissions.can_view) {
+                            actionsHtml += `
+                                <a href="/management-receipts/${id}/view-receipt/" class="btn btn-sm btn-link text-primary" title="View Receipt">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            `;
+                        }
+
+                        if (userPermissions.can_edit) {
+                            actionsHtml += `
+                                <a href="/management-receipts/${id}/edit-receipt/" class="btn btn-link text-primary mr-2" title="Edit Receipt">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                            `;
+                        }
+
+                        if (userPermissions.can_download) {
+                            actionsHtml += `
+                                <a href="/management-receipts/${id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            `;
+                        }
+                        return actionsHtml || '<span class="text-muted">No actions</span>';
                     }
                 },
                 { data: 'receipt_number', orderable: true },

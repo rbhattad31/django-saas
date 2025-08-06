@@ -40,7 +40,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group  # Add this import
 import os
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+# from django.core.files.storage import default_storage
 from django.utils.timezone import now  # Add this import
 import time
 import json

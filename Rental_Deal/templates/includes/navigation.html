@@ -1,6 +1,9 @@
+
 {% comment %} {% load json_script %} {% endcomment %} 
 
 {% load custom_tags %}
+
+
 
 <nav
   class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom my-3 h-auto"
@@ -36,16 +39,16 @@
                 can_view : {{perms.core.view_rentaldeals|yesno:"true,false"}} ,
                 can_edit : {{perms.core.change_rentaldeals|yesno:"true,false"}} ,
                 can_delete : {{perms.core.delete_rentaldeals|yesno:"true,false"}} ,
-                permissions: {% user_permissions_json %}
+              
 
 
               };
 
               console.log(currentUser.permissions)
 
-               if (currentUser.permissions.includes("core.change_rentaldeals")) {
+               {% comment %} if (currentUser.permissions.includes("core.change_rentaldeals")) {
           console.log("Can edit rental deals  this is to check for the custom tags");
-        }
+        } {% endcomment %}
               {% comment %} console.log(currentUser); {% endcomment %}
               document.addEventListener("DOMContentLoaded", function () {
           const usernameSpan = document.getElementById("username");

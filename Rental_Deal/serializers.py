@@ -216,8 +216,8 @@ class DealSerializer(serializers.ModelSerializer):
                 'tenant_mobile', 'tenant_email', 'agent_first_name', 'agent_phone',
                 'tenant_agency', 'tenant_agent_first_name', 'tenant_agent_phone',
                 'total_commission', 'less_outsude_commission', 'net_commission',
-                'classic', 'agent1', 'receipt_no',  'agent_name1',
-                  'screening'
+                'classic', 'agent1', 'receipt_no',  'agent_name1'
+                
             ]
             missing_fields = [
                 field for field in complete_required_fields if not data.get(field)

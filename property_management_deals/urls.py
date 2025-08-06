@@ -62,5 +62,8 @@ urlpatterns = [
     }), name='management_receipts_edit'),
     path('management-receipts/create-form/', ManagementReceiptsViewSet.as_view({'get': 'create_form'}), name='management_receipts_create_form'),
     path('management-receipts/create/', ManagementReceiptsViewSet.as_view({'post': 'create_receipt'}), name='management_receipts_create'),
+     path('rental-properties/<int:pk>/renew/', Rental_PropertyViewSet.as_view({'get': 'renew_property_page'}), name='rental-property-renew'),
+    path('rental-properties/<int:pk>/', Rental_PropertyViewSet.as_view({'put': 'renew'}), name='rental-property-update'),
+    path('api/rental-properties/<int:pk>/update-finance/', Rental_PropertyViewSet.as_view({'post': 'update_finance', 'put': 'update_finance'}), name='rental-property-update-finance'),
 
 ]

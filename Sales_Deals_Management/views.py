@@ -290,7 +290,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     print("value", value)
                     if value:
                         # Remove the file from S3
-                        filepath = f"/rental/referencenumber_CP/{sales_deal.reference_number}/{file_name}"
+                        filepath = f"sales/referencenumber_CP/{sales_deal.reference_number}/{file_name}"
 
                         # is_deleted= delete_from_s3(filepath)
                         # print( "filepath", filepath)
@@ -312,7 +312,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
     # Loop through all uploaded file fields
     # add data 
-            path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+            path = f"sales/referencenumber_CP/{mutable_data['reference_number']}"
             for key in request.FILES.keys():
                 base_field_name = key.rstrip("[]")  # Remove [] suffix if present
                 print("base_field_name", base_field_name)
@@ -369,7 +369,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
             for base_field_name in all_field_keys:
                 reference_number = mutable_data.get("reference_number")
-                path_folder = f"rental/referencenumber_CP/{reference_number}"
+                path_folder = f"sales/referencenumber_CP/{reference_number}"
 
                 existing_value = getattr(sales_deal, base_field_name, "")
                 existing_files = existing_value.split(",") if existing_value else []

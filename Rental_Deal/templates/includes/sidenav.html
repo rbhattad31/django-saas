@@ -101,11 +101,13 @@
               </li>
             {% endif %}
             <!-- Management Receipts -->
+              {% if perms.core.list_management_receipts_rentalproperties %}
             <li class="list-group-item border-0 px-3 py-1">
               <a href="{% url 'management_receipts_manager' %}" class="text-decoration-none">
                 <i class="fas fa-file-invoice-dollar me-2"></i> Management Receipts
               </a>
             </li>
+            {% endif %}
 
           </ul>
         </div>

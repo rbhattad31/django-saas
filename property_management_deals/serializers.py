@@ -43,7 +43,7 @@ class DealSerializer(serializers.ModelSerializer):
  
         # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
         # Replace 'your_app.change_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('property_management_deals.view_properties_rentalproperties')
+        has_permission = request.user.has_perm('core.view_properties_rentalproperties')
         # is_editable_status = obj.status != 'archived' # Example status check
  
         return has_permission  
@@ -58,7 +58,7 @@ class DealSerializer(serializers.ModelSerializer):
  
         # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
         # Replace 'your_app.change_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('property_management_deals.edit_properties_rentalproperties')
+        has_permission = request.user.has_perm('core.edit_properties_rentalproperties')
         # is_editable_status = obj.status != 'archived' # Example status check
  
         return has_permission  
@@ -71,7 +71,7 @@ class DealSerializer(serializers.ModelSerializer):
  
         # Example: User must have 'delete_rentaldeal' permission and be the creator of the deal
         # Replace 'your_app.delete_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('property_management_deals.delete_properties_rentalproperties')
+        has_permission = request.user.has_perm('core.delete_properties_rentalproperties')
         # is_owner = (request.user == obj.created_by) if obj.created_by else False # Assuming created_by is a User field
  
         return has_permission  

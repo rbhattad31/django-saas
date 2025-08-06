@@ -1,121 +1,7 @@
 
 {% extends "layouts/base.html" %}
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <title>View Property</title>
-    <!-- Add Bootstrap CSS if not already included -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .tab-content table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .tab-content td {
-            padding: 8px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .tab-content td:first-child {
-            text-align: left;
-            width: 50%;
-            font-weight: bold;
-        }
-        .tab-content td:last-child {
-            text-align: right;
-            width: 50%;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #fff;
-            border-bottom: 2px solid purple;
-        }
-    </style>
-</head>
-<body>
-    <h2>View Property</h2>
-    <div class="d-flex justify-content-end mb-3">
-        <a href="/rental-properties/" class="btn btn-secondary me-2">Back</a>
-        <button class="btn btn-secondary">Download Receipt</button>
-    </div>
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="property-details-tab" data-bs-toggle="tab" href="#property-details">Property Details</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="owner-details-tab" data-bs-toggle="tab" href="#owner-details">Owner Details</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="owner-agency-details-tab" data-bs-toggle="tab" href="#owner-agency-details">Owner Agency Details</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="cheque-details-tab" data-bs-toggle="tab" href="#cheque-details">Cheque Details</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="revenue-details-tab" data-bs-toggle="tab" href="#revenue-details">Revenue Details</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="documents-tab" data-bs-toggle="tab" href="#documents">Documents</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="status-comments-tab" data-bs-toggle="tab" href="#status-comments">Status & Comments</a>
-        </li>
-    </ul>
-    <div class="row">
-        <!-- Left Column -->
-        <div class="col-md-6">
-            <table class="w-100">
-                <tr><td><strong>Deal Date</strong></td><td>{{ property.deal_date }}</td></tr>
-                <tr><td><strong>Reference Number</strong></td><td>{{ property.reference_number }}</td></tr>
-                <tr><td><strong>Project Name</strong></td><td>{{ property.project_name }}</td></tr>
-                <tr><td><strong>Building Name</strong></td><td>{{ property.building_name }}</td></tr>
-                <tr><td><strong>Unit No</strong></td><td>{{ property.unit_details }}</td></tr>
-            </table>
-        </div>
-
-        <!-- Right Column -->
-        <div class="col-md-6">
-            <table class="w-100">
-                <tr><td><strong>PMS Price</strong></td><td>{{ property.pms_price }}</td></tr>
-                <tr><td><strong>PM Start Date</strong></td><td>{{ property.pm_start_date }}</td></tr>
-                <tr><td><strong>PM End Date</strong></td><td>{{ property.pm_end_date }}</td></tr>
-                <tr><td><strong>Tenancy Start Date</strong></td><td>{{ property.tenancy_start_date }}</td></tr>
-                <tr><td><strong>Tenancy End Date</strong></td><td>{{ property.tenancy_end_date }}</td></tr>
-            </table>
-        </div>
-    </div>
-
-    <div class="tab-content mt-3">
-        <div class="tab-pane fade show active" id="property-details">
-         
-            <div class="d-flex justify-content-center mt-3">
-                <button class="btn" style="background-color: purple; color: white;">Next</button>
-
-            </div>
-            
-        </div>
-        <div class="tab-pane fade" id="owner-details">
-            <!-- Add Owner Details content if needed -->
-        </div>
-        <div class="tab-pane fade" id="owner-agency-details">
-            <!-- Add Owner Agency Details content if needed -->
-        </div>
-        <div class="tab-pane fade" id="cheque-details">
-            <!-- Add Cheque Details content if needed -->
-        </div>
-        <div class="tab-pane fade" id="revenue-details">
-            <!-- Add Revenue Details content if needed -->
-        </div>
-        <div class="tab-pane fade" id="documents">
-            <!-- Add Documents content if needed -->
-        </div>
-        <div class="tab-pane fade" id="status-comments">
-            <!-- Add Status & Comments content if needed -->
-        </div>
-    </div>
-    <!-- Add Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> {% endcomment %}
-
+ 
+{% load custom_tags %}
 
 {% block content %}
 <div class="main-content pt-4">
@@ -131,7 +17,7 @@
                     <h4 class="p-2">View Property
                         <span class="float-right">
                             <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/rental-property/list">Back</a>
-                            <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/management_receipts/downloadReceiptPDF/1321">Download Receipt</a>
+                            <a class="btn btn-primary btn-rounded" href="/management-receipts/{{receipts.id}}/downloadReceiptPDF/">Download Receipt</a>
                         </span>
                     </h4>
                 </div>
@@ -579,7 +465,8 @@
                                             <div id="upload_prevss" class="buyers_passport_copy_list"></div>
                                             <span class="text-danger" id="buyers_passport_copy_error"></span>
                                             <div class="upload_prev">
-                                                <a href="{{ property.pms_contract_link }}" target="_new">{{ property.pms_contract }}</a>
+                                                
+                                                {% render_file_links property.pms_contract %} 
                                             </div>
                                         </div>
                                     </div>
@@ -593,7 +480,9 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="owner_passport_copy_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.owner_passport_copy_link }}" target="_new">{{ property.owner_passport_copy }}</a>
+
+                                                {% render_file_links property.owner_passport_copy %}
+                                                {% comment %} <a href="{{ property.owner_passport_copy_link }}" target="_new">{{ property.owner_passport_copy }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="owner_passport_copy_error"></span>
                                         </div>
@@ -610,7 +499,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="owner_eid_copy_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.owner_eid_copy_link }}" target="_new">{{ property.owner_eid_copy }}</a>
+                                                {% render_file_links property.owner_eid_copy %}
+                                                {% comment %} <a href="{{ property.owner_eid_copy_link }}" target="_new">{{ property.owner_eid_copy }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="owner_eid_copy_error"></span>
                                         </div>
@@ -625,7 +515,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="pms_cheque_copy_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.pms_cheque_copy_link }}" target="_new">{{ property.pms_cheque_copy }}</a>
+                                                {% render_file_links property.pms_cheque_copy %}
+                                                {% comment %} <a href="{{ property.pms_cheque_copy_link }}" target="_new">{{ property.pms_cheque_copy }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="pms_cheque_copy_error"></span>
                                         </div>
@@ -642,7 +533,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="title_deed_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.title_deed_link }}" target="_new">{{ property.title_deed }}</a>
+                                                {% render_file_links property.title_deed %}
+                                                {% comment %} <a href="{{ property.title_deed_link }}" target="_new">{{ property.title_deed }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="title_deed_error"></span>
                                         </div>
@@ -657,7 +549,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="poa_pp_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.poa_pp_link }}" target="_new">{{ property.poa_pp }}</a>
+                                                {% render_file_links property.poa_pp %}
+                                                {% comment %} <a href="{{ property.poa_pp_link }}" target="_new">{{ property.poa_pp }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="poa_pp_error"></span>
                                         </div>
@@ -674,7 +567,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="poa_copy_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.poa_copy_link }}" target="_new">{{ property.poa_copy }}</a>
+                                                {% render_file_links property.poa_copy %}
+                                                {% comment %} <a href="{{ property.poa_copy_link }}" target="_new">{{ property.poa_copy }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="poa_copy_error"></span>
                                         </div>
@@ -689,7 +583,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="key_hand_over_form_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.key_hand_over_form_link }}" target="_new">{{ property.key_hand_over_form }}</a>
+                                                {% render_file_links property.key_hand_over_form %}
+                                                {% comment %} <a href="{{ property.key_hand_over_form_link }}" target="_new">{{ property.key_hand_over_form }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="key_hand_over_form_error"></span>
                                         </div>
@@ -706,7 +601,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="kyc_form_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.kyc_form_link }}" target="_new">{{ property.kyc_form }}</a>
+                                                {% render_file_links property.kyc_form %}
+                                                {% comment %} <a href="{{ property.kyc_form_link }}" target="_new">{{ property.kyc_form }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="kyc_form_error"></span>
                                         </div>
@@ -721,7 +617,8 @@
                                         <div class="col-6">
                                             <div id="upload_prevss" class="screening_list"></div>
                                             <div class="upload_prev">
-                                                <a href="{{ property.screening_link }}" target="_new">{{ property.screening }}</a>
+                                                {% render_file_links property.screening %}
+                                                {% comment %} <a href="{{ property.screening_link }}" target="_new">{{ property.screening }}</a> {% endcomment %}
                                             </div>
                                             <span class="text-danger" id="screening_error"></span>
                                         </div>
@@ -765,7 +662,8 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6">
-                                            <label for=""><h6 class="value">{{ property.status }}</h6></label>
+                                            {% comment %} <label for=""><h6 class="value">{{ property.status }}</h6></label> {% endcomment %}
+                                            <label for=""><h6 class="value">{{ property.is_approved_rejected}}</h6></label>
                                         </div>
                                     </div>
                                 </div>
@@ -776,23 +674,92 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6">
-                                            <label for=""><h6 class="value">{{ property.aml }}</h6></label>
+                                            <label for=""><h6 class="value">{{ property.is_property_aml }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for=""><h6 class="labelname">Is Entered In Finance System</h6></label>
-                                    </div>
-                                    <div class="col-1"></div>
-                                    <div class="col-6">
-                                        <label for=""><h6 class="value">{{ property.is_entered_in_finance }}</h6></label>
-                                        <input type="button" id="enterFinance" value="Enter in Finance" class="btn btn-sm btn-info ml-3 status-finance" name="property">
+
+
+
+                            <div class="form-group row"> 
+                                <!-- Approve/Reject -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Approved/Rejected By</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{ property.approved_rejected_by }}</h6></label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                {% comment %} if perms.entered_finance_properties_rentalproperties
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Is Entered In Finance System</h6></label>
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{ property.is_entered_in_finance }}</h6></label>
+                                            <input type="button" id="enterFinance" value="Enter in Finance" class="btn btn-sm btn-info ml-3 status-finance" name="property">
+                                        </div>
+                                    </div>
+                                </div> {% endcomment %}
+
+
+                            
+                             
+                                <div class="col-md-6 form-group mb-3">
+                                        {% if perms.core.update_finance_status_properties_rentalproperties %}
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Is Entered In Finance System</h6>
+                                                </label>
+                                            </div>
+                                        
+                                                <div class="col-1">:</div>
+                                            {% comment %} <div class="col-6">
+                                                <label>
+                                                    <h6 class="value">{{ property.is_entered_in_finance_system }}</h6>
+                                                </label>
+                                                {% if property.is_entered_in_finance_system == "0" %}
+                                                    <input
+                                                        type="button"
+                                                        class="btn btn-sm btn-info ml-3 status-finance"
+                                                        value="Enter in Finance"
+                                                        id="financeBtn{{ property.id }}"
+                                                
+                                                    onclick="enterInFinance({{ property.id }})"
+                                                    >
+                                                {% endif %}
+                                            </div> {% endcomment %}
+                                            <div class="col-6">
+                                                <label for="">
+                                                    {% if property.is_entered_in_finance_system == "0" or property.is_entered_in_finance_system == 0 %}
+                                                        <h6 class="value" id="financeStatus">No</h6>
+                                                    {% else %}
+                                                        <h6 class="value" id="financeStatus">Yes</h6>
+                                                    {% endif %}
+                                                </label>
+                                                {% if property.is_entered_in_finance_system == "0" %}
+                                                <input
+                                                    type="button"
+                                                    class="btn btn-sm btn-info ml-3 status-finance"
+                                                    value="Enter in Finance"
+                                                    id="financeBtn{{ property.id }}"
+                                                    onclick="enterInFinance({{ property.id }})"
+                                                >
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                </div>
+                            </div>   
+ 
                             <hr>
                             <div class="row comments-section">
                                 <div class="col-md-6 form-group mb-4">
@@ -807,7 +774,8 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6 format-value">
-                                            <label for=""><h6 class="value">{{ property.comment_by_agent }}</h6></label>
+                                            {% comment %} <label for=""><h6 class="value">{{ property.comment_by_agent }}</h6></label> {% endcomment %}
+                                            <label for=""><h6 class="value">{{ property.agent_comment }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
@@ -818,12 +786,13 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6 format-value">
-                                            <label for=""><h6 class="value">{{ property.comment_by_admin }}</h6></label>
+                                            {% comment %} <label for=""><h6 class="value">{{ property.comment_by_admin }}</h6></label> {% endcomment %}
+                                            <label for=""><h6 class="value">{{ property.comments }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row comments-section">
+                            {% comment %} <div class="form-group row comments-section">
                                 <div class="col-md-2">
                                     <label for=""><h6 class="labelname">Comment by Finance</h6></label>
                                 </div>
@@ -843,7 +812,80 @@
                                         </div>
                                     </form>
                                 </div>
+                            </div> {% endcomment %}
+                            <div class="form-group row comments-section">
+                                <div class="col-md-2">
+                                    <label for=""><h6 class="labelname">Comment by Finance</h6></label>
+                                </div>
+                                <div class="col-md-1">:</div>
+                                {% comment %} <div class="col-md-6">
+
+                                    {% if perms.core.finance_comment_properties_rentalproperties %}
+                                    <form id="finance_comment_form" enctype="multipart/form-data" novalidate="novalidate">
+                                        <!-- Hidden editable comment box -->
+                                        <div class="form-group mb-3 edit_comments_finance" hidden>
+                                            <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments">{{ property.comment_by_finance }}</textarea>
+                                            <br>
+                                            <input type="button" id="addComment" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" name="property">
+                                        </div>
+
+                                        <!-- Display existing comment -->
+                                        <div>
+                                            <div class="format-value">
+                                                <label for="">
+                                                    <h6 class="value editComment">{{ property.comment_by_finance }}</h6>
+                                                </label>
+                                            </div>
+
+                                            {% if property.comment_by_finance %}
+                                                <!-- If comment exists, show Edit Comment -->
+                                                <input type="button" value="Edit Comment" class="btn btn-sm btn-warning ml-3 editCommentBtn" style="margin-top:-15px">
+                                            {% else %}
+                                                <!-- If no comment exists, show Add Comment -->
+                                                <input type="button" value="Add Comment" class="btn btn-sm btn-info ml-3 editCommentBtn" style="margin-top:-15px">
+                                            {% endif %}
+                                        </div>
+                                    </form>
+
+                                    {% else %}
+                                    <!-- Read-only for users without permission -->
+                                    <div class="format-value">
+                                        <label for="">
+                                            <h6 class="value">{{ property.comment_by_finance }}</h6>
+                                        </label>
+                                    </div>
+                                    {% endif %}
+                                </div> {% endcomment %}
+                                
+                                <div class="col-md-6">
+                                    {% if perms.core.finance_comment_properties_rentalproperties %}
+                                    <form id="finance_comment_form" enctype="multipart/form-data" novalidate="novalidate">
+                                        <div class="form-group mb-3 edit_comments_finance" style="display: none;">
+                                            <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments">{{ property.comments_finance|default:"" }}</textarea>
+                                            <br>
+                                            <input type="button" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" name="property" onclick="saveFinanceComment({{ property.id }})">
+                                        </div>
+                                        <div>
+                                            <div class="format-value">
+                                                <label for="">
+                                                    <h6 class="value" id="financeComment">{{ property.comments_finance }}</h6>
+                                                </label>
+                                            </div>
+                                            <input type="button" value="{% if property.comments_finance %}Edit Comment{% else %}Add Comment{% endif %}" class="btn btn-sm {% if property.comments_finance %}btn-warning{% else %}btn-info{% endif %} ml-3 editCommentBtn" style="margin-top:-15px" onclick="showCommentTextarea()">
+                                        </div>
+                                    </form>
+                                    {% else %}
+                                    <div class="format-value">
+                                        <label for="">
+                                            <h6 class="value">{{ property.comments_finance|default:"No comment added yet." }}</h6>
+                                        </label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            
+
                             </div>
+
                             <div class="form-group row mt-3">
                                 <div class="col-sm-12 d-flex justify-content-center">
                                     <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab6" style="float:right;color: white">Previous</a>
@@ -858,7 +900,10 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+{% comment %} <script>
+data = {{property | safe}}
+console.log(data)
+
 $(document).ready(function() {
     // Array of tab IDs
     const tabs = [
@@ -973,6 +1018,209 @@ $(document).ready(function() {
         $('.editComment').show();
         $('.editComment .value').text(comment);
     });
+
+    $('.tab-pane#nav-documents a').click(function(event) {
+        event.preventDefault();
+        const relativePath = $(this).attr('href');  // e.g., rental/.../file.pdf
+        const fullPath = '/media/' + relativePath;
+        console.log('Opening document:', fullPath);
+        window.open(fullPath, '_blank');
+    });
+
 });
+</script> {% endcomment %}
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+data = {{ property | safe }};
+console.log("Property Data:", data);
+
+$(document).ready(function() {
+    const tabs = [
+        '#nav-property',
+        '#nav-source',
+        '#nav-agency',
+        '#nav-cheque',
+        '#nav-revenue',
+        '#nav-documents',
+        '#nav-comments'
+    ];
+
+    function showTab(index) {
+        if (index >= 0 && index < tabs.length) {
+            $('.nav-link').removeClass('active');
+            $('.tab-pane').removeClass('active show');
+            $('[data-toggle="tab"]').eq(index).addClass('active');
+            $(tabs[index]).addClass('active show');
+            $('[data-toggle="tab"]').eq(index).tab('show');
+            if (index === 6) {
+                $('.comments-section').show();
+            } else {
+                $('.comments-section').hide();
+            }
+            if (index === 1) {
+                const ownerData = {
+                    owner_name: $('.tab-pane#nav-source .labelname:contains("Owner Name")').next().next().find('.value').text().trim(),
+                    mobile: $('.tab-pane#nav-source .labelname:contains("Mobile")').next().next().find('.value').text().trim()
+                };
+                const sourceData = {
+                    source: $('.tab-pane#nav-source .labelname:contains("Source")').next().next().find('.value').text().trim(),
+                    email: $('.tab-pane#nav-source .labelname:contains("Email")').next().next().find('.value').text().trim()
+                };
+                console.log('Left Data (Owner):', ownerData);
+                console.log('Right Data (Source):', sourceData);
+            }
+        }
+    }
+
+    const nextTabMap = {
+        'changeTabToSource': 1,
+        'changeTabToAgency': 2,
+        'changeTabToCheque': 3,
+        'changeTabToRevenue': 4,
+        'changeTabToDocuments': 5,
+        'changeTabToComments': 6
+    };
+
+    const prevTabMap = {
+        'previousTab1': 0,
+        'previousTab2': 1,
+        'previousTab3': 2,
+        'previousTab4': 3,
+        'previousTab5': 4,
+        'previousTab6': 5
+    };
+
+    const activeTab = $('.nav-link.active').attr('href');
+    const currentTab = tabs.indexOf(activeTab);
+    showTab(currentTab);
+
+    $('[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        const targetTab = $(e.target).attr('href');
+        const tabIndex = tabs.indexOf(targetTab);
+        showTab(tabIndex);
+    });
+
+    $('.btn[id^="changeTabTo"]').click(function() {
+        console.log("✅ Next clicked:", $(this).attr('id'));
+        const buttonId = $(this).attr('id');
+        const nextTab = nextTabMap[buttonId] ?? (currentTab + 1);
+        console.log("👉 Going to tab index:", nextTab);
+        showTab(nextTab);
+    });
+
+    $('.btn[id^="previousTab"]').click(function() {
+        console.log("✅ Previous clicked:", $(this).attr('id'));
+        const buttonId = $(this).attr('id');
+        const prevTab = prevTabMap[buttonId] ?? (currentTab - 1);
+        console.log("👈 Going to tab index:", prevTab);
+        showTab(prevTab);
+    });
+
+    $('.tab-pane#nav-documents a').click(function(event) {
+        event.preventDefault();
+        const relativePath = $(this).attr('href');
+        const fullPath = '/media/' + relativePath;
+        console.log('Opening document:', fullPath);
+        window.open(fullPath, '_blank');
+    });
+});
+
+function showCommentTextarea() {
+    console.log("✅ Show Comment Textarea clicked");
+    $('.edit_comments_finance').css('display', 'block');
+    $('#comments_finance').focus();
+    $('.editCommentBtn').css('display', 'none');
+}
+
+function enterInFinance(propertyId) {
+    console.log("✅ Enter in Finance clicked for property ID:", propertyId);
+    if (!csrftoken) {
+        console.error("❌ CSRF token is missing");
+        $('#successmsg').show().find('#alert-primary').text('Error: CSRF token is missing');
+        setTimeout(() => $('#successmsg').hide(), 3000);
+        return;
+    }
+
+    $.ajax({
+        url: `/api/rental-properties/${propertyId}/update-finance/`,
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        data: {
+            is_entered_in_finance_system: '1'
+        },
+        success: function(response) {
+            console.log("✅ Finance status updated:", response);
+            $('#financeStatus').text('Yes');
+            $(`#financeBtn${propertyId}`).remove();
+            $('#successmsg').show().find('#alert-primary').text('Finance status updated successfully');
+            setTimeout(() => $('#successmsg').hide(), 3000);
+        },
+        error: function(xhr) {
+            console.error("❌ Error updating finance status:", xhr.responseText);
+            $('#successmsg').show().find('#alert-primary').text('Error updating finance status: ' + (xhr.responseJSON?.detail || 'Unknown error'));
+            setTimeout(() => $('#successmsg').hide(), 3000);
+        }
+    });
+}
+
+function saveFinanceComment(propertyId) {
+    console.log("✅ Save Finance Comment clicked for property ID:", propertyId);
+    const comment = $('#comments_finance').val();
+    console.log("📝 Comment entered:", comment);
+
+    if (!csrftoken) {
+        console.error("❌ CSRF token is missing");
+        $('#successmsg').show().find('#alert-primary').text('Error: CSRF token is missing');
+        setTimeout(() => $('#successmsg').hide(), 3000);
+        return;
+    }
+
+    $.ajax({
+        url: `/api/rental-properties/${propertyId}/update-finance/`,
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        data: {
+            comments_finance: comment
+        },
+        success: function(response) {
+            console.log("✅ Comment saved successfully:", response);
+            $('#financeComment').text(comment || 'No comment added yet.');
+            $('.edit_comments_finance').css('display', 'none');
+            $('.editCommentBtn')
+                .val(comment ? 'Edit Comment' : 'Add Comment')
+                .removeClass('btn-info btn-warning')
+                .addClass(comment ? 'btn-warning' : 'btn-info')
+                .css('display', 'inline-block');
+            $('#successmsg').show().find('#alert-primary').text('Comment saved successfully');
+            setTimeout(() => $('#successmsg').hide(), 3000);
+        },
+        error: function(xhr, status, error) {
+            console.error("❌ Error saving comment:", xhr.responseText);
+            $('#successmsg').show().find('#alert-primary').text('Error saving comment: ' + (xhr.responseJSON?.detail || 'Unknown error'));
+            setTimeout(() => $('#successmsg').hide(), 3000);
+        }
+    });
+}
 </script>
 {% endblock content %}

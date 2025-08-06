@@ -12,6 +12,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.contrib.auth.models import Permission
 
 from django_multitenant.models import TenantModel, TenantManager
+from datetime import datetime, date
 
 # from Rental_Deal.serializers import User
 # from django_multitenant.models import TenantModel, TenantManager
@@ -137,7 +138,7 @@ class Account(models.Model):
                 "edit_properties_rentalproperties",
                 "delete_properties_rentalproperties",
                 "edit_approved_properties_rentalproperties",
-
+                "list_management_receipts_rentalproperties",
                 "add_management_receipts_rentalproperties",
                 "edit_management_receipts_rentalproperties",
                 "view_management_receipts_rentalproperties",
@@ -205,7 +206,7 @@ class Account(models.Model):
                 "view_properties_rentalproperties",
                 
                 "edit_properties_rentalproperties",
-
+                "list_management_receipts_rentalproperties",
                 "view_management_receipts_rentalproperties",
                 "download_management_receipts_rentalproperties",
 
@@ -292,6 +293,7 @@ class Account(models.Model):
                  # Property Managment for the  Finance 
                 "add_rentalproperties",
                 "view_properties_rentalproperties",
+                "list_management_receipts_rentalproperties",
                 "add_management_receipts_rentalproperties",
                 "edit_management_receipts_rentalproperties",
                 "view_management_receipts_rentalproperties",
@@ -1188,7 +1190,8 @@ class Deposits(models.Model):
 
 class RentalProperties(models.Model):
     id = models.BigAutoField(primary_key=True)
-    deal_date = models.TextField()
+    #deal_date = models.TextField()
+    deal_date = models.CharField(max_length=10, blank=True, null=True)  # Stores dd-mm-yyyy
     reference_number = models.TextField()
     pms = models.TextField(blank= True , null = True)
     
@@ -1196,10 +1199,14 @@ class RentalProperties(models.Model):
     building_name = models.TextField()
     unit_details = models.TextField()
     pms_price = models.TextField()
-    pm_start_date = models.TextField()
-    pm_end_date = models.TextField()
-    tenancy_start_date = models.TextField()
-    tenancy_end_date = models.TextField()
+    # pm_start_date = models.TextField()
+    # pm_end_date = models.TextField()
+    # tenancy_start_date = models.TextField()
+    # tenancy_end_date = models.TextField()
+    pm_start_date = models.CharField(max_length=10, blank=True, null=True)
+    pm_end_date = models.CharField(max_length=10, blank=True, null=True)
+    tenancy_start_date = models.CharField(max_length=10, blank=True, null=True)
+    tenancy_end_date = models.CharField(max_length=10, blank=True, null=True)
     owner_first_name = models.TextField()
     owner_source = models.TextField()
     owner_mobile = models.TextField()
@@ -1211,6 +1218,10 @@ class RentalProperties(models.Model):
     agent_email = models.TextField(blank=True, null=True)
     no_of_cheque = models.TextField()
     cheque_date = models.TextField()
+
+    #cheque_date = models.JSONField(blank=True, null=True)
+    #cheque_date = models.DateField(null=True, blank=True)
+    
     pms_contract = models.TextField()
     owner_passport_copy = models.TextField()
     owner_eid_copy = models.TextField()
@@ -1255,7 +1266,9 @@ class RentalProperties(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=191, blank=True, null=True)
     updated_by = models.CharField(max_length=191, blank=True, null=True)
-    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
+    #account = models.ForeignKey(Accounts, models.DO_NOTHING, blank=True, null=True)
+    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True,db_column='account_id')
+
       
 
     status = models.CharField(max_length=20, choices = [
@@ -1285,24 +1298,205 @@ class RentalProperties(models.Model):
     buyer_nationality = models.CharField(max_length=191)
     submitted_date = models.DateField()
     #manager_approved_rejected = models.CharField(max_length=10)
+    # manager_approved_rejected = models.CharField(
+    #     max_length=1,
+    #     choices=[
+    #         ('A', 'Approved'),
+    #         ('R', 'Rejected'),
+    #     ],
+    #     null=True,
+    #     blank=True,
+    # )
     manager_approved_rejected = models.CharField(
         max_length=1,
         choices=[
+            
             ('A', 'Approved'),
             ('R', 'Rejected'),
-            ('P', 'Pending'),
-            
         ],
         null=True,
-        blank=True, default ="P"
+        blank=True,
+        
     )
 
     class Meta:
-        managed = False
+        #managed = False
         db_table = 'rental_properties'
 
     def debug_form_status(self):
         print(f"\nForm Status: {self.form_status} (Length: {len(self.form_status) if self.form_status else 0})")
+
+
+    # def update_status_if_needed(self):
+    #     print(f"Starting update_status_if_needed for property ID: {self.id}")
+    #     if not self.tenancy_end_date:
+    #         print(f"No tenancy_end_date for property ID: {self.id}")
+    #         return
+
+    #     tenancy_end_date = self.tenancy_end_date.strip()
+    #     print(f"Tenancy End Date: '{tenancy_end_date}'")
+
+    #     # Try multiple date formats
+    #     date_formats = ["%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%B %d, %Y"]
+    #     tenancy_end = None
+    #     for fmt in date_formats:
+    #         try:
+    #             tenancy_end = datetime.strptime(tenancy_end_date, fmt).date()
+    #             print(f"Parsed date with format {fmt}: {tenancy_end}")
+    #             break
+    #         except ValueError:
+    #             continue
+
+    #     if not tenancy_end:
+    #         print(f"Failed to parse tenancy_end_date '{tenancy_end_date}' for property ID: {self.id}")
+    #         return
+
+    #     today = date.today()
+    #     print(f"Today: {today}, Tenancy End: {tenancy_end}")
+
+    #     if tenancy_end < today:
+    #         status = 'Expired'
+    #     elif (tenancy_end - today).days <= 30:
+    #         status = 'About To Expire'
+    #     else:
+    #         status = 'Active'
+
+    #     print(f"🏷 Current status: {self.status}, New status: {status}")
+    #     if self.status != status:
+    #         print(f"Updating status from {self.status} to {status} for property ID: {self.id}")
+    #         try:
+    #             self.status = status
+    #             self.save(update_fields=['status'])
+    #             print(f"Status updated successfully for property ID: {self.id}")
+    #         except Exception as e:
+    #             print(f"Save error for property ID: {self.id}: {str(e)}")
+    #     else:
+    #         print(f"Status already up to date: {status} for property ID: {self.id}")
+    # def update_status_if_needed(self):
+    #     print(f"Starting update_status_if_needed for property ID: {self.id}")
+
+    #     # 1. Handle Incomplete form as Inactive status
+    #     if self.form_status and self.form_status.strip() == 'Incomplete':
+    #         if self.status != 'Inactive':
+    #             print(f"Setting status to Inactive because form_status is Incomplete for property ID: {self.id}")
+    #             self.status = 'Inactive'
+    #             self.save(update_fields=['status'])
+    #         else:
+    #             print(f"Status already Inactive for Incomplete form on property ID: {self.id}")
+    #         return
+
+    #     # 2. If no tenancy_end_date, do nothing
+    #     if not self.tenancy_end_date:
+    #         print(f"No tenancy_end_date for property ID: {self.id}")
+    #         return
+
+    #     tenancy_end_date = self.tenancy_end_date.strip()
+    #     date_formats = ["%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%B %d, %Y"]
+    #     tenancy_end = None
+
+    #     for fmt in date_formats:
+    #         try:
+    #             tenancy_end = datetime.strptime(tenancy_end_date, fmt).date()
+    #             print(f"Parsed date with format {fmt}: {tenancy_end}")
+    #             break
+    #         except ValueError:
+    #             continue
+
+    #     if not tenancy_end:
+    #         print(f"Failed to parse tenancy_end_date '{tenancy_end_date}' for property ID: {self.id}")
+    #         return
+
+    #     today = date.today()
+    #     print(f"Today: {today}, Tenancy End: {tenancy_end}")
+
+    #     if tenancy_end < today:
+    #         status = 'Expired'
+    #     elif (tenancy_end - today).days <= 30:
+    #         status = 'About To Expire'
+    #     else:
+    #         status = 'Active'
+
+    #     print(f"🏷 Current status: {self.status}, New status: {status}")
+    #     if self.status != status:
+    #         print(f"Updating status from {self.status} to {status} for property ID: {self.id}")
+    #         try:
+    #             self.status = status
+    #             self.save(update_fields=['status'])
+    #             print(f"Status updated successfully for property ID: {self.id}")
+    #         except Exception as e:
+    #             print(f"Save error for property ID: {self.id}: {str(e)}")
+    #     else:
+    #         print(f"Status already up to date: {status} for property ID: {self.id}")
+
+    def update_status_if_needed(self):
+        #print(f"📌 Starting update_status_if_needed for property ID: {self.id}")
+
+        # 👇 Add these two lines here
+        #print(f"DEBUG - Account: {self.account}, Account ID: {self.account_id}")
+        #print(f"DEBUG - Deal SNO: {self.deal_sno}")
+        #print(f"Starting update_status_if_needed for property ID: {self.id}")
+
+        # 1. Handle Incomplete form as Inactive status
+        if self.form_status and self.form_status.strip() == 'Incomplete':
+            if self.status != 'Inactive':
+                print(f"Setting status to Inactive because form_status is Incomplete for property ID: {self.id}")
+                self.status = 'Inactive'
+                self.save(update_fields=['status'])
+            # else:
+            #     print(f"Status already Inactive for Incomplete form on property ID: {self.id}")
+            return
+
+        # 2. If no tenancy_end_date, do nothing
+        if not self.tenancy_start_date:
+            print(f"No tenancy_start_date for property ID: {self.id}")
+            return
+
+        #tenancy_end_date = self.tenancy_end_date.strip()
+        tenancy_start_date = self.tenancy_start_date.strip()
+        date_formats = ["%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%B %d, %Y"]
+        tenancy_start = None
+
+        for fmt in date_formats:
+            try:
+                tenancy_start = datetime.strptime(tenancy_start_date, fmt).date()
+                #print(f"Parsed date with format {fmt}: {tenancy_start}")
+                break
+            except ValueError:
+                continue
+
+        if not tenancy_start:
+            print(f"Failed to parse tenancy_start_date '{tenancy_start_date}' for property ID: {self.id}")
+            return
+
+        today = date.today()
+        #print(f"Today: {today}, Tenancy start: {tenancy_start}")
+
+        diff_days = (date.today() - tenancy_start).days
+
+        # if tenancy_start < today:
+        #     status = 'Expired'
+        # elif (tenancy_start - today).days <= 30:
+        #     status = 'About To Expire'
+        # else:
+        #     status = 'Active'
+        if diff_days > 365:
+            status = 'Expired'
+        elif 320 < diff_days <= 365:
+            status = 'About To Expire'
+        else:
+            status = 'Active'
+
+        #print(f"🏷 Current status: {self.status}, New status: {status}")
+        if self.status != status:
+            #print(f"Updating status from {self.status} to {status} for property ID: {self.id}")
+            try:
+                self.status = status
+                self.save(update_fields=['status'])
+                #print(f"Status updated successfully for property ID: {self.id}")
+            except Exception as e:
+                print(f"Save error for property ID: {self.id}: {str(e)}")
+        # else:
+        #     print(f"Status already up to date: {status} for property ID: {self.id}")
 
 
 
