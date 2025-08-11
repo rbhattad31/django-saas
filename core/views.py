@@ -107,7 +107,7 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
             current_user_obj = Users.objects.get(email=request.user.email) # Assuming request.user is Django's User model
             user_account_id = current_user_obj.account_id
             print()
-            queryset = Receipts.objects.all().order_by('-date')
+            queryset = Receipts.objects.filter(account_id=user_account_id).order_by('-date')
         except Users.DoesNotExist:
             return Response({"error": "User or account not found."}, status=status.HTTP_404_NOT_FOUND)
         except AttributeError:

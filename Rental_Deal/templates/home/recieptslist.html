@@ -145,6 +145,19 @@
 <script src="/static/assets/js/datatables.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+
+<!-- JSZip for Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- pdfmake for PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<!-- Buttons for Excel, PDF, Print -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 <script>
 $(document).ready(function(){
@@ -233,6 +246,34 @@ function getCookie(name) {
       //   }
       // },
     },
+    dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
+  "<'row mt-1'<'col-sm-12'tr>>" +
+  "<'row mt-1'<'col-md-6'i><'col-md-6 text-end'p>>",
+       buttons: [
+            {
+                extend: 'excelHtml5',
+                text: ' Excel',
+                titleAttr: 'Excel',
+                  exportOptions: {
+                    columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+                },
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            {
+                extend: 'pdfHtml5',
+                text: ' PDF',
+                 exportOptions: {
+                    columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+                },
+                titleAttr: 'PDF',
+                orientation: 'landscape',
+                pageSize: 'A3',
+            },
+            
+             
+        ],
+    
     success: function (data) {
       console.log("✅ Success:", data);
     },
@@ -300,24 +341,7 @@ function getCookie(name) {
          
     ],
     
-    "buttons": [
-               {
-                extend: 'excelHtml5',
-                exportOptions: {
-                    columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-
-                exportOptions: {
-                    columns: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-                },
-                orientation : 'landscape',
-                  pageSize : 'A4',
-            },
-            
-        ]
+ 
   });
     $('#filter').click(function(){
       receiptData.draw();

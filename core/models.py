@@ -84,7 +84,7 @@ class Account(models.Model):
                 "manage_rental_deals",
                 "view_pending_rental_deals",
                 "view_approved_rental_deals",
-              # this nee dto be removed
+                "edit_approved_rental_deals",
                 "enter_finance_rental_deals",
                 "edit_draft_rental_deals",
                 "update_finance_status_rental_deals",
@@ -116,12 +116,12 @@ class Account(models.Model):
                 "add_salesdeals",
                 "change_salesdeals",
                 "view_salesdeals",
-                "my_sales_deals_drafts",
+                "view_my_draft_sales_deals",# 
                 "delete_salesdeals",
                 "view_admin_sales_fields",
                 "edit_approved_sales_deals",
-                "view_pending_finance_sales_deals",
-                "enter_finance_sales_deals",
+                "view_pending_finance_sales_deal",#view_pending_finance_sales_deal
+                "enter_finance_sales_deal", #
                 "create_draft_sales_deal",
                 "edit_draft_sales_deal",
                 "update_aml_status_sales_deal",
@@ -177,6 +177,49 @@ class Account(models.Model):
                 "view_receipts",
 
 
+                # Dashboard permissions for Admin.
+                "total_users",
+                "total_active_users",
+                "total_inactive_users",
+
+                "total_rental_deals",
+                "rental_deal_drafts",
+                "approved_rental_deals",
+                "pending_rental_deals",
+                "rejected_rental_deals",
+                "waiting_finance_rental_deals",
+                "total_gross_commission_rental",
+                "total_net_commission_rental",
+                "entered_finance_rental_deals",
+                "pending_finance_rental_deals",
+
+                "total_sale_deals",
+                "sale_deal_drafts",
+                "approved_sale_deals",
+                "pending_sale_deals",
+                "rejected_sale_deals",
+                "waiting_finance_sales_deals",
+                "total_gross_commission_sales",
+                "total_net_commission_sales",
+                "entered_finance_sales_deals",
+                "pending_finance_sales_deals",
+
+                "total_property",
+                "property_drafts",
+                "approved_properties",
+                "pending_properties",
+                "rejected_properties",
+                "waiting_finance_properties",
+                "pending_finance_properties",
+                "entered_finance_properties",
+                "total_gross_commission_properties",
+                "total_net_commission_properties",
+
+                "receipts_count",
+                "third_party_receipts_count",
+                "management_receipts_count",
+
+
 
             ],
             "Manager": [
@@ -219,6 +262,22 @@ class Account(models.Model):
 
                 # recipts management for the Mananger 
                 "view_receipts",
+
+                # dashBroad Permissions for the Manager
+                "rental_deal_drafts",
+                "approved_rental_deals",
+                "pending_rental_deals",
+                "rejected_rental_deals",
+                "waiting_finance_rental_deals",
+                "total_gross_commission_rental",
+                "total_net_commission_rental",
+                "sale_deal_drafts",
+                "approved_sale_deals",
+                "pending_sale_deals",
+                "rejected_sale_deals",
+                "waiting_finance_sales_deals",
+                "total_gross_commission_sales",
+                "total_net_commission_sales",
                  
 
             ],
@@ -266,6 +325,27 @@ class Account(models.Model):
 
 
                 # recipts management for the Agent 
+
+
+                # Dash Broad Persmissions for the Agent
+                'total_rental_deals',
+                "rental_deal_drafts",
+                "approved_rental_deals",
+                "pending_rental_deals",
+                "rejected_rental_deals",
+                "total_gross_commission_rental",
+                "total_net_commission_rental",
+                "sale_deal_drafts",
+                "approved_sale_deals",
+                "pending_sale_deals",
+                "rejected_sale_deals",
+                "total_gross_commission_sales",
+                "total_net_commission_sales",
+                "total_property",
+                "property_drafts",
+                "approved_properties",
+                "pending_properties",
+                "rejected_properties",
                 
             ],
             "Finance": [
@@ -318,6 +398,14 @@ class Account(models.Model):
  	            "change_receipts", 
                 "delete_receipts", # here i dont have download permission  but i am using delete permission  for that rather than creating   since just we need to check id permision presnet or not  so we can use delete for the download permission only 
                 "view_receipts",
+
+                # dash broad Permisions
+                "entered_finance_rental_deals",
+                "pending_finance_rental_deals",
+                "entered_finance_sales_deals",
+                "pending_finance_sales_deals",
+                "pending_finance_properties",
+                "entered_finance_properties",
 
 
 
@@ -1543,6 +1631,10 @@ class ManagementReceipts(models.Model):
     class Meta:
         managed = False  # Assuming this model is managed outside of Django (existing DB table)
         db_table = 'management_receipts'
+
+class Dashboard(models.Model):
+    class Meta:
+        managed = False  # Prevents table creation
     
   
 

@@ -911,7 +911,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
         # Get and validate account_id
         account_id = (
-            request.user.account_id.id
+            request.user.account_id
             if request.user.is_authenticated and hasattr(request.user, 'account_id') and request.user.account_id
             else None
         )
@@ -1632,7 +1632,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         #print("Order in validated data:", data.get("order"))  # Debug validated order
 
         #queryset = RentalProperties.objects.all()
-        queryset = RentalProperties.objects.filter(is_deleted='N')
+        queryset = RentalProperties.objects.filter(is_deleted='N',account_id=account_id)
         #print("Initial Queryset:", queryset)
 
         # Global search
@@ -1715,8 +1715,8 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
  
             elif deal_type == 'draft':
-                queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
-       
+                queryset = queryset.filter(form_status='Incomplete',submitted_by_user_id=user.id)
+
             elif deal_type == "All" :
                 queryset = queryset.filter(form_status = "Complete")  
  
@@ -1809,59 +1809,59 @@ Rental_PropertyViewSet_filter = Rental_PropertyViewSet.as_view({
  
 
 
-def login_view(request):
-    form = LoginForm(request.POST or None)
+# def login_view(request):
+#     form = LoginForm(request.POST or None)
 
-    msg = None
+#     msg = None
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(email=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:
-                msg = 'Invalid credentials'
-        else:
-            msg = 'Error validating the form'
+#         if form.is_valid():
+#             username = form.cleaned_data.get("username")
+#             password = form.cleaned_data.get("password")
+#             user = authenticate(email=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#                 return redirect("/")
+#             else:
+#                 msg = 'Invalid credentials'
+#         else:
+#             msg = 'Error validating the form'
 
-    return render(request, "accounts/login.html", {"form": form, "msg": msg})
-def register_user(request):
-    msg = None
-    success = False
+#     return render(request, "accounts/login.html", {"form": form, "msg": msg})
+# def register_user(request):
+#     msg = None
+#     success = False
 
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get("email")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(email=email, password=raw_password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, 'User created and logged in successfully.')
-                return redirect("/login/")
-            else:
-                msg = 'User created but login failed. Please try logging in.'
-                success = True
-        else:
-            msg = 'Form is not valid'
-    else:
-        form = SignUpForm()
+#     if request.method == "POST":
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             email = form.cleaned_data.get("email")
+#             raw_password = form.cleaned_data.get("password1")
+#             user = authenticate(email=email, password=raw_password)
+#             if user is not None:
+#                 login(request, user)
+#                 messages.success(request, 'User created and logged in successfully.')
+#                 return redirect("/login/")
+#             else:
+#                 msg = 'User created but login failed. Please try logging in.'
+#                 success = True
+#         else:
+#             msg = 'Form is not valid'
+#     else:
+#         form = SignUpForm()
 
-    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
+#     return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
 
 
 
-@login_required(login_url="/login/")
-def index(request):
-    context = {'segment': 'index'}
+# @login_required(login_url="/login/")
+# def index(request):
+#     context = {'segment': 'index'}
 
-    html_template = loader.get_template('home/index.html')
-    return HttpResponse(html_template.render(context, request))
+#     html_template = loader.get_template('home/index.html')
+#     return HttpResponse(html_template.render(context, request))
 
 
 @login_required(login_url="/login/")

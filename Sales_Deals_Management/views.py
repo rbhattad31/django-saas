@@ -62,7 +62,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     def view_sales_deal(self, request, pk=None):
         sales_deal = get_object_or_404(SalesDeals, pk=pk)
         print("Sales Deal:", sales_deal)
-        serializer = SalesDealSerializer(sales_deal)
+        serializer = SalesDealSerializer(sales_deal,context ={'request': request})
         # return HttpResponse("hello this is view page")
         aws_url = settings.AWS_URL
 
@@ -232,7 +232,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             pk = pk
             sales_deal = get_object_or_404(SalesDeals, pk=pk)
-            serializer = SalesDealSerializer(sales_deal,   partial=True)
+            serializer = SalesDealSerializer(sales_deal,   partial=True ,context ={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
             
             # return render(request, 'home/editsalesdeal.html', {'salesdeal': serializer.data})
@@ -544,7 +544,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         length = validated.get("length", 10)
         paginated = queryset[start:start + length]
 
-        serializer = SalesDealSerializer(paginated, many=True)
+        serializer = SalesDealSerializer(paginated, many=True,context= {'request': request})
         response_data = {
             "draw": validated.get("draw", 0),
             "recordsTotal": queryset.count(),

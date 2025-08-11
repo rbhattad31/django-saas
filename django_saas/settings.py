@@ -97,11 +97,11 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME': 'deal_saas',
-        'USER': 'admin',
-        'PASSWORD': 'AKdWZKK6DlDfifTrOzj8',
-        'HOST': 'database-1.c542sayu4omi.ap-southeast-1.rds.amazonaws.com',
-        'PORT': '3306',
+        'NAME': os.getenv('DATABASE_NAME'),  # Default database name
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT', '3306'),
     }
 }
 
@@ -194,7 +194,7 @@ AUTH_USER_MODEL = 'core.Users'
 
 # AWS S3 settings
 
-AWS_URL = '/media/rental/referencenumber_CP/'
+AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/rental/referencenumber_CP/'
 
 
 ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"

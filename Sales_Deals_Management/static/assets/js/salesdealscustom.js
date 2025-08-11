@@ -296,21 +296,35 @@ $(document).ready(function () {
       //   }
       // },
     },
+        dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
+  "<'row mt-1'<'col-sm-12'tr>>" +
+  "<'row mt-1'<'col-md-6'i><'col-md-6 text-end'p>>",
+       buttons: [
+            {
+                extend: 'excelHtml5',
+                text: ' Excel',
+                titleAttr: 'Excel',
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            {
+                extend: 'pdfHtml5',
+                text: ' PDF',
+                columns: [2,3,4,5,6,7,8,9],
+                titleAttr: 'PDF',
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            
+             
+        ],
     success: function (data) {
       console.log("✅ Success:", data);
-    },
+    }, 
     columns: [
-      {
-        data: null,
-        title: "Actions",
-        render: function (data, type, row, meta) {
-          return `
-              <a href="/sales-deals/view/${row.id}/" class="text-primary"><i class="fas fa-eye"></i></a> 
-              <a href="/sales-deals/${row.id}/edit/" class="text-warning mx-2"><i class="fas fa-edit"></i></a>
-              <a href="#" class="text-danger delete-link" data-id="${row.id}"><i class="fas fa-trash"></i></a>
-            `;
-        },
-      },
+
+      {data:"action", title: "Actions"  },
+      
       { data: "email", title: "Submitted By User" },
       { data: "reference_number", title: "Reference Number" },
       {
@@ -502,6 +516,7 @@ $(document).ready(function () {
 
 //  edit Is entered  finace ststus  or not
 function enterInFinance(id) {
+  console.log("Updating finance status for ID:", id);
   $.ajax({
     url: "/update-single-field/",
     method: "PUT",
@@ -517,11 +532,13 @@ function enterInFinance(id) {
     }),
     success: function (response) {
       console.log("Update success:", response);
-      document.getElementById(`financeStatus${id}`).textContent = "Yes";
+      document.getElementById('financeStatus').textContent = "Yes";
 
       // ✅ Hide the button
       const btn = document.getElementById(`financeBtn${id}`);
+      console.log("Button to hide:", btn);
       if (btn) {
+        console.log("Hiding button:", btn);
         btn.style.display = "none";
       }
       // Update UI here, like hiding a button or showing "Yes"
@@ -1435,6 +1452,8 @@ $(document).on("click", "#create_deal", function (event) {
       },
       1000
     );
+       var validator = $("#sales_form").validate();
+          showErrors(validator);
   }
 });
 $(document).on("click", "#update_draft", function (event) {
@@ -1454,6 +1473,8 @@ $(document).on("click", "#update_draft", function (event) {
       },
       1000
     );
+    var validator = $("#sales_form").validate();
+          showErrors(validator);
   }
 });
 function checkKyc() {
@@ -1632,4 +1653,26 @@ function updatefunctionality(urls) {
           })
   
   ;
+}
+
+function showErrors(validator){
+  	var messages = '';
+  	$.each(validator.errorMap, function (index, value) {
+  		
+  		if (lang=='ar') {
+  			for (var key in form_fields) {
+  				var val = form_fields[key];
+  			
+	  		  	if (key==index) {
+	  		     	messages +=val + ' : ' + value+'\n';
+	  		  	}
+	  		  	else{
+  					// messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+  				}
+  			}
+  		}else{
+    		messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+  		}
+    });
+  	swal(msg,messages);
 }

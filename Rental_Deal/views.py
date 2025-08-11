@@ -72,7 +72,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
 
-        queryset = RentalDeals.objects.filter(is_deleted="N", account_id = account_id)  # Filter out deleted deals
+        queryset = RentalDeals.objects.filter(is_deleted="N", account_id = account_id) # Filter out deleted deals
 
         serializer =  filterSerializer()
        
@@ -148,8 +148,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Apply the combined Q object to the queryset
         print("point x2", queryset)
-        queryset = queryset.filter(combined_q_object)
-           
+        queryset = queryset.filter(combined_q_object).order_by('-date')
 
         # Field-specific filters
         filter_fields = [
@@ -619,6 +618,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             else:
                 mutable_data['form_status'] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
+
+            if mutable_data.get('receipt_no'):
+                print("this is the receipt no", mutable_data['receipt_no'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer

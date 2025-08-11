@@ -408,12 +408,14 @@
                       <label for="agent_comment">Comment by Agent</label>
                       <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">Documents attached including the receipt no are checked - MANJITHA</textarea>
                         <span class="text-danger" id="agent_comment_error"></span>
-                  </div>   
+                  </div>  
+                   {% if perms.core.view_admin_sales_fields %}  
                                      <div class="col-md-6 form-group">
                       <label for="comments">Comment by Admin</label>
                       <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
                         <span class="text-danger" id="comments_error"></span>
-                  </div>     
+                  </div>
+                  {% endif %}     
                                  
               </div>
               <div class="row">
@@ -439,7 +441,44 @@
                   </div>    
                                 
               </div>
-                             <div class="row">               
+
+               <div class="row">
+                {% for group in request.user.groups.all %}
+          {% if "Manager" in group.name %}
+    
+       
+             {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+
+            <div class="col-md-6 form-group">
+              <label for="receipt_no">Approve/Reject</label><br />
+              <div class="row">
+                <div class="col-3">
+                  <input
+                    type="radio"
+                    name="manager_approved_rejected"
+                    checked=""
+                    value="A"
+                  />
+                  Approve
+                </div>
+                <div class="col-3" style="margin-left: -45px">
+                  <input
+                    type="radio"
+                    name="manager_approved_rejected"
+                    value="R"
+                  />
+                  Reject
+                </div>
+              </div>
+            </div>
+           {% comment %} {% endif %} {% endcomment %}
+            {% comment %} {% break %} {% endcomment %}
+          {% endif %}
+        {% endfor %}
+               </div>
+               
+                <div class="row">  
+                  {% if perms.core.view_admin_sales_fields %}           
                  <div class="col-md-6 form-group">
                       <label for="receipt_no">Approve/Reject</label><br>
                       <div class="row">
@@ -453,7 +492,10 @@
                            <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
                          </div>
                       </div>   
-                  </div>   
+                  </div>
+                  {% endif %}  
+              
+                  {% if perms.core.update_aml_status_sales_deal %}
                   <div class="col-md-6 form-group">
                       <label for="kyc_number">AML<span class="mandetory_field">*</span></label><br>
                       <div class="row">
@@ -467,6 +509,7 @@
                       </div>    
                   </div>              
               </div>
+              {% endif %}
                                            <hr>
                 <div class="row">
                   <div class="col-md-6 form-group mb-1">
@@ -713,6 +756,18 @@
 
   console.log("Django to JS:",  sales_data);
 </script>
+<script>
+      var site_url = "http://dealsaws.classicproperties.ae";
+
+      var lang = "";
+      if (lang == "ar") {
+        var oLanguage = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+        var msg = "الرجاء ملء الحقل الإلزامي";
+      } else {
+        var oLanguage = "";
+        var msg = "Please fill mandatory field";
+      }
+    </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>

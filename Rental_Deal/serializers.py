@@ -43,6 +43,10 @@ class DealSerializer(serializers.ModelSerializer):
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
         format="%d-%m-%Y"             # Return DMY to frontend
     )
+    submitted_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
     deal_start_date = serializers.DateField(
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
         format="%d-%m-%Y"             # Return DMY to frontend

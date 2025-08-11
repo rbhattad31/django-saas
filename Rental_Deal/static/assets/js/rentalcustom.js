@@ -162,6 +162,7 @@ $(document).ready(function () {
         console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
         return JSON.stringify(d);
       },
+      
       dataSrc: function (json) {
         console.log("Full JSON response:", json); // 🔍 all data
         console.log("Only table rows:", json.data); // 🔍 just the rows
@@ -179,6 +180,29 @@ $(document).ready(function () {
       //   }
       // },
     },
+    
+        dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
+  "<'row mt-1'<'col-sm-12'tr>>" +
+  "<'row mt-1'<'col-md-6'i><'col-md-6 text-end'p>>",
+       buttons: [
+            {
+                extend: 'excelHtml5',
+                text: ' Excel',
+                titleAttr: 'Excel',
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            {
+                extend: 'pdfHtml5',
+                text: ' PDF',
+                columns: [2,3,4,5,6,7,8,9,10],
+                titleAttr: 'PDF',
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            
+             
+        ],
     success: function (data) {
       console.log("✅ Success:", data);
     },
@@ -1232,7 +1256,7 @@ $(document).on("click", "#create_deal", function (event) {
   });
   if ($("#deal_form").valid()) {
     $("#save_as").val("update-deal");
-    var url = "/list";
+    var url = "list/";
 
     if (
       countMultipleFiles("tenancy_contract") &

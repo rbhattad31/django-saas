@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from core.models import SalesDeals,Users
+from django.utils.html import format_html
 
 
 class SalesDealSerializer(serializers.ModelSerializer):
     submitted_by = serializers.StringRelatedField(read_only=True)
     email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
+    action = serializers.SerializerMethodField()
 
     # Making the required fields optional and allow blank
     reference_number = serializers.CharField(required=False, allow_blank=True)
@@ -17,6 +19,36 @@ class SalesDealSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesDeals
         fields = '__all__'
+
+    def get_action(self, obj):
+        request = self.context.get('request')
+     
+        user = request.user
+        html = ""
+
+        # View
+        if user.has_perm('core.view_salesdeals'):
+            print("it has view permission ifromteh  serlozer")
+            html += f'<a href="/sales-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
+
+        # Edit (disallowed if approved unless special permission exists)
+        if user.has_perm('core.change_salesdeals'):
+            print("thsi is from  ifromnthe serlizer ", obj.is_approved_rejected =='A' )
+            print(type(obj.is_approved_rejected))
+            print("thsi is from  ifromnthe serlizer ", user.has_perm('core.edit_approved_sales_deals') )
+
+            if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_sales_deals')):
+                print("entered the edit ")
+                html+=""
+
+            else:
+                html += f'<a href="/sales-deals/{obj.id}/edit/" class="text-warning mx-2" id="editDealBtn" data-deal-id="{obj.id}"><i class="fas fa-edit"></i></a>'
+
+        # Delete
+        if user.has_perm('core.delete_salesdeals'):
+            html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+
+        return format_html(html)
 
 
 class filterSerializer(serializers.Serializer):
@@ -79,3 +111,29 @@ class SalesDealSerializerForDraft(serializers.ModelSerializer):
     class Meta:
         model = SalesDeals
         fields = '__all__'
+
+
+
+
+
+class salesdealSerilizerforNon_file_validation(serializers.ModelSerializer):
+    # Override only the required fields to make them optional
+    agent1 = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    buyer_agency = serializers.CharField(required=False, allow_blank=True)
+    buyer_agent_name = serializers.CharField(required=False, allow_blank=True)
+    buyer_agent_phone = serializers.CharField(required=False, allow_blank=True)
+    classic = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    less_outside_commission = serializers.CharField(required=False, allow_blank=True)
+    net_commission = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    receipt_no = serializers.CharField(required=False, allow_blank=True)
+    seller_agency = serializers.CharField(required=False, allow_blank=True)
+    seller_agent_name = serializers.CharField(required=False, allow_blank=True)
+    seller_agent_phone = serializers.CharField(required=False, allow_blank=True)
+    total_commission = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    less_outsude_commission = serializers.CharField(required=False, allow_blank=True)
+    screening_comments = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = SalesDeals
+        fields = '__all__'
+        exclude = []

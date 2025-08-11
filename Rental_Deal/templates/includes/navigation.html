@@ -1,7 +1,7 @@
 
 {% comment %} {% load json_script %} {% endcomment %} 
 
-{% load custom_tags %}
+{% load custom_tags_rental  %}
 
 
 
@@ -39,7 +39,8 @@
                 can_view : {{perms.core.view_rentaldeals|yesno:"true,false"}} ,
                 can_edit : {{perms.core.change_rentaldeals|yesno:"true,false"}} ,
                 can_delete : {{perms.core.delete_rentaldeals|yesno:"true,false"}} ,
-              
+                permissions:{% user_permissions_json %}  //used in the recipts be carefull
+
 
 
               };
