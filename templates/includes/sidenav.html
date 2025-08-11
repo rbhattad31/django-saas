@@ -114,9 +114,11 @@
       </li>
 
       <!-- Third Party Receipts -->
+       {% if perms.core.add_deposits  or perms.core.view_deposits or perms.core.delete_deposits %}
       <li class="nav-item"><a class="nav-link" href="{% url 'third_party_receipts_list' %}">
           <i class="fas fa-receipt"></i> Third Party Receipts
         </a></li>
+        {% endif %}
 
       <!-- Settings -->
       <li class="nav-item">

@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Q
@@ -5,7 +6,9 @@ from core.models import Deposits
 from rest_framework.decorators import action
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
+from django.template.loader import render_to_string
 from .serializers import DepositsSerializer, DepositsfilterSerializer
+from weasyprint import HTML
 
 class DepositsViewSet(viewsets.ModelViewSet):
     queryset = Deposits.objects.all().order_by('-id')
@@ -18,10 +21,10 @@ class DepositsViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='view')
     def view_third_party(self, request, pk=None):
         deposit = get_object_or_404(Deposits, pk=pk)
-        serializer = DepositsSerializer(deposit)
+        serializer = DepositsSerializer(deposit,context = {'request': request})
         aws_url = settings.AWS_URL  # optional, include if you use S3
 
-        return render(request, 'third_party_receipts/viewThird_Party.html', {
+        return render(request, 'viewThird_Party.html', {
             'deposit': serializer.data,
             'aws_base_url': aws_url
         })
@@ -30,9 +33,9 @@ class DepositsViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get', 'post'], url_path='update')
     def update_third_party(self, request, pk=None):
         deposit = get_object_or_404(Deposits, pk=pk)
-        serializer = DepositsSerializer(deposit, partial=True)
+        serializer = DepositsSerializer(deposit, partial=True  ,context = {'request': request})
 
-        return render(request, 'third_party_receipts/editThird_Party.html', {
+        return render(request, 'editThird_Party.html', {
             'deposit': serializer.data
         })
 
@@ -93,7 +96,7 @@ class DepositsViewSet(viewsets.ModelViewSet):
         length = validated.get("length", 10)
         paginated = queryset[start:start + length]
 
-        serializer = DepositsSerializer(paginated, many=True)
+        serializer = DepositsSerializer(paginated, many=True , context = {'request': request})
         response_data = {
             "draw": validated.get("draw", 0),
             "recordsTotal": queryset.count(),
@@ -118,4 +121,21 @@ DepositsViewSet_filter =  DepositsViewSet.as_view({
 
 
 def third_party_receipts_page(request):
-    return render(request, 'third_party_receipts/Third_Party_Receipts.html')
+    return render(request, 'Third_Party_Receipts.html')
+
+
+
+
+
+def download_receipt_pdf(request, receipt_id):
+    receipt = Deposits.objects.get(id=receipt_id)
+    html_string = render_to_string('recicepts_pdf.html', {'receipt': receipt})
+    html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+    pdf_file = html.write_pdf()
+
+    download = request.GET.get("download") == "1"
+    disposition = 'attachment' if download else 'inline'
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'{disposition}; filename="receipt_{receipt.deposit_number}.pdf"'
+    return response

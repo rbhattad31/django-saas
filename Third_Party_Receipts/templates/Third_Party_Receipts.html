@@ -210,32 +210,19 @@
                 d.deal_type = $('[name="deal_type"]').val();
                 return JSON.stringify(d); // ✅ Return JSON
             },
-            dataSrc: 'data'  // Default unless your API responds differently
+            dataSrc: function (json) {
+                console.log("Data received from server:", json);
+                return json.data;
+            },
         },
+         success: function (data) {
+
+            console.log("Data received from server:", data); // Debugging line
+         },
 
         columns: [
-              {
-                data: null,
-              title: '<strong style="font-family:Segoe UI, sans-serif; font-weight:600; font-size:16px;text-transform:none;">Action</strong>',
-                orderable: false,
-                searchable: false,
-                render: function (data, type, row) {
-                    return `
-                        <a href="/third_party_receipts/third-party/update/${row.id}/" title="Edit" class="text-warning mx-1" style="font-size: 16px;">
-                            <i class="fas fa-edit"></i>
-                        </a>
-
-                        <a href="/third_party_receipts/third-party/view/${row.id}/" title="View" class="text-primary mx-1" style="font-size: 16px;">
-                            <i class="fas fa-eye"></i>
-                        </a>
-
-                        <a href=" " onclick="downloadRow(${row.id})" title="Download" class="text-success mx-1" style="font-size: 16px;">
-                            <i class="fas fa-download"></i>
-                        </a>
-
-                    `;
-                }
-            } ,
+               
+            {data :"action",title:"Action"},
             { data: 'id', visible: false }, // Hidden ID column for row identification  
             { data: 'deposit_number', title: '<strong style="font-family:Segoe UI, sans-serif; font-weight:600; font-size:16px;text-transform:none;">Receipt Number</strong>' },
             { data: 'date', title: '<strong style="font-family:Segoe UI, sans-serif; font-weight:600; font-size:16px;text-transform:none;">Receipt Date</strong>' },
@@ -254,6 +241,12 @@
 
 
     // Handle edit/delete actions (optional implementation hooks)
+
+    downloadRow = function (receiptId) {
+        // Redirect to the download URL
+        window.location.href = `/third_party_receipts/recipts/download/${receiptId}/`;
+
+    };
   
  
   

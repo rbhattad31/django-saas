@@ -219,6 +219,12 @@ class Account(models.Model):
                 "third_party_receipts_count",
                 "management_receipts_count",
 
+                # thrid party receipts management for the admin
+                "add_deposits",
+                "change_deposits",
+                "delete_deposits",
+                "view_deposits",
+
 
 
             ],
@@ -279,6 +285,9 @@ class Account(models.Model):
                 "total_gross_commission_sales",
                 "total_net_commission_sales",
                  
+                #therid party receipts management for the manager
+
+                "view_deposits",
 
             ],
             "Agent": [
@@ -346,6 +355,8 @@ class Account(models.Model):
                 "approved_properties",
                 "pending_properties",
                 "rejected_properties",
+
+                # thrid party receipts management for the Agent
                 
             ],
             "Finance": [
@@ -408,8 +419,11 @@ class Account(models.Model):
                 "entered_finance_properties",
 
 
-
-
+                # third party receipts management for the Finance
+                "view_deposits",
+                "add_deposits",
+                "change_deposits",
+                "delete_deposits",
 
 
 
