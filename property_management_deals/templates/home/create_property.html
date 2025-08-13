@@ -54,6 +54,46 @@
         cursor: pointer;
         font-weight: bold;
     }
+
+
+    .swal-custom {
+        width: 400px !important;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .swal-title-custom {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .swal2-html-container ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin: 0;
+        color: #555;
+    }
+
+    .swal2-html-container li {
+        margin-bottom: 8px;
+    }
+
+    .btn.btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 8px 20px;
+        border-radius: 4px;
+    }
+
+    .btn.btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
 </style>
 {% endblock stylesheets %}
 
@@ -542,12 +582,15 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- jQuery Validate -->
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<!-- SweetAlert (Version 1) -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 <script>
 var $j = jQuery.noConflict(true);
 window.$j = $j;
 
-console.log("Using $j version:", $j.fn.jquery);
+console.log("Using $j version:", $j.fn.jquery);  
 console.log("Validator available:", typeof $j.validator !== "undefined");
 
 // Object to store selected files for each input
@@ -564,22 +607,83 @@ const selectedFiles = {
     'screening': []
 };
 
+
 function showErrors(validator) {
     let messages = '';
+    let errorCount = 0;
+
     if (validator && Array.isArray(validator.errorList)) {
+        const uniqueErrors = {};
         $j.each(validator.errorList, function (_, error) {
             if (!error || !error.element) return;
+
             const field = $j(error.element);
             const fieldName = field.attr('name');
+
+            // Get label text
             let labelText = $j(`label[for="${field.attr('id')}"]`).text().trim();
             if (!labelText) {
                 labelText = field.closest('.form-group').find('label').first().text().trim() || fieldName;
             }
-            messages += `${labelText.replace(/\*$/, '')}: ${error.message}\n`;
+
+            // Clean up label
+            labelText = labelText.replace(/\*This field is required\.?$/i, '');
+            labelText = labelText.replace(/\*$/, '');
+
+            uniqueErrors[fieldName] = `${labelText}: ${error.message}`;
         });
+        const errorList = Object.values(uniqueErrors);
+        messages = errorList.join('\n');
+        errorCount = errorList.length;
     }
-    alert(messages || "Please correct the errors in the form.");
+
+    const titleText = "Please fill mandatory fields";
+
+    // Dynamic modal width based on errors and title length
+    const titleWidthEstimate = titleText.length * 8; // approx 8px per char
+    const errorsWidthEstimate = errorCount * 10 + 300;
+    const dynamicWidth = Math.min(700, Math.max(300, Math.max(titleWidthEstimate, errorsWidthEstimate)));
+
+    // Dynamic padding (5% of modal width)
+    const dynamicPadding = Math.round(dynamicWidth * 0.05);
+
+    // Apply styles dynamically
+    $j("<style>")
+        .prop("type", "text/css")
+        .html(`
+            .swal-modal {
+                width: ${dynamicWidth}px !important;
+            }
+            .swal-title {
+                white-space: normal !important; /* allow wrapping */
+                word-break: break-word !important; /* prevent overflow */
+                font-weight: bold !important;
+                text-align: center !important;
+                padding-left: ${dynamicPadding}px !important;
+                padding-right: ${dynamicPadding}px !important;
+            }
+            .swal-text {
+                text-align: left !important;
+                white-space: pre-line !important;
+            }
+        `)
+        .appendTo("head");
+
+    swal({
+        title: titleText,
+        text: messages || "Please correct the errors in the form.",
+        icon: null,
+        button: "OK"
+    });
 }
+
+
+
+
+
+
+
+
 
 function validateChequeDates() {
     const numberOfCheques = parseInt($j('#no_of_cheque').val()) || 0;

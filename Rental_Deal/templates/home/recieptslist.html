@@ -304,7 +304,7 @@ function getCookie(name) {
           // Conditionally add the Delete button
           if ( have_perm("core.delete_receipts")) {
             actionsHtml += ` <a href="/receipt/${row.id}/download/" target="_blank" class="text-primary view-btn">
-    <i class="fas fa-file-pdf"></i>
+    <i class="fas fa-download"></i>
   </a>`;
           } else {
             // Optionally, show a disabled/tooltip for why it's not deletable

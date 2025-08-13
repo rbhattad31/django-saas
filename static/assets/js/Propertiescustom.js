@@ -59,11 +59,56 @@ $(document).ready(function () {
   
   console.log(getTypeFromURL());
   const table = $("#myTable").DataTable({
+    pagingType: "simple_numbers",
+    renderer: "bootstrap",
+    // dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>rtip',
+    dom: '<"d-flex justify-content-between align-items-center mb-3"<"dt-buttons-left"B><"dt-filter-right"f>>rti<"d-flex justify-content-end"p><"clear">',
+
+    // dom: 
+    // "<'row mb-3'<'col-md-6'B><'col-md-6'f>>" + 
+    // "<'row'<'col-12'tr>>" + 
+    // "<'row mt-3'<'col-md-6'i><'col-md-6'p>>",
+    // pagingType: 'full_numbers',
+    buttons: [
+      'excelHtml5',
+      'pdfHtml5'
+    ],
     
     processing: true,
     serverSide: true,
     ordering: true,
     order: [[1, 'asc']], // Default sort on the second column (optional)
+    // dom: 'Bfrtip', // Add buttons to the table
+    
+    buttons: [
+        
+        {
+            extend: 'excelHtml5',
+            text: '<i class=""></i> Excel',
+            titleAttr: 'Export to Excel',
+            className: 'btn btn-success btn-sm', // Custom styling
+            exportOptions: {
+                columns: ':visible' // Export only visible columns
+            }
+        },
+        {
+            extend: 'pdfHtml5',
+            text: '<i class=""></i> PDF',
+            titleAttr: 'Export to PDF',
+            className: 'btn btn-danger btn-sm',
+            orientation: 'landscape',
+            pageSize: 'A4',
+            exportOptions: {
+                columns: ':visible'
+            }
+        }
+    ],
+    drawCallback: function () {
+          // Optional: add any custom JS you want on draw
+          // Example: add class if needed (but your CSS should handle it)
+          $('.dataTables_paginate .page-link').addClass('page-link');
+    },
+   
     ajax: {
       // url: "/api/rental-deals/filter",
       url: "/rental-properties/filter/",
@@ -83,22 +128,75 @@ $(document).ready(function () {
         console.log("🔍 Order data before sending:", JSON.stringify(d.order, null, 2)); // Debug order
         console.log("🔍 d.type:", d.type);
         const formData = $('#filterForm').serializeArray();
+        // formData.forEach(field => {
+            
+        //    if (field.name === 'tenancy_start_date' ||field.name === 'tenancy_end_date' ||field.name === 'deal_date' ||field.name === 'deal_date_to' ||field.name === 'pm_start_date' ||field.name === 'pm_end_date') {
+        //         if (field.value) {
+        //             // Format date as DD-MM-YYYY (if your backend expects that)
+        //             const dateObj = new Date(field.value);
+        //             const day = ("0" + dateObj.getDate()).slice(-2);
+        //             const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+        //             const year = dateObj.getFullYear();
+        //             d[field.name] = `${day}-${month}-${year}`;
+        //         }
+               
+        //         return;  
+        //     }
+        //    if (field.name === 'type'){
+        //       console.log("TYPE IN SIDE POINT x1") 
+        //       return;
+        //    }            
+        //    if (field.name === 'from_date' || field.name === 'to_date'|| field.name === 'tenancy_start_date') {
+        //     if(field.name === 'tenancy_start_date'){
+        //         console.log("Raw tenancy_start_date value:", field.value);
+        //     }
+        //     // Format manually to YYYY-MM-DD if value is present
+        //     if (field.value) {
+        //       const date = new Date(field.value);
+        //       const formatted = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        //       d[field.name] = formatted;
+        //     }
+        //   } else {
+        //     d[field.name] = field.value;
+        //   }
+        // });
+        
         formData.forEach(field => {
-           if (field.name === 'type'){
-              console.log("TYPE IN SIDE POINT x1") 
-              return;
-           }            
-           if (field.name === 'from_date' || field.name === 'to_date') {
-            // Format manually to YYYY-MM-DD if value is present
-            if (field.value) {
-              const date = new Date(field.value);
-              const formatted = date.toISOString().split('T')[0]; // YYYY-MM-DD
-              d[field.name] = formatted;
+            if (field.name === 'tenancy_start_date' || field.name === 'tenancy_end_date' || field.name === 'deal_date' || field.name === 'submitted_date' || field.name === 'pm_start_date' || field.name === 'pm_end_date') {
+                if (field.value) {
+                    // Format date as DD-MM-YYYY
+                    const dateObj = new Date(field.value);
+                    const day = ("0" + dateObj.getDate()).slice(-2);
+                    const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+                    const year = dateObj.getFullYear();
+                    d[field.name] = `${day}-${month}-${year}`;
+                } else {
+                    d[field.name] = null;  // Explicitly send null for empty dates
+                }
+                return;
             }
-          } else {
-            d[field.name] = field.value;
-          }
+            if (field.name === 'type'){
+                console.log("TYPE IN SIDE POINT x1")
+                return;
+            }
+            if (field.name === 'from_date' || field.name === 'to_date' || field.name === 'tenancy_start_date') {
+                if(field.name === 'tenancy_start_date'){
+                    console.log("Raw tenancy_start_date value:", field.value);
+                }
+                // Format manually to YYYY-MM-DD if value is present
+                if (field.value) {
+                    const date = new Date(field.value);
+                    const formatted = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                    d[field.name] = formatted;
+                } else {
+                    d[field.name] = null;  // Add this for consistency with other dates
+                }
+            } else {
+                d[field.name] = field.value;
+            }
         });
+        
+        
        
         console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
         return JSON.stringify(d);
@@ -122,6 +220,8 @@ $(document).ready(function () {
         title: "Actions",
         orderable: false,
         render: function (data, type, row, meta) {
+          console.log("Full row object:", row);
+          console.log("Row status:", row.status);
           console.log(data);
           //           return `
           //                 <a href="/rental-deals/view/${row.id}/" class="text-primary"><i class="fas fa-eye"></i></a>
@@ -143,21 +243,25 @@ $(document).ready(function () {
             actionsHtml += `
                                      <a href="/rental-properties/${row.id}/edit/" class="text-warning mx-2"><i class="fas fa-edit"></i></a>
                                 `;
-          } else {
-            // Optionally, show a disabled/tooltip for why it's not editable
-            //  actionsHtml += `<span class="text-gray-400 mx-2 action-btn cursor-not-allowed" title="Not editable"><i class="fas fa-edit"></i></span> `;
-          }
+          } 
+         
  
           // Conditionally add the Delete button
           if (row.can_delete) {
             actionsHtml += `
                                    <a href="#" class="text-danger delete-link" data-id="${row.id}"><i class="fas fa-trash"></i></a>
                                 `;
-          } else {
-            // Optionally, show a disabled/tooltip for why it's not deletable
-            // actionsHtml += `<span class="text-gray-400 action-btn cursor-not-allowed" title="Not deletable"><i class="fas fa-trash"></i></span>`;
+          } 
+
+          if(row.status=='Expired'||row.status=='About To Expire'){
+                actionsHtml += `
+                  <a href="/rental-properties/${row.id}/renew/" class="text-primary mr-2" title="Renew Property">
+                    <i class="fas fa-spinner"></i>
+                  </a>
+                `;
           }
- 
+
+           
           return actionsHtml;
         }
       },
@@ -183,6 +287,13 @@ $(document).ready(function () {
       
     ],
   });
+
+
+  // Change table length
+  $('select[name="length"]').on('change', function () {
+    table.page.len(parseInt($(this).val()) || 10).draw();
+  });
+
   let selectedDealId = null;
 
   // When trash icon or delete link is clicked
@@ -193,27 +304,52 @@ $(document).ready(function () {
   });
 
   // When user confirms deletion in modal
+  // $("#confirmDeleteBtn").on("click", function () {
+  //   if (!selectedDealId) return;
+
+  //   $.ajax({
+  //     url: `/rental-properties/${selectedDealId}/delete/`,
+  //     //type: "POST", // or "DELETE" if your backend expects that
+  //     type: "DELETE",
+  //     headers: {
+  //       "X-CSRFToken": getCookie("csrftoken"),
+  //     },
+  //     success: function () {
+  //       $("#deleteModal").modal("hide");
+  //       alert("Property deleted successfully.");
+  //       $("#myTable").DataTable().ajax.reload(null, false); // Refresh DataTable
+  //     },
+  //     error: function (xhr) {
+  //       alert("Error deleting property: " + (xhr.responseJSON?.message || "Unknown error"));
+  //     },
+  //   });
+  // });
+  // Confirm delete in modal
   $("#confirmDeleteBtn").on("click", function () {
-    if (!selectedDealId) return;
+      if (!selectedDealId) return;
 
-    $.ajax({
-      url: `/rental-properties/${selectedDealId}/delete/`,
-      //type: "POST", // or "DELETE" if your backend expects that
-      type: "DELETE",
-      headers: {
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      success: function () {
-        $("#deleteModal").modal("hide");
-        alert("Property deleted successfully.");
-        $("#myTable").DataTable().ajax.reload(null, false); // Refresh DataTable
-      },
-      error: function (xhr) {
-        alert("Error deleting property: " + (xhr.responseJSON?.message || "Unknown error"));
-      },
+      $.ajax({
+        url: `/rental-properties/${selectedDealId}/delete/`,
+        type: "DELETE",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        success: function () {
+          $("#deleteModal").modal("hide");
+          alert("Property deleted successfully.");
+
+          // Remove the row immediately from DataTable
+          const row = $(`#myTable .delete-link[data-id='${selectedDealId}']`).closest('tr');
+          table.row(row).remove().draw(false);
+
+          // Or reload the table (if you prefer this instead of manual row remove)
+          // table.ajax.reload(null, false);
+        },
+        error: function (xhr) {
+          alert("Error deleting property: " + (xhr.responseJSON?.message || "Unknown error"));
+        },
+      });
     });
-  });
-
 
  
    $('#filterForm').on('submit', function (e) {

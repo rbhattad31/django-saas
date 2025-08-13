@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from core.models import SalesDeals,Users
 from django.utils.html import format_html
 
@@ -9,7 +10,11 @@ class SalesDealSerializer(serializers.ModelSerializer):
     action = serializers.SerializerMethodField()
 
     # Making the required fields optional and allow blank
-    reference_number = serializers.CharField(required=False, allow_blank=True)
+    reference_number = serializers.CharField(required=False, allow_blank=True, validators=[
+            UniqueValidator(
+                queryset=SalesDeals.objects.all(),
+                message="This reference number already exists."
+            )])
     unit_details = serializers.CharField(required=False, allow_blank=True)
     building_name = serializers.CharField(required=False, allow_blank=True)
     deal_status = serializers.CharField(required=False, allow_blank=True)

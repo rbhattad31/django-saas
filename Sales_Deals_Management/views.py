@@ -140,7 +140,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
 
         # rental_deal = get_object_or_404(RentalDeals, pk=pk)
-        path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+        path = f"sales/referencenumber_CP/{mutable_data['reference_number']}"
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")  # Remove [] suffix if present
             print("base_field_name", base_field_name)
@@ -177,7 +177,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         for base_field_name in all_field_keys:
             reference_number = mutable_data.get("reference_number")
-            path_folder = f"rental/referencenumber_CP/{reference_number}"
+            path_folder = f"sales/referencenumber_CP/{reference_number}"
 
        
 

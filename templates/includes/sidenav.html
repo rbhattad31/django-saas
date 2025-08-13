@@ -1,6 +1,6 @@
 {% load custom_tags %}
-<nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2" id="sidenav-main">
-  <div class="sidebar">
+<nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2 h-100vh d-flex justify-content-center align-items-start" id="sidenav-main">
+  <div class="sidebar ">
     <div class="text-center mb-4">
       <h4>bradsol</h4>
     </div>
@@ -19,7 +19,7 @@
         </a>
         <div class="collapse" id="accountsSubmenu">
           <ul class="list-group ms-3">
-            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Users</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href={% url "user-list" %} class="text-decoration-none">Users</a></li>
             <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Roles</a></li>
           </ul>
         </div>
@@ -280,7 +280,7 @@
       <li class="nav-item">  
          <form method="post" action="{% url 'logout' %}" style="display: inline;">
     {% csrf_token %}
-    <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none;">
+    <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none; font-size :16px">
       <i class="fas fa-sign-out-alt"></i> Logout
     </button>
   </form>

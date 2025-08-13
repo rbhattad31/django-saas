@@ -1345,7 +1345,7 @@ $('#deal_form').validate({
         
             if($('#deal_form').valid() & countMultipleFiles('manager_cheque_copy') & countMultipleFiles('owners_passport_copy') & countMultipleFiles('old_title_deed') & countMultipleFiles('buyers_passport_copy') & countMultipleFiles('signed_mou')  & countMultipleFiles('new_title_deed') & countMultipleFiles('title_deed') & countMultipleFiles('screening') & countMultipleFiles('buyers_deposit_cheque_copy') & checkKyc()){                   
                         $('#save_as').val("create-deal"); 
-                        var url="/list";                 
+                        var url="list/";                 
                         storefunctionality(url);
            
                   }else{

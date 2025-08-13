@@ -1145,11 +1145,11 @@ class RentalDeals ( models.Model):
 # sale deal management  
 
 class SalesDeals(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True) 
     submitted_date = models.DateField()
     submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
     date = models.DateField()
-    reference_number = models.TextField()
+    reference_number = models.TextField(unique=True)
     unit_details = models.TextField()
     builduing_name = models.TextField()
     project_name = models.TextField()
@@ -1252,15 +1252,15 @@ class Deposits(models.Model):
     deposit_number = models.BigIntegerField()
     dhs = models.CharField(max_length=191)
     fils = models.CharField(max_length=191)
-    cheque_no = models.CharField(max_length=191)
-    bank = models.CharField(max_length=191)
+    cheque_no = models.CharField(max_length=191 ,blank= True , null  = True)
+    bank = models.CharField(max_length=191 , blank= True  , null=True)
     sec_date = models.DateField()
     being = models.CharField(max_length=191)
     status = models.CharField(max_length=191)
     deal_type = models.CharField(max_length=191)
     received_from = models.CharField(max_length=191, null=True, blank=True)
     payment_type = models.CharField(max_length=191, null=True, blank=True)
-    deal_refer_no = models.CharField(max_length=191)
+    deal_refer_no = models.CharField(max_length=191 ,null = True , blank = True  )
     sum_of_dhs = models.CharField(max_length=191)
     agent_name = models.CharField(max_length=191)
     project_name = models.CharField(max_length=191)
@@ -1295,7 +1295,7 @@ class RentalProperties(models.Model):
     #deal_date = models.TextField()
     deal_date = models.CharField(max_length=10, blank=True, null=True)  # Stores dd-mm-yyyy
     reference_number = models.TextField()
-    pms = models.TextField(blank= True , null = True)
+    #pms = models.TextField(blank= True , null = True)
     
     project_name = models.TextField()
     building_name = models.TextField()
@@ -1399,137 +1399,39 @@ class RentalProperties(models.Model):
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
     submitted_date = models.DateField()
-    #manager_approved_rejected = models.CharField(max_length=10)
+    
     # manager_approved_rejected = models.CharField(
     #     max_length=1,
     #     choices=[
+            
     #         ('A', 'Approved'),
     #         ('R', 'Rejected'),
     #     ],
     #     null=True,
     #     blank=True,
+        
     # )
     manager_approved_rejected = models.CharField(
         max_length=1,
         choices=[
-            
+            ('P', 'Pending'),
             ('A', 'Approved'),
             ('R', 'Rejected'),
         ],
+        default='P',  # Default stored value, not in choices
         null=True,
         blank=True,
-        
     )
 
     class Meta:
-        #managed = False
+        managed = False
         db_table = 'rental_properties'
 
     def debug_form_status(self):
         print(f"\nForm Status: {self.form_status} (Length: {len(self.form_status) if self.form_status else 0})")
 
 
-    # def update_status_if_needed(self):
-    #     print(f"Starting update_status_if_needed for property ID: {self.id}")
-    #     if not self.tenancy_end_date:
-    #         print(f"No tenancy_end_date for property ID: {self.id}")
-    #         return
-
-    #     tenancy_end_date = self.tenancy_end_date.strip()
-    #     print(f"Tenancy End Date: '{tenancy_end_date}'")
-
-    #     # Try multiple date formats
-    #     date_formats = ["%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%B %d, %Y"]
-    #     tenancy_end = None
-    #     for fmt in date_formats:
-    #         try:
-    #             tenancy_end = datetime.strptime(tenancy_end_date, fmt).date()
-    #             print(f"Parsed date with format {fmt}: {tenancy_end}")
-    #             break
-    #         except ValueError:
-    #             continue
-
-    #     if not tenancy_end:
-    #         print(f"Failed to parse tenancy_end_date '{tenancy_end_date}' for property ID: {self.id}")
-    #         return
-
-    #     today = date.today()
-    #     print(f"Today: {today}, Tenancy End: {tenancy_end}")
-
-    #     if tenancy_end < today:
-    #         status = 'Expired'
-    #     elif (tenancy_end - today).days <= 30:
-    #         status = 'About To Expire'
-    #     else:
-    #         status = 'Active'
-
-    #     print(f"🏷 Current status: {self.status}, New status: {status}")
-    #     if self.status != status:
-    #         print(f"Updating status from {self.status} to {status} for property ID: {self.id}")
-    #         try:
-    #             self.status = status
-    #             self.save(update_fields=['status'])
-    #             print(f"Status updated successfully for property ID: {self.id}")
-    #         except Exception as e:
-    #             print(f"Save error for property ID: {self.id}: {str(e)}")
-    #     else:
-    #         print(f"Status already up to date: {status} for property ID: {self.id}")
-    # def update_status_if_needed(self):
-    #     print(f"Starting update_status_if_needed for property ID: {self.id}")
-
-    #     # 1. Handle Incomplete form as Inactive status
-    #     if self.form_status and self.form_status.strip() == 'Incomplete':
-    #         if self.status != 'Inactive':
-    #             print(f"Setting status to Inactive because form_status is Incomplete for property ID: {self.id}")
-    #             self.status = 'Inactive'
-    #             self.save(update_fields=['status'])
-    #         else:
-    #             print(f"Status already Inactive for Incomplete form on property ID: {self.id}")
-    #         return
-
-    #     # 2. If no tenancy_end_date, do nothing
-    #     if not self.tenancy_end_date:
-    #         print(f"No tenancy_end_date for property ID: {self.id}")
-    #         return
-
-    #     tenancy_end_date = self.tenancy_end_date.strip()
-    #     date_formats = ["%Y-%m-%d", "%Y/%m/%d", "%d-%m-%Y", "%B %d, %Y"]
-    #     tenancy_end = None
-
-    #     for fmt in date_formats:
-    #         try:
-    #             tenancy_end = datetime.strptime(tenancy_end_date, fmt).date()
-    #             print(f"Parsed date with format {fmt}: {tenancy_end}")
-    #             break
-    #         except ValueError:
-    #             continue
-
-    #     if not tenancy_end:
-    #         print(f"Failed to parse tenancy_end_date '{tenancy_end_date}' for property ID: {self.id}")
-    #         return
-
-    #     today = date.today()
-    #     print(f"Today: {today}, Tenancy End: {tenancy_end}")
-
-    #     if tenancy_end < today:
-    #         status = 'Expired'
-    #     elif (tenancy_end - today).days <= 30:
-    #         status = 'About To Expire'
-    #     else:
-    #         status = 'Active'
-
-    #     print(f"🏷 Current status: {self.status}, New status: {status}")
-    #     if self.status != status:
-    #         print(f"Updating status from {self.status} to {status} for property ID: {self.id}")
-    #         try:
-    #             self.status = status
-    #             self.save(update_fields=['status'])
-    #             print(f"Status updated successfully for property ID: {self.id}")
-    #         except Exception as e:
-    #             print(f"Save error for property ID: {self.id}: {str(e)}")
-    #     else:
-    #         print(f"Status already up to date: {status} for property ID: {self.id}")
-
+    
     def update_status_if_needed(self):
         #print(f"📌 Starting update_status_if_needed for property ID: {self.id}")
 
@@ -1575,12 +1477,7 @@ class RentalProperties(models.Model):
 
         diff_days = (date.today() - tenancy_start).days
 
-        # if tenancy_start < today:
-        #     status = 'Expired'
-        # elif (tenancy_start - today).days <= 30:
-        #     status = 'About To Expire'
-        # else:
-        #     status = 'Active'
+        
         if diff_days > 365:
             status = 'Expired'
         elif 320 < diff_days <= 365:
@@ -1643,7 +1540,7 @@ class ManagementReceipts(models.Model):
 
 
     class Meta:
-        managed = False  # Assuming this model is managed outside of Django (existing DB table)
+        #managed = False  # Assuming this model is managed outside of Django (existing DB table)
         db_table = 'management_receipts'
 
 class Dashboard(models.Model):

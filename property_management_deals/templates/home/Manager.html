@@ -11,6 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- jQuery UI for Datepicker -->
     <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <!-- Custom CSS for boxed pagination -->
+  
+
 {% endblock extra_styles %}
 
 {% block content %}
@@ -72,12 +75,12 @@
                         <div class="row pb-3">
                             <div class="col-md-2">Receipt Date From</div>
                             <div class="col-md-3">
-                                <input type="text" class="form-control hasDatepicker" id="from" name="from" placeholder="Receipt Date From" autocomplete="off">
+                                <input type="Date" class="form-control hasDatepicker" id="date" name="date" placeholder="Receipt Date From" autocomplete="off">
                             </div>
                             <div class="col-md-2"></div>
                             <div class="col-md-2">Receipt Date To</div>
                             <div class="col-md-3">
-                                <input type="text" class="form-control hasDatepicker" id="to" name="to" placeholder="Receipt Date To" autocomplete="off">
+                                <input type="Date" class="form-control hasDatepicker" id="sec_date" name="sec_date" placeholder="Receipt Date To" autocomplete="off">
                             </div>
                         </div>
                         <div class="row pb-3">
@@ -107,7 +110,7 @@
                         </div>
                     </div>
                     <!-- DataTable -->
-                    <table id="receiptlist_table" class="table table-bordered text-center" style="width:100%">
+                    <table id="receiptlist_table" class=" table-bordered  " style="width:100%">
                         <thead>
                             <tr>
                                 <th>Action</th>
@@ -134,6 +137,57 @@
             </div>
         </div>
     </div>
+
+    <style>
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item .page-link {
+            width: auto !important;          /* Let width grow based on content */
+            min-width: 40px !important;      /* Minimum clickable width */
+            max-width: 180px !important;     /* Maximum width to avoid breaking */
+            padding: 6px 12px !important;    /* Padding for breathing room */
+            white-space: nowrap !important;  /* Prevent wrapping */
+            overflow: visible !important;    /* Allow content to be fully visible */
+            text-overflow: clip !important;  /* Show full text, no ellipsis */
+            display: inline-flex !important; /* Make it a flex container */
+            align-items: center !important;  /* Center vertically */
+            justify-content: center !important; /* Center horizontally */
+            border-radius: 0 !important;     /* Remove radius here, add to first/last */
+            border: 1px solid #dee2e6 !important;
+            border-right: none !important;   /* Remove right border for all except last */
+            color: black !important;
+            background-color: white !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Add right border back for last page-link */
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+            border-right: 1px solid #dee2e6 !important;
+            border-top-right-radius: 4px !important;
+            border-bottom-right-radius: 4px !important;
+        }
+
+        /* Add left border radius for first page-link */
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
+            border-top-left-radius: 4px !important;
+            border-bottom-left-radius: 4px !important;
+        }
+
+        /* Active page button */
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            color: white !important;
+
+            /* Keep all borders on active button */
+            border-right: 1px solid #007bff !important;
+        }
+
+        /* Hover effect */
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover_
+
+</style>
+
+
+
 
     <!-- Modal for Create/Edit Receipt (commented out as per original) -->
     {% comment %}
@@ -657,8 +711,11 @@
                     d.status = $('#status').val();
                     d.payment_type = $('#payment_type').val();
                     d.deal_type = $('#deal_type').val();
-                    d.from = $('#from').val();
-                    d.to = $('#to').val();
+                    //d.from = $('#date').val();
+                    //d.to = $('#sec_date').val();
+
+                    d.date = $('#date').val();
+                    d.sec_date = $('#sec_date').val();
                     d.agent_name = $('#agent_name').val();
                     d.unit_number = $('#unit_number').val();
                     d.building_name = $('#building_name').val();
@@ -761,7 +818,7 @@
         // Reset button
         $('#reset').on('click', function(e) {
             e.preventDefault();
-            $('#receipt_number, #status, #payment_type, #deal_type, #from, #to, #agent_name, #unit_number, #building_name').val('');
+            $('#receipt_number, #status, #payment_type, #deal_type, #sec_date, #date, #agent_name, #unit_number, #building_name').val('');
             table.ajax.reload();
         });
 

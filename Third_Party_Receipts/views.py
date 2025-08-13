@@ -1,13 +1,15 @@
+import json
 from django.http import HttpResponse
-from rest_framework import viewsets
+from rest_framework import viewsets , status
 from rest_framework.response import Response
 from django.db.models import Q
-from core.models import Deposits
+from core.models import Deposits  , Users
+from  Rental_Deal.serializers import AgentDropdownSerializer
 from rest_framework.decorators import action
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.template.loader import render_to_string
-from .serializers import DepositsSerializer, DepositsfilterSerializer
+from .serializers import Deposits_create_Serializer, DepositsSerializer, DepositsfilterSerializer
 from weasyprint import HTML
 
 class DepositsViewSet(viewsets.ModelViewSet):
@@ -24,20 +26,15 @@ class DepositsViewSet(viewsets.ModelViewSet):
         serializer = DepositsSerializer(deposit,context = {'request': request})
         aws_url = settings.AWS_URL  # optional, include if you use S3
 
+        print(serializer.data)
+
         return render(request, 'viewThird_Party.html', {
             'deposit': serializer.data,
             'aws_base_url': aws_url
         })
     
 
-    @action(detail=False, methods=['get', 'post'], url_path='update')
-    def update_third_party(self, request, pk=None):
-        deposit = get_object_or_404(Deposits, pk=pk)
-        serializer = DepositsSerializer(deposit, partial=True  ,context = {'request': request})
 
-        return render(request, 'editThird_Party.html', {
-            'deposit': serializer.data
-        })
 
 
 
@@ -49,7 +46,9 @@ class DepositsViewSet(viewsets.ModelViewSet):
         validated = data.validated_data
         print("Validated Data:", validated) 
 
-        queryset = Deposits.objects.all()
+        account_id = request.user.account_id
+
+        queryset = Deposits.objects.filter(account_id = account_id)
         print("Initial Queryset:", queryset)  # Debugging line
 
         # Global search
@@ -107,6 +106,71 @@ class DepositsViewSet(viewsets.ModelViewSet):
     
 
 
+    # create the deposits api view
+    @action(detail= False , method = ["post"] , url_path = "create")
+    def create_thrid_party_recicept(self,request):
+        print(request.data)
+        print(request.user.account_id)
+        mutable_data = request.data.copy()
+
+        deposit_number = request.data.get("deposit_number")
+        print(request.data)
+        mutable_data  = request.data.copy()
+
+        if  Deposits.objects.filter(deposit_number=deposit_number).exists():
+            return Response(
+                {"error": f"Receipt number {deposit_number} is already taken."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        mutable_data['account_id'] = request.user.account_id
+        mutable_data['mail_status'] = "sent"
+        mutable_data['status'] = ""
+    
+
+        print(mutable_data , "mutable data is  ")
+
+
+
+
+        serializer = Deposits_create_Serializer(data=mutable_data )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+      
+    
+    # edit the deposite or thritd party recipts
+    @action(detail=False, methods=['get', 'post'], url_path='update')
+    def update_third_party(self, request, pk=None):
+        if request.method  =="GET":
+            deposit = get_object_or_404(Deposits, pk=pk)
+            serializer = DepositsSerializer(deposit ,context = {'request': request})
+
+            return render(request, 'editThird_Party.html', {
+                'deposit': serializer.data
+            })
+        elif request.method == "PUT":
+            
+            mutable_data = request.data.copy()
+
+            print(mutable_data)
+           
+
+
+
+            serializer = DepositsSerializer( data = mutable_data ,partial=True  ,context = {'request': request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response("not valid form " , status= status.HTTP_400_BAD_REQUEST)
+
+    
+
+
 
 
 
@@ -118,6 +182,8 @@ class DepositsViewSet(viewsets.ModelViewSet):
 DepositsViewSet_filter =  DepositsViewSet.as_view({
     'post': 'datatable_filter'
 })
+DepositsViewSet_create = DepositsViewSet.as_view({ "post" : "create_thrid_party_recicept"})
+DepositsViewSet_edit = DepositsViewSet.as_view({'put' : "update_third_party"})
 
 
 def third_party_receipts_page(request):
@@ -139,3 +205,23 @@ def download_receipt_pdf(request, receipt_id):
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'{disposition}; filename="receipt_{receipt.deposit_number}.pdf"'
     return response
+
+
+
+def thrid_party_recipt_crete_htmlpage(request):
+    return render(request , "createThird_Party.html")
+
+#serving the  create html page
+def thrid_party_recipt_crete_htmlpage(request):
+    latest = Deposits.objects.order_by('-deposit_number').first()
+    next_receipt = int(latest.deposit_number) + 1 if latest and latest.deposit_number else 1
+
+    agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
+    agents = AgentDropdownSerializer(agents, many=True).data
+    reciecpt_data = {
+        'agents': agents
+    }
+
+    return render(request, "createThird_Party.html", {
+        "next_receipt_number": next_receipt,"reciecpt_data" :  json.dumps(reciecpt_data)
+    })

@@ -3,6 +3,12 @@
 {% load static %}
 
 {% block content %}
+
+<style>
+  .error{
+    color :red
+  }
+</style>
 <div class="main-content pt-4"><div class="col-md-12" id="successmsg" style="display: none">
     <div class="alert alert-primary " id="alert-primary">
       <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
@@ -18,7 +24,8 @@
 				<input type="hidden" name="_token" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI">
 				<div class="row">
           <input type="hidden" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI" name="csrf-token" id="token">
-          <input type="hidden" name="id" value="896" id="id">
+          <input type="hidden" name="id" value= {{deposit.id}} id="id">
+          <input type="hidden" name="account_id" value= {{deposit.account_id}} id="account_id">
 					<div class="col-md-6 form-group mb-3">
 						<label for="date">Receipt Date<span style="color: red">*</span></label>
             <input type="text" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" value="{{deposit.date}}" readonly="">
@@ -140,4 +147,302 @@
   </div>
 </div>
 </div>
+
+
+
+
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+ {% comment %} <script src="static/assets/vendor/jquery/dist/jquery.min.js"></script> {% endcomment %}
+    <!-- ✅ Bootstrap and related -->
+    <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+    <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    {% comment %} <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script> {% endcomment %}
+
+    <!-- ✅ jQuery UI (datepicker etc.) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- ✅ Datatables -->
+    <script src="/static/assets/js/datatables.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- ✅ jQuery Validation plugin -->
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<script type="text/javascript">
+
+   function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      for (let cookie of document.cookie.split(";")) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+ 
+$.validator.addMethod("only_text", function(value, element) {
+  return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/);
+  },"Enter valid Name");
+		
+			
+$.validator.addMethod("custom_email", function (value, element) {
+      		var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        	return this.optional(element) || regEx.test(value);
+    		}, "Enter a valid email address.");
+
+$.validator.addMethod("alpha_numeric", function (value, element, param) {
+       return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+    }, "Enter valid Profile Id");
+
+$.validator.addMethod("numeric", function (value, element, param) {
+    	 return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    }, "Enter only numbers.");
+$.validator.addMethod("text_special", function(value, element) {
+        return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+     },"Enter only letters and special characters.");
+$.validator.addMethod("alphanum_special", function(value, element) {
+    return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+ },"Enter only letters, numbers and special characters.");
+$.validator.addMethod("lettersonly", function(value, element) {
+  return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+}, "Letters only please")
+ 
+  $('#createReceiptForm').validate({
+    ignore: "",
+    ignore: [], 
+    rules: {
+        date:{
+         required: true,
+         },
+         deposit_number:{
+         required: true,
+         alphanum_special: true,
+        },
+        received_from:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+       
+        dhs:{
+         required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+        fils:{
+        required: true,
+        alphanum_special: true,
+        maxlength: 255,
+        },
+        sum_of_dhs:{
+        required: true,
+        alphanum_special: true, 
+        maxlength: 255,
+        },
+       
+        bank:{
+        alphanum_special: true,
+        required: function () {
+                return $("#payment_type").val() == "Cheque"  || $("#payment_type").val() == "Bank"  ;
+            },
+        },
+        sec_date:{
+        required: true,
+        },
+        being:{
+        required: true,
+        },
+        deal_type:{
+        required: true,
+        },
+        payment_type:{
+        required:true,    
+        },
+        cheque_no:{
+        alphanum_special: true, 
+        required: function () {
+                return $("#payment_type").val() == "Cheque";
+            },
+        minlength:3,
+        maxlength:15,
+
+        },
+        on_behalf_of:{
+          required:true
+        },
+        building_name: {
+          alphanum_special: true,
+          required: true,
+          maxlength: 255,
+        },
+        unit_number:{
+          alphanum_special: true,
+          required: true,
+          maxlength: 15,
+        },
+        project_name: {
+           required: true,
+           maxlength: 255,
+       }
+
+      },
+    
+ 
+  
+  submitHandler:function(){
+            $('#submit').attr('disabled',true);
+            $('.loadscreen').show();
+            $.ajax({
+                method: "PUT",
+                headers: {
+                        "X-CSRFToken":  getCookie("csrftoken")
+            },  
+               url: "/third_party_receipts/api/deposits/edit/",
+                data:new FormData($("#createReceiptForm")[0]),
+                contentType: false,
+              processData: false,
+              })
+            .done(function( data, textStatus, xhr, Response ) {
+                $('.loadscreen').hide();
+                $('#submit').removeAttr('disabled',true);
+                
+              
+                if(xhr.status == 200){
+                  $("#createReceiptForm")[0].reset();
+                    $("#alert-primary").text("Receipt has been created successfully!");
+                    $("#successmsg").show();
+              
+                  $("#createReceiptForm")[0].reset();
+                    $("#alert-primary").text("Receipt has been created successfully!");
+                    $("#successmsg").show();
+                    $('html, body').animate({
+                      scrollTop: $('.main-header').offset().top
+                  }, 1000);
+                    setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = "/third_party_receipts/list/" }, 5000);
+                    
+                }
+                else if(data.status=='validation_error'){
+                  $.each(data.data, function (key, val) {
+                        $("#"+key+"_error").text(val[0]);
+                        $("#"+key+"_error").show();
+                        $(document).on("keyup", "input[name='"+key+"']", function(e) {
+                              $("#"+key+"_error").hide();
+                         });
+                         if(key == 'deposit_number' && val[0] == 'The receipt number has already been taken'){
+                          swal("Receipt number is already taken", "Click Ok to refresh the receipt number")
+                          .then(function(){
+                              location.reload();
+                          });
+                         }
+                    });
+                }
+                else{
+                   $("#alert-primary").text("Something Went Wrong !");
+                    $("#successmsg").show();
+                    $('html, body').animate({
+                      scrollTop: $('.main-header').offset().top
+                  }, 1000);
+                    setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                }
+                
+            });
+            
+            }
+
+});
+       
+    
+</script>
+<!-- Start script here to add required msg in cheque no and add datepicker field-->
+<script>
+
+
+  $(document).ready(function() {
+  $("#date").datepicker({
+       dateFormat: "dd-mm-yy",
+       autoclosed:true,
+       changeMonth: true,
+       changeYear: true,
+       maxDate: 0,
+       yearRange: "-50:+50",
+   });
+   $("#date").datepicker('setDate', '+0');
+   $('#date').attr('readOnly', true);
+  $("#sec_date").datepicker({
+       dateFormat: "dd-mm-yy",
+       autoclosed:true,
+       changeMonth: true,
+       changeYear: true,
+       yearRange: "-50:+50",
+   });
+  
+   $("#sec_date").datepicker('setDate', '+0');
+   $('#sec_date').attr('readOnly', true);
+  var payment_type = $('#payment_type').val();
+  if(payment_type == '')
+  {
+    $('.bank_name').hide();
+    $('.cheque_no').hide();
+  }
+  else if(payment_type == 'Cash')
+  {
+    $('.bank_name').hide();
+    $('.cheque_no').hide();
+  }
+  else if(payment_type == 'Cheque')
+  {
+    $('.bank_name').show();
+    $('.cheque_no').show();
+  }
+  else if(payment_type == 'Bank Transfer')
+  {
+    $('.bank_name').show();
+    $('.cheque_no').hide();
+  }
+
+  $('#payment_type').on('change', function() {  
+    var payment_type = this.value;
+    if(payment_type == 'Cheque')
+      {
+        $('.bank_name').show();
+        $('.cheque_no').show();
+      }
+    else if(payment_type == 'Cash')
+      {
+        $('.bank_name').hide();
+        $('.cheque_no').hide();
+      } 
+      else if(payment_type == 'Bank Transfer')
+      { 
+        $('.cheque_no').hide();
+        $('.bank_name').show();
+      }
+  });
+  $("#submit").click(function () {
+    var payment_type = $('#payment_type').val();
+    if(payment_type == 'Cash'){
+        $('#cheque_no_error').hide();
+        $('#bank_error').hide();
+    }else if(payment_type == 'Cheque'){
+        $('#cheque_no_error').show();
+        $('#bank_error').show();
+    }else if(payment_type == 'Bank Transfer'){ 
+        $('#cheque_no_error').hide();
+        $('#bank_error').show();
+    }
+  });
+ 
+});
+</script>
+
+
 {% endblock content %}

@@ -1630,10 +1630,10 @@ function updatefunctionality(urls) {
                       }
                     }
                   }
-                  errorMessage = "Bad Request: " + errors.join("; ");
+                  errorMessage =  errors.join("; ");
                 } else {
                   // If backend sends a simple string message
-                  errorMessage = "Bad Request: " + xhr.responseJSON;
+                  errorMessage =   xhr.responseJSON;
                 }
               } else {
                 errorMessage = "Bad Request: Invalid data provided.";

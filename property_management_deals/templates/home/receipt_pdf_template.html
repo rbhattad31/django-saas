@@ -1,171 +1,4 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Receipt</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      .header, .footer {
-        text-align: center;
-      }
-      .header h1 {
-        color: #d38d00;
-        font-size: 24px;
-        margin: 10px 0;
-      }
-      .company-details {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 12px;
-      }
-      .company-details .company-info {
-        display: inline-block;
-        text-align: left;
-      }
-      .company-details .company-name {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-      .company-logo {
-        width: 100px;
-        vertical-align: top;
-        margin-right: 10px;
-      }
-      .flex {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 20px 0;
-      }
-      .bold {
-        font-weight: bold;
-      }
-      .right {
-        text-align: right;
-      }
-      .arabic {
-        font-family: Arial, sans-serif;
-        direction: rtl;
-        font-size: 18px;
-      }
-      .amount-box {
-        border: 2px solid black;
-        width: 120px;
-        text-align: center;
-        padding: 5px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      td, th {
-        border: 1px solid #000;
-        padding: 5px;
-        text-align: center;
-      }
-      .field {
-        margin: 5px 0;
-        font-size: 14px;
-        line-height: 1.5;
-      }
-      .note {
-        font-size: 12px;
-        color: #000;
-        margin-top: 20px;
-      }
-      .highlight-red {
-        color: red;
-        font-weight: bold;
-      }
-      .bordered {
-        border-top: 1px dashed #999;
-        margin-top: 30px;
-        padding-top: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <h1>Receipt</h1>
-    </div>
 
-    <div class="company-details">
-      <img src="/static/assets/img/brand/image.png" alt="Classic Properties Logo" class="company-logo">
-      <div class="company-info">
-        <div class="company-name">CLASSIC PROPERTIES REAL ESTATE MANAGEMENT</div>
-        <div>P.O.Box: 15862, Properties Office: Suite No. 509 & 510, Clover Bay Tower, Business Bay, Dubai, UAE</div>
-        <div>ORN No.29471</div>
-        <div>+97143366844 +97142711128 <a href="mailto:pm@classicproperties.ae">pm@classicproperties.ae</a> <a href="https://www.classicproperties.ae">www.classicproperties.ae</a></div>
-      </div>
-    </div>
-
-    <div class="flex">
-      <div class="amount-box">
-        <table>
-          <tr>
-            <th>Dhs.</th>
-            <th>Fils</th>
-          </tr>
-          <tr>
-            <td>325</td>
-            <td>00</td>
-          </tr>
-        </table>
-      </div>
-
-      <div>
-        <span class="arabic bold">سند القبض</span>
-        <div class="bold">Receipt Voucher</div>
-      </div>
-
-      <div class="right">
-        <div class="bold">No: <span class="highlight-red">1376</span></div>
-        <div>Date: 26-07-2025</div>
-      </div>
-    </div>
-
-    <div>
-      <div class="field">
-        <strong>Received From Mr./Ms./M/s:</strong> Kivanc Vural
-        <span class="arabic">من السيد/السيدة/الشركة: كيفانش فورال</span>
-      </div>
-      <div class="field">
-        <strong>The Sum of Dhs:</strong> Three Hundred Twenty Five Only
-        <span class="arabic">المبلغ: ثلاثمائة وخمسة وعشرون فقط</span>
-      </div>
-      <div class="field">
-        <strong>Cash / Cheque No:</strong> Cash <strong>Bank:</strong>
-        <span class="arabic">نقدًا / الشيك رقم: نقدي البنك:</span>
-      </div>
-      <div class="field">
-        <strong>Date:</strong> 26-07-2025
-        <span class="arabic">التاريخ: 26-07-2025</span>
-      </div>
-      <div class="field">
-        <strong>Being:</strong> Ejari Fee for Unit 276, Zinnia, Madinat Hind 4
-        <span class="arabic">بخصوص: رسوم الإجارة للوحدة 276، زينيا، مادينات هند 4</span>
-      </div>
-    </div>
-
-    <div>
-      <div class="note">
-        <strong>Note:</strong><br />
-        Cheque bounce charges will be AED 105.00 inclusive of VAT.
-        <span class="arabic">ملاحظة: رسوم الشيك المرتد ستكون AED 105.00 شاملة الضريبة</span>
-      </div>
-
-      <div class="note bordered">
-        This is a computer generated receipt and doesn't require signature.
-        <span class="arabic">هذه إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا</span>
-      </div>
-    </div>
-  </body>
-</html> {% endcomment %}
 
 
 {% load static %}
@@ -282,11 +115,13 @@ table, tr {
             <span style="font-weight:bold;font-size:20px;border-top: solid 2px grey;">Receipt Voucher</span><br>
           </td>
 
-          <td style="width:28%; height:100px;text-align:left;border:none;padding-right:40px;">
+          {% comment %} <td style="width:28%; height:100px;text-align:left;border:none;padding-right:40px;"> {% endcomment %}
+          <td style="width:28%; height:100px; text-align:left; border:none; padding-right:0; padding-left:5px;">
+
             <span style="font-weight:bold;font-size:13px;"><b>No:&nbsp;</b></span>
             <span style="color:red;font-weight:bold;font-size:13px;">{{ receipt.receipt_number }}</span><br>
             <span style="font-weight:bold;font-size:13px;">Date:</span>
-            <span style="font-size:13px;" class="dotted">{{ receipt.date|date:'d-m-Y' }}</span>
+            <span style="font-size:13px;" class="dotted">{{ receipt.date }}</span>
             <span style="font-size:13px;margin-right:25px;font-weight:bold;">: تاريخ  </span>
           </td>
         </tr>
@@ -343,40 +178,7 @@ table, tr {
 
         <tr>
           
-          {% comment %} <td style="width:65%;text-align:left;padding-top:25px;">
-            <span style="font-weight:bold;font-size:15px;"><i>Cash / Cheque No:</i></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div style="display:inline-block; border-bottom:1px dotted #000; font-size:15px; width:70%; vertical-align:middle;">
-                {% if receipt.payment_type == 'Cash' %}
-                    Cash
-                {% elif receipt.payment_type == 'Bank Transfer' %}
-                    Bank Transfer
-                {% else %}
-                    {{ receipt.cheque_no }}
-                {% endif %}
-            </div>
-          </td> {% endcomment %}
-          {% comment %} <td style="width:65%; text-align:left; padding-top:25px;">
-            <span style="display:inline-block; font-weight:bold; font-size:15px;">
-              <i>Cash / Cheque No:</i>
-            </span>
-            <span style="display:inline-block; border-bottom:1px dotted #000; font-size:15px; width:70%; vertical-align:middle; padding-left:10px;">
-              {% if receipt.payment_type == 'Cash' %}
-                  Cash
-              {% elif receipt.payment_type == 'Bank Transfer' %}
-                  Bank Transfer
-              {% else %}
-                  {{ receipt.cheque_no }}
-              {% endif %}
-            </span>
-          </td> {% endcomment %}
-
-          {% comment %} <td style="width:25%;text-align:left;padding-top:25px;">
-            <span style="font-weight:bold;font-size:15px;"><i>Bank:</i></span>
-            <div style="display:inline-block; border-bottom:1px dotted #000; font-size:15px; width:70%; vertical-align:middle;">
-                {{ receipt.bank }}
-            </div>
-          </td> {% endcomment %}
-
+          
 
           <td style="width:65%; text-align:left; padding-top:25px; white-space:nowrap;">
             <span style="font-weight:bold; font-size:13px; display:inline-block;">
@@ -399,7 +201,7 @@ table, tr {
             <span style="font-weight:bold; font-size:13px; display:inline-block;">
               <i>Bank:</i>
             </span>
-            <span style="display:inline-block; border-bottom:1px dotted #000; font-size:13px; width:60%; margin-left:10px; vertical-align:middle;">
+            <span style="display:inline-block; border-bottom:1px dotted #000; font-size:13px; width:100%; margin-left:10px; vertical-align:middle;">
               {{ receipt.bank }}
             </span>
           </td>
@@ -407,7 +209,7 @@ table, tr {
 
           <td style="width:10%;text-align:left;padding-left:140px;padding-top:25px;">
             <span style="font-weight:bold;font-size:13px;"><i>Date:</i></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <u class="dotted" style="text-decoration:none;font-size:15px;">{{ receipt.sec_date|date:'d-m-Y' }}</u>
+            <u class="dotted" style="text-decoration:none;font-size:15px;">{{ receipt.sec_date }}</u>
           </td>
         </tr>
 
@@ -415,18 +217,14 @@ table, tr {
           <td style="width:35%;text-align:left;font-weight:bold;font-size:15px;padding-top:25px;">
             <span style="font-size:13px;"><i>Being:</i></span> 
           </td>
-          {% comment %} <td style="width:45%;text-align:left;font-size:15px;padding-top:25px;" class="dotted">
-            <span style="font-size:15px;">{{ receipt.being }}</span>
-          </td> {% endcomment %}
+         
           <td style="width:45%; text-align:left; font-size:15px; padding-top:25px;">
             <span style="display: inline-block; width: 200px; border-bottom: 1px dotted black; font-size:13px; margin-left:85px;">
               {{ receipt.being }}
             </span>
           </td>
 
-          {% comment %} <td style="width:30%;text-align:left;padding-top:25px;">
-            <span style="font-size:14px;font-weight:bold;">: يجرى </span>
-          </td> {% endcomment %}
+          
           <td style="width:30%; padding-right:10px; font-weight:bold; padding-top:25px;">
             <span style="font-size:12px; margin-left:95px; display:inline-block;">: يجرى </span>
           </td>
