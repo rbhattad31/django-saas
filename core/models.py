@@ -14,6 +14,18 @@ from django.contrib.auth.models import Permission
 from django_multitenant.models import TenantModel, TenantManager
 from datetime import datetime, date
 
+
+
+
+class GroupProfile(models.Model):
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name="profile")
+    account = models.ForeignKey("core.Account", on_delete=models.CASCADE , default  = 2)  # your account model
+    is_active = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.account_id} - {self.group.name}"
+
 # from Rental_Deal.serializers import User
 # from django_multitenant.models import TenantModel, TenantManager
 
@@ -439,6 +451,14 @@ class Account(models.Model):
                         group.permissions.add(perm)
                     except Permission.DoesNotExist:
                         print(f"⚠️ Permission '{codename}' not found — please make sure it exists.")
+
+                GroupProfile.objects.get_or_create(
+                    group=group,
+                    defaults={
+                        "account": self,
+                        "is_active": True  # or False if you want to deactivate by default
+                    }
+                )
         
             # Create default roles only after the Account is saved and has a valid ID
             # default_roles = ['Admin', 'Manager', 'Agent','Finance']

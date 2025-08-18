@@ -1,0 +1,2411 @@
+{% extends "layouts/base.html" %} 
+{% block content %}
+
+<div
+  id="dealMeta"
+  class="hidden"
+  data-deal-id="{{  role_id }}"
+  style="display: none"
+></div>
+
+<div class="main-content pt-4">
+  <div class="col-md-12 main-header" id="successmsg" style="display: none">
+      <div class="alert alert-primary" id="alert-primary">
+        <button
+          class="close float-right"
+          type="button"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  <div class="col-md-12">
+    <h4 class="pb-2">
+      Edit Role<span class="float-right mr-2">
+        <a
+          class="btn btn-primary btn-rounded"
+          href="/role/list/"
+          >Back</a
+        ></span
+      >
+    </h4>
+    <div class="card mb-5">
+      <div class="card-body">
+        <form
+           
+          id="createRoleForm"
+           
+        >
+          <input
+            type="hidden"
+            name="_token"
+            value="uERTcFOkCIcahSyMMr2R9xPxeqgxwEfiabq3tBg2"
+          />
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label for="firstName1"
+                >Role Name<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-control"
+                placeholder="Enter Role Name"
+                value=""
+                readonly=""
+              />
+              <label
+                class="error text-danger err-name"
+                id="Role_name_error_msg"
+              >
+              </label>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+              <label for="firstName1"
+                >Description<span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                name="description"
+                class="form-control"
+                id="description"
+                placeholder="Enter Description"
+                value=""
+              />
+              <label
+                class="error text-danger err-description"
+                id="description_error_msg"
+              >
+              </label>
+            </div>
+          </div>
+          <div class="row">
+             
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="phone">Account<span style="color: red">*</span></label>
+                          <select class="form-control" name="account_id" id="accountMain" readonly="">
+                               
+                              
+                               
+                              
+                          </select>
+                        <span class="text-danger" id="account_error">
+                        </span>
+                      </div>
+                       
+                       
+                   
+                    <div class="col-md-6 form-group mt-3">
+                              <label for="status">Role Status</label>
+                              <label class="switch pr-5 switch-primary mr-3">
+                                  <input type="checkbox" name="role_status" checked=""><span class="slider">
+                                  </span>
+                              </label>                  
+                            </div>   
+	 	                </div>
+          {% comment %} <input type="hidden" name="account" value="2" /> {% endcomment %}
+          <div class="row">
+            <div class="col-form-label font-weight-bold col-sm-2 pt-0">
+              All Permissions
+            </div>
+            <div class="col-sm-10"></div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10 font-weight-bold pb-2">
+              User &amp; Role Management:
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Admin Dashboard"
+                />
+                Admin Dashboard
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-1"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="User &amp; Role Management"
+                />
+                User &amp; Role Management
+                <br />
+              </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Role Management"
+                />
+                Role Management
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-2"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="add_group"
+                />
+                Add Roles
+                <br />
+              </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="view_group"
+                />
+                View Roles
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-3"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Edit Roles"
+                />
+                Edit Roles
+                <br />
+              </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Update Profile &amp; Password"
+                />
+                Update Profile &amp; Password
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-3"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="User Management"
+                />
+                User Management
+                <br />
+              </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Add Users"
+                />
+                Add Users
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-3"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Edit Users"
+                />
+                Edit Users
+                <br />
+              </div>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="View Users"
+                />
+                View Users
+                <br />
+              </div>
+            </div>
+            {% comment %}
+            <div class="col-sm-3"></div>
+            {% endcomment %}
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  id=""
+                  name="Permissions[]"
+                  value="Accounts Management Main Menu"
+                />
+                Accounts Management Main Menu
+                <br />
+              </div>
+            </div>
+          </div>
+
+          <div class="account-permissions">
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                dashboard
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_users"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Total Users</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_active_users"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Total Active Users</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_inactive_users"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total InActive Users</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="rental_deal_drafts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Rental Deal Drafts Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="approved_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Approved Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Pending Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="rejected_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Rejected Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="waiting_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Waiting For Finance Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_gross_commission_rental"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Total Gross commission Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_net_commission_rental"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Net commission Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="entered_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Entered finance Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Pending finance Rental Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_sale_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Sale Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="sale_deal_drafts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Sale Deal Drafts Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="approved_sale_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Approved Sale Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_sale_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Pending Sale Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="rejected_sale_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Rejected Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="waiting_finance_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Waiting For Finance Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_gross_commission_sales"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Gross commission Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_net_commission_sales"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Net commission Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="entered_finance_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Entered finance Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_finance_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending finance Sales Deals Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_property"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Property Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="property_drafts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Property Drafts Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="approved_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Approved Properties Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending Properties Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="rejected_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Rejected Properties Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="waiting_finance_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Waiting For Finance Properties Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_finance_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending finance Properties Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="entered_finance_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Entered finance Properties Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_gross_commission_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Gross commission Properties Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="total_net_commission_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Total Net commission Properties Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="receipts_count"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Receipts Count</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="third_party_receipts_count"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Third Party Receipts Count</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="management_receipts_count"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Management Receipts Count</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Rental Deals Management
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="manage_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Rental Deals Management</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_all_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; All Rental Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_pending_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending Rental Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_waiting_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Waiting For Finance Rental Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_approved_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Approved Rental Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_rejected_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Rejected Rental Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_rentaldeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Create Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="change_rentaldeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Edit Rental Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_rentaldeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; View Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_my_draft_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; My Rental Deals Drafts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="delete_rentaldeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Delete Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_admin_rental_fields"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Admin Rental Deal fields</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_approved_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Edit Approved Rental Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_pending_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending finance Rental Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="enter_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Entered finance Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="create_draft_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Create Draft Rental Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_draft_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Edit Draft Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_amt_status_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Update Aml status Rental Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_finance_status_rental_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Update finance status Rental Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="comment_finance_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Finance comment Rental Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="generate_tenancy_contract_rental_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Generate Tenancy Contract Rental Deal</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Sales Deals Management
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="manage_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Sales Deals Management</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_all_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; All Sales Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_pending_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Pending Sales Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_approved_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Approved Sales Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_rejected_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Rejected Sales Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_waiting_finance_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Waiting For Finance Sales Deals</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_salesdeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Create Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="change_salesdeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Edit Sales Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_salesdeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; View Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_my_draft_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; My Sales Deals Drafts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="delete_salesdeals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Delete Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_admin_sales_fields"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Admin Sales Deal fields</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_approved_sales_deals"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Edit Approved Sales Deals</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_pending_finance_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Pending finance Sales Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="enter_finance_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Entered finance Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="create_draft_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Create Draft Sales Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_draft_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Edit Draft Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_aml_status_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Update Aml status Sales Deal</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_finance_status_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Update finance status Sales Deal</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="comment_finance_sales_deal"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Finance comment Sales Deal</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp;Property Management
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="property_management_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Property Management</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="property_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Property</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="draft_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Draft</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Create Property</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="create_draft_property_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; Create Draft Property</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp; View properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Edit properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="list_management_receipts_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;List Management Receipts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_management_receipts_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Add Management Receipts</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_management_receipts_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Edit Management Receipts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_management_receipts_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;View Management Receipts</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="download_management_receipts_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Download Management Receipts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions">
+                    &nbsp;Pending Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="approved_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Approved Properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="rejected_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Rejected Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="waiting_for_finance_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Waiting For Finance Properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="pending_finance_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Pending finance Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="entered_finance_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Entered finance Properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="admin_properties_fields_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Admin Properties fields</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_aml_status_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Update Aml status Properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="update_finance_status_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Update finance status Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="finance_comment_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Finance comment Properties</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="delete_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Delete Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="edit_approved_properties_rentalproperties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Approved Properties</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Receipt
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Receipt"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Receipt</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;View Receipt</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Receipt</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="change_receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Receipt</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Download Receipt"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Download Receipt</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                Settings
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Settings"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Settings</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Manage Email Address"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Manage Email Address</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Add Email Address"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Email Address</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Edit Email Address"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Email Address</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Delete Email Address"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Delete Email Address</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Manage Email Contents"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Manage Email Contents</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Add Email Contents"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Email Contents</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Edit Email Contents"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Email Contents</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="View Email Contents"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;View Email Contents</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Delete Email Contents"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Delete Email Contents</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Configuration"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Configuration</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Add Configuration"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Configuration</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="View Configuation"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;View Configuation</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Edit Configuration"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Configuration</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Email Reminders History"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Email Reminders History</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Third Party Receipts
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="List Third Party Receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;List Third Party Receipts</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Add Third Party Receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Third Party Receipts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Edit Third Party Receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Third Party Receipts</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="View Third Party Receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;View Third Party Receipts</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Download Third Party Receipts"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Download Third Party Receipts</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Reports Management
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Reports Management"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Reports Management</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Agent Commission Report"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Agent Commission Report</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Agent Performance Report"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Agent Performance Report</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-form-label font-weight-bold col-sm-2 pt-0"></div>
+              <div class="col-sm-10"></div>
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10 font-weight-bold pb-2 heading-permission">
+                &nbsp; Properties
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="Properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Properties</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="view_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;View Property</label
+                  >
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="change_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Edit Property</label
+                  >
+                </div>
+              </div>
+              {% comment %}
+              <div class="col-sm-3"></div>
+              {% endcomment %}
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <input
+                    type="checkbox"
+                    class="i-checks permissionsjs"
+                    value="add_properties"
+                    name="Permissions[]"
+                  /><label for="checkbox4" class="permissions"
+                    >&nbsp;Add Property</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br />
+
+          <div class="form-group row">
+            <div class="col-sm-12 btn-center">
+              <button type="submit" class="btn btn-primary btn-rounded m-1">
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+ {% comment %} <script src="static/assets/vendor/jquery/dist/jquery.min.js"></script> {% endcomment %}
+    <!-- ✅ Bootstrap and related -->
+    <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
+    <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    {% comment %} <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery.scrollLock.min.js"></script> {% endcomment %}
+
+    <!-- ✅ jQuery UI (datepicker etc.) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- ✅ Datatables -->
+    <script src="/static/assets/js/datatables.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- ✅ jQuery Validation plugin -->
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+<script>
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      for (let cookie of document.cookie.split(";")) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+let roleId = $("#dealMeta").data("deal-id");
+
+  $.ajax({
+    url: `/role/api/${roleId}/update/`,   // your GET API for role details
+    method: "GET",
+    success: function(response) {
+      console.log(response)
+        // clear all first
+        $("input[name='Permissions[]']").prop("checked", false);
+
+
+
+        // tick only the ones in response.permissions
+        response.permissions.forEach(function(perm) {
+            $("input[name='Permissions[]'][value='" + perm + "']").prop("checked", true);
+        });
+
+        // also fill other fields if needed
+        $("#name").val(response.name);
+        $("#description").val(response.description).trigger("change");
+          if ($("#accountMain option[value='" + response.account.id + "']").length === 0) {
+        $("#accountMain").append(
+            $("<option>", { value: response.account.id, text: response.account.name })
+        );
+        }
+        $("#accountMain").val(response.account.id).trigger("change");
+    }
+});
+
+
+
+
+
+
+
+
+  var requiredMessageName='Role Name is Required';
+      var requiredMessageMax ='Role Name may not be greater than 100 characters';
+      var requiredMessageDesc='Description is Required';
+      var requiredMessageDescMax ='Description may not be greater than 100 characters';
+      var requiredMessageAccount='Please Select Accont';
+
+$('#createRoleForm').validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3,
+            maxlength: 100,
+        },
+        description: {
+            required: true,
+            maxlength: 100,
+        },
+       
+    },
+    messages: {
+        name: {
+            required: requiredMessageName,
+            maxlength: requiredMessageMax
+        },
+        description: {
+            required: requiredMessageDesc,
+            maxlength: requiredMessageDescMax
+        },
+      
+    },
+      errorPlacement: function (error, element) {
+        error.addClass("text-danger");
+         error.insertAfter(element);
+    },
+ 
+    submitHandler: function (form, event) {
+        event.preventDefault();
+
+        let selectedPermissions = [];
+        $("input[name='Permissions[]']:checked").each(function () {
+            selectedPermissions.push($(this).val());
+        });
+        console.log(selectedPermissions)
+
+        let payload = {
+            role_name: $("#name").val(),
+            description: $("#description").val(),
+            account: $("#account").val(),
+            permissions: selectedPermissions
+        };
+
+        if(selectedPermissions.length >= 1){
+        $.ajax({
+            url:  `/role/api/${roleId}/update/`,
+            type: "PUT",
+            data: JSON.stringify(payload),
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            success: function (response) {
+                 $("#alert-primary").text('Role Created Successfully ');
+	          $("#successmsg").show();
+	          $('html, body').animate({
+	            scrollTop: $('.main-header').offset().top
+	          }, 1000);
+	          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                console.log(response);
+                $("#createRoleForm")[0].reset();
+                $("input[name='permissions']").prop("checked", false);
+            },
+            error: function (xhr) {
+                alert("Error creating role!");
+                console.log(xhr.responseText);
+            }
+        });
+      }
+      else{
+          console.log("reached top")
+	          $("#alert-primary").text('selecte Aleast One Permission');
+	          $("#successmsg").show();
+	          $('html, body').animate({
+	            scrollTop: $('.main-header').offset().top
+	          }, 1000);
+	          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+	        
+      }
+    }
+});
+
+</script>
+
+
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+

@@ -26,6 +26,7 @@ from django.contrib.auth.views import LogoutView
 from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_delete, Rental_DealViewSet_view,Rental_DealViewSet_finance_update,Rental_DealViewSet_tenancey_contact  
 
 from Rental_Deal import urls 
+from rolemanagement import urls
 from core import urls
 urlpatterns = [
     path('', include('core.urls'), name='home'),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('', include('Sales_Deals_Management.urls')),
     path('', include('property_management_deals.urls')), 
     path('third_party_receipts/', include('Third_Party_Receipts.urls')),
+    path("role/" , include('rolemanagement.urls')),
     path('receipt/',include('core.urls')),
     path("rental/filter",views.Rental_DealViewSet_filter),
     path('login/', login_view, name="login"),

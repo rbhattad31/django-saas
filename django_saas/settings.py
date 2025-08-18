@@ -49,8 +49,9 @@ INSTALLED_APPS = [
     "Sales_Deals_Management",
     "Third_Party_Receipts",
     "property_management_deals",
+    "rolemanagement",
     'django_multitenant',
-    "users",
+   
 
     #rest_framework
     'rest_framework',  # Django REST Framework for API support'
