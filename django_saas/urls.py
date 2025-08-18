@@ -32,7 +32,7 @@ urlpatterns = [
     path('', include('core.urls'), name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('Rental_Deal.urls')),
-    path("user/" , include('users.urls')),
+    
     path('', include('Sales_Deals_Management.urls')),
     path('', include('property_management_deals.urls')), 
     path('third_party_receipts/', include('Third_Party_Receipts.urls')),
