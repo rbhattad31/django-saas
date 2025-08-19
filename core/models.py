@@ -187,6 +187,8 @@ class Account(models.Model):
  	            "change_receipts" ,
                 "delete_receipts", # here i dont have download permission  but i am using delete permission  for that rather than creating   since just we need to check id permision presnet or not  so we can use delete for the download permission only 
                 "view_receipts",
+                "list_receipts",  
+                "download_receipts",
 
 
                 # Dashboard permissions for Admin.
@@ -236,6 +238,17 @@ class Account(models.Model):
                 "change_deposits",
                 "delete_deposits",
                 "view_deposits",
+                "list_third_party_deposits",
+                "download_third_party_deposits",
+
+
+                # User & Role  management for admin
+                "admin_dashboard_access",
+                "add_group",
+                "change_group",
+                "view_group",
+                "role_management",
+                "user&role_management",
 
 
 
@@ -280,6 +293,8 @@ class Account(models.Model):
 
                 # recipts management for the Mananger 
                 "view_receipts",
+                "list_receipts",  
+                 
 
                 # dashBroad Permissions for the Manager
                 "rental_deal_drafts",
@@ -300,6 +315,15 @@ class Account(models.Model):
                 #therid party receipts management for the manager
 
                 "view_deposits",
+                "list_third_party_deposits",
+                 
+
+                # User & Role  management for admin
+                "admin_dashboard_access",
+                 
+
+
+
 
             ],
             "Agent": [
@@ -369,6 +393,11 @@ class Account(models.Model):
                 "rejected_properties",
 
                 # thrid party receipts management for the Agent
+
+
+                # User & Role  management for admin
+                "admin_dashboard_access",
+                
                 
             ],
             "Finance": [
@@ -421,6 +450,8 @@ class Account(models.Model):
  	            "change_receipts", 
                 "delete_receipts", # here i dont have download permission  but i am using delete permission  for that rather than creating   since just we need to check id permision presnet or not  so we can use delete for the download permission only 
                 "view_receipts",
+                "list_receipts",  
+                "download_receipts",
 
                 # dash broad Permisions
                 "entered_finance_rental_deals",
@@ -436,7 +467,12 @@ class Account(models.Model):
                 "add_deposits",
                 "change_deposits",
                 "delete_deposits",
+                "list_third_party_deposits",
+                "download_third_party_deposits",
 
+                # User & Role  management for admin
+                "admin_dashboard_access",
+                
 
 
                 ],

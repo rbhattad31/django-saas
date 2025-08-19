@@ -52,22 +52,22 @@ class GroupSerializer(serializers.ModelSerializer):
             html = ""
 
             # View
-            if user.has_perm('core.view_salesdeals'):
+            if user.has_perm('auth.view_group'):
                 print("it has view permission ifromteh  serlozer")
-                html += f'<a href="/sales-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
+                html += f'<a href="/role/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
 
             # Edit (disallowed if approved unless special permission exists)
 
-             
-            print("it has view permission ifromteh  serlozer")
-            html += f'<a href="/role/edit/{obj.id}/" class="text-primary mr-2"><i class="fas fa-edit"></i></a>'
+            if user.has_perm('auth.change_group'):
+
+                print("it has view permission ifromteh  serlozer")
+                html += f'<a href="/role/edit/{obj.id}/" class="text-warning mr-2"><i class="fas fa-edit"></i></a>'
         
 
             
 
             # Delete
-            if user.has_perm('core.delete_salesdeals'):
-                html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+             
 
             return format_html(html)
     

@@ -20,7 +20,10 @@
         <div class="collapse" id="accountsSubmenu">
           <ul class="list-group ms-3">
             <li class="list-group-item border-0 px-3 py-1"><a href= "#" class="text-decoration-none">Users</a></li>
-            <li class="list-group-item border-0 px-3 py-1"><a href={% url "role-list" %} class="text-decoration-none">Roles</a></li>
+
+            {% if perms.auth.role_management %}
+            <li class="list-group-item border-0 px-3 py-1"><a href={% url "role-list" %} class="text-decoration-none">Roles Management</a></li>
+            {% endif %}
           </ul>
         </div>
       </li>
@@ -291,6 +294,68 @@
 
  
 </nav>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  // Get current URL path
+  const path = window.location.pathname;
+  console.log(path.startsWith("/role/"))
+  console.log(path)
+
+  // Check if current URL is under /rental-deals/
+  if (path.startsWith("/role/")) {
+    // Expand the submenu
+   document.getElementById("accountsSubmenu").classList.add("show");
+
+// Highlight the parent nav link
+document.querySelector("[href='#accountsSubmenu']").classList.remove("collapsed");
+
+// Highlight the correct submenu item
+document.querySelectorAll("#accountsSubmenu a").forEach(function (el) {
+  if (el.getAttribute("href") === path) {
+    el.parentElement.classList.add("actived");
+  }
+});
+  }
+});
+</script>
+
+{% comment %} <script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Get current URL path
+  const currentPath = window.location.pathname;
+
+  // Loop through all links in the sidebar
+  document.querySelectorAll("#sidenav-main a").forEach(function (link) {
+    const href = link.getAttribute("href");
+
+    if (href && href !== "#" && currentPath.startsWith(href)) {
+      // Highlight the clicked link
+      link.classList.add("active");
+
+      // Highlight its parent li
+      if (link.closest("li")) {
+        link.closest("li").classList.add("actived");
+      }
+
+      // Expand submenu if it's inside one
+      const collapseDiv = link.closest(".collapse");
+      if (collapseDiv) {
+        collapseDiv.classList.add("show");
+
+        // Highlight the parent toggle link
+        const toggle = document.querySelector(
+          `[href="#${collapseDiv.id}"]`
+        );
+        if (toggle) {
+          toggle.classList.remove("collapsed");
+        }
+      }
+    }
+  });
+});
+</script> {% endcomment %}
 {% comment %} <nav aria-label="breadcrumb">
   <ol class="breadcrumb" id="breadcrumb">
     <li class="breadcrumb-item active" aria-current="page">Dashboard</li>

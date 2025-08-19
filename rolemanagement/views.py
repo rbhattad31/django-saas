@@ -156,7 +156,7 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
                 pass  # skip invalid permissions
         account = Account.objects.get(id=request.user.account_id)
         profile, _ = GroupProfile.objects.get_or_create(group=group)
-        profile.account = account
+        profile.account = account # profile acccount can be only a account Instance
        
         profile.description = description
         profile.save()
@@ -251,7 +251,7 @@ def role_management_view(request,pk=None):
     group = Group.objects.filter(id = pk).first()
     print(group)
 
-    
+
 
     if request.method == "GET":
         serializer = GroupSerializer(group ,context = {"request":request})

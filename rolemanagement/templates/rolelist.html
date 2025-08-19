@@ -11,8 +11,9 @@
 				<div class="card o-hidden mb-4">
 			<div class="card-header">
 				<h3 class="w-50 float-left card-title m-0">List of Roles</h3>
-				 
+				 {% if perms.auth.add_group %}
 					<a href="/role/create/" class="btn btn-primary btn-rounded m-1" style="float: right"> Add New Role</a>
+            {% endif %}
 							</div>
 			
 			<div class="card-body">
@@ -142,15 +143,7 @@ $(document).ready(function () {
             { data: "action", title: "Action" },
             { data: "name", title: "Name" },
             { data: "is_active", title: "Status" },
-            {
-                data: null,
-                render: function (data, type, row) {
-                    return `
-                        <button class="btn btn-sm btn-primary edit-group" data-id="${row.id}">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-group" data-id="${row.id}">Delete</button>
-                    `;
-                }
-            }
+            
         ]
     });
 });

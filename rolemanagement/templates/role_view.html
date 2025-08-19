@@ -33,75 +33,37 @@
     </h4>
     <div class="card mb-5">
       <div class="card-body">
-        <form id="createRoleForm"  >
-          <fieldset disabled>
+        <form
+           
+          id="createRoleForm"
+           
+        >
+        <fieldset disabled  >
           <input
             type="hidden"
             name="_token"
             value="uERTcFOkCIcahSyMMr2R9xPxeqgxwEfiabq3tBg2"
           />
           <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label for="firstName1"
-                >Role Name<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                id="name"
-                name="name"
-                class="form-control"
-                placeholder="Enter Role Name"
-                value=""
-              />
-              <label
-                class="error text-danger err-name"
-                id="Role_name_error_msg"
-              >
-              </label>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="firstName1"
-                >Description<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="description"
-                class="form-control"
-                id="description"
-                placeholder="Enter Description"
-                value=""
-              />
-              <label
-                class="error text-danger err-description"
-                id="description_error_msg"
-              >
-              </label>
-            </div>
-          </div>
-          <div class="row">
-             
-                      <div class="col-md-6 form-group mb-3">
-                        <label for="phone">Account<span style="color: red">*</span></label>
-                          <select class="form-control" name="account_id" id="accountMain">
-                                                           
-                              
-                               
-                              
-                          </select>
-                        <span class="text-danger" id="account_error">
-                        </span>
-                      </div>
-                       
-                       
-                   
-                    <div class="col-md-6 form-group mt-3">
+         									<div class="col-md-6 form-group mb-3">
+                              <label for="firstName1">Role Name</label>
+                             	<input type="name" name="name" class="form-control" id="name" value="2-Admin" readonly="">
+                          </div>
+         							 		<div class="col-md-6 form-group mb-3">
+                            <label for="firstName1">Description</label>
+                           	<input type="description" name="description" class="form-control" id="description" value="Account Admin" readonly="">
+                        </div>
+                        
+                        <div class="col-md-6 form-group mb-3">
+                        <label for="phone">Account</label>
+                          <input class="form-control" id="name" value="classic_properties" readonly="">
+                        </div>
+                        
+                          <div class="col-md-6 form-group mb-3">
                               <label for="status">Role Status</label>
-                              <label class="switch pr-5 switch-primary mr-3">
-                                  <input type="checkbox" name="role_status" checked=""><span class="slider">
-                                  </span>
-                              </label>                  
-                            </div>   
-	 	                </div>
+                                  <input type="text" class="form-control" readonly="" name="role_status" value="Active">
+                          </div>
+   							      </div>
           {% comment %} <input type="hidden" name="account" value="2" /> {% endcomment %}
           <div class="row">
             <div class="col-form-label font-weight-bold col-sm-2 pt-0">
@@ -119,7 +81,7 @@
                   type="checkbox"
                   id=""
                   name="Permissions[]"
-                  value="Admin Dashboard"
+                  value="admin_dashboard_access"
                 />
                 Admin Dashboard
                 <br />
@@ -134,7 +96,7 @@
                   type="checkbox"
                   id=""
                   name="Permissions[]"
-                  value="User &amp; Role Management"
+                  value="user&role_management"
                 />
                 User &amp; Role Management
                 <br />
@@ -147,7 +109,7 @@
                   type="checkbox"
                   id=""
                   name="Permissions[]"
-                  value="Role Management"
+                  value="role_management"
                 />
                 Role Management
                 <br />
@@ -190,7 +152,7 @@
                   type="checkbox"
                   id=""
                   name="Permissions[]"
-                  value="Edit Roles"
+                  value="change_group"
                 />
                 Edit Roles
                 <br />
@@ -1060,7 +1022,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="update_finance_status_rental_deal"
+                    value="update_finance_status_rental_deals"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp; Update finance status Rental Deal</label
@@ -1361,7 +1323,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="update_finance_status_sales_deal"
+                    value="update_finance_status_sales_deals"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp; Update finance status Sales Deal</label
@@ -1741,7 +1703,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="Receipt"
+                    value="list_receipts"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;Receipt</label
@@ -1797,7 +1759,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="Download Receipt"
+                    value="download_receipts"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;Download Receipt</label
@@ -2035,7 +1997,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="List Third Party Receipts"
+                    value="list_third_party_deposits"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;List Third Party Receipts</label
@@ -2050,7 +2012,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="Add Third Party Receipts"
+                    value="add_deposits"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;Add Third Party Receipts</label
@@ -2063,7 +2025,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="Edit Third Party Receipts"
+                    value="change_deposits"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;Edit Third Party Receipts</label
@@ -2078,7 +2040,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="View Third Party Receipts"
+                    value="view_deposits"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;View Third Party Receipts</label
@@ -2091,7 +2053,7 @@
                   <input
                     type="checkbox"
                     class="i-checks permissionsjs"
-                    value="Download Third Party Receipts"
+                    value="download_third_party_deposits"
                     name="Permissions[]"
                   /><label for="checkbox4" class="permissions"
                     >&nbsp;Download Third Party Receipts</label
@@ -2223,10 +2185,10 @@
               </button>
             </div>
           </div>
-           <fieldset >
-        </form> 
-      </div> 
-    </div>
+          </fieldset>
+        </form>
+      </div>
+    </div> 
   </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

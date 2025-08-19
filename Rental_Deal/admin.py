@@ -1,6 +1,7 @@
 from django.contrib import admin
 from core.models import RentalDeals, Users, Account
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 from django import forms
 
 # admin.site.register(RentalDeals)
@@ -97,12 +98,23 @@ class CustomUserAdmin(BaseUserAdmin):
 
 admin.site.register(Users, CustomUserAdmin)
 
+
+
+User = get_user_model()
+
+class UserInline(admin.StackedInline):  # or StackedInline for a bigger form
+    model = User
+    extra = 1
+     
+
+
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('id',"account_domain" )  # fields to show in the list view
     search_fields = ('name',)
     ordering = ('-created_at',)
-
+    inlines = [UserInline]
+ 
 
 
 
