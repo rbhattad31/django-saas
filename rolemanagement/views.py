@@ -238,6 +238,9 @@ Role_delete_view = RoleMangementViewSet.as_view({'delete': 'destroy'})
 
 
 def role_managementlist_html(request):
+  
+  
+
   return render(request , "rolelist.html")
 
 def role_management_create(request):

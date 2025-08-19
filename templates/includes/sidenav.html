@@ -1,4 +1,40 @@
 {% load custom_tags %}
+
+<style>
+  /* For main nav items and submenu items */
+  #sidenav-main .nav-item,
+  #sidenav-main .list-group-item {
+    position: relative;
+    overflow: hidden;
+  }
+
+  #sidenav-main .nav-item::before,
+  #sidenav-main .list-group-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: rgba(0, 123, 255, 0.15); /* light blue highlight */
+    z-index: 0;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Expand left → right on hover */
+  #sidenav-main .nav-item:hover::before,
+  #sidenav-main .list-group-item:hover::before {
+    width: 100%;
+  }
+
+  /* Keep text above background (but no color change) */
+  #sidenav-main .nav-item > a,
+  #sidenav-main .list-group-item > a {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
 <nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2 h-100vh d-flex justify-content-center align-items-start" id="sidenav-main">
   <div class="sidebar ">
     <div class="text-center mb-4">
