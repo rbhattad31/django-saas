@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DealSerializer(serializers.ModelSerializer):
     # is_rental_aml = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     # users = UserSerializer(source='submitted_by_user', read_only=True)
-    
+    # submitted_date = serializers.DateField(read_only=True) 
 
     date = serializers.DateField(
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
@@ -45,7 +45,8 @@ class DealSerializer(serializers.ModelSerializer):
     )
     submitted_date = serializers.DateField(
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
-        format="%d-%m-%Y"             # Return DMY to frontend
+        format="%d-%m-%Y",
+          read_only=True            # Return DMY to frontend
     )
     deal_start_date = serializers.DateField(
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
@@ -82,6 +83,7 @@ class DealSerializer(serializers.ModelSerializer):
 
     
     CONDITIONAL_REQUIRED_FIELDS = [
+        
         'owner_agency',
         'agent_first_name',
         'agent_phone',
@@ -167,76 +169,76 @@ class DealSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This reference number is already used.")
         return value
 
-    def validate(self, data):
-        form_status = data.get('form_status', 'Incomplete')
-        print(f"DEBUG: Serializer validate method called. Data received: {data}") # <--- ADD THIS
-        form_status = data.get('form_status', 'Incomplete')
-        print(f"DEBUG: form_status inside serializer: {form_status}") 
+    # def validate(self, data):
+    #     form_status = data.get('form_status', 'Incomplete')
+    #     print(f"DEBUG: Serializer validate method called. Data received: {data}") # <--- ADD THIS
+    #     form_status = data.get('form_status', 'Incomplete')
+    #     print(f"DEBUG: form_status inside serializer: {form_status}") 
 
-        print()
-        print("this is for the sermilser " ,form_status)
-        print()
+    #     print()
+    #     print("this is for the sermilser " ,form_status)
+    #     print()
 
-        # Required for saving as DRAFT
-        if form_status == 'Incomplete':
-            draft_required_fields = [
-                'submitted_by_agent',
-                'reference_number',
-                'date',
-                'is_new_deal',
-                'project_name',
-                'unit_details',
-                'building_name',
-                'deal_start_date',
-                'deal_end_date',
-                'owner_first_name',
-                'owner_source',
-                'owner_mobile',
-                'owner_email',
-                'seller_nationality',
-                'buyer_nationality',
-                'tenant_first_name',
-                'tenant_source',
-                'tenant_mobile',
-                'tenant_email',
+    #     # Required for saving as DRAFT
+    #     if form_status == 'Incomplete':
+    #         draft_required_fields = [
+    #             'submitted_by_agent',
+    #             'reference_number',
+    #             'date',
+    #             'is_new_deal',
+    #             'project_name',
+    #             'unit_details',
+    #             'building_name',
+    #             'deal_start_date',
+    #             'deal_end_date',
+    #             'owner_first_name',
+    #             'owner_source',
+    #             'owner_mobile',
+    #             'owner_email',
+    #             'seller_nationality',
+    #             'buyer_nationality',
+    #             'tenant_first_name',
+    #             'tenant_source',
+    #             'tenant_mobile',
+    #             'tenant_email',
                
-            ]
-            missing_fields = [
-                field for field in draft_required_fields if not data.get(field)
-            ]
-            if missing_fields:
-                raise serializers.ValidationError({
-                    field: "This field is required for saving as draft."
-                    for field in missing_fields
-                })
+    #         ]
+    #         missing_fields = [
+    #             field for field in draft_required_fields if not data.get(field)
+    #         ]
+    #         if missing_fields:
+    #             raise serializers.ValidationError({
+    #                 field: "This field is required for saving as draft."
+    #                 for field in missing_fields
+    #             })
 
-        # Required for final submission
-        elif form_status == 'Complete':
-            complete_required_fields = [
-                'submitted_by_agent', 'owner_agency', 'reference_number', 'date', 'is_new_deal',
-                'project_name', 'unit_details', 'building_name', 'deal_start_date', 'deal_end_date',
-                'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
-                'seller_nationality', 'buyer_nationality', 'tenant_first_name', 'tenant_source',
-                'tenant_mobile', 'tenant_email', 'agent_first_name', 'agent_phone',
-                'tenant_agency', 'tenant_agent_first_name', 'tenant_agent_phone',
-                'total_commission', 'less_outsude_commission', 'net_commission',
-                'classic', 'agent1', 'receipt_no',  'agent_name1'
+    #     # Required for final submission
+    #     elif form_status == 'Complete':
+    #         complete_required_fields = [
+    #             'submitted_by_agent', 'owner_agency', 'reference_number', 'date', 'is_new_deal',
+    #             'project_name', 'unit_details', 'building_name', 'deal_start_date', 'deal_end_date',
+    #             'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
+    #             'seller_nationality', 'buyer_nationality', 'tenant_first_name', 'tenant_source',
+    #             'tenant_mobile', 'tenant_email', 'agent_first_name', 'agent_phone',
+    #             'tenant_agency', 'tenant_agent_first_name', 'tenant_agent_phone',
+    #             'total_commission', 'less_outsude_commission', 'net_commission',
+    #             'classic', 'agent1', 'receipt_no',  'agent_name1'
                 
-            ]
-            missing_fields = [
-                field for field in complete_required_fields if not data.get(field)
-            ]
-            if missing_fields:
-                raise serializers.ValidationError({
-                    field: "This field is required when submitting the form."
-                    for field in missing_fields
-                })
+    #         ]
+    #         missing_fields = [
+    #             field for field in complete_required_fields if not data.get(field)
+    #         ]
+    #         if missing_fields:
+    #             raise serializers.ValidationError({
+    #                 field: "This field is required when submitting the form."
+    #                 for field in missing_fields
+    #             })
 
-            # KYC validation (only for Complete)
+    #         # KYC validation (only for Complete)
             
 
-        # Return validated data
-        return data
+    #     # Return validated data
+    #     return data
 
     def get_view_link(self, obj): 
         request = self.context.get('request')

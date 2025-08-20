@@ -37,6 +37,7 @@ from django import template
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import Group  # Add this import
+from django.core.exceptions import PermissionDenied  # <-- Add this import
 import os
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -48,7 +49,14 @@ import json
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from django.db.models import Q
+from rest_framework.permissions import BasePermission
 from rest_framework import status
+
+
+ 
+
+
+
 
 class Rental_DealViewSet(viewsets.ModelViewSet):
     queryset = RentalDeals.objects.all()
@@ -172,47 +180,140 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
         
-        if type_filter:
-            if type_filter == 'pending':
-                if account_id:
-                    if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                        queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
-                    else:
-                        queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
+        # if type_filter:
+        #     if type_filter == 'pending':
+        #         if account_id:
+        #             if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+        #                 queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
+        #             else:
+        #                 queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
 
-            elif type_filter == 'approved':
-                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                    queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
-                else:
-                    queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
+        #     elif type_filter == 'approved':
+        #         if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+        #             queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
+        #         else:
+        #             queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
 
-            elif type_filter == 'rejected':
-                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                    queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
-                else:
-                     queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
+        #     elif type_filter == 'rejected':
+        #         if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
+        #             queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
+        #         else:
+        #              queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
                 
 
 
-            elif type_filter == "waiting-finance" :
-                queryset = queryset.filter(is_approved_rejected='F')
+        #     elif type_filter == "waiting-finance" :
+        #         queryset = queryset.filter(is_approved_rejected='F')
 
-            elif type_filter == 'entered-finance':
-                queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
+        #     elif type_filter == 'entered-finance':
+        #         queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
 
-            elif type_filter == "pending-finance" :
-                queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
+        #     elif type_filter == "pending-finance" :
+        #         queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
 
-            elif type_filter == 'draft':
-                queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
+        #     elif type_filter == 'draft':
+        #         queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
         
-            elif type_filter == "All" :
-                queryset = queryset.filter(form_status = "Complete")  
+        #     elif type_filter == "All" :
+        #         queryset = queryset.filter(form_status = "Complete")  
 
-            if role == 'Admin' and type_filter == 'draft':
-                queryset = queryset.filter(created_by=user.email)
+        #     if role == 'Admin' and type_filter == 'draft':
+        #         queryset = queryset.filter(created_by=user.email)
 
- 
+
+
+        
+        
+
+        if type_filter:
+            # ---------------- Pending ----------------
+            if type_filter == "pending":
+                if user.has_perm("core.view_pending_rental_deals"):
+                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="P", manager_approved_rejected="A", form_status="Complete")
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)  # 🚨 Forbidden
+
+            # ---------------- Approved ----------------
+            elif type_filter == "approved":
+                if user.has_perm("core.view_approved_rental_deals"):
+                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)
+
+            # ---------------- Rejected ----------------
+            elif type_filter == "rejected":
+                if user.has_perm("core.view_rejected_rental_deals"):
+                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)
+
+            # ---------------- Waiting Finance ----------------
+            elif type_filter == "waiting-finance":
+                if user.has_perm("core.view_waiting_finance_rental_deals"):
+                    queryset = queryset.filter(is_approved_rejected="F")
+                else:
+                    return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+            # ---------------- Entered Finance ----------------
+            elif type_filter == "entered-finance":
+                if user.has_perm("core.enter_finance_rental_deals"):
+                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete")
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)
+
+            # ---------------- Pending Finance ----------------
+            elif type_filter == "pending-finance":
+                if user.has_perm("core.view_pending_finance_rental_deals"):
+                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete")
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)
+
+            # ---------------- Draft ----------------
+            elif type_filter == "draft":
+                if user.has_perm("core.view_my_draft_rental_deals"):
+                    if role == "Admin":
+                        queryset = queryset.filter(form_status="Incomplete", created_by=user.email)
+                    else:
+                        queryset = queryset.filter(form_status="Incomplete", submitted_by_user=user)
+                else:
+                     return Response(
+    {"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN
+)
+
+            # ---------------- All ----------------
+            elif type_filter == "All":
+                if user.has_perm("core.view_all_rental_deals"):
+                    queryset = queryset.filter(form_status="Complete")
+                else:
+                    return Response(serializer.errors,{"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
         print(queryset)
         order = request.data.get("order", [{}])[0]  # ⬅️ Use raw request.data
         print("Order parameter:", order)
@@ -396,6 +497,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
         if mutable_data.get('save_as') == "create-deal":
             mutable_data['form_status'] = "Complete"
+            # mutable_data['submitted_date']= datetime.date.today().strftime("%Y-%m-%d")
         else:
             mutable_data['form_status'] = "Incomplete"
         print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
@@ -615,6 +717,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                  
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
+                mutable_data['submitted_date']= datetime.date.today().strftime("%Y-%m-%d")
+                
+
+ 
             else:
                 mutable_data['form_status'] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
@@ -849,6 +955,10 @@ def pages(request):
 
         html_template = loader.get_template('home/page-404.html')
         return HttpResponse(html_template.render(context, request))
+    
+    except PermissionDenied:   # 🚨 Catch forbidden access
+        html_template = loader.get_template('home/page-403.html')
+        return HttpResponse(html_template.render(context, request), status=403)
 
     except:
         html_template = loader.get_template('home/page-500.html')

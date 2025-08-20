@@ -17,9 +17,15 @@
               <div class="text-muted text-center mt-2 mb-3">
                 Oups! Error 403      
               </div>
+               <div class="text-center mb-4">
+                Access denied  You don't have permission to access this Page!   <button onclick="window.history.back()" class="btn btn-secondary">
+        ⬅ Go Back
+    </button>
+ .  
+              </div>
 
               <div class="text-center mb-4">
-                Access denied - Please authenticate <a href="{% url 'login' %}">Login</a>
+To access this page you may need to have right permission. <a href="{% url 'login' %}">Login</a>
               </div>
 
             </div>

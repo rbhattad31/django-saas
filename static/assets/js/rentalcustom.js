@@ -206,6 +206,22 @@ $(document).ready(function () {
     success: function (data) {
       console.log("✅ Success:", data);
     },
+    error: function (xhr, status, error) {
+      console.log("entered the error file")
+            if (xhr.status === 403) {
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+                // Option 2: show SweetAlert (if you’re using it)
+                // Swal.fire({
+                //     icon: "error",
+                //     title: "Access Denied",
+                //     text: "You do not have permission to view this page."
+                // });
+            } else {
+                console.error("❌ AJAX Error:", status, error);
+            }
+        },
     columns: [
      {data: "action",
         title: "Action ",},

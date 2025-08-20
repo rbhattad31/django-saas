@@ -1513,10 +1513,10 @@ $('#deal_form').validate({
                       }
                     }
                   }
-                  errorMessage = "Bad Request: " + errors.join("; ");
+                  errorMessage = "  " + errors.join("; ");
                 } else {
                   // If backend sends a simple string message
-                  errorMessage = "Bad Request: " + xhr.responseJSON;
+                  errorMessage = "" + xhr.responseJSON;
                 }
               } else {
                 errorMessage = "Bad Request: Invalid data provided.";
@@ -1531,6 +1531,12 @@ $('#deal_form').validate({
             setTimeout(function () {
               $("#successmsg").fadeOut();
             }, 3000);
+            swal({
+              title: "Error Creating the Deal!",
+              text: errorMessage  
+               
+             
+            });
 
             // Hide error message after a few seconds // Display errors a bit longer
           });;
