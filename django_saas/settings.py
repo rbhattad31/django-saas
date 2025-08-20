@@ -107,14 +107,7 @@ DATABASES = {
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT', '3306'),
     }
-    #    'default':  {
-    #     'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-    #     'NAME':  "gopitest",  # Default database name
-    #     'USER':  "root",
-    #     'PASSWORD': "root",
-    #     'HOST': "localhost",
-    #     'PORT': "3306",
-    # }
+  
 }
 
 
