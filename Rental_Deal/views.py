@@ -9,6 +9,7 @@ from .Utilities import delete_from_s3, upload_file_to_full_s3_url
 
 # Create your views here.
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -16,6 +17,7 @@ from core.models import Users
 from .forms import RentalDealForm, FinanceCommentForm
 
 from rest_framework import viewsets, permissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from core.models import RentalDeals,Users,Account,Receipts
@@ -62,12 +64,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     queryset = RentalDeals.objects.all()
        # for default `list`, `retrieve`
     pagination_class = CustomPagination 
+    permission_classes = [IsAuthenticated]
     
     def get_serializer_class(self):
         if self.action == 'datatable_filter':
             return filterSerializer
         return DealSerializer # Custom pagination class
     # filter bsed on input 
+    
     @action(detail=False, methods=['post'] ,url_path='filter')
     def datatable_filter(self, request):
         print(request.data)
@@ -388,9 +392,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
               # original input back
         } 
 
-        return Response(response_data)
-
+        return Response(response_data, status= status.HTTP_200_OK)
     # // create deal
+    @permission_required('core.add_rentaldeals')
     @action(detail=False, methods=['post'], url_path='create-deal')
     def create_deal(self, request):
 
@@ -525,6 +529,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
     # edit the data 
     # @action(detail=True, methods=['get', 'post']) 
+    @permission_required('core.change_rentaldeals')
     def custom_update(self, request, pk=None):
         # print("Raw body:", request.body)
       
@@ -956,9 +961,7 @@ def pages(request):
         html_template = loader.get_template('home/page-404.html')
         return HttpResponse(html_template.render(context, request))
     
-    except PermissionDenied:   # 🚨 Catch forbidden access
-        html_template = loader.get_template('home/page-403.html')
-        return HttpResponse(html_template.render(context, request), status=403)
+ 
 
     except:
         html_template = loader.get_template('home/page-500.html')
@@ -976,6 +979,7 @@ def all_rental_deals(request):
 
 # // html forthe edit rental deal 
 @login_required(login_url="/login/")
+@permission_required('core.change_rentaldeals',raise_exception=True)
 def edit_rental_deal_view(request, pk): 
     deal = RentalDeals.objects.get(pk=pk)
     aws_url = settings.AWS_URL
@@ -1004,6 +1008,7 @@ def edit_rental_deal_view(request, pk):
 
 # html for the create rental deal 
 @login_required(login_url="/login/")
+@permission_required('core.add_rentaldeals',raise_exception=True)
 def create_rental_deal_view(request):
     """
     View to create a new rental deal.

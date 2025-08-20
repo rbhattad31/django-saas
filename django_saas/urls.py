@@ -26,17 +26,17 @@ from django.contrib.auth.views import LogoutView
 from Rental_Deal.views import  Rental_DealViewSet_update, Rental_DealViewSet_delete, Rental_DealViewSet_view,Rental_DealViewSet_finance_update,Rental_DealViewSet_tenancey_contact  
 
 from Rental_Deal import urls 
-from Rolemanagement import urls
+from rolemanagement import urls
 from core import urls
 from django.conf.urls import handler403
 from django.shortcuts import render
 # from core.exception_handler import custom_exception_handler
 
-def custom_permission_denied_view(request,):
+def custom_permission_denied_view(request,exception=None):
     print("forbidden")
     return render(request, "home/page-403.html", status=403)
 
-# handler403 = custom_exception_handler
+handler403 =  custom_permission_denied_view
 
 
 
@@ -48,7 +48,7 @@ urlpatterns = [
     path('', include('Sales_Deals_Management.urls')),
     path('', include('property_management_deals.urls')), 
     path('third_party_receipts/', include('Third_Party_Receipts.urls')),
-    path("role/" , include('Rolemanagement.urls')),
+    path("role/" , include('rolemanagement.urls')),
     path('receipt/',include('core.urls')),
     path("rental/filter",views.Rental_DealViewSet_filter),
     path('login/', login_view, name="login"),
@@ -80,7 +80,7 @@ urlpatterns = [
 
     path("tenancey/contract/download/<int:pk>/",Rental_DealViewSet_tenancey_contact,name = "tenancey-contact"),
      # Include the Rental_Deal app URLs
-    path("forbidden_page/",custom_permission_denied_view , name = "forbidden" ),
+    path("forbidden_page/",custom_permission_denied_view , name = "forbidden_page" ),
 
  
 

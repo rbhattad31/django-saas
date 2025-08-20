@@ -28,7 +28,7 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = 'django-insecure-fh5_0e5k3g*1u_78@kglv40*5e@54-5d$9eauv8awg$52)n-*@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =  True
 
 ALLOWED_HOSTS = ['*']
 
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "Sales_Deals_Management",
     "Third_Party_Receipts",
     "property_management_deals",
-    "Rolemanagement",
+    "rolemanagement",
     'django_multitenant',
    
 
@@ -164,6 +164,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    
       
     
 }

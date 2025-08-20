@@ -163,11 +163,29 @@ $(document).ready(function () {
         return JSON.stringify(d);
       },
       
+      
       dataSrc: function (json) {
         console.log("Full JSON response:", json); // 🔍 all data
         console.log("Only table rows:", json.data); // 🔍 just the rows
         return json.data; // required — tells DataTables where the table rows are
       },
+      error: function (xhr, status, error) {
+      console.log("entered the error file")
+            if (xhr.status === 403) {
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+                // Option 2: show SweetAlert (if you’re using it)
+                // Swal.fire({
+                //     icon: "error",
+                //     title: "Access Denied",
+                //     text: "You do not have permission to view this page."
+                // });
+            } else {
+                console.error("❌ AJAX Error:", status, error);
+            }
+        },
+     
 
       // complete: function (xhr, status) {
       //   // Log the full response object
@@ -180,6 +198,8 @@ $(document).ready(function () {
       //   }
       // },
     },
+     
+    
     
         dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
   "<'row mt-1'<'col-sm-12'tr>>" +
@@ -203,25 +223,7 @@ $(document).ready(function () {
             
              
         ],
-    success: function (data) {
-      console.log("✅ Success:", data);
-    },
-    error: function (xhr, status, error) {
-      console.log("entered the error file")
-            if (xhr.status === 403) {
-                // Option 1: redirect to your custom 403 page
-                window.location.href = "/forbidden_page/";
-
-                // Option 2: show SweetAlert (if you’re using it)
-                // Swal.fire({
-                //     icon: "error",
-                //     title: "Access Denied",
-                //     text: "You do not have permission to view this page."
-                // });
-            } else {
-                console.error("❌ AJAX Error:", status, error);
-            }
-        },
+  
     columns: [
      {data: "action",
         title: "Action ",},
