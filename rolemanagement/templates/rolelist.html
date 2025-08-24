@@ -131,7 +131,15 @@ function getCookie(name) {
 $(document).ready(function () {
     var table = $('#grouplist_table').DataTable({
         processing: true,
-        serverSide: true,   // 🚀 let DataTables send draw/start/length
+        serverSide: true, 
+         language: {
+    paginate: {
+      previous: "Previous",
+      next: "Next "
+    }
+  },
+
+  pagingType: "simple_numbers",  // 🚀 let DataTables send draw/start/length
         ajax: {
             url: "/role/filter/",
             type: "POST",

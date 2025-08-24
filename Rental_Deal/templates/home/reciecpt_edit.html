@@ -8,342 +8,347 @@
 ></div>
 
 <div class="main-content pt-4">
-  <div class="col-md-12" id="successmsg" style="display: none">
-    <div class="alert alert-primary" id="alert-primary">
-      <button
-        class="close float-right"
-        type="button"
-        data-dismiss="alert"
-        aria-label="Close"
-      >
-        <span aria-hidden="true"></span>
-      </button>
-    </div>
-  </div>
-  <div class="col-md-12">
-    <h4 class="pb-2">
-      Edit Receipt Details<span class="float-right mr-2">
-        <a
-          class="btn btn-primary btn-rounded"
-          href="/receipt/list/"
-          >Cancel</a
-        ></span
-      >
-    </h4>
-    <div class="card mb-5">
-      <div class="card-body">
-        <form id="createReceiptForm" novalidate="novalidate">
-          <input
-            type="hidden"
-            name="_token"
-            value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
-          />
-          <div class="row">
-            <input
-              type="hidden"
-              value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
-              name="csrf-token"
-              id="token"
-            />
-            <input type="hidden" name="id" value="4334" id="id" />
-            <div class="col-md-6 form-group mb-3">
-              <label for="date"
-                >Receipt Date<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                id="date"
-                name="date"
-                class="form-control hasDatepicker"
-                placeholder="Enter Receipt Date"
-                readonly=""
-              />
-              <span class="error text-danger err-name" id="date_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="receipt_number"
-                >Receipt Number<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="receipt_number"
-                class="form-control"
-                id="receipt_number"
-                placeholder="Enter Receipt Number"
-                readonly=""
-                style="background-color: #f8f9fa"
-              />
-              <span
-                class="error text-danger err-name"
-                id="receipt_number_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="received_from"
-                >Received From<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="received_from"
-                class="form-control"
-                id="received_from"
-                placeholder="Enter Received From"
-              />
-              <span
-                class="error text-danger err-name"
-                id="received_from_error"
-              ></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="dhs">Dhs<span style="color: red">*</span></label>
-              <input
-                type="text"
-                name="dhs"
-                class="form-control"
-                id="dhs"
-                placeholder="Enter Dhs"
-              />
-              <span class="error text-danger err-name" id="dhs_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="fils">Fils<span style="color: red">*</span></label>
-              <input
-                type="text"
-                name="fils"
-                class="form-control"
-                id="fils"
-                placeholder="Enter Fils"
-              />
-              <span class="error text-danger err-name" id="fils_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="sum_of_dhs"
-                >The Sum Of Dhs<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="sum_of_dhs"
-                class="form-control"
-                id="sum_of_dhs"
-                placeholder="Enter Sum Of Dhs"
-              />
-              <span
-                class="error text-danger err-name"
-                id="sum_of_dhs_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="payment_type"
-                >Payment Type<span style="color: red">*</span></label
-              >
-              <select
-                name="payment_type"
-                class="form-control"
-                id="payment_type"
-              >
-                <option value="Cash" selected="" hidden="">Cash</option>
-                <option value="Cash">Cash</option>
-                <option value="Cheque">Cheque</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-              </select>
-              <span
-                class="error text-danger err-name"
-                id="deal_type_error"
-              ></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3 cheque">
-              <label for="cash/cheque no"
-                >Cheque No<span
-                  class="cheque_no"
-                  style="color: red; display: none"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="cheque_no"
-                class="form-control"
-                id="cheque_no"
-                placeholder="Enter Cheque No"
-              />
-              <span
-                class="error text-danger err-name"
-                id="cheque_no_error"
-              ></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="bank"
-                >Bank Name<span
-                  class="bank_name"
-                  style="color: red; display: none"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="bank"
-                class="form-control"
-                id="bank"
-                placeholder="Enter Bank Name"
-              />
-              <span class="error text-danger err-name" id="bank_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="sec_date"
-                >Payment Date<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="sec_date"
-                class="form-control"
-                id="sec_date"
-                placeholder="Enter Payment Date"
-                readonly=""
-              />
-              <span
-                class="error text-danger err-name"
-                id="sec_date_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="being">Being<span style="color: red">*</span></label>
-              <input
-                type="text"
-                name="being"
-                class="form-control"
-                id="being"
-                placeholder="Enter Being"
-              />
-              <span class="error text-danger err-name" id="being_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="status"
-                >Status<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="status"
-                class="form-control"
-                id="status"
-                placeholder="msg.Enter Status"
-                readonly=""
-              />
-              <span class="error text-danger err-name" id="status_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="deal_type"
-                >Deal Type<span style="color: red">*</span></label
-              >
-              <select name="deal_type" class="form-control" id="deal_type">
-                <option value="Rental" selected="" hidden="">Rental</option>
-                <option value="Sales">Sales</option>
-                <option value="Rental">Rental</option>
-              </select>
-              <span
-                class="error text-danger err-name"
-                id="deal_type_error"
-              ></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="agent_name"
-                >Agent Name<span style="color: red">*</span></label
-              >
-              <select name="agent_name" class="form-control" id="agent_name">
-                <option value="">Select Agent</option>
-                <option
-                  select
-                  value="Rahul B"
-                  data-email="rahul@classicproperties.ae"
-                  data-agent_id="10"
+  <div class="row">
+      <div class="col-md-12" id="successmsg" style="display: none">
+        <div class="alert alert-primary" id="alert-primary">
+          <button
+            class="close float-right"
+            type="button"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="card mb-5">
+          <div class="card-header">
+              <h4 class="pb-2">
+                Edit Receipt Details<span class="float-right mr-2">
+                  <a
+                    class="btn btn-primary btn-rounded"
+                    href="/receipt/list/"
+                    >Cancel</a
+                  ></span
                 >
-                  Rahul B
-                </option>
-
-                <option
-                  value="Kalash Malani"
-                  data-email="kalash@classicproperties.ae"
-                  data-agent_id="126"
-                >
-                  Kalash Malani
-                </option>
-              </select>
+              </h4>
+          </div>
+          <div class="card-body">
+            <form id="createReceiptForm" novalidate="novalidate">
               <input
                 type="hidden"
-                name="agent_email"
-                id="agent_email"
-                value="swaraj@classicproperties.ae"
+                name="_token"
+                value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
               />
-              <input type="hidden" name="agent_id" id="agent_id" />
-              <!-- <input type="text" name="agent_name" class="form-control" id="agent_name" value="Swaraj Sanjay Bhutada" placeholder="Enter Agent Name" readonly>-->
-              <span
-                class="error text-danger err-name"
-                id="agent_name_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="project_name"
-                >Project Name<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="project_name"
-                class="form-control"
-                id="project_name"
-                placeholder="Enter Project Name"
-              />
-              <span
-                class="error text-danger err-name"
-                id="project_name_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="building_name"
-                >Building Name<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="building_name"
-                class="form-control"
-                id="building_name"
-                placeholder="Enter Building Name"
-              />
-              <span
-                class="error text-danger err-name"
-                id="building_name_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="unit_number"
-                >Unit Number<span style="color: red">*</span></label
-              >
-              <input
-                type="text"
-                name="unit_number"
-                class="form-control"
-                id="unit_number"
-                placeholder="Enter Unit Number"
-              />
-              <span
-                class="error text-danger err-name"
-                id="unit_number_error"
-              ></span>
-            </div>
+              <div class="row">
+                <input
+                  type="hidden"
+                  value="CAbFg2CI7duABh9UMbevLXwgbJmXuAHZHDexQxpA"
+                  name="csrf-token"
+                  id="token"
+                />
+                <input type="hidden" name="id" value="4334" id="id" />
+                <div class="col-md-6 form-group mb-3">
+                  <label for="date"
+                    >Receipt Date<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="date"
+                    name="date"
+                    class="form-control hasDatepicker"
+                    placeholder="Enter Receipt Date"
+                    readonly=""
+                  />
+                  <span class="error text-danger err-name" id="date_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="receipt_number"
+                    >Receipt Number<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="receipt_number"
+                    class="form-control"
+                    id="receipt_number"
+                    placeholder="Enter Receipt Number"
+                    readonly=""
+                    style="background-color: #f8f9fa"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="receipt_number_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="received_from"
+                    >Received From<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="received_from"
+                    class="form-control"
+                    id="received_from"
+                    placeholder="Enter Received From"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="received_from_error"
+                  ></span>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                  <label for="dhs">Dhs<span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    name="dhs"
+                    class="form-control"
+                    id="dhs"
+                    placeholder="Enter Dhs"
+                  />
+                  <span class="error text-danger err-name" id="dhs_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="fils">Fils<span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    name="fils"
+                    class="form-control"
+                    id="fils"
+                    placeholder="Enter Fils"
+                  />
+                  <span class="error text-danger err-name" id="fils_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="sum_of_dhs"
+                    >The Sum Of Dhs<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="sum_of_dhs"
+                    class="form-control"
+                    id="sum_of_dhs"
+                    placeholder="Enter Sum Of Dhs"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="sum_of_dhs_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="payment_type"
+                    >Payment Type<span style="color: red">*</span></label
+                  >
+                  <select
+                    name="payment_type"
+                    class="form-control"
+                    id="payment_type"
+                  >
+                    <option value="Cash" selected="" hidden="">Cash</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                  <span
+                    class="error text-danger err-name"
+                    id="deal_type_error"
+                  ></span>
+                </div>
+
+                <div class="col-md-6 form-group mb-3 cheque">
+                  <label for="cash/cheque no"
+                    >Cheque No<span
+                      class="cheque_no"
+                      style="color: red; display: none"
+                      >*</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    name="cheque_no"
+                    class="form-control"
+                    id="cheque_no"
+                    placeholder="Enter Cheque No"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="cheque_no_error"
+                  ></span>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                  <label for="bank"
+                    >Bank Name<span
+                      class="bank_name"
+                      style="color: red; display: none"
+                      >*</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    name="bank"
+                    class="form-control"
+                    id="bank"
+                    placeholder="Enter Bank Name"
+                  />
+                  <span class="error text-danger err-name" id="bank_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="sec_date"
+                    >Payment Date<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="sec_date"
+                    class="form-control"
+                    id="sec_date"
+                    placeholder="Enter Payment Date"
+                    readonly=""
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="sec_date_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="being">Being<span style="color: red">*</span></label>
+                  <input
+                    type="text"
+                    name="being"
+                    class="form-control"
+                    id="being"
+                    placeholder="Enter Being"
+                  />
+                  <span class="error text-danger err-name" id="being_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="status"
+                    >Status<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="status"
+                    class="form-control"
+                    id="status"
+                    placeholder="msg.Enter Status"
+                    readonly=""
+                  />
+                  <span class="error text-danger err-name" id="status_error"></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="deal_type"
+                    >Deal Type<span style="color: red">*</span></label
+                  >
+                  <select name="deal_type" class="form-control" id="deal_type">
+                    <option value="Rental" selected="" hidden="">Rental</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Rental">Rental</option>
+                  </select>
+                  <span
+                    class="error text-danger err-name"
+                    id="deal_type_error"
+                  ></span>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                  <label for="agent_name"
+                    >Agent Name<span style="color: red">*</span></label
+                  >
+                  <select name="agent_name" class="form-control" id="agent_name">
+                    <option value="">Select Agent</option>
+                    <option
+                      select
+                      value="Rahul B"
+                      data-email="rahul@classicproperties.ae"
+                      data-agent_id="10"
+                    >
+                      Rahul B
+                    </option>
+
+                    <option
+                      value="Kalash Malani"
+                      data-email="kalash@classicproperties.ae"
+                      data-agent_id="126"
+                    >
+                      Kalash Malani
+                    </option>
+                  </select>
+                  <input
+                    type="hidden"
+                    name="agent_email"
+                    id="agent_email"
+                    value="swaraj@classicproperties.ae"
+                  />
+                  <input type="hidden" name="agent_id" id="agent_id" />
+                  <!-- <input type="text" name="agent_name" class="form-control" id="agent_name" value="Swaraj Sanjay Bhutada" placeholder="Enter Agent Name" readonly>-->
+                  <span
+                    class="error text-danger err-name"
+                    id="agent_name_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="project_name"
+                    >Project Name<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="project_name"
+                    class="form-control"
+                    id="project_name"
+                    placeholder="Enter Project Name"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="project_name_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="building_name"
+                    >Building Name<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="building_name"
+                    class="form-control"
+                    id="building_name"
+                    placeholder="Enter Building Name"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="building_name_error"
+                  ></span>
+                </div>
+                <div class="col-md-6 form-group mb-3">
+                  <label for="unit_number"
+                    >Unit Number<span style="color: red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="unit_number"
+                    class="form-control"
+                    id="unit_number"
+                    placeholder="Enter Unit Number"
+                  />
+                  <span
+                    class="error text-danger err-name"
+                    id="unit_number_error"
+                  ></span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-12 btn-center">
+                  <button id="submit" class="btn btn-primary btn-rounded m-1">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="form-group row">
-            <div class="col-sm-12 btn-center">
-              <button id="submit" class="btn btn-primary btn-rounded m-1">
-                Submit
-              </button>
-            </div>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
   </div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

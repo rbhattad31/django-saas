@@ -247,7 +247,7 @@ $(document).ready(function () {
     paging: true,
     processing: true,
     searching: true,
-     anguage: {
+    language: {
     paginate: {
       previous: "Previous",
       next: "Next "

@@ -9,143 +9,148 @@
     color :red
   }
 </style>
-<div class="main-content pt-4"><div class="col-md-12" id="successmsg" style="display: none">
-    <div class="alert alert-primary " id="alert-primary">
-      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
-    </div>
-</div> 
-<div class="col-md-12">
-	<h4 class="pb-2">Edit Third Party Receipt Details<span class="float-right mr-2">
-		<a class="btn btn-primary btn-rounded" href="{% url 'third_party_receipts_list' %}">Cancel</a></span>
-	</h4>
-	<div class="card mb-5">
-		<div class="card-body">
-			<form id="createReceiptForm" novalidate="novalidate">
-				<input type="hidden" name="_token" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI">
-				<div class="row">
-          <input type="hidden" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI" name="csrf-token" id="token">
-          <input type="hidden" name="id" value= {{deposit.id}} id="id">
-          <input type="hidden" name="account_id" value= {{deposit.account_id}} id="account_id">
-					<div class="col-md-6 form-group mb-3">
-						<label for="date">Receipt Date<span style="color: red">*</span></label>
-            <input type="text" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" value="{{deposit.date}}" readonly="">
-            <span class="error text-danger err-name" id="date_error"></span>
+<div class="main-content pt-4">
+  <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+          <div class="alert alert-primary " id="alert-primary">
+            <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
           </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="deposit_number">Receipt Number<span style="color: red">*</span></label>
-            <input type="text" name="deposit_number" class="form-control" id="deposit_number" placeholder="Enter Receipt Number" value="{{deposit.deposit_number}}" readonly="" style="background-color: #f8f9fa">
-            <span class="error text-danger err-name" id="deposit_number_error"></span> 
-          </div>
-           <div class="col-md-6 form-group mb-3">
-            <label for="received_from">Received From<span style="color: red">*</span></label>
-            <input type="text" name="received_from" class="form-control" id="received_from" placeholder="Enter Received From" value="{{deposit.received_from}}">
-            <span class="error text-danger err-name" id="received_from_error"></span> 
-          </div>
-          
-          <div class="col-md-6 form-group mb-3">
-            <label for="dhs">Dhs<span style="color: red">*</span></label>
-            <input type="text" name="dhs" class="form-control" id="dhs" value="{{deposit.dhs}}" placeholder="Enter Dhs">
-            <span class="error text-danger err-name" id="dhs_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="fils">Fils<span style="color: red">*</span></label>
-            <input type="text" name="fils" class="form-control" id="fils" value="{{deposit.fils}}" placeholder="Enter Fils">
-            <span class="error text-danger err-name" id="fils_error"></span>
-          </div>
-           <div class="col-md-6 form-group mb-3">
-            <label for="sum_of_dhs">The Sum Of Dhs<span style="color: red">*</span></label>
-            <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" value="{{deposit.sum_of_dhs}}" placeholder="Enter Sum Of Dhs">
-            <span class="error text-danger err-name" id="sum_of_dhs_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="payment_type">
-              Payment Type <span style="color: red">*</span>
-            </label>
-            <select name="payment_type" class="form-control" id="payment_type">
-              <option value="">Select Payment Type</option>
-              <option value="Cash" {% if deposit.payment_type == 'Cash' %}selected{% endif %}>Cash</option>
-              <option value="Cheque" {% if deposit.payment_type == 'Cheque' %}selected{% endif %}>Cheque</option>
-              <option value="Bank Transfer" {% if deposit.payment_type == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
-            </select>
-            <span class="error text-danger err-name" id="payment_type_error"></span>
-          </div>
-
-                   
-           <div class="col-md-6 form-group mb-3 cheque">
-           <label for="cash/cheque no">Cheque No<span class="cheque_no" style="color: red; display: none;">*</span></label>
-            <input type="text" name="cheque_no" class="form-control" id="cheque_no" value="{{deposit.cheque_no}}" placeholder="Enter Cheque No">
-            <span class="error text-danger err-name" id="cheque_no_error"></span>
-          </div>
-         
-          <div class="col-md-6 form-group mb-3">
-            <label for="bank">Bank Name<span class="bank_name" style="color: red; display: none;">*</span></label>
-            <input type="text" name="bank" class="form-control" id="bank" value="{{deposit.bank}}" placeholder="Enter Bank Name">
-            <span class="error text-danger err-name" id="bank_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="sec_date">Payment Date<span style="color: red">*</span></label>
-            <input type="text" name="sec_date" class="form-control hasDatepicker" id="sec_date" value="{{deposit.sec_date}}" placeholder="Enter Payment Date" readonly="">
-            <span class="error text-danger err-name" id="sec_date_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="being">Being<span style="color: red">*</span></label>
-            <input type="text" name="being" class="form-control" id="being" value="{{deposit.being}}" placeholder="Enter Being">
-             <span class="error text-danger err-name" id="being_error"></span>
-          </div>
-           <!-- <div class="col-md-6 form-group mb-3">
-            <label for="status">Status<span style="color: red">*</span></label>
-            <input type="text" name="status" class="form-control" id="status" value="" placeholder="msg.Enter Status" readonly>
-             <span class="error text-danger err-name" id="status_error"></span>
-          </div> -->
-          <div class="col-md-6 form-group mb-3">
-            <label for="deal_type">
-              Deal Type <span style="color: red">*</span>
-            </label>
-            <select name="deal_type" class="form-control" id="deal_type">
-              <option value="">Select Deal Type</option>
-              <option value="Sales" {% if deposit.deal_type == 'Sales' %}selected{% endif %}>Sales</option>
-              <option value="Rental" {% if deposit.deal_type == 'Rental' %}selected{% endif %}>Rental</option>
-            </select>
-            <span class="error text-danger err-name" id="deal_type_error"></span>
-          </div>
-
-          <div class="col-md-6 form-group mb-3">
-            <label for="agent_name">Agent Name</label>
-            <input type="text" name="agent_name" class="form-control" id="agent_name" placeholder="Enter Agent Name" value="{{deposit.agent_name}}">
-            <label class="error text-danger err-name" id="agent_name_error_msg"></label>
-            <span class="error text-danger err-name" id="agent_name_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="agent_name">On Behalf Of<span style="color: red">*</span></label>
-            <input type="text" name="on_behalf_of" class="form-control" id="on_behalf_of" placeholder="Enter On Behalf Of" value="{{deposit.on_behalf_of}}">
-            <label class="error text-danger err-name" id="on_behalf_of_error_msg"></label>
-            <span class="error text-danger err-name" id="on_behalf_of_error"></span>
-          </div>
-           <div class="col-md-6 form-group mb-3">
-            <label for="project_name">Project Name<span style="color: red">*</span></label>
-            <input type="text" name="project_name" class="form-control" id="project_name" value="{{deposit.project_name}}" placeholder="Enter Project Name">
-             <span class="error text-danger err-name" id="project_name_error"></span>
-          </div>
-           <div class="col-md-6 form-group mb-3">
-            <label for="building_name">Building Name<span style="color: red">*</span></label>
-            <input type="text" name="building_name" class="form-control" id="building_name" value="{{deposit.building_name}}" placeholder="Enter Building Name">
-             <span class="error text-danger err-name" id="building_name_error"></span>
-          </div>
-          <div class="col-md-6 form-group mb-3">
-            <label for="unit_number">Unit Number<span style="color: red">*</span></label>
-            <input type="text" name="unit_number" class="form-control" id="unit_number" value="{{deposit.unit_number}}" placeholder="Enter Unit Number">
-             <span class="error text-danger err-name" id="unit_number_error"></span>
-          </div>
-          </div>
-          <div class="form-group row">
-          <div class="col-sm-12 btn-center">
-            <button id="submit" class="btn btn-primary btn-rounded m-1">Submit</button>
-          </div>
+        </div> 
+    <div class="col-md-12">
+      <div class="card mb-5">
+        <div class="card-header">
+          <h4 class="pb-2">Edit Third Party Receipt Details<span class="float-right mr-2">
+            <a class="btn btn-primary btn-rounded" href="{% url 'third_party_receipts_list' %}">Cancel</a></span>
+          </h4>
         </div>
-			</form>
+        <div class="card-body">
+          <form id="createReceiptForm" novalidate="novalidate">
+            <input type="hidden" name="_token" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI">
+            <div class="row">
+              <input type="hidden" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI" name="csrf-token" id="token">
+              <input type="hidden" name="id" value= {{deposit.id}} id="id">
+              <input type="hidden" name="account_id" value= {{deposit.account_id}} id="account_id">
+              <div class="col-md-6 form-group mb-3">
+                <label for="date">Receipt Date<span style="color: red">*</span></label>
+                <input type="text" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" value="{{deposit.date}}" readonly="">
+                <span class="error text-danger err-name" id="date_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="deposit_number">Receipt Number<span style="color: red">*</span></label>
+                <input type="text" name="deposit_number" class="form-control" id="deposit_number" placeholder="Enter Receipt Number" value="{{deposit.deposit_number}}" readonly="" style="background-color: #f8f9fa">
+                <span class="error text-danger err-name" id="deposit_number_error"></span> 
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="received_from">Received From<span style="color: red">*</span></label>
+                <input type="text" name="received_from" class="form-control" id="received_from" placeholder="Enter Received From" value="{{deposit.received_from}}">
+                <span class="error text-danger err-name" id="received_from_error"></span> 
+              </div>
+              
+              <div class="col-md-6 form-group mb-3">
+                <label for="dhs">Dhs<span style="color: red">*</span></label>
+                <input type="text" name="dhs" class="form-control" id="dhs" value="{{deposit.dhs}}" placeholder="Enter Dhs">
+                <span class="error text-danger err-name" id="dhs_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="fils">Fils<span style="color: red">*</span></label>
+                <input type="text" name="fils" class="form-control" id="fils" value="{{deposit.fils}}" placeholder="Enter Fils">
+                <span class="error text-danger err-name" id="fils_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="sum_of_dhs">The Sum Of Dhs<span style="color: red">*</span></label>
+                <input type="text" name="sum_of_dhs" class="form-control" id="sum_of_dhs" value="{{deposit.sum_of_dhs}}" placeholder="Enter Sum Of Dhs">
+                <span class="error text-danger err-name" id="sum_of_dhs_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="payment_type">
+                  Payment Type <span style="color: red">*</span>
+                </label>
+                <select name="payment_type" class="form-control" id="payment_type">
+                  <option value="">Select Payment Type</option>
+                  <option value="Cash" {% if deposit.payment_type == 'Cash' %}selected{% endif %}>Cash</option>
+                  <option value="Cheque" {% if deposit.payment_type == 'Cheque' %}selected{% endif %}>Cheque</option>
+                  <option value="Bank Transfer" {% if deposit.payment_type == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+                </select>
+                <span class="error text-danger err-name" id="payment_type_error"></span>
+              </div>
+
+                      
+              <div class="col-md-6 form-group mb-3 cheque">
+              <label for="cash/cheque no">Cheque No<span class="cheque_no" style="color: red; display: none;">*</span></label>
+                <input type="text" name="cheque_no" class="form-control" id="cheque_no" value="{{deposit.cheque_no}}" placeholder="Enter Cheque No">
+                <span class="error text-danger err-name" id="cheque_no_error"></span>
+              </div>
+            
+              <div class="col-md-6 form-group mb-3">
+                <label for="bank">Bank Name<span class="bank_name" style="color: red; display: none;">*</span></label>
+                <input type="text" name="bank" class="form-control" id="bank" value="{{deposit.bank}}" placeholder="Enter Bank Name">
+                <span class="error text-danger err-name" id="bank_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="sec_date">Payment Date<span style="color: red">*</span></label>
+                <input type="text" name="sec_date" class="form-control hasDatepicker" id="sec_date" value="{{deposit.sec_date}}" placeholder="Enter Payment Date" readonly="">
+                <span class="error text-danger err-name" id="sec_date_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="being">Being<span style="color: red">*</span></label>
+                <input type="text" name="being" class="form-control" id="being" value="{{deposit.being}}" placeholder="Enter Being">
+                <span class="error text-danger err-name" id="being_error"></span>
+              </div>
+              <!-- <div class="col-md-6 form-group mb-3">
+                <label for="status">Status<span style="color: red">*</span></label>
+                <input type="text" name="status" class="form-control" id="status" value="" placeholder="msg.Enter Status" readonly>
+                <span class="error text-danger err-name" id="status_error"></span>
+              </div> -->
+              <div class="col-md-6 form-group mb-3">
+                <label for="deal_type">
+                  Deal Type <span style="color: red">*</span>
+                </label>
+                <select name="deal_type" class="form-control" id="deal_type">
+                  <option value="">Select Deal Type</option>
+                  <option value="Sales" {% if deposit.deal_type == 'Sales' %}selected{% endif %}>Sales</option>
+                  <option value="Rental" {% if deposit.deal_type == 'Rental' %}selected{% endif %}>Rental</option>
+                </select>
+                <span class="error text-danger err-name" id="deal_type_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group mb-3">
+                <label for="agent_name">Agent Name</label>
+                <input type="text" name="agent_name" class="form-control" id="agent_name" placeholder="Enter Agent Name" value="{{deposit.agent_name}}">
+                <label class="error text-danger err-name" id="agent_name_error_msg"></label>
+                <span class="error text-danger err-name" id="agent_name_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="agent_name">On Behalf Of<span style="color: red">*</span></label>
+                <input type="text" name="on_behalf_of" class="form-control" id="on_behalf_of" placeholder="Enter On Behalf Of" value="{{deposit.on_behalf_of}}">
+                <label class="error text-danger err-name" id="on_behalf_of_error_msg"></label>
+                <span class="error text-danger err-name" id="on_behalf_of_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="project_name">Project Name<span style="color: red">*</span></label>
+                <input type="text" name="project_name" class="form-control" id="project_name" value="{{deposit.project_name}}" placeholder="Enter Project Name">
+                <span class="error text-danger err-name" id="project_name_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="building_name">Building Name<span style="color: red">*</span></label>
+                <input type="text" name="building_name" class="form-control" id="building_name" value="{{deposit.building_name}}" placeholder="Enter Building Name">
+                <span class="error text-danger err-name" id="building_name_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="unit_number">Unit Number<span style="color: red">*</span></label>
+                <input type="text" name="unit_number" class="form-control" id="unit_number" value="{{deposit.unit_number}}" placeholder="Enter Unit Number">
+                <span class="error text-danger err-name" id="unit_number_error"></span>
+              </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-12 btn-center">
+                <button id="submit" class="btn btn-primary btn-rounded m-1">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 

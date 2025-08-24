@@ -4,134 +4,143 @@
 {% block content %}
 
  
-<div class=" pt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3> List of Reciecpts </h3>
+<div class="main-content pt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card o-hidden mb-4 ">
+        <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3> List of Reciecpts </h3>
 
-  
-    {% if perms.core.add_receipts %}  
-    <a class="btn btn-primary" href="{% url 'reciecpt_create_page' %}"> Create Reciecpts </a>
-    {% endif %}
+                
+                  {% if perms.core.add_receipts %}  
+                  <a class="btn btn-primary" href="{% url 'reciecpt_create_page' %}"> Create Reciecpts </a>
+                  {% endif %}
 
-  </div>
-</div>
+                </div>
+        </div>
 
-<div>
-<form id="filterFormReciepts" class="m-0 border rounded p-3 bg-light ">
-  <!-- Filter Toggle -->
-  <div class="d-flex align-items-center mb-2">
-    <strong class="me-2">Filters By:</strong>
-    <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
-      <i class="bi bi-chevron-down"></i> click here
-    </a>
-  </div>
 
-  <!-- Collapsible Filter Fields -->
-  <div class="collapse" id="filterCollapse">
-    <div class="row">
-      <!-- Left Column -->
-      <div class="col-md-6">
-                  <div class="mb-3">
-                    <label class="form-label">Receipt No</label>
-                     <input type="text" class="form-control" id="receipt_number" name="receipt_number" placeholder="Receipt No" autocomplete="off">
-                  </div>
-                {% comment %} <input type="hidden" name="type" value=""> {% endcomment %}
 
-         
-                  <div class="mb-3">
-                    <label class="form-label">Payment Type </label>
-                     <select name="payment_type" id="payment_type" class="form-control">
-                          <option value="">Please Select</option>
-                          <option value="Cash">Cash</option>
-                          <option value="Cheque">Cheque</option>
-                          <option value="Bank Transfer">Bank Transfer</option>
-                        </select>
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label">Receipt Date From</label>
-                    <input type="text" class="form-control " id="from" name="from" placeholder="Receipt Date From" autocomplete="off"/>
-                  </div>
-
-                  
-                  <div class="mb-3">
-                    <label class="form-label">Agent Name</label>
-                     <input type="text" class="form-control" id="agent_name" name="agent_name" placeholder="Agent Name" autocomplete="off">              
-                  </div>
-                  
-                 
-                  <div class="mb-3">
-                    <label class="form-label">Building Name</label>
-                    <input type="text" class="form-control" id="building_name" name="building_name" placeholder="Building Name" autocomplete="off">                
-                  </div>
-       </div>
-
-      <!-- Right Column -->
-      <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Receipt Status</label>
-                    <select name="status" id="status" class="form-control">
-                      <option value="">Please Select</option>
-                      <option value="Used">Used</option>
-                      <option value="Unused">Unused</option>
-                    </select>
-                  </div>
-              <div class="mb-3">
-                    <label class="form-label">Deal Type  </label>
-                    <select name="deal_type" id="deal_type" class="form-control">
-                          <option value="">Please Select</option>
-                          <option value="Rental">Rental</option>
-                          <option value="Sales">Sales</option>
-                        </select>
-                  </div>
-              <div class="mb-3">
-                <label class="form-label">Receipt Date To</label>
-                <input type="text" class="form-control" id="to" name="to" placeholder="Receipt Date To" autocomplete="off">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Unit Number</label>
-                <input type="text" class="form-control" id="unit_number" name="unit_number" placeholder="Unit Number" autocomplete="off">
-              </div>
-            
-              
-            </div>
-    </div>
-
-    <!-- Filter Buttons -->
-    <div class="row mt-2">
-      <div class="col-md-12 d-flex gap-3">
-        <button type="submit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Filter</button>
-        <button type="reset" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Reset</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Visually OUTSIDE collapse but INSIDE form -->
-   
-</form>
-</div style="max-height: 400px; overflow-y: auto;">
-<table id="receiptlist_table" class="display " style="width:100% overflow-y: auto;">
-    <thead>
-        <tr>
-      {% comment %} <th>ID</th>
-      <th>Reference #</th>
-      <th>Agent</th>
-      <th>Tenant</th>
-      <th>Owner</th>
-      <th>Rental Price</th>
-      <th>Building</th>
-      <th>Project</th>   {% endcomment %}
-        </tr>
-    </thead>
-    <tbody>
         
-    </tbody>
-</table>
 
+        <div class = "card-body p-0 ">
+          <form id="filterFormReciepts" class="m-0 border rounded p-3 ">
+          <!-- Filter Toggle -->
+          <div class="d-flex align-items-center mb-2">
+            <strong class="me-2">Filters By:</strong>
+            <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
+              <i class="bi bi-chevron-down"></i> click here
+            </a>
+          </div>
 
+          <!-- Collapsible Filter Fields -->
+          <div class="collapse" id="filterCollapse">
+            <div class="row">
+              <!-- Left Column -->
+              <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label">Receipt No</label>
+                            <input type="text" class="form-control" id="receipt_number" name="receipt_number" placeholder="Receipt No" autocomplete="off">
+                          </div>
+                        {% comment %} <input type="hidden" name="type" value=""> {% endcomment %}
 
+                
+                          <div class="mb-3">
+                            <label class="form-label">Payment Type </label>
+                            <select name="payment_type" id="payment_type" class="form-control">
+                                  <option value="">Please Select</option>
+                                  <option value="Cash">Cash</option>
+                                  <option value="Cheque">Cheque</option>
+                                  <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                          </div>
 
+                          <div class="mb-3">
+                            <label class="form-label">Receipt Date From</label>
+                            <input type="text" class="form-control " id="from" name="from" placeholder="Receipt Date From" autocomplete="off"/>
+                          </div>
 
+                          
+                          <div class="mb-3">
+                            <label class="form-label">Agent Name</label>
+                            <input type="text" class="form-control" id="agent_name" name="agent_name" placeholder="Agent Name" autocomplete="off">              
+                          </div>
+                          
+                        
+                          <div class="mb-3">
+                            <label class="form-label">Building Name</label>
+                            <input type="text" class="form-control" id="building_name" name="building_name" placeholder="Building Name" autocomplete="off">                
+                          </div>
+              </div>
+
+              <!-- Right Column -->
+              <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label">Receipt Status</label>
+                            <select name="status" id="status" class="form-control">
+                              <option value="">Please Select</option>
+                              <option value="Used">Used</option>
+                              <option value="Unused">Unused</option>
+                            </select>
+                          </div>
+                      <div class="mb-3">
+                            <label class="form-label">Deal Type  </label>
+                            <select name="deal_type" id="deal_type" class="form-control">
+                                  <option value="">Please Select</option>
+                                  <option value="Rental">Rental</option>
+                                  <option value="Sales">Sales</option>
+                                </select>
+                          </div>
+                      <div class="mb-3">
+                        <label class="form-label">Receipt Date To</label>
+                        <input type="text" class="form-control" id="to" name="to" placeholder="Receipt Date To" autocomplete="off">
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Unit Number</label>
+                        <input type="text" class="form-control" id="unit_number" name="unit_number" placeholder="Unit Number" autocomplete="off">
+                      </div>
+                    
+                      
+                    </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="row mt-2">
+              <div class="col-md-12 d-flex gap-3">
+                <button type="submit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Filter</button>
+                <button type="reset" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visually OUTSIDE collapse but INSIDE form -->
+          
+          </form>
+        </div >
+                <table id="receiptlist_table" class="display " style="width:100% overflow-y: auto;">
+                    <thead>
+                        <tr>
+                      {% comment %} <th>ID</th>
+                      <th>Reference #</th>
+                      <th>Agent</th>
+                      <th>Tenant</th>
+                      <th>Owner</th>
+                      <th>Rental Price</th>
+                      <th>Building</th>
+                      <th>Project</th>   {% endcomment %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 
@@ -199,6 +208,14 @@ function getCookie(name) {
     paging: true,
     processing: true,
     serverSide: true,
+    language: {
+    paginate: {
+      previous: "Previous",
+      next: "Next "
+      }
+    },
+
+    pagingType: "simple_numbers",
     ajax: {
       url: "/receipt/api/filter/",
       type: "POST",

@@ -2,17 +2,18 @@
 {% load static %}
 
 {% block content %}
-<div class="main-content pt-4"><div class="row">
+<div class="main-content pt-4">
+    <div class="row">
     <div class="col-md-12">
-                <div class="card o-hidden mb-4">
+        <div class="card o-hidden mb-4">
             <div class="card-header">
                 <h3 class="w-50 float-left card-title m-0">Third Party Receipts</h3>
                                 <a href="/third_party_receipts/create/" class="btn btn-primary btn-rounded m-1" style="float:right">Add Third Party Receipt</a>
                                 
                 
             </div>
-            <div>
-            <form id="filterForm" class="m-0 border rounded p-3 bg-light">
+            <div class= "card-body p-0">
+                <form id="filterForm" class="m-0 border rounded p-3">
                 <!-- Filter Toggle -->
                 <div class="d-flex align-items-center mb-2">
                 <strong class="me-2">Filters By:</strong>
@@ -74,16 +75,18 @@
                     </div>
                 </div>
                 </div>
-            </form>
+                </form>
                                                          
-        </div>
-    </div>
-</div>
+            </div>
 
-</div>
-<table id="receiptlist_table" class=" table-bordered " style="width:100%">
+        <table id="receiptlist_table" class=" table-bordered " style="width:100%">
      
 </table>
+        </div>
+    </div>
+
+</div>
+
 
 
 <!-- jQuery -->
@@ -145,6 +148,14 @@
     paging: true,
     processing: true,
     searching: true,
+    language: {
+    paginate: {
+      previous: "Previous",
+      next: "Next "
+        }
+    },
+
+    pagingType: "simple_numbers",
     order: [[7, "desc"]], // Default order by "Submitted Date" descending
     serverSide: true,
         rowId: 'id',  // 💡 Use 'id' field from each row for DT_RowId

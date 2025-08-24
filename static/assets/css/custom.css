@@ -87,13 +87,17 @@ body{
     margin-top: 1rem;
 }
 /* tabel datapadding */
-#myTable_wrapper{
+#myTable_wrapper ,#receiptlist_table_wrapper{
   padding: 1rem;
 }
-#dt-length-0::before{
-  content: "BEfore";
-  padding-left: 1rem;
 
+.dt-length::before {
+  content: "Show";
+  margin-right: .5rem;
+  display: inline-block;
+  font-size: 18px;
+  
+   
 }
 
 /* Pagination buttons */
@@ -166,3 +170,10 @@ body{
   background-color: #5a32a3 !important; /* darker shade on hover */
   border-color: #5a32a3 !important;
 }
+
+
+
+
+
+
+ 

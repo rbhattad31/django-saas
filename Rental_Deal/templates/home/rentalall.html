@@ -138,139 +138,132 @@
   <div class="row">
     <div class="col-md-12">
          
-        <div class="card o-hidden mb-4">
+      <div class="card o-hidden mb-4">
             <div class="card-header">
-                 
-                                  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3> List of  <span id = "h`eading">All</span> </h3>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3> List of  <span id = "heading">All</span> </h3>
 
   
-    {% if perms.core.add_rentaldeals %}  
-    <a class="btn btn-primary" href="{% url 'create-rental-deal' %}"> Create Rental  Deal</a>
-    {% endif %}
+                  {% if perms.core.add_rentaldeals %}  
+                  <a class="btn btn-primary" href="{% url 'create-rental-deal' %}"> Create Rental  Deal</a>
+                  {% endif %}
 
-  </div>
+              </div>
                                 
             </div>
-      <div class="card-body p-0">
-        <form id="filterForm" class="m-0 border rounded p-3  ">
-        <div class="row  ">
-          <div class="col-md-12 mb-2 font-size">
-                      
-                           <strong class="me-2">Filters By:</strong>
-                      <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
-                        <i class="bi bi-chevron-down"></i> click here
-                      </a>
-                    </div>
-                  </div>
+            <div class="card-body p-0">
+              <form id="filterForm" class="m-0 border rounded p-3  ">
+              <div class="row  ">
+                <div class="col-md-12 mb-2 font-size">
+                            
+                                <strong class="me-2">Filters By:</strong>
+                            <a class="text-primary" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="filterCollapse">
+                              <i class="bi bi-chevron-down"></i> click here
+                            </a>
+                          </div>
+                        </div>
+                    
+                      <div class="collapse" id="filterCollapse">
+                        <div class="row">
+                          <!-- Left Column -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label class="form-label">Reference No</label>
+                              <input type="text" class="form-control" id = "filter-reference-number" name="reference_number" placeholder="Reference No">
+                            </div>
+                          {% comment %} <input type="hidden" name="type" value=""> {% endcomment %}
+
+                            <div class="mb-3">
+                              <label class="form-label">Building Name</label>
+                              <input type="text" class="form-control" id="filter-building-name" name="building_name" placeholder="Building Name">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Owner Name</label>
+                              <input type="text" class="form-control" id="filter-owner-name"  name="owner_name" placeholder="Owner Name">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Owner Mobile</label>
+                              <input type="text" class="form-control" name="owner_mobile"  id="filter-owner-mobile" placeholder="Owner Mobile">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">New Deal / Renewal</label>
+                              <select class="form-select" id="filter-deal-type" name="deal_type">
+                                <option value="">Select Deal</option>
+                                <option value="New">New</option>
+                                <option value="Renewal">Renewal</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Deal Date From</label>
+                              <input type="date" class="form-control" id= "filter-from-date" name="from_date">
+                            </div>
+                          </div>
+
+                          <!-- Right Column -->
+                          <div class="col-md-6">
+                            <div class="mb-3">
+                              <label class="form-label">Unit No</label>
+                              <input type="text" class="form-control" id="filter-unit-details" name="filter-unit_details" placeholder="Unit No">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Project Name</label>
+                              <input type="text" class="form-control" name="project_name" id="filter-project-name"placeholder="Project Name">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Tenant Name</label>
+                              <input type="text" class="form-control" name="tenant_name" id="filter-tenant-name" placeholder="Tenant Name">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Tenant Mobile</label>
+                              <input type="text" class="form-control" name="tenant_mobile" id="filter-tenant-mobile" placeholder="Tenant Mobile">
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Deal Status</label>
+                              <select class="form-select" id="filter-deal-status" name="deal_status">
+                                <option value="">Please Select</option>
+                                <option value="Active">Approved</option>
+                                <option value="Closed">Rejected</option>
+                                <option value="Closed">Pending</option>
+                                <option value="Closed">Waiting for finance</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label class="form-label">Deal Date To</label>
+                              <input type="date" class="form-control" id = "filter-to-date" name="to_date">
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Filter Buttons -->
+                        <div class="row mt-2">
+                          <div class="col-md-12 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary"  >Filter</button>
+                            <button type="reset" class="btn btn-primary" >Reset</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+
               
-                <div class="collapse" id="filterCollapse">
-                  <div class="row">
-                    <!-- Left Column -->
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label class="form-label">Reference No</label>
-                        <input type="text" class="form-control" id = "filter-reference-number" name="reference_number" placeholder="Reference No">
-                      </div>
-                    {% comment %} <input type="hidden" name="type" value=""> {% endcomment %}
-
-                      <div class="mb-3">
-                        <label class="form-label">Building Name</label>
-                        <input type="text" class="form-control" id="filter-building-name" name="building_name" placeholder="Building Name">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Owner Name</label>
-                        <input type="text" class="form-control" id="filter-owner-name"  name="owner_name" placeholder="Owner Name">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Owner Mobile</label>
-                        <input type="text" class="form-control" name="owner_mobile"  id="filter-owner-mobile" placeholder="Owner Mobile">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">New Deal / Renewal</label>
-                        <select class="form-select" id="filter-deal-type" name="deal_type">
-                          <option value="">Select Deal</option>
-                          <option value="New">New</option>
-                          <option value="Renewal">Renewal</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Deal Date From</label>
-                        <input type="date" class="form-control" id= "filter-from-date" name="from_date">
-                      </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="col-md-6">
-                      <div class="mb-3">
-                        <label class="form-label">Unit No</label>
-                        <input type="text" class="form-control" id="filter-unit-details" name="filter-unit_details" placeholder="Unit No">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Project Name</label>
-                        <input type="text" class="form-control" name="project_name" id="filter-project-name"placeholder="Project Name">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Tenant Name</label>
-                        <input type="text" class="form-control" name="tenant_name" id="filter-tenant-name" placeholder="Tenant Name">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Tenant Mobile</label>
-                        <input type="text" class="form-control" name="tenant_mobile" id="filter-tenant-mobile" placeholder="Tenant Mobile">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Deal Status</label>
-                        <select class="form-select" id="filter-deal-status" name="deal_status">
-                          <option value="">Please Select</option>
-                          <option value="Active">Approved</option>
-                          <option value="Closed">Rejected</option>
-                          <option value="Closed">Pending</option>
-                          <option value="Closed">Waiting for finance</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Deal Date To</label>
-                        <input type="date" class="form-control" id = "filter-to-date" name="to_date">
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Filter Buttons -->
-                  <div class="row mt-2">
-                    <div class="col-md-12 d-flex gap-3">
-                      <button type="submit" class="btn btn-primary"  >Filter</button>
-                      <button type="reset" class="btn btn-primary" >Reset</button>
-                    </div>
-                  </div>
-                </div>
-              </form>
-
+            </div>
+          <table id="myTable" class="display " style="width:100% overflow-y: auto;">
+            <thead>
+              <tr>
         
+              </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+          </table>
+
+
+
       </div>
-       <table id="myTable" class="display " style="width:100% overflow-y: auto;">
-      <thead>
-          <tr>
-    
-          </tr>
-      </thead>
-      <tbody>
-          
-      </tbody>
-    </table>
-
-
-
     </div>
-  </div>
- 
-      
- 
-    <!------------------- Change Agent Status Modal End--------------------------->
-
-     
-                                   
        
  
+  </div>
 </div>
 
  <!--  ==================modal for the deleting a record==================== -->
