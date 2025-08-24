@@ -351,6 +351,15 @@ $.validator.addMethod("lettersonly", function(value, element) {
                   });
                   
                 }
+                else if (xhr.status === 403) {
+              // This is your "Bad Request" error
+               window.location.href = "/forbidden_page/";
+              console.log("Bad Request details:", xhr.responseJSON);
+              scrollTop();
+
+              // Attempt to extract specific error messages from the backend
+            
+            }
                 else{
                    $("#alert-primary").text("Something Went Wrong !");
                     $("#successmsg").show();
@@ -361,6 +370,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
                 }
                 
             });
+            .fai
             }
 
 });

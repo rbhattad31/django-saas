@@ -4,13 +4,6 @@
 
 {% block stylesheets %}
 <style>
-    .cheque, .bank {
-        display: none;
-    }
-    .cheque_no, .bank_name {
-        color: red;
-        display: none;
-    }
     .text-danger {
         color: #dc3545 !important; /* Bootstrap's red color for .text-danger, with !important to override conflicts */
         font-size: 0.875rem;
@@ -21,8 +14,6 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
-
-    
 </style>
 {% endblock stylesheets %}
 
@@ -50,7 +41,7 @@
                         <div class="row">
                             <div class="col-md-6 form-group mb-3">
                                 <label for="date">Receipt Date<span style="color: red">*</span></label>
-                                <input type="date" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" autocomplete="off">
+                                <input type="text" id="date" name="date" class="form-control datepicker-input" placeholder="Enter Receipt Date" autocomplete="off">
                                 <span class="text-danger" id="date_error"></span>
                             </div>
                             <div class="col-md-6 form-group mb-3">
@@ -88,19 +79,19 @@
                                 </select>
                                 <span class="text-danger" id="payment_type_error"></span>
                             </div>
-                            <div class="col-md-6 form-group mb-3 cheque">
-                                <label for="cheque_no">Cheque No<span class="cheque_no" style="color: red">*</span></label>
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="cheque_no">Cheque No<span class="cheque_no" style="color: red"></span></label>
                                 <input type="text" name="cheque_no" class="form-control" id="cheque_no" placeholder="Enter Cheque No">
                                 <span class="text-danger" id="cheque_no_error"></span>
                             </div>
-                            <div class="col-md-6 form-group mb-3 bank">
-                                <label for="bank">Bank Name<span class="bank_name" style="color: red">*</span></label>
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="bank">Bank Name<span class="bank_name" style="color: red"></span></label>
                                 <input type="text" name="bank" class="form-control" id="bank" placeholder="Enter Bank Name">
                                 <span class="text-danger" id="bank_error"></span>
                             </div>
                             <div class="col-md-6 form-group mb-3">
                                 <label for="sec_date">Payment Date<span style="color: red">*</span></label>
-                                <input type="date" name="sec_date" class="form-control hasDatepicker" id="sec_date" placeholder="Enter Payment Date" autocomplete="off">
+                                <input type="text" id="sec_date" name="sec_date" class="form-control datepicker-input" placeholder="Enter Payment Date" autocomplete="off">
                                 <span class="text-danger" id="sec_date_error"></span>
                             </div>
                             <div class="col-md-6 form-group mb-3">
@@ -171,28 +162,74 @@ window.$main = $main;
 
 $main(document).ready(function () {
     // Initialize datepickers
-    $main('.hasDatepicker').datepicker({
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        maxDate: 0 // Restrict to today or earlier
-    });
-
-    $('#date').datepicker({
-        dateFormat: 'yy-mm-dd',
+    $main('.datepicker-input').datepicker({
+        dateFormat: 'dd-mm-yy',
         changeMonth: true,
         changeYear: true,
         maxDate: 0
+    }).focus(function() {
+        $main(this).datepicker("show");
     });
 
-    $('#sec_date').datepicker({
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        maxDate: 0
+    // Optional: reformat existing yyyy-mm-dd values to dd-mm-yy
+    $main('.datepicker-input').each(function() {
+        let val = $main(this).val();
+        if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            const parts = val.split('-');
+            $main(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
+        }
     });
 
-    // Custom validation methods
+    // Universal date formatter
+    function formatForBackend(dateString) {
+        if (!dateString) return '';
+        dateString = dateString.trim();
+        console.log("Raw input date:", dateString);
+
+        let ymdMatch = dateString.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (ymdMatch) {
+            let yyyy = ymdMatch[1];
+            let mm = ymdMatch[2].padStart(2, '0');
+            let dd = ymdMatch[3].padStart(2, '0');
+            console.log("Detected YYYY-MM-DD, returning:", `${yyyy}-${mm}-${dd}`);
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        let dmyMatch = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+        if (dmyMatch) {
+            let dd = dmyMatch[1].padStart(2, '0');
+            let mm = dmyMatch[2].padStart(2, '0');
+            let yyyy = dmyMatch[3];
+            console.log("Converted D-M-YYYY to YYYY-MM-DD:", `${yyyy}-${mm}-${dd}`);
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        let dmy2Match = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{2})$/);
+        if (dmy2Match) {
+            let dd = dmy2Match[1].padStart(2, '0');
+            let mm = dmy2Match[2].padStart(2, '0');
+            let yyyy = '20' + dmy2Match[3];
+            console.log("Converted D-M-YY to YYYY-MM-DD:", `${yyyy}-${mm}-${dd}`);
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        console.warn("Invalid date format detected:", dateString);
+        return '';
+    }
+
+    $main.validator.addMethod("validDate", function(value, element) {
+        if (!value) return false;
+        let formats = [
+            /^\d{4}-\d{1,2}-\d{1,2}$/,
+            /^\d{1,2}-\d{1,2}-\d{4}$/,
+            /^\d{1,2}-\d{1,2}-\d{2}$/
+        ];
+        for (let i = 0; i < formats.length; i++) {
+            if (formats[i].test(value)) return true;
+        }
+        return false;
+    }, "Please enter a valid date.");
+
     $main.validator.addMethod("alphanum_special", function (value, element) {
         return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
     }, "Only letters, numbers, and certain special characters are allowed.");
@@ -205,14 +242,14 @@ $main(document).ready(function () {
     $main('#createReceiptForm').validate({
         ignore: "",
         rules: {
-            date: { required: true, date: true },
+            date: { required: true, validDate: true },
             receipt_number: { required: true, alphanum_special: true, maxlength: 20 },
             received_from: { required: true, alphanum_special: true, maxlength: 255 },
             dhs: { required: true, numeric: true, maxlength: 10 },
             fils: { required: true, numeric: true, maxlength: 10 },
             sum_of_dhs: { required: true, alphanum_special: true, maxlength: 255 },
             payment_type: { required: true },
-            cheque_no: { 
+            cheque_no: {
                 required: function(element) {
                     return $main('#payment_type').val() === 'Cheque';
                 },
@@ -227,7 +264,7 @@ $main(document).ready(function () {
                 alphanum_special: true,
                 maxlength: 255
             },
-            sec_date: { required: true, date: true },
+            sec_date: { required: true, validDate: true },
             being: { required: true, alphanum_special: true, maxlength: 255 },
             status: { required: true, alphanum_special: true, maxlength: 50 },
             deal_type: { required: true },
@@ -244,8 +281,8 @@ $main(document).ready(function () {
             fils: { required: "Fils is required." },
             sum_of_dhs: { required: "The Sum Of Dhs is required." },
             payment_type: { required: "Payment Type is required." },
-            cheque_no: { required: "Cheque No is required." },
-            bank: { required: "Bank Name is required." },
+            cheque_no: { required: "Cheque No is required when payment type is Cheque." },
+            bank: { required: "Bank Name is required when payment type is Cheque or Bank Transfer." },
             sec_date: { required: "Payment Date is required." },
             being: { required: "Being is required." },
             status: { required: "Status is required." },
@@ -255,38 +292,29 @@ $main(document).ready(function () {
             building_name: { required: "Building Name is required." },
             unit_number: { required: "Unit Number is required." }
         },
-        //errorPlacement: function (error, element) {
-        //    error.insertAfter(element);
-        //}
         errorPlacement: function (error, element) {
             const name = element.attr("name");
             $main(`#${name}_error`).html(error);
-        },
-
+        }
     });
 
-    // Toggle cheque_no and bank fields based on payment_type
+    // Toggle validation rules for cheque_no and bank based on payment_type
     $main('#payment_type').on('change', function () {
         const paymentType = $main(this).val();
+        // Clear previous error messages
+        $main('#cheque_no_error').text('');
+        $main('#bank_error').text('');
+        // Update asterisk visibility
+        $main('.cheque_no').text(paymentType === 'Cheque' ? '*' : '');
+        $main('.bank_name').text(paymentType === 'Cheque' || paymentType === 'Bank Transfer' ? '*' : '');
+
         if (paymentType === 'Cheque') {
-            $main('.cheque').show();
-            $main('.cheque_no').show();
-            $main('.bank').show();
-            $main('.bank_name').show();
             $main('#cheque_no').rules('add', { required: true, minlength: 3, maxlength: 15 });
             $main('#bank').rules('add', { required: true });
         } else if (paymentType === 'Bank Transfer') {
-            $main('.cheque').hide();
-            $main('.cheque_no').hide();
-            $main('.bank').show();
-            $main('.bank_name').show();
             $main('#cheque_no').rules('remove', 'required minlength maxlength');
             $main('#bank').rules('add', { required: true });
         } else {
-            $main('.cheque').hide();
-            $main('.cheque_no').hide();
-            $main('.bank').hide();
-            $main('.bank_name').hide();
             $main('#cheque_no').rules('remove', 'required minlength maxlength');
             $main('#bank').rules('remove', 'required');
         }
@@ -296,6 +324,18 @@ $main(document).ready(function () {
     $main('#createReceiptForm').on('submit', function (e) {
         e.preventDefault();
         if ($main(this).valid()) {
+            console.log("Raw Receipt Date input:", $main('#date').val());
+            console.log("Raw Payment Date input:", $main('#sec_date').val());
+
+            let convertedDate = formatForBackend($main('#date').val());
+            let convertedSecDate = formatForBackend($main('#sec_date').val());
+
+            console.log("Converted Receipt Date:", convertedDate);
+            console.log("Converted Payment Date:", convertedSecDate);
+
+            $main('#date').val(convertedDate);
+            $main('#sec_date').val(convertedSecDate);
+
             const formData = $main(this).serialize();
             $main.ajax({
                 url: '{% url "management_receipts_create" %}',

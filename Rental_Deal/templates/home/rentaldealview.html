@@ -23,12 +23,12 @@
 
 
                                         <a class="btn btn-primary btn-rounded" href="/receipt/{{ recipt_no.id}}/download/" target="_blank" >Download  Receipt</a> 
-{% if perms.core.view_admin_rental_fields %}
+                                    {% if perms.core.view_admin_rental_fields %}
                                         <a class="btn btn-primary btn-rounded" href="/tenancey/contract/download/{{rentaldeal.id}}/" target="_blank" > Generate Tenancy Contract   </a> 
                                         {% endif %}
-                                                                                    </span>
+                                                                                                </span>
                     
-                </h4>
+                    </h4>
                 
             </div>
             <div class="card-body m-1">

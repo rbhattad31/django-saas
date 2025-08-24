@@ -7,12 +7,13 @@
 
 {% block content %}
 
-<div class="main-content pt-4"><div class="row">
-<div class="col-md-12" id="successmsg" style="display: none">
-    <div class="alert alert-primary " id="alert-primary">
-      <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
-    </div>
-</div>
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary " id="alert-primary">
+            <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+            </div>
+        </div>
 <div class="col-md-12">
     
 	<div class="card mt-2 mb-4">
@@ -24,1245 +25,1247 @@
                <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Back</a>
                  </span>
             </h4>
-             
-       <div class="nav nav-tabs d-flex flex-wrap justify-content-start" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active" id="nav-property-tab" data-toggle="tab" href="#nav-property" role="tab">Property</a>
-        <a class="nav-item nav-link" id="nav-source-tab" data-toggle="tab" href="#nav-source" role="tab">Source</a>
-        <a class="nav-item nav-link" id="nav-agency-tab" data-toggle="tab" href="#nav-agency" role="tab">Agency</a>
-        <a class="nav-item nav-link" id="nav-revenue-tab" data-toggle="tab" href="#nav-revenue" role="tab">Revenue</a>
-        <a class="nav-item nav-link" id="nav-documents-tab" data-toggle="tab" href="#nav-documents" role="tab">Documents</a>
-        <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#nav-comments" role="tab">Comments</a>
-    </div>
-
-
-         	 <input type="hidden" value="1837" name="view_id" id="view_id">
-         		<!-- Nav tabs started-->
-         		<div class="tab-content ul-tab__content" id="nav-tabContent">
-
-         		<!-- ==================Rental Property details tab start ========================= -->  	
-                	<div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
-                          
-                                           		 <div class="form-group row mt-2">
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Deal Submitted By Agent</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                    <label for="">{{salesdeal.buyer_agent_name}}<h6 class="value">
-                                  </h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                           
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Selling Price</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.deal_amount}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div> 
-                    </div>
-                    					
-			            <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Reference Number</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                    <label for=""><h6 class="value">{{salesdeal.reference_number}}</h6></label>
-                                </div>
-                            </div>
-                        </div>    
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Deal Date</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.date}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>    
-                    </div>
-                   
-
-			            <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Unit No</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.unit_details}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Building Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.builduing_name}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>  
-                        </div>
-                        <div class="form-group row mt-2">  
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Project Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.project_name}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-                                                  
-                       </div>
-                       
-                		<div class="form-group row mt-3">
-                            <div class="col-sm-12 d-flex justify-content-center">
-                            <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToSource" style="float:right; color: white">Next</a>
-                            </div>
-                        </div> 
-                	</div>
-
-                <!-- ================== Rental Property details tab end================== -> 
-
-                <!- =======================Property Source details tab start ========================= -->  	
-	            	<div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
-	            		<div class="row">
-    		               <div class="col-md-6 form-group mb-1">
-    		                  <label>
-    		                     <h5>Seller Details</h5>
-    		                  </label>
-    		               </div>
-    		            </div>
-
-    		           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.seller_name}}</h6></label>
-                                </div>
-                            </div>
+        </div>
+        <div class="card-body">  
+            <div class="nav nav-tabs d-flex flex-wrap justify-content-start" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-property-tab" data-toggle="tab" href="#nav-property" role="tab">Property</a>
+                <a class="nav-item nav-link" id="nav-source-tab" data-toggle="tab" href="#nav-source" role="tab">Source</a>
+                <a class="nav-item nav-link" id="nav-agency-tab" data-toggle="tab" href="#nav-agency" role="tab">Agency</a>
+                <a class="nav-item nav-link" id="nav-revenue-tab" data-toggle="tab" href="#nav-revenue" role="tab">Revenue</a>
+                <a class="nav-item nav-link" id="nav-documents-tab" data-toggle="tab" href="#nav-documents" role="tab">Documents</a>
+                <a class="nav-item nav-link" id="nav-comments-tab" data-toggle="tab" href="#nav-comments" role="tab">Comments</a>
                         </div>
 
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Source</h6>
-                                    </label>
+
+                    <input type="hidden" value="1837" name="view_id" id="view_id">
+                        <!-- Nav tabs started-->
+                        <div class="tab-content ul-tab__content" id="nav-tabContent">
+
+                        <!-- ==================Rental Property details tab start ========================= -->  	
+                            <div class="tab-pane fade active show" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
+                                
+                                                        <div class="form-group row mt-2">
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal Submitted By Agent</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for="">{{salesdeal.buyer_agent_name}}<h6 class="value">
+                                        </h6>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.seller_source}}</h6>
-                                    </label>
-                                </div>
+                                
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Selling Price</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.deal_amount}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div> 
                             </div>
-                        </div>
-                    </div> 
-
-			          <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Mobile</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.selller_mobile}}</h6></label>
-                                </div>
+                                                
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Reference Number</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <label for=""><h6 class="value">{{salesdeal.reference_number}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Deal Date</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.date}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>    
                             </div>
-                        </div>
+                        
 
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Email</h6>
-                                    </label>
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Unit No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.unit_details}}</h6></label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.seller_email}}</h6>
-                                    </label>
+            
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Building Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.builduing_name}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>  
                                 </div>
+                                <div class="form-group row mt-2">  
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Project Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.project_name}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                                        
                             </div>
-                        </div>
-                    </div> 
-			            <hr>
-                <div class="row">
-                    <div class="col-md-6 form-group mb-1">
-                        <label><h5>Buyer Details</h5></label>
-                    </div>
-                </div>
-
-			           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.buyer_name}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Source</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.buyer_source}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			          <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Mobile</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.buyer_mobile}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Email</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.buyer_email}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <br>
-
-	            		<div class="form-group row mt-3">
-	            		    <div class="col-sm-12 d-flex justify-content-center">
-	            		    	<a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab1" style="float:right;color: white">Previous</a>
-	            		        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToAgency" style="float:right; color: white">Next</a>
-	            		    </div>
-	            		</div>
-	         		</div>
-         		<!--------------Property Source details tab start------------->  	
-
-         		<!--------------Property Agency details tab start------------->  	
-	            	<div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
-	            		<div class="row">
-			               <div class="col-md-6 form-group mb-1">
-			                  <label>
-			                     <h5>Seller Agency Details</h5>
-			                  </label>
-			               </div>
-			            </div>
-
-			            <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.seller_agency}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.seller_agent_name}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			             <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Brn</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.seller_agency_brn}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Phone</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.seller_agent_phone}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Email</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.seller_agent_email}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-			            <hr>
-
-			            <div class="row">
-			               <div class="col-md-6 form-group mb-1">
-			                  <label>
-			                     <h5>Buyer Agency Details</h5>
-			                  </label>
-			               </div>
-			            </div>
-
-			             <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.buyer_agency}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.buyer_agent_name}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Brn</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.buyer_agency_brn}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Phone</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.buyer_agent_phone}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Email</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.buyer_agent_email}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  <hr>
-
-			            <div class="form-group row nav-agency">
-			               <div class="col-md-6 form-group mb-1">
-			                  <label>
-			                     <h5>Mediating Agency Details</h5>
-			                  </label>
-			               </div>
-			            </div>
-
-			            
-                 <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.mediating_agency_name}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname"> Agent Name</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.mediating_agent_name}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			          <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agency Brn</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.mediating_agency_brn}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Phone</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.mediating_agent_phone}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent Email</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.mediating_agent_email}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 			           
-			            <br>
-
-	            		<div class="form-group row mt-3">
-	            		    <div class="col-sm-12 d-flex justify-content-center">
-	            		    	<a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab2" style="float:right;color: white">Previous</a>
-	            		        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToRevenue" style="float:right; color: white">Next</a>
-	            		    </div>
-	            		</div>
-	         		</div>
-         		<!--------------Property Agency details tab start-------------> 
-
-
-         		<!--------------Property Revenue details tab start------------->  	
-	            	<div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab">
-	            		 <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Total Commission</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.total_commission}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Less Outside Commission</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.less_outsude_commission}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Net Commission</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.net_commission}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Classic</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.classic}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-			          <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent1</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                               <div class="col-3 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.agent1}}</h6></label>
-                                </div>
-                                  <div class="col-1">:</div>
-                                <div class="col-3">
-                                       
-                                                                                         
-                                <label for=""><h6 class="value">{{salesdeal.seller_agent_name}}</h6>
-                              
                             
-                                    </label></div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                    <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToSource" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div> 
+                            </div>
+
+                        <!-- ================== Rental Property details tab end================== -> 
+
+                        <!- =======================Property Source details tab start ========================= -->  	
+                            <div class="tab-pane fade" id="nav-source" role="tabpanel" aria-labelledby="nav-source-tab">
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Seller Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.seller_name}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Source</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.seller_source}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Mobile</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.selller_mobile}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.seller_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                                <hr>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-1">
+                                <label><h5>Buyer Details</h5></label>
                             </div>
                         </div>
 
-                    </div>
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.buyer_name}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Source</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.buyer_source}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Mobile</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.buyer_mobile}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.buyer_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <br>
+
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab1" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToAgency" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <!--------------Property Source details tab start------------->  	
+
+                        <!--------------Property Agency details tab start------------->  	
+                            <div class="tab-pane fade" id="nav-agency" role="tabpanel" aria-labelledby="nav-agency-tab">
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Seller Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.seller_agency}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.seller_agent_name}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.seller_agency_brn}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.seller_agent_phone}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.seller_agent_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                                <hr>
+
+                                <div class="row">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Buyer Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.buyer_agency}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.buyer_agent_name}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.buyer_agency_brn}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.buyer_agent_phone}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.buyer_agent_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  <hr>
+
+                                <div class="form-group row nav-agency">
+                                <div class="col-md-6 form-group mb-1">
+                                    <label>
+                                        <h5>Mediating Agency Details</h5>
+                                    </label>
+                                </div>
+                                </div>
+
+                                
+                        <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.mediating_agency_name}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname"> Agent Name</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.mediating_agent_name}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agency Brn</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.mediating_agency_brn}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Phone</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.mediating_agent_phone}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent Email</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.mediating_agent_email}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 			           
+                                <br>
+
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab2" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToRevenue" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <!--------------Property Agency details tab start-------------> 
+
+
+                        <!-==============Property Revenue details tab start ===============-->  	
+                            <div class="tab-pane fade" id="nav-revenue" role="tabpanel" aria-labelledby="nav-revenue-tab">
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Total Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.total_commission}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Less Outside Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.less_outsude_commission}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Net Commission</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.net_commission}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Classic</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.classic}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent1</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                    <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.agent1}}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                            
+                                                                                                
+                                        <label for=""><h6 class="value">{{salesdeal.seller_agent_name}}</h6>
+                                    
+                                    
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent2</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.agent2}}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+                                                                                                
+                                        <label for=""><h6 class="value">{{salesdeal.buyer_agent_name}}</h6>
+                                    
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+
+                                <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Agent3</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                    <div class="col-3 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.agent3}}</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-3">
+
+                                        <label for=""><h6 class="value">{{salesdeal.mediating_agent_name}}</h6>
+
+                                            </label></div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{salesdeal.receipt_no}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">KYC Number</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{salesdeal.kyc_number}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>     
+
+                            
+                                <br>
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab3" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToDocuments" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- ======================Property Revenue details tab end ==========--> 
+
+                        <!-- ==========Upload Documents tab start ==============-->  	
+                            <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
+                                
+                        <div class="row">  
+                            <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="signed_mou">Form F</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                            
+                                                                                                                                                                                                                                            <div class="upload_prev">
+                                                        <!-- <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/signed_mou1750840885SPA 1520.pdf" target="_new">signed_mou 1</a> -->
+                                                        <div id="upload_prevss" class="Form F">
+                                                            {% render_file_links salesdeal.signed_mou aws_base_url salesdeal.reference_number %}
+                                                        </div>
+                                                    </div>                                             
+                                                                                                                            
+                                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                            <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="new_title_deed">New Title Deed</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="new_title_deed">
+                                            {% render_file_links salesdeal.new_title_deed aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="old_title_deed">Old Title Deed</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="old_title_deed">
+                                            {% render_file_links salesdeal.old_title_deed aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="owners_passport_copy">Owners Passport Copy</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="owners_passport_copy">
+                                            {% render_file_links salesdeal.owners_passport_copy aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="buyers_passport_copy">Buyers Passport Copy</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="buyers_passport_copy">
+                                            {% render_file_links salesdeal.buyers_passport_copy aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="buyers_deposit_cheque_copy">Buyers Deposit Cheque Copy</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="buyers_deposit_cheque_copy">
+                                            {% render_file_links salesdeal.buyers_deposit_cheque_copy aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                        <label for="buyer_eid">Buyer EID</label><br>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                        <div id="upload_prevss" class="buyer_eid">
+                                            {% render_file_links salesdeal.buyer_eid aws_base_url salesdeal.reference_number %}
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyers_deposit_cheque_copy">Sellers Deposit Cheque Copy</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.buyers_deposit_cheque_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="seller_poa_passport_copy">Seller Poa Passport Copy</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.seller_poa_passport_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>                  
+                                </div>
+
+                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyer_poa_passport_copy">Buyer Poa Passport Copy</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.buyer_poa_passport_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyer_poa_copy">Buyer Poa Copy</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.buyer_poa_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>                  
+                                </div>
+
+                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="seller_poa_copy">Sellers Poa Copy</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.seller_poa_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyer_poa_eid">Buyer Poa EID</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.buyer_poa_eid aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>                  
+                                </div>
+
+                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="seller_poa_eid">Sellers Poa EID</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.seller_poa_eid aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyer_poa_eid">KYC/Form I/Referral Agreement/Management Approval Form</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.buyer_poa_eid aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div> 
+
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-3"> 
+                                        <div class="row">                                
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Screening</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.screening aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>                              
+                                    </div>
+                                </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Screening Comments</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6 format-value">
+                                                <label for="">
+                                                <h6 class="value">No Match Found</h6>
+                                            </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3 gopi"> 
+                                    <div class="row">
+                                        <div class="col-md-6 form-group mb-3">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label for=""><h6 class="labelname">Manager Cheque Copy</h6></label>
+                                                </div>
+                                                <div class="col-1">:</div>
+                                                <div class="col-6">
+                                                    <div id="upload_prevss" class="kyc_number_list">
+                                                        {% load customtags %}
+                                                        {% render_file_links manager_cheque_copy base_url reference_number %}
+                                                    </div>
+                                                    <span class="text-danger" id="manager_cheque_copy_error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+
+                                    
+                            </div>
+
+
+                        <!-- =======Upload Documents tab end  =========================--> 
+                        
+
+                        
+                </div> 
+
                 
+                
+                </div>   
+            
+                            <div class="form-group row mt-3">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab4" style="float:right;color: white">Previous</a>
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToComments" style="float:right; color: white">Next</a>
+                                    </div>
+                                </div>
 
-			           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent2</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-3 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.agent2}}</h6></label>
-                                </div>
-                                  <div class="col-1">:</div>
-                                <div class="col-3">
-                                                                                         
-                                <label for=""><h6 class="value">{{salesdeal.buyer_agent_name}}</h6>
-                             
-                                    </label></div>
-                            </div>
                         </div>
-
-                        
-                    </div>
-
-			            <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Agent3</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                               <div class="col-3 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.agent3}}</h6></label>
-                                </div>
-                                  <div class="col-1">:</div>
-                                <div class="col-3">
-
-                                <label for=""><h6 class="value">{{salesdeal.mediating_agent_name}}</h6>
-
-                                    </label></div>
-                            </div>
-                        </div>
-
-                        
-                    </div>
-
-			           <div class="form-group row mt-2">
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Receipt No</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for=""><h6 class="value">{{salesdeal.receipt_no}}</h6></label>
-                                </div>
-                            </div>
-                        </div>
-                       
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">KYC Number</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">
-                                        <h6 class="value">{{salesdeal.kyc_number}}</h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>     
-
-			          
-			            <br>
-	            		<div class="form-group row mt-3">
-	            		    <div class="col-sm-12 d-flex justify-content-center">
-	            		    	<a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab3" style="float:right;color: white">Previous</a>
-	            		        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToDocuments" style="float:right; color: white">Next</a>
-	            		    </div>
-	            		</div>
-	         		</div>
-         		<!--------------Property Revenue details tab end-------------> 
-
-         		<!--------------Upload Documents tab start------------->  	
-	            	<div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
-                          
-	            <div class="row">  
-                    <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                         <label for="signed_mou">Form F</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                                    
-                                                                                                                                                                                                                                     <div class="upload_prev">
-                                                <!-- <a href="https://deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/sale/referencenumber_CPS/CPS/1504/signed_mou1750840885SPA 1520.pdf" target="_new">signed_mou 1</a> -->
-                                                 <div id="upload_prevss" class="Form F">
-                                                    {% render_file_links salesdeal.signed_mou aws_base_url salesdeal.reference_number %}
-                                                 </div>
-                                             </div>                                             
-                                                                                                                     
-                                                           
-                                    </div>
-                                </div>
-                            </div>
-                    
-                    <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="new_title_deed">New Title Deed</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="new_title_deed">
-                                    {% render_file_links salesdeal.new_title_deed aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="old_title_deed">Old Title Deed</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="old_title_deed">
-                                    {% render_file_links salesdeal.old_title_deed aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="owners_passport_copy">Owners Passport Copy</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="owners_passport_copy">
-                                    {% render_file_links salesdeal.owners_passport_copy aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="buyers_passport_copy">Buyers Passport Copy</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="buyers_passport_copy">
-                                    {% render_file_links salesdeal.buyers_passport_copy aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="buyers_deposit_cheque_copy">Buyers Deposit Cheque Copy</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="buyers_deposit_cheque_copy">
-                                    {% render_file_links salesdeal.buyers_deposit_cheque_copy aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                <label for="buyer_eid">Buyer EID</label><br>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                <div id="upload_prevss" class="buyer_eid">
-                                    {% render_file_links salesdeal.buyer_eid aws_base_url salesdeal.reference_number %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                                        <div class="row">  
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="buyers_deposit_cheque_copy">Sellers Deposit Cheque Copy</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.buyers_deposit_cheque_copy aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="seller_poa_passport_copy">Seller Poa Passport Copy</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.seller_poa_passport_copy aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>                  
-                        </div>
-
-                        <div class="row">  
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="buyer_poa_passport_copy">Buyer Poa Passport Copy</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.buyer_poa_passport_copy aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="buyer_poa_copy">Buyer Poa Copy</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.buyer_poa_copy aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>                  
-                        </div>
-
-                        <div class="row">  
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="seller_poa_copy">Sellers Poa Copy</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.seller_poa_copy aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="buyer_poa_eid">Buyer Poa EID</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.buyer_poa_eid aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>                  
-                        </div>
-
-                        <div class="row">  
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="seller_poa_eid">Sellers Poa EID</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.seller_poa_eid aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="buyer_poa_eid">KYC/Form I/Referral Agreement/Management Approval Form</label><br>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.buyer_poa_eid aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                </div>
-                            </div>  
-                        </div> 
+                <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
 
                         <div class="row">
-                            <div class="col-md-6 form-group mb-3"> 
-                                <div class="row">                                
-                                    <div class="col-4">
-                                        <label for="">
-                                            <h6 class="labelname">Screening</h6>
-                                        </label>
-                                    </div>
-                                    <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        {% render_file_links salesdeal.screening aws_base_url salesdeal.reference_number %}
-                                    </div>
-                                    <span class="text-danger" id="screening_error"></span>
-                                </div>                              
+                            <div class="col-md-6 form-group mb-4">
+                                <label><h5>Status</h5></label>
                             </div>
                         </div>
 
+                        <div class="form-group row">
                             <div class="col-md-6 form-group mb-3">
                                 <div class="row">
                                     <div class="col-4">
                                         <label for="">
-                                            <h6 class="labelname">Screening Comments</h6>
+                                            <h6 class="labelname">Approve/Reject</h6>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="col-1">:</div>
+                                                                <div class="col-6">
+
+                                        {% if salesdeal.is_approved_rejected == "P" %}                           
+                                        <label for="">
+                                            <h6 class="value"> Pending</h6>
+                                        </label>
+                                        {% endif %} 
+                                        {% if salesdeal.is_approved_rejected == "A" %}                           
+                                        <label for="">
+                                            <h6 class="value"> Approved</h6>
+                                        </label>
+                                        {% endif %} 
+                                        {% if salesdeal.is_approved_rejected == "R" %}                           
+                                        <label for="">
+                                            <h6 class="value"> Rejected  </h6>
+                                        </label>
+                                        {% endif %} 
+                                        {% if salesdeal.is_approved_rejected == "W" %}                           
+                                        <label for="">
+                                            <h6 class="value"> Waiting for Finance</h6>
+                                        </label>
+                                        {% endif %} 
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">AML</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            
+                                            <label for=""><h6 class="value">{{salesdeal.is_sale_aml}}</h6>
+                                            </label>
+                                                                            </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+
+
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Is Entered In Finance System</h6>
+                                            </label>
+                                        </div>
+                                    <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                
+                                                    {% if salesdeal.is_entered_in_finance_system == "1" %}
+                                                    <label>
+                                                        <h6 class="value" id="financeStatus">Yes</h6>
+                                                    </label>
+                                                    {% endif %}
+                                                    {% if salesdeal.is_entered_in_finance_system == "0" %}
+                                                    <label>
+                                                        <h6 class="value" id="financeStatus">No</h6>
+                                                    </label>
+                                                    {% endif %}
+
+                                                    {% if perms.core.update_finance_status_sales_deal %}
+                                                    {% if salesdeal.is_entered_in_finance_system == "0" %}
+                                                        <input 
+                                                            type="button" 
+                                                            class="btn btn-sm btn-info ml-3 status-finance" 
+                                                            value="Enter in Finance"
+                                                            id="financeBtn{{ salesdeal.id }}"
+
+
+                                                        onclick="enterInFinance({{ salesdeal.id }})"
+                                                        >
+                                                    {% endif %}
+                                                    {% endif %}
+                                                                    </div>
+                                </div>
+                            </div>                          
+                        </div> <hr>    
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-4">
+                                <label><h5>Comments</h5></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 form-group mb-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="">
+                                            <h6 class="labelname">Comment by Agent</h6>
                                         </label>
                                     </div>
                                     <div class="col-1">:</div>
                                     <div class="col-6 format-value">
-                                        <label for="">
-                                        <h6 class="value">No Match Found</h6>
-                                    </label>
+                                        <label for=""><h6 class="value">{{salesdeal.agent_comment}}</h6>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <div class="row">
-                        <div class="col-md-6 form-group mb-3 gopi"> 
-                               <div class="row">
+
+                                
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">
-                                            <label for=""><h6 class="labelname">Manager Cheque Copy</h6></label>
+                                            <label for="">
+                                                <h6 class="labelname">Comment by Admin</h6>
+                                            </label>
                                         </div>
                                         <div class="col-1">:</div>
-                                        <div class="col-6">
-                                            <div id="upload_prevss" class="kyc_number_list">
-                                                {% load customtags %}
-                                                {% render_file_links manager_cheque_copy base_url reference_number %}
-                                            </div>
-                                            <span class="text-danger" id="manager_cheque_copy_error"></span>
+                                        <div class="col-6 format-value">
+                                            <label for="">{{salesdeal.comments}}<h6 class="value"></h6>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
-                              
-
-	            			
-	         		</div>
+                            </div> 
 
 
-         		<!-- =======Upload Documents tab end  =========================--> 
-				
-
-                
-        </div> 
-
-        
-     	
-	</div>   
-    
-                    <div class="form-group row mt-3">
-	            		    <div class="col-12 d-flex justify-content-center">
-	            		    	<a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab4" style="float:right;color: white">Previous</a>
-	            		        <a class="txt-color btn btn-primary btn-rounded m-1" id="changeTabToComments" style="float:right; color: white">Next</a>
-	            		    </div>
-	            		</div>
-
-                </div>
-    <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab">
-
-                <div class="row">
-                    <div class="col-md-6 form-group mb-4">
-                        <label><h5>Status</h5></label>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-md-6 form-group mb-3">
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="">
-                                    <h6 class="labelname">Approve/Reject</h6>
-                                </label>
-                            </div>
-                            
-                            <div class="col-1">:</div>
-                                                        <div class="col-6">
-
-                                {% if salesdeal.is_approved_rejected == "P" %}                           
-                                <label for="">
-                                    <h6 class="value"> Pending</h6>
-                                </label>
-                                {% endif %} 
-                                {% if salesdeal.is_approved_rejected == "A" %}                           
-                                <label for="">
-                                    <h6 class="value"> Approved</h6>
-                                </label>
-                                {% endif %} 
-                                {% if salesdeal.is_approved_rejected == "R" %}                           
-                                <label for="">
-                                    <h6 class="value"> Rejected  </h6>
-                                </label>
-                                {% endif %} 
-                                {% if salesdeal.is_approved_rejected == "W" %}                           
-                                <label for="">
-                                    <h6 class="value"> Waiting for Finance</h6>
-                                </label>
-                                {% endif %} 
-                            </div>
-                        </div>
-                    </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">AML</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6">
-                                    
-                                    <label for=""><h6 class="value">{{salesdeal.is_sale_aml}}</h6>
-                                    </label>
-                                                                     </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="form-group row">
-
-
-
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Is Entered In Finance System</h6>
-                                    </label>
-                                </div>
-                            <div class="col-1">:</div>
-                                    <div class="col-6">
-                                        
-                                            {% if salesdeal.is_entered_in_finance_system == "1" %}
-                                            <label>
-                                                <h6 class="value" id="financeStatus">Yes</h6>
-                                            </label>
-                                            {% endif %}
-                                              {% if salesdeal.is_entered_in_finance_system == "0" %}
-                                            <label>
-                                                <h6 class="value" id="financeStatus">No</h6>
-                                            </label>
-                                            {% endif %}
-
-                                            {% if perms.core.update_finance_status_sales_deal %}
-                                            {% if salesdeal.is_entered_in_finance_system == "0" %}
-                                                <input 
-                                                    type="button" 
-                                                    class="btn btn-sm btn-info ml-3 status-finance" 
-                                                    value="Enter in Finance"
-                                                    id="financeBtn{{ salesdeal.id }}"
-
-
-                                                onclick="enterInFinance({{ salesdeal.id }})"
-                                                >
-                                            {% endif %}
-                                            {% endif %}
-                                                            </div>
-                        </div>
-                    </div>                          
-                </div> <hr>    
-				 <div class="row">
-                    <div class="col-md-6 form-group mb-4">
-                        <label><h5>Comments</h5></label>
-                    </div>
-                </div>
-
-				 <div class="form-group row">
-                    <div class="col-md-6 form-group mb-3">
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="">
-                                    <h6 class="labelname">Comment by Agent</h6>
-                                </label>
-                            </div>
-                            <div class="col-1">:</div>
-                            <div class="col-6 format-value">
-                                <label for=""><h6 class="value">{{salesdeal.agent_comment}}</h6>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                          
-                        <div class="col-md-6 form-group mb-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="">
-                                        <h6 class="labelname">Comment by Admin</h6>
-                                    </label>
-                                </div>
-                                <div class="col-1">:</div>
-                                <div class="col-6 format-value">
-                                    <label for="">{{salesdeal.comments}}<h6 class="value"></h6>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-
-
-                    <div class="form-group row">
-                            <div class="col-2 ">
-                                <label for="">
-                                    <h6 class="labelname">Comment by Finance</h6>
-                                </label>
-                            </div>
-                            <div class="col-1">:</div>
-                            
-                            <div class="col-6">
-                                <form id="finance_comment_form" method="post" novalidate>
-                                {% csrf_token %}
-
-                                <!-- Comment input area - initially hidden -->
-                                <div class="form-group mb-3 edit_comments_finance" hidden>
-                                    <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments"></textarea>
-                                    <br>
-                                    <input type="buttom" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" onclick="comment_finance({{ salesdeal.id }})">
-                                </div>
-                                </form>
-                                <!-- Displayed comment (if any) -->
-                                    <div class="col-6">
-                                        <div class="format-value">
-                                        <label>
-                                            <h6 class="value editCommentText" id="existing_comment">{{ salesdeal.comments_finance|default_if_none:"" }}</h6>
+                            <div class="form-group row">
+                                    <div class="col-2 ">
+                                        <label for="">
+                                            <h6 class="labelname">Comment by Finance</h6>
                                         </label>
+                                    </div>
+                                    <div class="col-1">:</div>
+                                    
+                                    <div class="col-6">
+                                        <form id="finance_comment_form" method="post" novalidate>
+                                        {% csrf_token %}
+
+                                        <!-- Comment input area - initially hidden -->
+                                        <div class="form-group mb-3 edit_comments_finance" hidden>
+                                            <textarea class="form-control" name="comments_finance" id="comments_finance" rows="5" cols="50" placeholder="Finance Comments"></textarea>
+                                            <br>
+                                            <input type="buttom" value="Save Comment" class="btn btn-sm btn-info ml-3 status-finance" onclick="comment_finance({{ salesdeal.id }})">
                                         </div>
+                                        </form>
+                                        <!-- Displayed comment (if any) -->
+                                            <div class="col-6">
+                                                <div class="format-value">
+                                                <label>
+                                                    <h6 class="value editCommentText" id="existing_comment">{{ salesdeal.comments_finance|default_if_none:"" }}</h6>
+                                                </label>
+                                                </div>
 
-                                    <!-- Add/Edit button -->
-                                      {% if perms.core.comment_finance_sales_deal %}
- 
-                                    <input 
-                                        type="button"
-                                        value="{% if salesdeal.comments_finance %}Edit Comment{% else %}Add Comment{% endif %}" 
-                                        class="btn btn-sm btn-info ml-3 editComment"
-                                        style="margin-top:-15px"
-                                    >
-                                    {% endif %}
-                                </div>
-                           
-                            </div>
-                        </div> 
-                    	<div class="form-group row mt-3">
-	            		    <div class="col-sm-12 d-flex justify-content-center">
-	            		    	<a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab5" style="float:right;color: white">Previous</a>
-	            		    </div>
-	            		</div>	
-                </div>
-                			
-				</div>
+                                            <!-- Add/Edit button -->
+                                            {% if perms.core.comment_finance_sales_deal %}
+        
+                                            <input 
+                                                type="button"
+                                                value="{% if salesdeal.comments_finance %}Edit Comment{% else %}Add Comment{% endif %}" 
+                                                class="btn btn-sm btn-info ml-3 editComment"
+                                                style="margin-top:-15px"
+                                            >
+                                            {% endif %}
+                                        </div>
+                                
+                                    </div>
+                                </div> 
+                                <div class="form-group row mt-3">
+                                    <div class="col-sm-12 d-flex justify-content-center">
+                                        <a class="txt-color btn btn-primary btn-rounded m-1" id="previousTab5" style="float:right;color: white">Previous</a>
+                                    </div>
+                                </div>	
+                        </div>
+                                    
+                        </div>
 
-    
-</div> 
+            
+                </div> 
 
 
-</div>
-							</div>
+            </div>
+        </div>
+	</div>
 			<div class="sidebar-overlay open"></div>
 		</div>
 

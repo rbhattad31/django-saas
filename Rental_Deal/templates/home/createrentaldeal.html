@@ -2026,7 +2026,7 @@
       
     </script>
     <script>
-      var site_url = "http://dealsaws.classicproperties.ae";
+       
 
       var lang = "";
       if (lang == "ar") {
@@ -3038,6 +3038,15 @@
               } else {
                 errorMessage = "Bad Request: Invalid data provided.";
               }
+            }
+            if (xhr.status === 403) {
+              // This is your "Bad Request" error
+               window.location.href = "/forbidden_page/";
+              console.log("Bad Request details:", xhr.responseJSON);
+              scrollTop();
+
+              // Attempt to extract specific error messages from the backend
+            
             }
 
             // Display the error message to the user

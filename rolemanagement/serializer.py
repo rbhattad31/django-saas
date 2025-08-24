@@ -80,6 +80,18 @@ class Groupfilter(serializers.Serializer):
     draw = serializers.IntegerField(required=False, default=0)
 
     search = serializers.DictField(required=False, default=dict)
+
+
+class GroupSerializerforlistHtml(serializers.ModelSerializer):
+   
+
+
+
+    
+     
+    class Meta:
+        model = Group
+        fields = ['id', 'name']
     
  
      

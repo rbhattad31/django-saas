@@ -242,13 +242,23 @@ class Account(models.Model):
                 "download_third_party_deposits",
 
 
-                # User & Role  management for admin
+                #   Role  management for admin
                 "admin_dashboard_access",
                 "add_group",
                 "change_group",
                 "view_group",
                 "role_management",
                 "user&role_management",
+
+                #user permissions for Admin
+                 
+                 
+                "update_profile_password",
+                "user_management",
+                "add_users",
+                "change_users",
+                "view_users",
+                "accounts_management",
 
 
 
@@ -320,6 +330,8 @@ class Account(models.Model):
 
                 # User & Role  management for admin
                 "admin_dashboard_access",
+                 
+                #user permissions for Admin
                  
 
 
@@ -397,6 +409,9 @@ class Account(models.Model):
 
                 # User & Role  management for admin
                 "admin_dashboard_access",
+
+                #user permissions for the Agent
+                "update_profile_password",
                 
                 
             ],
@@ -472,6 +487,8 @@ class Account(models.Model):
 
                 # User & Role  management for admin
                 "admin_dashboard_access",
+                #user permissions for the Agent
+                "update_profile_password",
                 
 
 
@@ -1480,7 +1497,7 @@ class RentalProperties(models.Model):
     )
 
     class Meta:
-        managed = False
+        #managed = False
         db_table = 'rental_properties'
 
     def debug_form_status(self):
@@ -1552,7 +1569,6 @@ class RentalProperties(models.Model):
                 print(f"Save error for property ID: {self.id}: {str(e)}")
         # else:
         #     print(f"Status already up to date: {status} for property ID: {self.id}")
-
 
 
 

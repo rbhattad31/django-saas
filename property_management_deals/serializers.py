@@ -6,6 +6,7 @@ from core.models import RentalProperties,Users,ManagementReceipts
 from django.contrib.auth import get_user_model
 from datetime import date, datetime
 import re
+from django.db.models import Q
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -141,80 +142,52 @@ class filterSerializer(serializers.Serializer):
 
 
 
-# class PropertySerializer(serializers.ModelSerializer):
-#     is_deleted = serializers.ChoiceField(
-#         choices=[('Y', 'Yes'), ('N', 'No')],
-#         default='N',
-#         allow_blank=False
-#     )
-#     is_approved_rejected = serializers.ChoiceField(
-#         choices=[('P', 'Pending'), ('A', 'Approved'), ('R', 'Rejected'), ('W', 'Waiting Finance')],
-#         default='P',
-#         allow_blank=False,
-#         required=False
-#     )
-#     is_entered_in_finance_system = serializers.ChoiceField(
-#         choices=[('0', 'No'), ('1', 'Yes')],
-#         default='0',
-#         allow_blank=False,
-#         required=False
-#     )
-#     deal_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False, allow_null=True)
-#     pm_start_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False, allow_null=True)
-#     pm_end_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False, allow_null=True)
-#     tenancy_start_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False, allow_null=True)
-#     tenancy_end_date = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False, allow_null=True)
+class PropertySerializer(serializers.ModelSerializer):
+
     
 
-#     class Meta:
-#         model = RentalProperties
-#         fields = '__all__'
-#         extra_kwargs = {
-#             'pms_contract': {'required': False},
-#             'owner_passport_copy': {'required': False},
-#             'owner_eid_copy': {'required': False},
-#             'pms_cheque_copy': {'required': False},
-#             'title_deed': {'required': False},
-#             'poa_pp': {'required': False},
-#             'poa_copy': {'required': False},
-#             'key_hand_over_form': {'required': False},
-#             'kyc_form': {'required': False},
-#             'form_status': {'required': False},
-#             'created_at': {'required': False},
-#             'updated_at': {'required': False},
-#             'created_by': {'required': False},
-#             'updated_by': {'required': False},
-#             'account': {'required': False},
-#             'status': {'required': False},
-#             'deal_sno': {'required': False},
-#             'approved_rejected_by': {'required': False},
-#             'comments_finance': {'required': False},
-#             'submitted_by_user_id': {'required': False},
-#             'agent_comment': {'required': False},
-#             'is_property_aml': {'required': False},
-#             'screening': {'required': False},
-#             'screening_comments': {'required': False},
-#             'seller_nationality': {'required': False},
-#             'buyer_nationality': {'required': False},
-#             'submitted_date': {'required': False},
-#             'manager_approved_rejected': {'required': False},
-#         }
+    def __init__(self, *args, **kwargs):
+        # Pop 'draft' from kwargs; default False
+        self.draft = kwargs.pop('draft', False)
+        super().__init__(*args, **kwargs)
 
-#         def validate(self, data):
-#             required_file_fields = [
-#                 'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
-#                 'title_deed', 'kyc_form', 'screening'
-#             ]
-#             for field in required_file_fields:
-#                 # Check if field is in data or exists in instance (for updates)
-#                 existing_value = getattr(self.instance, field, "") if self.instance else ""
-#                 new_value = data.get(field, existing_value)
-#                 if not new_value:
-#                     raise serializers.ValidationError({field: f"{field} is required."})
-#             return data
+    # submitted_by_agent = serializers.PrimaryKeyRelatedField(
+    #     queryset=Users.objects.exclude(Q(name__isnull=True) | Q(name__exact="")),
+    #     source='submitted_by_user_id',   # ✅ use the field, not the raw id
+    #     allow_null=False
+    # )
+    # inside PropertySerializer
 
+    # Accept and store user id
+    #submitted_by_agent = serializers.IntegerField(source='submitted_by_user_id')
+    submitted_by_agent = serializers.IntegerField(
+        source='submitted_by_user_id',
+        required=False,
+        allow_null=True
+    )
 
-class PropertySerializer(serializers.ModelSerializer):
+    # Read-only name display
+    submitted_by_agent_name = serializers.SerializerMethodField()
+
+    def get_submitted_by_agent_name(self, obj):
+        if obj.submitted_by_user_id:
+            try:
+                return Users.objects.get(id=obj.submitted_by_user_id).name
+            except Users.DoesNotExist:
+                return None
+        return None
+  
+    def validate_is_approved_rejected(self, value):
+        # If field is empty, return "P"
+        if not value:
+            return "P"
+        return value
+
+    is_property_aml = serializers.ChoiceField(
+        choices=[("Yes", "Yes"), ("No", "No")],
+        required=False,   # not required for draft
+        allow_blank=True
+    )
     is_deleted = serializers.ChoiceField(
         choices=[('Y', 'Yes'), ('N', 'No')],
         default='N',
@@ -232,6 +205,9 @@ class PropertySerializer(serializers.ModelSerializer):
         allow_blank=False,
         required=False
     )
+
+    owner_eid_copy = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    screening_comments = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     deal_date = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
     pm_start_date = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
     pm_end_date = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
@@ -328,6 +304,10 @@ class PropertySerializer(serializers.ModelSerializer):
             ]
 
         return rep
+    # def validate_submitted_by_agent(self, value):
+    #     if not value:
+    #         raise serializers.ValidationError("Agent is required.")
+    #     return value
 
     class Meta:
         model = RentalProperties
@@ -400,15 +380,31 @@ class PropertySerializer(serializers.ModelSerializer):
                 self.validate_date_format(date, f'cheque_date[{i}]')
 
         # Validate required file fields
-        required_file_fields = [
-            'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
-            'title_deed', 'kyc_form', 'screening'
-        ]
-        for field in required_file_fields:
-            existing_value = getattr(self.instance, field, "") if self.instance else ""
-            new_value = data.get(field, existing_value)
-            if not new_value:
-                raise serializers.ValidationError({field: f"{field} is required."})
+        # required_file_fields = [
+        #     'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
+        #     'title_deed', 'kyc_form', 'screening'
+        # ]
+        # for field in required_file_fields:
+        #     existing_value = getattr(self.instance, field, "") if self.instance else ""
+        #     new_value = data.get(field, existing_value)
+        #     if not new_value:
+        #         raise serializers.ValidationError({field: f"{field} is required."})
+        # File validation
+        if self.draft:
+            # Only 'screening' is mandatory for draft
+            if not data.get('screening') and not (self.instance and getattr(self.instance, 'screening', '')):
+                raise serializers.ValidationError({'screening': "screening is required for draft."})
+        else:
+            # Full submission: all required files
+            required_file_fields = [
+                'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
+                'title_deed', 'kyc_form', 'screening'
+            ]
+            for field in required_file_fields:
+                existing_value = getattr(self.instance, field, "") if self.instance else ""
+                new_value = data.get(field, existing_value)
+                if not new_value:
+                    raise serializers.ValidationError({field: f"{field} is required."})
 
         # Ensure end dates are after start dates
         if data.get('pm_start_date') and data.get('pm_end_date'):

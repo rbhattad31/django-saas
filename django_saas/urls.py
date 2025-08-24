@@ -30,13 +30,17 @@ from rolemanagement import urls
 from core import urls
 from django.conf.urls import handler403
 from django.shortcuts import render
+from core.views import custom_permission_denied_view
 # from core.exception_handler import custom_exception_handler
+from accounts_management import urls
+from core.views import  custom_permission_denied_view
+from Rental_Deal.views import index
 
-def custom_permission_denied_view(request,exception=None):
-    print("forbidden")
-    return render(request, "home/page-403.html", status=403)
+ 
 
-handler403 =  custom_permission_denied_view
+ 
+
+
 
 
 
@@ -44,9 +48,11 @@ urlpatterns = [
     path('', include('core.urls'), name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('Rental_Deal.urls')),
+    path("dashbroad/",index,name="dashbroad"),
     
     path('', include('Sales_Deals_Management.urls')),
     path('', include('property_management_deals.urls')), 
+    path('', include('accounts_management.urls')),
     path('third_party_receipts/', include('Third_Party_Receipts.urls')),
     path("role/" , include('rolemanagement.urls')),
     path('receipt/',include('core.urls')),
@@ -81,6 +87,7 @@ urlpatterns = [
     path("tenancey/contract/download/<int:pk>/",Rental_DealViewSet_tenancey_contact,name = "tenancey-contact"),
      # Include the Rental_Deal app URLs
     path("forbidden_page/",custom_permission_denied_view , name = "forbidden_page" ),
+    
 
  
 
@@ -92,3 +99,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
+
+
+
+handler403 =   custom_permission_denied_view

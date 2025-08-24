@@ -1522,6 +1522,15 @@ $('#deal_form').validate({
                 errorMessage = "Bad Request: Invalid data provided.";
               }
             }
+            if (xhr.status === 403) {
+              // This is your "Bad Request" error
+               window.location.href = "/forbidden_page/";
+              console.log("Bad Request details:", xhr.responseJSON);
+              scrollTop();
+
+              // Attempt to extract specific error messages from the backend
+            
+            }
 
             // Display the error message to the user
             // Make sure you have an element with id="alert-danger" in your HTML

@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 from core.models import Users
 # from .forms import RentalDealForm, FinanceCommentForm
 
@@ -71,6 +72,9 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='filter')
     def reciecptstable_filter(self, request):
+        if not request.user.has_perm("core.list_receipts"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+
         # 1. Validate incoming request data using DataTableSearchSerializer
         print(request.data)
         serializer =  DataTableSearchSerializer(data=request.data)
@@ -159,6 +163,15 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
             queryset = queryset.filter(global_q_object)
  
+        filter_fields = [
+            'receipt_number' , 'payment_type' , 'agent_name' , 'building_name' , 'status' , 'deal_type' , 'unit_number' 
+        ]
+        for field in filter_fields:
+            print()
+            value = validated_data.get(field)
+            if value:
+                filter_kwargs = {f"{field}__icontains": value}
+                queryset = queryset.filter(**filter_kwargs)
 
 
         # --- Calculate recordsFiltered (after all filters, before pagination) ---
@@ -186,6 +199,8 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
     
 
     def create_recicept(self,request):
+        if not request.user.has_perm("core.add_receipts"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         receipt_number = request.data.get("receipt_number")
         print(request.data)
         mutable_data  = request.data.copy()
@@ -211,6 +226,8 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
       
 
     def reciecpt_update(self,request,pk =None):
+        if not request.user.has_perm("core.change_receipts"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         reciecpt = get_object_or_404(Receipts, pk=pk)
 
         if request.method == 'GET':
@@ -262,10 +279,14 @@ Receipts_ViewSet_update = Receipts_ViewSet.as_view({
 
 
 # serving datatable view html page
+@login_required(login_url="/login/")
+@permission_required('core.list_receipts',raise_exception=True)
 def reciept_table_view(request):
     return render(request , "home/recieptslist.html")
 
 # serving the edit recipt html page
+@login_required(login_url="/login/")
+@permission_required('core.change_receipts',raise_exception=True)
 def edit_recipt_deal_view(request, pk=None): 
     deal = Receipts.objects.get(pk=pk)
     aws_url = settings.AWS_URL
@@ -288,6 +309,8 @@ def edit_recipt_deal_view(request, pk=None):
     return render(request, 'home/reciecpt_edit.html', {'receipt_id': pk,    "reciecpt_data" :  json.dumps(reciecpt_data), })
 
 #serving the  create html page
+@login_required(login_url="/login/")
+@permission_required('core.add_receipts',raise_exception=True)
 def recicept_create(request):
     latest = Receipts.objects.order_by('-receipt_number').first()
     next_receipt = int(latest.receipt_number) + 1 if latest and latest.receipt_number else 1
@@ -303,6 +326,8 @@ def recicept_create(request):
     })
 
 # serving the reccept_view html page
+@login_required(login_url="/login/")
+@permission_required('core.view_receipts',raise_exception=True)
 def recicept_view(request,pk=None):
     reciecpt = get_object_or_404(Receipts, pk=pk)
 
@@ -312,6 +337,8 @@ def recicept_view(request,pk=None):
 
 
 # Download the recipt we will convert the html to dowmload the recipt format 
+@login_required(login_url="/login/")
+@permission_required('core.download_receipts',raise_exception=True)
 def download_receipt_pdf(request, receipt_id):
     receipt = Receipts.objects.get(id=receipt_id)
     html_string = render_to_string('home/recicepts_pdf.html', {'receipt': receipt})
@@ -557,4 +584,15 @@ def dashboard_stats(request):
     }
     return Response(data)
    
+
+
+
+def custom_permission_denied_view(request,exception=None):
+    print("⚠️ Permission Denied triggered")
+    return render(request, "home/page-403.html", status=403)
+
+
+
+def home_redirect(request):
+    return redirect('dashbroad') 
     

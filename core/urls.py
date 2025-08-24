@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     
-    path('',views.index,name='index'),
+    path('',views.home_redirect,name='index'),
+   
     path('list/',views.reciept_table_view, name = "receipts_list"),
     path("api/filter/", views.Receipts_Viewset_filter,name= "receipts_filter"),
     path('create/', views.recicept_create, name="reciecpt_create_page" ),

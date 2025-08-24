@@ -70,6 +70,7 @@ from datetime import datetime, date
 from dateutil.parser import parse
 from django.db import transaction
 from django.contrib.auth.decorators import permission_required
+from core.models import Users
 
 
 
@@ -256,7 +257,7 @@ class PropertyAPIView(APIView):
 
             # Refresh serialized data
             serializer = PropertySerializer(property_obj)
-            print(f"✅ Saved instance: {serializer.data}")
+            print(f"✅ Saved instance put: {serializer.data}")
             return Response(serializer.data)
 
         print(f"❌ Serializer errors: {serializer.errors}")
@@ -269,6 +270,17 @@ class PropertyAPIView(APIView):
 def edit_property_page(request, pk):
     print("🔍 Called edit_property_page")
     property_obj = get_object_or_404(RentalProperties, pk=pk)
+
+    agents_raw = Users.objects.all()
+ 
+    # Filter out users with blank/null/whitespace-only names
+    agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
+
+    print("---- Cleaned Agent Names ----")
+    for agent in agents:
+        print(agent.name.strip())
+    print("-----------------------------")
+    
 
     if request.method == "POST":
         form = PropertyForm(request.POST, request.FILES, instance=property_obj)
@@ -285,7 +297,8 @@ def edit_property_page(request, pk):
     return render(request, 'home/edit_property.html', {
         'form': form,
         'property': property_obj,
-        'receipt_nos': receipt_nos   # ✅ Pass to template
+        'receipt_nos': receipt_nos,
+        'agents': agents,   # ✅ Pass to template
     })
 
 
@@ -575,6 +588,13 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             path = f"rental/referencenumber_CP/{reference_number}"
             print(f"📁 Reference Path: {path}")
 
+            # --- DUPLICATE CHECK ---
+            if RentalProperties.objects.filter(reference_number=reference_number).exists():
+                return Response(
+                    {'success': False, 'message': f'Reference Number "{reference_number}" already exists.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             # Handle draft submission
             if request.data.get('save_as') == 'draft':
                 required_fields = [
@@ -592,22 +612,62 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                         )
 
                 # Prepare data for draft
+                # draft_data = {
+                #     field: request.data[field] for field in required_fields if field in request.data
+                    
+                # }
                 draft_data = {
-                    field: request.data[field] for field in required_fields if field in request.data
+                    field: request.data[field] for field in required_fields if field != 'submitted_by_agent' and field in request.data
                 }
                 draft_data.update({
                     'form_status': 'Incomplete',
-                    'is_approved_rejected': 'P',
+                    'is_approved_rejected': request.data.get('is_approved_rejected', 'P'),
                     'is_entered_in_finance_system': '0',
                     'is_deleted': request.data.get('is_deleted', 'N'),
                     'status': 'Inactive',
                     'account_id': account_id,
                     'deal_sno': new_sno,
-                    'submitted_by_user_id': request.user.id if request.user.is_authenticated else 0,
+                    #'submitted_by_user_id': request.user.id if request.user.is_authenticated else 0,
+                    'submitted_by_user_id': request.data.get('submitted_by_agent') or (
+                        request.user.id if request.user.is_authenticated else 0
+                    ),
                     'submitted_date': now().date(),
                     'created_at': now(),
                     'updated_at': now()
                 })
+
+                # --- FIX for is_property_aml ---
+                # Ensure is_property_aml is always 'Yes' or 'No' for draft
+                is_property_aml = request.data.get('is_property_aml', 'No')
+                if isinstance(is_property_aml, list):
+                    is_property_aml = is_property_aml[0] or 'No'
+                elif not is_property_aml:
+                    is_property_aml = 'No'
+                draft_data['is_property_aml'] = is_property_aml
+                draft_date_fields = ['deal_date', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date']
+                for field in draft_date_fields:
+                    if field in draft_data and draft_data[field]:
+                        for fmt in ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]:
+                            try:
+                                parsed = datetime.strptime(draft_data[field], fmt)
+                                draft_data[field] = parsed.strftime("%d-%m-%Y")
+                                break
+                            except ValueError:
+                                continue
+
+                if 'cheque_date' in request.data:
+                    cheque_dates = request.data.getlist('cheque_date[]')  # or request.data['cheque_date']
+                    formatted_cheque_dates = []
+                    for date_str in cheque_dates:
+                        if date_str.strip():
+                            for fmt in ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]:
+                                try:
+                                    parsed = datetime.strptime(date_str, fmt)
+                                    formatted_cheque_dates.append(parsed.strftime("%d-%m-%Y"))
+                                    break
+                                except ValueError:
+                                    continue
+                    draft_data['cheque_date'] = formatted_cheque_dates
 
                 # Handle file uploads for draft (optional)
                 for field in file_fields:
@@ -632,20 +692,45 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                                 )
                         draft_data[field] = ','.join(file_paths) if file_paths else ''
+               # --- Set required files for draft ---
+                required_file_fields_draft = ['screening']  # only screening is required
 
-                try:
-                    instance = RentalProperties.objects.create(**draft_data)
-                    print("DEBUG: Draft created with id:", instance.id, "deal_sno:", instance.deal_sno)
-                    return Response(
-                        {'success': True, 'message': 'Draft saved successfully', 'data': {'id': instance.id}},
-                        status=status.HTTP_201_CREATED
-                    )
-                except Exception as e:
-                    print("DEBUG: Error saving draft:", str(e))
-                    return Response(
-                        {'success': False, 'message': f'Error saving draft: {str(e)}'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
+               
+
+                # Use partial=True so serializer does not enforce other required fields
+                #serializer = PropertySerializer(data=draft_data, partial=True)
+
+                # Manually check required file fields for draft
+                for field in required_file_fields_draft:
+                    if not draft_data.get(field):
+                        return Response(
+                            {'success': False, 'message': f'At least one file is required for {field}.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+
+                # serializer = PropertySerializer(data=draft_data, partial=True)
+                serializer = PropertySerializer(data=draft_data, partial=True, draft=True)
+                if serializer.is_valid():
+                    instance = serializer.save()
+                    return Response({'success': True, 'message': 'Draft saved successfully', 'data': {'id': instance.id}},
+                                    status=status.HTTP_201_CREATED)
+                print("DEBUG: Serializer errors:", serializer.errors)
+                return Response({'success': False, 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                # try:
+                #     instance = RentalProperties.objects.create(**draft_data)
+                #     print("DEBUG: Draft created with id:", instance.id, "deal_sno:", instance.deal_sno)
+                #     return Response(
+                #         {'success': True, 'message': 'Draft saved successfully', 'data': {'id': instance.id}},
+                #         status=status.HTTP_201_CREATED
+                #     )
+                # except Exception as e:
+                #     print("DEBUG: Error saving draft:", str(e))
+                #     return Response(
+                #         {'success': False, 'message': f'Error saving draft: {str(e)}'},
+                #         status=status.HTTP_400_BAD_REQUEST
+                #     )
 
             # Full submission
             # Copy non-file fields
@@ -681,14 +766,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 data[field] = ','.join(updated_files[field]) if updated_files[field] else ''
 
             # Validate required file fields
-            required_file_fields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening']
-            for field in required_file_fields:
-                if not data.get(field):
-                    print(f"DEBUG: Missing required file field: {field}")
-                    return Response(
-                        {'success': False, 'message': f'At least one file is required for {field}.'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
+            if request.data.get('save_as') != 'draft':
+                required_file_fields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening']
+                for field in required_file_fields:
+                    if not data.get(field):
+                        print(f"DEBUG: Missing required file field: {field}")
+                        return Response(
+                            {'success': False, 'message': f'At least one file is required for {field}.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
 
             # Handle cheque dates
             cheque_dates = []
@@ -773,7 +859,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 'account_id': account_id,
                 'deal_sno': new_sno,
                 'form_status': 'Complete',
-                'is_approved_rejected': 'P',
+                'is_approved_rejected': request.data.get('is_approved_rejected', 'P'),
                 'is_entered_in_finance_system': '0',
                 'is_deleted': request.data.get('is_deleted', 'N'),
                 'status': 'Active',
@@ -881,11 +967,27 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="edit")
     def edit(self, request, pk=None):
         instance = self.get_object()
+        agents_raw = Users.objects.all()
+ 
+        # Filter out users with blank/null/whitespace-only names
+        agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
+
+        print("---- Cleaned Agent Names ----")
+        for agent in agents:
+            print(agent.name.strip())
+        print("-----------------------------")
         serializer = self.get_serializer(instance, data=request.data, partial=False)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST,{'agents': agents})
+        return Response(
+            {
+                'errors': serializer.errors,
+                'agents': [agent.name.strip() for agent in agents]
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
 
     def retrieve(self, request, *args, **kwargs):
@@ -1008,7 +1110,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(property_obj, data=mutable_data, partial=True)
         if serializer.is_valid():
             self.perform_update(serializer)
-            print(f"✅ Saved instance: {serializer.data}")
+            print(f"✅ Saved instance edit: {serializer.data}")
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             print(f"❌ Serializer errors: {serializer.errors}")
@@ -1430,7 +1532,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                         queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
                     else:
                         print("entered the  finace pending")
-                        queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
+                        queryset = queryset.filter(is_approved_rejected='', manager_approved_rejected='A', form_status='Complete')
  
             elif deal_type == 'approved':
                 #if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
@@ -1449,18 +1551,19 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                      queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
                
  
- 
-            elif deal_type == "waiting-finance" :
-                queryset = queryset.filter(is_approved_rejected='F')
+            #Here waitint is related to Waiting for Waiting Finance
+            elif deal_type == "waiting" :
+                queryset = queryset.filter(is_approved_rejected='W')
  
             elif deal_type == 'entered-finance':
                 queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
- 
-            elif deal_type == "pending-finance" :
+            
+            #Here waiting-finance is related to pending finance
+            elif deal_type == "waiting-finance" :
                 queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
  
             elif deal_type == 'draft':
-                queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
+                queryset = queryset.filter(form_status='Incomplete',submitted_by_user_id=user.id)
        
             elif deal_type == "All" :
                 queryset = queryset.filter(form_status = "Complete")  

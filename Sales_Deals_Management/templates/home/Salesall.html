@@ -1,194 +1,201 @@
 {% extends 'layouts/base.html' %} {% block title %} All Sales Deals 
 {% endblock title %} {% block content %}
 
-<div class="">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>List of <span id="saleheading"></span></h3>
-    <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
-      >Create Sale Deal</a
-    >
-  </div>
+<div class="main-content pt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card o-hidden mb-4">
+        <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3>List of <span id="saleheading"></span></h3>
 
-  <!-- Bootstrap CSS -->
-  <div>
-    <form id="filterForm" class="m-0 border rounded p-3 bg-light">
-      <!-- Filter Toggle -->
-      <div class="d-flex align-items-center mb-2">
-        <strong class="me-2">Filters By:</strong>
-        <a
-          class="text-primary"
-          data-bs-toggle="collapse"
-          href="#filterCollapse"
-          role="button"
-          aria-expanded="false"
-          aria-controls="filterCollapse"
-        >
-          <i class="bi bi-chevron-down"></i> click here
-        </a>
-      </div>
-
-      <!-- Collapsible Filter Fields -->
-      <div class="collapse" id="filterCollapse">
-        <div class="row">
-          <!-- Left Column -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Reference No</label>
-              <input
-                type="text"
-                class="form-control"
-                name="reference_number"
-                placeholder="Reference No"
-              />
-            </div>
-            <!-- <input type="hidden" name="type" value=""> -->
-
-            <div class="mb-3">
-              <label class="form-label">Building Name</label>
-              <input
-                type="text"
-                class="form-control"
-                name="building_name"
-                placeholder="Building Name"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Seller Name</label>
-              <input
-                type="text"
-                class="form-control"
-                name="seller_name"
-                placeholder="Seller Name"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Seller Source</label>
-              <input
-                type="text"
-                class="form-control"
-                name="seller_source"
-                placeholder="Seller Source"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Buyer Name</label>
-              <input
-                type="text"
-                class="form-control"
-                name="buyer_name"
-                placeholder="Buyer Name"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Deal Date From</label>
-              <input type="date" class="form-control" name="from_date" />
-            </div>
-          </div>
-
-          <!-- Right Column -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Unit No</label>
-              <input
-                type="text"
-                class="form-control"
-                name="unit_details"
-                placeholder="Unit No"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Project Name</label>
-              <input
-                type="text"
-                class="form-control"
-                name="project_name"
-                placeholder="Project Name"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Buyer Mobile</label>
-              <input
-                type="text"
-                class="form-control"
-                name="buyer_mobile"
-                placeholder="Buyer Mobile"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">seller Mobile</label>
-              <input
-                type="text"
-                class="form-control"
-                name="selller_mobile"
-                placeholder="seller Mobile"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Buyer Source</label>
-              <input
-                type="text"
-                class="form-control"
-                name="buyer_source"
-                placeholder="Buyer Source"
-              />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Deal Status</label>
-              <select class="form-select" name="deal_status">
-                <option value="">Please Select</option>
-                <option value="Active">Active</option>
-                <option value="Closed">Closed</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Deal Date To</label>
-              <input type="date" class="form-control" name="to_date" />
-            </div>
-          </div>
+                  <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
+                    >Create Sale Deal</a
+                  >
+                </div>
         </div>
 
-        <!-- Filter Buttons -->
-        <div class="row mt-2">
-          <div class="col-md-12 d-flex gap-3">
-            <button
-              type="submit"
-              class="btn btn-purple"
-              style="background-color: #6f42c1; color: white"
-            >
-              Filter
-            </button>
-            <button
-              type="reset"
-              class="btn btn-purple"
-              style="background-color: #6f42c1; color: white"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-      </div>
+                <!-- Bootstrap CSS -->
+        
+                <div class="card-body p-0">
+                  <form id="filterForm" class="m-0 border rounded p-3  ">
+                    <!-- Filter Toggle -->
+                    <div class="d-flex align-items-center mb-2">
+                      <strong class="me-2">Filters By:</strong>
+                      <a
+                        class="text-primary"
+                        data-bs-toggle="collapse"
+                        href="#filterCollapse"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="filterCollapse"
+                      >
+                        <i class="bi bi-chevron-down"></i> click here
+                      </a>
+                    </div>
 
-      <!-- Visually OUTSIDE collapse but INSIDE form -->
-    </form>
-  </div>
-  <table id="myTable" class="display">
-    <thead>
-      <tr></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+                    <!-- Collapsible Filter Fields -->
+                    <div class="collapse" id="filterCollapse">
+                      <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label">Reference No</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="reference_number"
+                              placeholder="Reference No"
+                            />
+                          </div>
+                          <!-- <input type="hidden" name="type" value=""> -->
+
+                          <div class="mb-3">
+                            <label class="form-label">Building Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="building_name"
+                              placeholder="Building Name"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Seller Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="seller_name"
+                              placeholder="Seller Name"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Seller Source</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="seller_source"
+                              placeholder="Seller Source"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Buyer Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="buyer_name"
+                              placeholder="Buyer Name"
+                            />
+                          </div>
+
+                          <div class="mb-3">
+                            <label class="form-label">Deal Date From</label>
+                            <input type="date" class="form-control" name="from_date" />
+                          </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label">Unit No</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="unit_details"
+                              placeholder="Unit No"
+                            />
+                          </div>
+
+                          <div class="mb-3">
+                            <label class="form-label">Project Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="project_name"
+                              placeholder="Project Name"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Buyer Mobile</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="buyer_mobile"
+                              placeholder="Buyer Mobile"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">seller Mobile</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="selller_mobile"
+                              placeholder="seller Mobile"
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Buyer Source</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="buyer_source"
+                              placeholder="Buyer Source"
+                            />
+                          </div>
+
+                          <div class="mb-3">
+                            <label class="form-label">Deal Status</label>
+                            <select class="form-select" name="deal_status">
+                              <option value="">Please Select</option>
+                              <option value="Active">Active</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Deal Date To</label>
+                            <input type="date" class="form-control" name="to_date" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Filter Buttons -->
+                      <div class="row mt-2">
+                        <div class="col-md-12 d-flex gap-3">
+                          <button
+                            type="submit"
+                            class="btn btn-purple"
+                            style="background-color: #6f42c1; color: white"
+                          >
+                            Filter
+                          </button>
+                          <button
+                            type="reset"
+                            class="btn btn-purple"
+                            style="background-color: #6f42c1; color: white"
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Visually OUTSIDE collapse but INSIDE form -->
+                  </form>
+                </div>
+        
+                <table id="myTable" class="display">
+                  <thead>
+                    <tr></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+      </div>
+    </div>
 </div>
 
-<div
-  class="modal fade"
-  id="deleteModal"
-  tabindex="-1"
-  aria-labelledby="deleteModalLabel"
-  aria-hidden="true"
->
+</div>
+
+<div  class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

@@ -36,7 +36,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="collapse show" id="collapseExample">
+                    <div class="collapse" id="collapseExample">
                         <div class="row pb-3">
                             <div class="col-md-2">Receipt No</div>
                             <div class="col-md-3">
@@ -773,7 +773,7 @@
 
                         if (userPermissions.can_download) {
                             actionsHtml += `
-                                <a href="/management-receipts/${id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-success" target="_blank">
+                                <a href="/management-receipts/${id}/downloadReceiptPDF/" title="Download" class="btn btn-link text-primary mr-2" target="_blank">
                                     <i class="fa fa-download"></i>
                                 </a>
                             `;

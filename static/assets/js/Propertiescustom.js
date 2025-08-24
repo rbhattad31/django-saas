@@ -23,10 +23,10 @@ function getTypeFromURL() {
     draft: "draft",
     approved: "approved",
     pending: "pending",
-    waiting: "waiting",
+    waiting: "waiting",//This is related to Waiting Finance.
     rejected: "rejected",
     "entered-finance": "entered-finance",
-    "waiting-finance": "waiting-finance",
+    "waiting-finance": "waiting-finance",//This is related to pending finance
   };
     
   

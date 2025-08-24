@@ -1,23 +1,33 @@
 from django.shortcuts import render
-
+import json
 # Create your views here.
 
 
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from django.contrib.auth.models import Group, Permission
 from core.models import GroupProfile,Account
-from  .serializer import GroupSerializer
+from  .serializer import GroupSerializer, GroupSerializerforlistHtml
 from django.db.models import Q
+from django.contrib.auth.decorators import permission_required,login_required
+ 
+
+
+def CheckPermission(perm_codename):
+    class _CheckPermission(BasePermission):
+        def has_permission(self, request, view):
+            return request.user.has_perm(perm_codename)
+    return _CheckPermission
 
 class RoleMangementViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
+    @permission_classes([CheckPermission("auth.view_group")])
     def list(self, request, *args, **kwargs):
         """
         Return only roles (groups) that belong to the same account id.
@@ -34,7 +44,7 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
         roles = GroupSerializer(queryset, many=True , context = {"request" : request})
 
         return Response(roles.data)
-    
+    @permission_classes(CheckPermission("auth.role_management"))
     @action(detail=False, methods=['post'] ,url_path='filter')
     def datatable_filter(self, request):
         print(request.data)
@@ -48,6 +58,24 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
         account_id = user.account_id
         prefix = f"{account_id}-"
         queryset = Group.objects.filter(name__startswith=prefix)
+
+
+
+        role = data.get("role") 
+        if role:
+            queryset =  queryset.filter(id =  role )
+
+        role_status = data.get("status")
+        if role_status == "Y":
+            role_status = 1
+        else:
+            role_status = 0
+
+        if role_status:
+             
+                queryset.filter(profile__is_active=role_status).select_related("profile")                          # joins GroupProfile in one query
+         
+
 
        
 
@@ -87,6 +115,9 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
 
         print("point x2", queryset)
         queryset = queryset.filter(combined_q_object) 
+
+
+
          
 
 
@@ -128,6 +159,7 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
         return Response(response_data , status= status.HTTP_200_OK)
     
 
+    @permission_classes( CheckPermission("auth.add_group"))
     def create(self,request):
         print(request.data)
         data = request.data
@@ -165,7 +197,7 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
     
 
 
-    @action(detail=True, methods=["get", "post"], url_path="update-role")
+    @action(detail=True, methods=["get", "post"], url_path="update-role",permission_classes=[CheckPermission("auth.change_group")])
     def update_role(self, request, pk=None):
         """
         GET  -> Fetch role details (with permissions, profile info)
@@ -236,19 +268,34 @@ Role_delete_view = RoleMangementViewSet.as_view({'delete': 'destroy'})
 
 
 
+@login_required(login_url="/login/")
+@permission_required('auth.role_management',raise_exception=True)
+def role_managementlist_html(request): 
+    account_id = request.user.account_id
+    prefix = f"{account_id}-"
+    queryset = Group.objects.filter(name__startswith=prefix)
 
-def role_managementlist_html(request):
-  
-  
+    group = GroupSerializerforlistHtml(queryset,many=True)
 
-  return render(request , "rolelist.html")
 
+    return render(request , "rolelist.html",{'group':json.dumps(group.data)})
+
+
+@login_required(login_url="/login/")
+@permission_required('auth.add_group',raise_exception=True)
 def role_management_create(request):
     return render(request , "role_create.html")
 
+
+
+@login_required(login_url="/login/")
+@permission_required('auth.change_group',raise_exception=True)
 def role_management_update(request,pk=None):
     return render(request , "role_edit.html" ,{"role_id":pk})
 
+
+@login_required(login_url="/login/")
+@permission_required('auth.view_group',raise_exception=True)
 def role_management_view(request,pk=None):
     print(pk)
     group = Group.objects.filter(id = pk).first()

@@ -7,1439 +7,1451 @@
   style="display: none"
 ></div>
 <div class="main-content pt-4">
-  <div class="col-md-12 main-header" id="successmsg" style="display: none">
-    <div class="alert alert-primary" id="alert-primary">
-      <button
-        class="close float-right"
-        type="button"
-        data-dismiss="alert"
-        aria-label="Close"
-      >
-        <span aria-hidden="true"></span>
-      </button>
-    </div>
-  </div>
-  <div class="col-md-12">
-    <h4 class="pb-2">
-      Edit Rental Deal<span class="float-right">
-        <a class="btn btn-primary btn-rounded" href="/rental-deals/list/"
-          >Cancel</a
-        ></span
-      >
-    </h4>
-    <div class="card mb-5">
-      <div class="card-body">
-        <form
-          id="deal_form"
-          enctype="multipart/form-data"
-          novalidate="novalidate"
+  <div class="row">
+    <div class="col-md-12 main-header" id="successmsg" style="display: none">
+      <div class="alert alert-primary" id="alert-primary">
+        <button
+          class="close float-right"
+          type="button"
+          data-dismiss="alert"
+          aria-label="Close"
         >
-          <div class="row">
-            <input
-              type="hidden"
-              value="tbtuvd6OVcsxQCjqu6A2TQuPm8L3YLhlOPNNwRuI"
-              name="csrf-token"
-              id="token"
-            />
-            <input type="hidden" name="id" id="id" />
-            <input type="hidden" name="save_as" id="save_as" />
-            <input type="hidden" name="account_id" id="account_id" />
-            <input
-              type="hidden"
-              name="comments_finance"
-              id="comments_finance"
-            />
-            <input
-              type="hidden"
-              name="existing_property"
-              value=""
-              id="existing_property"
-            />
-
-            <div class="col-md-6 form-group">
-              <label for="role"
-                >Deal Submitted By Agent<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              >
-              <select
-                class="selectbox2 form-control"
-                name="submitted_by_agent"
-                id="submitted_by_agent"
-              >
-                <option value="">Select Agent Name</option>
-                <option value="10">Rahul B</option>
-                <option value="11">Anirudh</option>
-                <option value="12">Sonia</option>
-                <option value="13">Anusha</option>
-                <option value="16">Majid</option>
-                <option value="17">Rakesh Saldhana</option>
-                <option value="18">Jamil Mirza</option>
-                <option value="19">Asad Lohar</option>
-                <option value="20">Ashwin Radhakrishnan</option>
-                <option value="21">Seema</option>
-                <option value="22">Richard Ileogben</option>
-                <option value="23">SHAHBAZ</option>
-                <option value="25">Satish</option>
-                <option value="124">Shubh Sarda</option>
-                <option value="125">Hitesh Aswani</option>
-                <option value="126">Kalash Malani</option>
-              </select>
-              <span class="text-danger" id="submitted_by_agent_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="date"
-                >Deal Date<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="date"
-                class="form-control"
-                id="date"
-                placeholder="Deal Date"
-                value="20-06-2025"
-                readonly=""
-              />
-              <span class="error text-danger" id="date_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="reference_number"
-                >Reference Number<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="reference_number"
-                class="form-control"
-                id="reference_number"
-                placeholder="Reference Number"
-              />
-              <span
-                class="error text-danger"
-                id="reference_number_error"
-              ></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="is_new_deal"
-                >Deal<span class="mandetory_field" style="color: red"
-                  >*
-                </span></label
-              ><br />
-              <div class="row">
-                <div class="col-3">
-                  <input
-                    type="radio"
-                    name="is_new_deal"
-                    value="N"
-                    id="is_new_deal"
-                  />
-                  New
-                </div>
-                <div class="col-3" style="margin-left: -75px">
-                  <input
-                    type="radio"
-                    name="is_new_deal"
-                    value="R"
-                    class="ml-1"
-                    id="is_new_deal"
-                    checked=""
-                  />
-                  Renewal
-                </div>
-                <br />
-                <span class="error text-danger" id="is_new_deal_error"></span>
-              </div>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="project_name"
-                >Project Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="project_name"
-                class="form-control"
-                id="project_name"
-                placeholder="Project Name"
-              />
-              <span class="error text-danger" id="project_name_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="unit_details"
-                >Unit No<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="unit_details"
-                class="form-control"
-                id="unit_details"
-                placeholder="Unit No"
-              />
-              <span class="error text-danger" id="unit_details_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="building_name"
-                >Building Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="building_name"
-                class="form-control"
-                id="building_name"
-                placeholder="Building Name"
-              />
-              <span class="error text-danger" id="building_name_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="rental_price">Rental Price</label>
-              <input
-                type="text"
-                name="rental_price"
-                class="form-control"
-                id="rental_price"
-                placeholder="Rental Price"
-              />
-              <span class="error text-danger" id="rental_price_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="deal_start_date"
-                >Deal Start Date<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="deal_start_date"
-                class="form-control startDate"
-                id="deal_start_date"
-                placeholder="Deal Start Date"
-                readonly=""
-              />
-              <span class="error text-danger" id="deal_start_date_error"></span>
-            </div>
-            <div class="col-md-6 form-group mb-3">
-              <label for="deal_end_date"
-                >Deal End Date<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="deal_end_date"
-                class="form-control endDate"
-                id="deal_end_date"
-                placeholder="Deal End Date"
-                autocomplete="off"
-                value=""
-                readonly=""
-              />
-              <span class="error text-danger" id="deal_end_date_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="agent1">Property Usage</label>
-              <select
-                name="property_usage"
-                class="form-control"
-                id="property_usage"
-              >
-                <option value="">Select Property Usage</option>
-                <option value="industrial">Industrial</option>
-                <option value="commercial">Commercial</option>
-                <option value="residential">Residential</option>
-              </select>
-              <span class="text-danger" id="property_usage_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label for="property_type">Property Type</label>
-              <input
-                type="text"
-                name="property_type"
-                class="form-control"
-                id="property_type"
-                placeholder="Property Type"
-              />
-              <span class="text-danger" id="property_type_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="property_size">Property Size</label>
-              <input
-                class="form-control"
-                type="text"
-                id="property_size"
-                name="property_size"
-                placeholder="Property Size"
-              />
-              <span class="text-danger" id="property_size_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="premises_no">Premises No</label>
-              <input
-                class="form-control"
-                type="text"
-                id="premises_no"
-                name="premises_no"
-                value="916027929"
-                placeholder="Premises No"
-              />
-              <span class="text-danger" id="premises_no_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="premises_no">Security Deposit</label>
-              <input
-                class="form-control"
-                type="text"
-                id="security_deposit"
-                name="security_deposit"
-                value="5,500 /-"
-                placeholder="Security Deposit"
-              />
-              <span class="text-danger" id="security_deposit_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="plot_no">Plot No</label>
-              <input
-                class="form-control"
-                type="text"
-                id="plot_no"
-                name="plot_no"
-                value="8020"
-                placeholder="Plot No"
-              />
-              <span class="text-danger" id="plot_no_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="mode_of_payment">Mode of Payment</label>
-              <input
-                class="form-control"
-                type="text"
-                id="mode_of_payment"
-                name="mode_of_payment"
-                placeholder="Mode of Payment"
-              />
-              <span class="text-danger" id="mode_of_payment_error"></span>
-            </div>
-          </div>
-
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Owner Details</h5></label>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="role"
-                >Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="owner_first_name"
-                class="form-control"
-                id="owner_first_name"
-                placeholder="Owner Name"
-              />
-              <span
-                class="error text-danger"
-                id="owner_first_name_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="role"
-                >Source<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <select
-                class="form-control"
-                name="owner_source"
-                id="owner_source"
-              >
-                <option value="">Reference</option>
-                <option value="Dubizzle">Dubizzle</option>
-                <option value="Property finder">Property finder</option>
-                <option value="Classic Website">Classic Website</option>
-                <option value="YZER">YZER</option>
-                <option value="Gulfnews">Gulfnews</option>
-                <option value="Others">Others</option>
-                <option value="Reference">Reference</option>
-                <option value="Agent">Agent</option>
-                <option value="Network">Network</option>
-                <option value="Social Media">Social Media</option>
-                <option value="Walk In">Walk In</option>
-                <option value="Security">Security</option>
-                <option value="Developer">Developer</option>
-                <option value="BAYUT">BAYUT</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="owner_mobile"
-                >Mobile<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="owner_mobile"
-                name="owner_mobile"
-                placeholder="Owner Mobile"
-              />
-              <span class="text-danger" id="owner_mobile_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="owner_email"
-                >Email<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="email"
-                id="owner_email"
-                name="owner_email"
-                placeholder="Owner Email"
-              />
-              <span class="text-danger" id="owner_email_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="seller_nationality"
-                >Nationality<span class="mandetory_field">*</span></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="seller_nationality"
-                name="seller_nationality"
-                placeholder="Nationality"
-              />
-              <span class="text-danger" id="seller_nationality_error"></span>
-            </div>
-          </div>
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Tenant Details</h5></label>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="role"
-                >Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="tenant_first_name"
-                class="form-control"
-                id="tenant_first_name"
-                placeholder="Tenant Name"
-              />
-              <span
-                class="error text-danger"
-                id="tenant_first_name_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="role"
-                >Source<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <select
-                class="form-control"
-                name="tenant_source"
-                id="tenant_source"
-              >
-                <option value="">Reference</option>
-                <option value="Dubizzle">Dubizzle</option>
-                <option value="Property finder">Property finder</option>
-                <option value="Classic Website">Classic Website</option>
-                <option value="YZER">YZER</option>
-                <option value="Gulfnews">Gulfnews</option>
-                <option value="Others">Others</option>
-                <option value="Reference">Reference</option>
-                <option value="Agent">Agent</option>
-                <option value="Network">Network</option>
-                <option value="Social Media">Social Media</option>
-                <option value="Walk In">Walk In</option>
-                <option value="Security">Security</option>
-                <option value="Developer">Developer</option>
-                <option value="BAYUT">BAYUT</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenant_mobile"
-                >Mobile<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="tenant_mobile"
-                name="tenant_mobile"
-                placeholder="Tenant Mobile"
-              />
-              <span class="text-danger" id="tenant_mobile_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="tenant_email"
-                >Email<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="email"
-                id="tenant_email"
-                name="tenant_email"
-                placeholder="Tenant Email"
-              />
-              <span class="text-danger" id="tenant_email_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="buyer_nationality"
-                >Nationality<span class="mandetory_field">*</span></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="buyer_nationality"
-                name="buyer_nationality"
-                placeholder="Nationality"
-              />
-              <span class="text-danger" id="buyer_nationality_error"></span>
-            </div>
-          </div>
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Owner Agency Details</h5></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="owner_agency"
-                >Agency Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="owner_agency"
-                class="form-control"
-                id="owner_agency"
-                placeholder="Owner Agency"
-              />
-              <span class="error text-danger" id="owner_agency_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="agent_first_name">
-                Agent Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="agent_first_name"
-                class="form-control"
-                id="agent_first_name"
-                placeholder="Agent Name"
-              />
-              <span
-                class="error text-danger"
-                id="agent_first_name_error"
-              ></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="brn">Agency Brn</label>
-              <input
-                class="form-control"
-                type="text"
-                id="brn"
-                name="brn"
-                placeholder="Agent Brn"
-              />
-              <span class="text-danger" id="brn_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="agent_phone"
-                >Agent Phone<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="agent_phone"
-                name="agent_phone"
-                placeholder="Agent Phone"
-              />
-              <span class="text-danger" id="agent_phone_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="agent_email">Agent Email</label>
-              <input
-                class="form-control"
-                type="email"
-                id="agent_email"
-                name="agent_email"
-                placeholder="Tenant Agent Email"
-              />
-              <span class="text-danger" id="agent_email_error"></span>
-            </div>
-          </div>
-
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Tenant Agency Details</h5></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenant_agency"
-                >Agency Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="tenant_agency"
-                class="form-control"
-                id="tenant_agency"
-                placeholder="Tenant Agency"
-              />
-              <span class="error text-danger" id="tenant_agency_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="tenant_agent_first_name"
-                >Agent Name<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="tenant_agent_first_name"
-                class="form-control"
-                id="tenant_agent_first_name"
-                placeholder="Tenant Agent Name"
-              />
-              <span
-                class="error text-danger"
-                id="tenant_agent_first_name_error"
-              ></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenant_brn">Agency Brn</label>
-              <input
-                class="form-control"
-                type="text"
-                id="tenant_brn"
-                name="tenant_brn"
-                placeholder="Tenant Brn"
-              />
-              <span class="text-danger" id="tenant_brn_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="tenant_agent_phone"
-                >Agent Phone<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="tenant_agent_phone"
-                name="tenant_agent_phone"
-                placeholder="Tenant Agent Phone"
-              />
-              <span class="text-danger" id="tenant_agent_phone_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenant_agent_email">Agent Email</label>
-              <input
-                class="form-control"
-                type="email"
-                id="tenant_agent_email"
-                name="tenant_agent_email"
-                placeholder="Tenant Agent Email"
-              />
-              <span class="text-danger" id="tenant_agent_email_error"></span>
-            </div>
-          </div>
-
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Mediating Agency Details</h5></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="mediating_agency">Agency Name</label>
-              <input
-                type="text"
-                name="mediating_agency"
-                class="form-control"
-                id="mediating_agency"
-                placeholder="Mediating Agency"
-              />
-              <span
-                class="error text-danger"
-                id="mediating_agency_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="mediating_agent_name">Agent Name</label>
-              <input
-                type="text"
-                name="mediating_agent_name"
-                class="form-control"
-                id="mediating_agent_name"
-                placeholder="Agent Name"
-              />
-              <span
-                class="error text-danger"
-                id="mediating_agent_name_error"
-              ></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="mediating_agency_brn">Agency Brn</label>
-              <input
-                class="form-control"
-                type="text"
-                id="mediating_agency_brn"
-                name="mediating_agency_brn"
-                placeholder="Agent Brn"
-              />
-              <span class="text-danger" id="mediating_agency_brn_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="mediating_agent_phone">Agent Phone</label>
-              <input
-                class="form-control"
-                type="text"
-                id="mediating_agent_phone"
-                name="mediating_agent_phone"
-                placeholder="Agent Phone"
-              />
-              <span class="text-danger" id="mediating_agent_phone_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="mediating_agent_email">Agent Email</label>
-              <input
-                class="form-control"
-                type="email"
-                id="mediating_agent_email"
-                name="mediating_agent_email"
-                placeholder="Agent Email"
-              />
-              <span class="text-danger" id="mediating_agent_email_error"></span>
-            </div>
-          </div>
-
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Revenue Details</h5></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="total_commission"
-                >Total Commission<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="total_commission"
-                class="form-control"
-                id="total_commission"
-                placeholder="Total Commission"
-              />
-              <span
-                class="error text-danger"
-                id="total_commission_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="less_outsude_commission"
-                >Less Outside Commission<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="less_outsude_commission"
-                class="form-control"
-                id="less_outsude_commission"
-                placeholder="Less Outside Commission"
-              />
-              <span
-                class="error text-danger"
-                id="less_outsude_commission_error"
-              ></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="net_commission"
-                >Net Commission<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                type="text"
-                name="net_commission"
-                class="form-control"
-                id="net_commission"
-                placeholder="Net Commission"
-              />
-              <span class="error text-danger" id="net_commission_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="classic"
-                >Classic<span class="mandetory_field">*</span></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="classic"
-                name="classic"
-                placeholder="Classic"
-              />
-              <span class="text-danger" id="classic_error"></span>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="agent1"
-                >Agent1<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <input
-                class="form-control"
-                type="text"
-                id="agent1"
-                name="agent1"
-                placeholder="Agent Commission"
-              />
-              <span class="text-danger" id="agent1_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="agent1"></label>
-              <select name="agent_name1" class="form-control" id="agent_name1">
-                <option value="">Select Agent</option>
-                <option value="10">Rahul B</option>
-                <option value="11">Anirudh</option>
-                <option value="12">Sonia</option>
-                <option value="13">Anusha</option>
-                <option value="16">Majid</option>
-              </select>
-              <span class="text-danger" id="agent_name1_error"></span>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="agent2">Agent2</label>
-              <input
-                class="form-control"
-                type="text"
-                id="agent2"
-                name="agent2"
-                placeholder="Agent Commission"
-                value="250"
-              />
-              <span class="text-danger" id="agent2_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="agent2"></label>
-              <select name="agent_name2" class="form-control" id="agent_name2">
-                <option value="">Select Agent</option>
-                <option value="10">Rahul B</option>
-                <option value="11">Anirudh</option>
-                <option value="12">Sonia</option>
-                <option value="13">Anusha</option>
-                <option value="16">Majid</option>
-                <option value="17">Rakesh Saldhana</option>
-                <option value="18">Jamil Mirza</option>
-                <option value="19">Asad Lohar</option>
-                <option value="20">Ashwin Radhakrishnan</option>
-                <option value="21">Seema</option>
-                <option value="22">Richard Ileogben</option>
-                <option value="23">SHAHBAZ</option>
-                <option value="25">Satish</option>
-                <option value="27">ganesh@classicproperties.ae</option>
-                <option value="28">Vikas Pamnani</option>
-                <option value="29">Yazan Abbar</option>
-                <option value="30">Yervant</option>
-                <option value="31">Sheryl Santos</option>
-                <option value="32">vivek@classicproperties.ae</option>
-                <option value="33">Leon Peter Zindi</option>
-                <option value="34">Kiran Shetty</option>
-                <option value="35">Vatche Saghdejian</option>
-                <option value="36">Lavin</option>
-                <option value="37">Hagop</option>
-                <option value="39">Utkurbek</option>
-                <option value="40">Heba</option>
-                <option value="41">Rohit Lohia</option>
-                <option value="42">Suneer</option>
-                <option value="43">Anuraag Bhattad</option>
-                <option value="44">David Melki</option>
-                <option value="45">Faizan Ahmed</option>
-                <option value="46">James</option>
-              </select>
-              <span class="text-danger" id="agent_name2_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="agent3">Agent3</label>
-              <input
-                class="form-control"
-                type="text"
-                id="agent3"
-                name="agent3"
-                placeholder="Agent Commission"
-              />
-              <span class="text-danger" id="agent3_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="agent3"></label>
-              <select name="agent_name3" class="form-control" id="agent_name3">
-                <option value="">Select Agent</option>
-                <option value="10">Rahul B</option>
-                <option value="11">Anirudh</option>
-                <option value="12">Sonia</option>
-                <option value="13">Anusha</option>
-                <option value="16">Majid</option>
-                <option value="17">Rakesh Saldhana</option>
-                <option value="18">Jamil Mirza</option>
-                <option value="19">Asad Lohar</option>
-                <option value="20">Ashwin Radhakrishnan</option>
-                <option value="21">Seema</option>
-              </select>
-              <span class="text-danger" id="agent_name3_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="agent_comment">Comment by Agent</label>
-              <textarea
-                class="form-control"
-                name="agent_comment"
-                id="agent_comment"
-                rows="5"
-                cols="50"
-                placeholder="Agent Comments"
-              >
-              </textarea>
-              <span class="text-danger" id="agent_comment_error"></span>
-            </div>
-            {% if perms.core.view_admin_rental_fields %}
-
-            <div class="col-md-6 form-group">
-              <label for="comments">Comment by Admin</label>
-              <textarea
-                class="form-control"
-                name="comments"
-                id="comments"
-                rows="5"
-                cols="50"
-                placeholder="Admin Comments"
-              ></textarea>
-              <span class="text-danger" id="comments_error"></span>
-            </div>
-            {% endif %}
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="receipt_no"
-                >Receipt No<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              >
-              <select name="receipt_no" class="form-control" id="receipt_no">
-                <option value="8877" selected="">8877</option>
-
-                <option value="Null">Null</option>
-                <option value="No Commision">No Commision</option>
-                <option value="4814">4814</option>
-                <option value="4815">4815</option>
-                <option value="4816">4816</option>
-                <option value="4817">4817</option>
-                <option value="4825">4825</option>
-                <option value="4826">4826</option>
-                <option value="4827">4827</option>
-                <option value="4828">4828</option>
-              </select>
-              <span class="text-danger" id="receipt_no_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="kyc_number">KYC Number</label>
-              <input
-                class="form-control"
-                type="text"
-                id="kyc_number"
-                name="kyc_number"
-                placeholder="KYC Number"
-              />
-              <span class="text-danger" id="kyc_number_error"></span>
-            </div>
-          </div>
-
-          <div class="row">
-            {% if perms.core.view_admin_rental_fields %}
-            <div class="col-md-6 form-group">
-              <label for="receipt_no">Approve/Reject</label><br />
-              <div class="row">
-                <div class="col-3">
-                  <input
-                    type="radio"
-                    name="is_approved_rejected"
-                    checked=""
-                    value="A"
-                  />
-                  Approve
-                </div>
-                <div class="col-3" style="margin-left: -45px">
-                  <input type="radio" name="is_approved_rejected" value="R" />
-                  Reject
-                </div>
-                <div class="col-6" style="margin-left: -55px">
-                  <input type="radio" name="is_approved_rejected" value="F" />
-                  Waiting for Finance
-                </div>
-              </div>
-            </div>
-            {% endif %}
-
-            {% for group in request.user.groups.all %}
-          {% if "Manager" in group.name %}
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
     
-       
-             {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+    <div class="col-md-12">
+     
 
-            <div class="col-md-6 form-group">
-              <label for="receipt_no">Approve/Reject</label><br />
-              <div class="row">
-                <div class="col-3">
-                  <input
-                    type="radio"
-                    name="manager_approved_rejected"
-                    checked=""
-                    value="A"
-                  />
-                  Approve
+      <div class="card mb-5">
+         <div class="card-header bg-transparent">
+        <h4 class="pb-2">
+          Edit Rental Deal<span class="float-right">
+            <a class="btn btn-primary btn-rounded" href="/rental-deals/list/"
+              >Cancel</a
+            ></span
+          >
+        </h4>
+      </div>
+        <div class="card-body">
+          <div class="row">
+                    <div class="col-md-6 form-group mb-1">
+                        <label><h5>Property Details</h5></label>
+                    </div>
                 </div>
-                <div class="col-3" style="margin-left: -45px">
-                  <input
-                    type="radio"
-                    name="manager_approved_rejected"
-                    value="R"
-                  />
-                  Reject
+          <form
+            id="deal_form"
+            enctype="multipart/form-data"
+            novalidate="novalidate"
+          >
+            <div class="row">
+              <input
+                type="hidden"
+                value="tbtuvd6OVcsxQCjqu6A2TQuPm8L3YLhlOPNNwRuI"
+                name="csrf-token"
+                id="token"
+              />
+              <input type="hidden" name="id" id="id" />
+              <input type="hidden" name="save_as" id="save_as" />
+              <input type="hidden" name="account_id" id="account_id" />
+              <input
+                type="hidden"
+                name="comments_finance"
+                id="comments_finance"
+              />
+              <input
+                type="hidden"
+                name="existing_property"
+                value=""
+                id="existing_property"
+              />
+
+              <div class="col-md-6 form-group">
+                <label for="role"
+                  >Deal Submitted By Agent<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                >
+                <select
+                  class="selectbox2 form-control"
+                  name="submitted_by_agent"
+                  id="submitted_by_agent"
+                >
+                  <option value="">Select Agent Name</option>
+                  <option value="10">Rahul B</option>
+                  <option value="11">Anirudh</option>
+                  <option value="12">Sonia</option>
+                  <option value="13">Anusha</option>
+                  <option value="16">Majid</option>
+                  <option value="17">Rakesh Saldhana</option>
+                  <option value="18">Jamil Mirza</option>
+                  <option value="19">Asad Lohar</option>
+                  <option value="20">Ashwin Radhakrishnan</option>
+                  <option value="21">Seema</option>
+                  <option value="22">Richard Ileogben</option>
+                  <option value="23">SHAHBAZ</option>
+                  <option value="25">Satish</option>
+                  <option value="124">Shubh Sarda</option>
+                  <option value="125">Hitesh Aswani</option>
+                  <option value="126">Kalash Malani</option>
+                </select>
+                <span class="text-danger" id="submitted_by_agent_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group mb-3">
+                <label for="date"
+                  >Deal Date<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="date"
+                  class="form-control"
+                  id="date"
+                  placeholder="Deal Date"
+                  value="20-06-2025"
+                  readonly=""
+                />
+                <span class="error text-danger" id="date_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="reference_number"
+                  >Reference Number<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="reference_number"
+                  class="form-control"
+                  id="reference_number"
+                  placeholder="Reference Number"
+                />
+                <span
+                  class="error text-danger"
+                  id="reference_number_error"
+                ></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="is_new_deal"
+                  >Deal<span class="mandetory_field" style="color: red"
+                    >*
+                  </span></label
+                ><br />
+                <div class="row">
+                  <div class="col-3">
+                    <input
+                      type="radio"
+                      name="is_new_deal"
+                      value="N"
+                      id="is_new_deal"
+                    />
+                    New
+                  </div>
+                  <div class="col-3" style="margin-left: -75px">
+                    <input
+                      type="radio"
+                      name="is_new_deal"
+                      value="R"
+                      class="ml-1"
+                      id="is_new_deal"
+                      checked=""
+                    />
+                    Renewal
+                  </div>
+                  <br />
+                  <span class="error text-danger" id="is_new_deal_error"></span>
                 </div>
               </div>
-            </div>
-           {% comment %} {% endif %} {% endcomment %}
-            {% comment %} {% break %} {% endcomment %}
-          {% endif %}
-        {% endfor %}
+              <div class="col-md-6 form-group mb-3">
+                <label for="project_name"
+                  >Project Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="project_name"
+                  class="form-control"
+                  id="project_name"
+                  placeholder="Project Name"
+                />
+                <span class="error text-danger" id="project_name_error"></span>
+              </div>
 
+              <div class="col-md-6 form-group mb-3">
+                <label for="unit_details"
+                  >Unit No<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="unit_details"
+                  class="form-control"
+                  id="unit_details"
+                  placeholder="Unit No"
+                />
+                <span class="error text-danger" id="unit_details_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="building_name"
+                  >Building Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="building_name"
+                  class="form-control"
+                  id="building_name"
+                  placeholder="Building Name"
+                />
+                <span class="error text-danger" id="building_name_error"></span>
+              </div>
 
-             {% if perms.core.update_amt_status_rental_deals %}
-            <div class="col-md-6 form-group">
-              <label for="kyc_number"
-                >AML<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <div class="row">
-                <div class="col-3">
-                  <input
-                    value="Yes"
-                    class=""
-                    name="is_rental_aml"
-                    id="is_rental_aml"
-                    type="radio"
-                    checked=""
-                  />
-                  Yes
-                </div>
-                <div class="col-5" style="margin-left: -80px">
-                  <input
-                    value="No"
-                    class="ml-1"
-                    name="is_rental_aml"
-                    id="is_rental_aml"
-                    type="radio"
-                  />
-                  No
-                </div>
-                <br />
-                <span class="text-danger" id="is_rental_aml_error"></span>
+              <div class="col-md-6 form-group mb-3">
+                <label for="rental_price">Rental Price</label>
+                <input
+                  type="text"
+                  name="rental_price"
+                  class="form-control"
+                  id="rental_price"
+                  placeholder="Rental Price"
+                />
+                <span class="error text-danger" id="rental_price_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="deal_start_date"
+                  >Deal Start Date<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="deal_start_date"
+                  class="form-control startDate"
+                  id="deal_start_date"
+                  placeholder="Deal Start Date"
+                  readonly=""
+                />
+                <span class="error text-danger" id="deal_start_date_error"></span>
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="deal_end_date"
+                  >Deal End Date<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="deal_end_date"
+                  class="form-control endDate"
+                  id="deal_end_date"
+                  placeholder="Deal End Date"
+                  autocomplete="off"
+                  value=""
+                  readonly=""
+                />
+                <span class="error text-danger" id="deal_end_date_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group mb-3">
+                <label for="agent1">Property Usage</label>
+                <select
+                  name="property_usage"
+                  class="form-control"
+                  id="property_usage"
+                >
+                  <option value="">Select Property Usage</option>
+                  <option value="industrial">Industrial</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="residential">Residential</option>
+                </select>
+                <span class="text-danger" id="property_usage_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group mb-3">
+                <label for="property_type">Property Type</label>
+                <input
+                  type="text"
+                  name="property_type"
+                  class="form-control"
+                  id="property_type"
+                  placeholder="Property Type"
+                />
+                <span class="text-danger" id="property_type_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="property_size">Property Size</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="property_size"
+                  name="property_size"
+                  placeholder="Property Size"
+                />
+                <span class="text-danger" id="property_size_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="premises_no">Premises No</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="premises_no"
+                  name="premises_no"
+                  value="916027929"
+                  placeholder="Premises No"
+                />
+                <span class="text-danger" id="premises_no_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="premises_no">Security Deposit</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="security_deposit"
+                  name="security_deposit"
+                  value="5,500 /-"
+                  placeholder="Security Deposit"
+                />
+                <span class="text-danger" id="security_deposit_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="plot_no">Plot No</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="plot_no"
+                  name="plot_no"
+                  value="8020"
+                  placeholder="Plot No"
+                />
+                <span class="text-danger" id="plot_no_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="mode_of_payment">Mode of Payment</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="mode_of_payment"
+                  name="mode_of_payment"
+                  placeholder="Mode of Payment"
+                />
+                <span class="text-danger" id="mode_of_payment_error"></span>
               </div>
             </div>
+
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Owner Details</h5></label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="role"
+                  >Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="owner_first_name"
+                  class="form-control"
+                  id="owner_first_name"
+                  placeholder="Owner Name"
+                />
+                <span
+                  class="error text-danger"
+                  id="owner_first_name_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="role"
+                  >Source<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <select
+                  class="form-control"
+                  name="owner_source"
+                  id="owner_source"
+                >
+                  <option value="">Reference</option>
+                  <option value="Dubizzle">Dubizzle</option>
+                  <option value="Property finder">Property finder</option>
+                  <option value="Classic Website">Classic Website</option>
+                  <option value="YZER">YZER</option>
+                  <option value="Gulfnews">Gulfnews</option>
+                  <option value="Others">Others</option>
+                  <option value="Reference">Reference</option>
+                  <option value="Agent">Agent</option>
+                  <option value="Network">Network</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="Walk In">Walk In</option>
+                  <option value="Security">Security</option>
+                  <option value="Developer">Developer</option>
+                  <option value="BAYUT">BAYUT</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="owner_mobile"
+                  >Mobile<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="owner_mobile"
+                  name="owner_mobile"
+                  placeholder="Owner Mobile"
+                />
+                <span class="text-danger" id="owner_mobile_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="owner_email"
+                  >Email<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="email"
+                  id="owner_email"
+                  name="owner_email"
+                  placeholder="Owner Email"
+                />
+                <span class="text-danger" id="owner_email_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="seller_nationality"
+                  >Nationality<span class="mandetory_field">*</span></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="seller_nationality"
+                  name="seller_nationality"
+                  placeholder="Nationality"
+                />
+                <span class="text-danger" id="seller_nationality_error"></span>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Tenant Details</h5></label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="role"
+                  >Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="tenant_first_name"
+                  class="form-control"
+                  id="tenant_first_name"
+                  placeholder="Tenant Name"
+                />
+                <span
+                  class="error text-danger"
+                  id="tenant_first_name_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="role"
+                  >Source<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <select
+                  class="form-control"
+                  name="tenant_source"
+                  id="tenant_source"
+                >
+                  <option value="">Reference</option>
+                  <option value="Dubizzle">Dubizzle</option>
+                  <option value="Property finder">Property finder</option>
+                  <option value="Classic Website">Classic Website</option>
+                  <option value="YZER">YZER</option>
+                  <option value="Gulfnews">Gulfnews</option>
+                  <option value="Others">Others</option>
+                  <option value="Reference">Reference</option>
+                  <option value="Agent">Agent</option>
+                  <option value="Network">Network</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="Walk In">Walk In</option>
+                  <option value="Security">Security</option>
+                  <option value="Developer">Developer</option>
+                  <option value="BAYUT">BAYUT</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenant_mobile"
+                  >Mobile<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="tenant_mobile"
+                  name="tenant_mobile"
+                  placeholder="Tenant Mobile"
+                />
+                <span class="text-danger" id="tenant_mobile_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="tenant_email"
+                  >Email<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="email"
+                  id="tenant_email"
+                  name="tenant_email"
+                  placeholder="Tenant Email"
+                />
+                <span class="text-danger" id="tenant_email_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="buyer_nationality"
+                  >Nationality<span class="mandetory_field">*</span></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="buyer_nationality"
+                  name="buyer_nationality"
+                  placeholder="Nationality"
+                />
+                <span class="text-danger" id="buyer_nationality_error"></span>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Owner Agency Details</h5></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="owner_agency"
+                  >Agency Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="owner_agency"
+                  class="form-control"
+                  id="owner_agency"
+                  placeholder="Owner Agency"
+                />
+                <span class="error text-danger" id="owner_agency_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="agent_first_name">
+                  Agent Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="agent_first_name"
+                  class="form-control"
+                  id="agent_first_name"
+                  placeholder="Agent Name"
+                />
+                <span
+                  class="error text-danger"
+                  id="agent_first_name_error"
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="brn">Agency Brn</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="brn"
+                  name="brn"
+                  placeholder="Agent Brn"
+                />
+                <span class="text-danger" id="brn_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="agent_phone"
+                  >Agent Phone<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="agent_phone"
+                  name="agent_phone"
+                  placeholder="Agent Phone"
+                />
+                <span class="text-danger" id="agent_phone_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="agent_email">Agent Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  id="agent_email"
+                  name="agent_email"
+                  placeholder="Tenant Agent Email"
+                />
+                <span class="text-danger" id="agent_email_error"></span>
+              </div>
+            </div>
+
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Tenant Agency Details</h5></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenant_agency"
+                  >Agency Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="tenant_agency"
+                  class="form-control"
+                  id="tenant_agency"
+                  placeholder="Tenant Agency"
+                />
+                <span class="error text-danger" id="tenant_agency_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="tenant_agent_first_name"
+                  >Agent Name<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="tenant_agent_first_name"
+                  class="form-control"
+                  id="tenant_agent_first_name"
+                  placeholder="Tenant Agent Name"
+                />
+                <span
+                  class="error text-danger"
+                  id="tenant_agent_first_name_error"
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenant_brn">Agency Brn</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="tenant_brn"
+                  name="tenant_brn"
+                  placeholder="Tenant Brn"
+                />
+                <span class="text-danger" id="tenant_brn_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="tenant_agent_phone"
+                  >Agent Phone<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="tenant_agent_phone"
+                  name="tenant_agent_phone"
+                  placeholder="Tenant Agent Phone"
+                />
+                <span class="text-danger" id="tenant_agent_phone_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenant_agent_email">Agent Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  id="tenant_agent_email"
+                  name="tenant_agent_email"
+                  placeholder="Tenant Agent Email"
+                />
+                <span class="text-danger" id="tenant_agent_email_error"></span>
+              </div>
+            </div>
+
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Mediating Agency Details</h5></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="mediating_agency">Agency Name</label>
+                <input
+                  type="text"
+                  name="mediating_agency"
+                  class="form-control"
+                  id="mediating_agency"
+                  placeholder="Mediating Agency"
+                />
+                <span
+                  class="error text-danger"
+                  id="mediating_agency_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="mediating_agent_name">Agent Name</label>
+                <input
+                  type="text"
+                  name="mediating_agent_name"
+                  class="form-control"
+                  id="mediating_agent_name"
+                  placeholder="Agent Name"
+                />
+                <span
+                  class="error text-danger"
+                  id="mediating_agent_name_error"
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="mediating_agency_brn">Agency Brn</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="mediating_agency_brn"
+                  name="mediating_agency_brn"
+                  placeholder="Agent Brn"
+                />
+                <span class="text-danger" id="mediating_agency_brn_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="mediating_agent_phone">Agent Phone</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="mediating_agent_phone"
+                  name="mediating_agent_phone"
+                  placeholder="Agent Phone"
+                />
+                <span class="text-danger" id="mediating_agent_phone_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="mediating_agent_email">Agent Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  id="mediating_agent_email"
+                  name="mediating_agent_email"
+                  placeholder="Agent Email"
+                />
+                <span class="text-danger" id="mediating_agent_email_error"></span>
+              </div>
+            </div>
+
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Revenue Details</h5></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="total_commission"
+                  >Total Commission<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="total_commission"
+                  class="form-control"
+                  id="total_commission"
+                  placeholder="Total Commission"
+                />
+                <span
+                  class="error text-danger"
+                  id="total_commission_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="less_outsude_commission"
+                  >Less Outside Commission<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="less_outsude_commission"
+                  class="form-control"
+                  id="less_outsude_commission"
+                  placeholder="Less Outside Commission"
+                />
+                <span
+                  class="error text-danger"
+                  id="less_outsude_commission_error"
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="net_commission"
+                  >Net Commission<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  type="text"
+                  name="net_commission"
+                  class="form-control"
+                  id="net_commission"
+                  placeholder="Net Commission"
+                />
+                <span class="error text-danger" id="net_commission_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="classic"
+                  >Classic<span class="mandetory_field">*</span></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="classic"
+                  name="classic"
+                  placeholder="Classic"
+                />
+                <span class="text-danger" id="classic_error"></span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="agent1"
+                  >Agent1<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="agent1"
+                  name="agent1"
+                  placeholder="Agent Commission"
+                />
+                <span class="text-danger" id="agent1_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="agent1"></label>
+                <select name="agent_name1" class="form-control" id="agent_name1">
+                  <option value="">Select Agent</option>
+                  <option value="10">Rahul B</option>
+                  <option value="11">Anirudh</option>
+                  <option value="12">Sonia</option>
+                  <option value="13">Anusha</option>
+                  <option value="16">Majid</option>
+                </select>
+                <span class="text-danger" id="agent_name1_error"></span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="agent2">Agent2</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="agent2"
+                  name="agent2"
+                  placeholder="Agent Commission"
+                  value="250"
+                />
+                <span class="text-danger" id="agent2_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="agent2"></label>
+                <select name="agent_name2" class="form-control" id="agent_name2">
+                  <option value="">Select Agent</option>
+                  <option value="10">Rahul B</option>
+                  <option value="11">Anirudh</option>
+                  <option value="12">Sonia</option>
+                  <option value="13">Anusha</option>
+                  <option value="16">Majid</option>
+                  <option value="17">Rakesh Saldhana</option>
+                  <option value="18">Jamil Mirza</option>
+                  <option value="19">Asad Lohar</option>
+                  <option value="20">Ashwin Radhakrishnan</option>
+                  <option value="21">Seema</option>
+                  <option value="22">Richard Ileogben</option>
+                  <option value="23">SHAHBAZ</option>
+                  <option value="25">Satish</option>
+                  <option value="27">ganesh@classicproperties.ae</option>
+                  <option value="28">Vikas Pamnani</option>
+                  <option value="29">Yazan Abbar</option>
+                  <option value="30">Yervant</option>
+                  <option value="31">Sheryl Santos</option>
+                  <option value="32">vivek@classicproperties.ae</option>
+                  <option value="33">Leon Peter Zindi</option>
+                  <option value="34">Kiran Shetty</option>
+                  <option value="35">Vatche Saghdejian</option>
+                  <option value="36">Lavin</option>
+                  <option value="37">Hagop</option>
+                  <option value="39">Utkurbek</option>
+                  <option value="40">Heba</option>
+                  <option value="41">Rohit Lohia</option>
+                  <option value="42">Suneer</option>
+                  <option value="43">Anuraag Bhattad</option>
+                  <option value="44">David Melki</option>
+                  <option value="45">Faizan Ahmed</option>
+                  <option value="46">James</option>
+                </select>
+                <span class="text-danger" id="agent_name2_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="agent3">Agent3</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="agent3"
+                  name="agent3"
+                  placeholder="Agent Commission"
+                />
+                <span class="text-danger" id="agent3_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="agent3"></label>
+                <select name="agent_name3" class="form-control" id="agent_name3">
+                  <option value="">Select Agent</option>
+                  <option value="10">Rahul B</option>
+                  <option value="11">Anirudh</option>
+                  <option value="12">Sonia</option>
+                  <option value="13">Anusha</option>
+                  <option value="16">Majid</option>
+                  <option value="17">Rakesh Saldhana</option>
+                  <option value="18">Jamil Mirza</option>
+                  <option value="19">Asad Lohar</option>
+                  <option value="20">Ashwin Radhakrishnan</option>
+                  <option value="21">Seema</option>
+                </select>
+                <span class="text-danger" id="agent_name3_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="agent_comment">Comment by Agent</label>
+                <textarea
+                  class="form-control"
+                  name="agent_comment"
+                  id="agent_comment"
+                  rows="5"
+                  cols="50"
+                  placeholder="Agent Comments"
+                >
+                </textarea>
+                <span class="text-danger" id="agent_comment_error"></span>
+              </div>
+              {% if perms.core.view_admin_rental_fields %}
+
+              <div class="col-md-6 form-group">
+                <label for="comments">Comment by Admin</label>
+                <textarea
+                  class="form-control"
+                  name="comments"
+                  id="comments"
+                  rows="5"
+                  cols="50"
+                  placeholder="Admin Comments"
+                ></textarea>
+                <span class="text-danger" id="comments_error"></span>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="receipt_no"
+                  >Receipt No<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                >
+                <select name="receipt_no" class="form-control" id="receipt_no">
+                  <option value="8877" selected="">8877</option>
+
+                  <option value="Null">Null</option>
+                  <option value="No Commision">No Commision</option>
+                  <option value="4814">4814</option>
+                  <option value="4815">4815</option>
+                  <option value="4816">4816</option>
+                  <option value="4817">4817</option>
+                  <option value="4825">4825</option>
+                  <option value="4826">4826</option>
+                  <option value="4827">4827</option>
+                  <option value="4828">4828</option>
+                </select>
+                <span class="text-danger" id="receipt_no_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="kyc_number">KYC Number</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="kyc_number"
+                  name="kyc_number"
+                  placeholder="KYC Number"
+                />
+                <span class="text-danger" id="kyc_number_error"></span>
+              </div>
+            </div>
+
+            <div class="row">
+              {% if perms.core.view_admin_rental_fields %}
+              <div class="col-md-6 form-group">
+                <label for="receipt_no">Approve/Reject</label><br />
+                <div class="row">
+                  <div class="col-3">
+                    <input
+                      type="radio"
+                      name="is_approved_rejected"
+                      checked=""
+                      value="A"
+                    />
+                    Approve
+                  </div>
+                  <div class="col-3" style="margin-left: -45px">
+                    <input type="radio" name="is_approved_rejected" value="R" />
+                    Reject
+                  </div>
+                  <div class="col-6" style="margin-left: -55px">
+                    <input type="radio" name="is_approved_rejected" value="F" />
+                    Waiting for Finance
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+
+              {% for group in request.user.groups.all %}
+            {% if "Manager" in group.name %}
+      
+        
+              {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+
+              <div class="col-md-6 form-group">
+                <label for="receipt_no">Approve/Reject</label><br />
+                <div class="row">
+                  <div class="col-3">
+                    <input
+                      type="radio"
+                      name="manager_approved_rejected"
+                      checked=""
+                      value="A"
+                    />
+                    Approve
+                  </div>
+                  <div class="col-3" style="margin-left: -45px">
+                    <input
+                      type="radio"
+                      name="manager_approved_rejected"
+                      value="R"
+                    />
+                    Reject
+                  </div>
+                </div>
+              </div>
+            {% comment %} {% endif %} {% endcomment %}
+              {% comment %} {% break %} {% endcomment %}
             {% endif %}
-          </div>
+          {% endfor %}
 
-          <hr />
-          <div class="row">
-            <div class="col-md-6 form-group mb-1">
-              <label><h5>Documents</h5></label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenancy_contract"
-                >Tenancy Contract<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
 
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="tenancy_contract"
-                type="file"
-                value=""
-                name="tenancy_contract[]"
-              />
-
-              <span class="text-danger" id="tenancy_contract_error"></span>
-            </div>
-
-            <div class="col-md-6 form-group">
-              <label for="owner_passport_copy"
-                >Owner Passport Copy<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="owner_passport_copy"
-                type="file"
-                name="owner_passport_copy[]"
-              />
-
-              <span class="text-danger" id="owner_passport_copy_error"></span>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="title_deed"
-                >Title Deed<span class="mandetory_field" style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="title_deed"
-                type="file"
-                value=""
-                name="title_deed[]"
-              />
-
-              <span class="text-danger" id="title_deed_error"></span>
+              {% if perms.core.update_amt_status_rental_deals %}
+              <div class="col-md-6 form-group">
+                <label for="kyc_number"
+                  >AML<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <div class="row">
+                  <div class="col-3">
+                    <input
+                      value="Yes"
+                      class=""
+                      name="is_rental_aml"
+                      id="is_rental_aml"
+                      type="radio"
+                      checked=""
+                    />
+                    Yes
+                  </div>
+                  <div class="col-5" style="margin-left: -80px">
+                    <input
+                      value="No"
+                      class="ml-1"
+                      name="is_rental_aml"
+                      id="is_rental_aml"
+                      type="radio"
+                    />
+                    No
+                  </div>
+                  <br />
+                  <span class="text-danger" id="is_rental_aml_error"></span>
+                </div>
+              </div>
+              {% endif %}
             </div>
 
-            <div class="col-md-6 form-group">
-              <label for="ejari">Ejari</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="ejari"
-                type="file"
-                value=""
-                name="ejari[]"
-              />
-
-              <span class="text-danger" id="ejari_error"></span>
+            <hr />
+            <div class="row">
+              <div class="col-md-6 form-group mb-1">
+                <label><h5>Documents</h5></label>
+              </div>
             </div>
-          </div>
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenancy_contract"
+                  >Tenancy Contract<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
 
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenant_passport_visa_copy"
-                >Tenant Passport Visa Copy<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="tenant_passport_visa_copy"
-                type="file"
-                value=""
-                name="tenant_passport_visa_copy[]"
-              />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="tenancy_contract"
+                  type="file"
+                  value=""
+                  name="tenancy_contract[]"
+                />
 
-              <span
-                class="text-danger"
-                id="tenant_passport_visa_copy_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="tenant_emirates_id">Tenants Eid Copy</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="tenant_emirates_id"
-                type="file"
-                value=""
-                name="tenant_emirates_id[]"
-              />
+                <span class="text-danger" id="tenancy_contract_error"></span>
+              </div>
 
-              <span class="text-danger" id="tenant_emirates_id_error"></span>
-            </div>
-          </div>
+              <div class="col-md-6 form-group">
+                <label for="owner_passport_copy"
+                  >Owner Passport Copy<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="owner_passport_copy"
+                  type="file"
+                  name="owner_passport_copy[]"
+                />
 
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="owner_eid_copy">Owner Eid Copy</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="owner_eid_copy"
-                type="file"
-                value=""
-                name="owner_eid_copy[]"
-              />
-
-              <div id="upload_prevss" class="owner_eid_copy_list"></div>
-              <span class="text-danger" id="owner_eid_copy_error"></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="rental_deposit_cheque_copy"
-                >Rental Deposit &amp; Rental Cheque Copy<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="rental_deposit_cheque_copy"
-                type="file"
-                value=""
-                name="rental_deposit_cheque_copy[]"
-              />
-
-              <span
-                class="text-danger"
-                id="rental_deposit_cheque_copy_error"
-              ></span>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="owner_poa_pp_copy">Poa Pp</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="owner_poa_pp_copy"
-                type="file"
-                value=""
-                name="owner_poa_pp_copy[]"
-              />
-
-              <span class="text-danger" id="owner_poa_pp_copy_error"></span>
+                <span class="text-danger" id="owner_passport_copy_error"></span>
+              </div>
             </div>
 
-            <div class="col-md-6 form-group">
-              <label for="poa_copy">Poa Copy</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="poa_copy"
-                type="file"
-                value=""
-                name="poa_copy[]"
-              />
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="title_deed"
+                  >Title Deed<span class="mandetory_field" style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="title_deed"
+                  type="file"
+                  value=""
+                  name="title_deed[]"
+                />
 
-              <span class="text-danger" id="poa_copy_error"></span>
-            </div>
-          </div>
+                <span class="text-danger" id="title_deed_error"></span>
+              </div>
 
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="key_hand_over_form"
-                >Key Hand Over Form<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="key_hand_over_form"
-                type="file"
-                value=""
-                name="key_hand_over_form[]"
-              />
+              <div class="col-md-6 form-group">
+                <label for="ejari">Ejari</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="ejari"
+                  type="file"
+                  value=""
+                  name="ejari[]"
+                />
 
-              <span class="text-danger" id="key_hand_over_form_error"></span>
+                <span class="text-danger" id="ejari_error"></span>
+              </div>
             </div>
 
-            <div class="col-md-6 form-group">
-              <label for="rental_kyc_number">KYC Form</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="rental_kyc_number"
-                type="file"
-                value=""
-                name="rental_kyc_number[]"
-              />
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenant_passport_visa_copy"
+                  >Tenant Passport Visa Copy<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="tenant_passport_visa_copy"
+                  type="file"
+                  value=""
+                  name="tenant_passport_visa_copy[]"
+                />
 
-              <span class="text-danger" id="rental_kyc_number_error"></span>
-            </div>
-          </div>
+                <span
+                  class="text-danger"
+                  id="tenant_passport_visa_copy_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="tenant_emirates_id">Tenants Eid Copy</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="tenant_emirates_id"
+                  type="file"
+                  value=""
+                  name="tenant_emirates_id[]"
+                />
 
-          <div class="row">
-            <div class="col-md-6 form-group">
-              <label for="tenancy_application_form"
-                >Tenancy Application Form<span
-                  class="mandetory_field"
-                  style="color: red"
-                  >*</span
-                ></label
-              ><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="tenancy_application_form"
-                type="file"
-                name="tenancy_application_form[]"
-              />
+                <span class="text-danger" id="tenant_emirates_id_error"></span>
+              </div>
+            </div>
 
-              <span
-                class="text-danger"
-                id="tenancy_application_form_error"
-              ></span>
-            </div>
-            <div class="col-md-6 form-group">
-              <label for="screening">Screening</label><br />
-              <input
-                multiple="multiple"
-                class="imageUploadInput"
-                id="screening"
-                type="file"
-                value=""
-                name="screening[]"
-              />
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="owner_eid_copy">Owner Eid Copy</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="owner_eid_copy"
+                  type="file"
+                  value=""
+                  name="owner_eid_copy[]"
+                />
 
-              <span class="text-danger" id="screening_error"></span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label for="screening_comments">Screening Comments</label>
-              <textarea
-                class="form-control"
-                name="screening_comments"
-                id="screening_comments"
-                rows="5"
-                cols="50"
-                placeholder="Screening Comments"
-              ></textarea>
-            </div>
-          </div>
+                <div id="upload_prevss" class="owner_eid_copy_list"></div>
+                <span class="text-danger" id="owner_eid_copy_error"></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="rental_deposit_cheque_copy"
+                  >Rental Deposit &amp; Rental Cheque Copy<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="rental_deposit_cheque_copy"
+                  type="file"
+                  value=""
+                  name="rental_deposit_cheque_copy[]"
+                />
 
-          <div class="row mt-3 w-100 d-flex justify-content-center">
-            <div class="col-12   mt-3 w-100 d-flex justify-content-center">
-              <button
-                type="button"
-                class="btn btn-primary btn-rounded m-1"
-                name="create_deal"
-                id="create_deal"
-              >
-                Submit Deal
-              </button>
-               
+                <span
+                  class="text-danger"
+                  id="rental_deposit_cheque_copy_error"
+                ></span>
+              </div>
             </div>
-          </div>
-        </form>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="owner_poa_pp_copy">Poa Pp</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="owner_poa_pp_copy"
+                  type="file"
+                  value=""
+                  name="owner_poa_pp_copy[]"
+                />
+
+                <span class="text-danger" id="owner_poa_pp_copy_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="poa_copy">Poa Copy</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="poa_copy"
+                  type="file"
+                  value=""
+                  name="poa_copy[]"
+                />
+
+                <span class="text-danger" id="poa_copy_error"></span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="key_hand_over_form"
+                  >Key Hand Over Form<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="key_hand_over_form"
+                  type="file"
+                  value=""
+                  name="key_hand_over_form[]"
+                />
+
+                <span class="text-danger" id="key_hand_over_form_error"></span>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <label for="rental_kyc_number">KYC Form</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="rental_kyc_number"
+                  type="file"
+                  value=""
+                  name="rental_kyc_number[]"
+                />
+
+                <span class="text-danger" id="rental_kyc_number_error"></span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="tenancy_application_form"
+                  >Tenancy Application Form<span
+                    class="mandetory_field"
+                    style="color: red"
+                    >*</span
+                  ></label
+                ><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="tenancy_application_form"
+                  type="file"
+                  name="tenancy_application_form[]"
+                />
+
+                <span
+                  class="text-danger"
+                  id="tenancy_application_form_error"
+                ></span>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="screening">Screening</label><br />
+                <input
+                  multiple="multiple"
+                  class="imageUploadInput"
+                  id="screening"
+                  type="file"
+                  value=""
+                  name="screening[]"
+                />
+
+                <span class="text-danger" id="screening_error"></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group mb-3">
+                <label for="screening_comments">Screening Comments</label>
+                <textarea
+                  class="form-control"
+                  name="screening_comments"
+                  id="screening_comments"
+                  rows="5"
+                  cols="50"
+                  placeholder="Screening Comments"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="row mt-3 w-100 d-flex justify-content-center">
+              <div class="col-12   mt-3 w-100 d-flex justify-content-center">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-rounded m-1"
+                  name="create_deal"
+                  id="create_deal"
+                >
+                  Submit Deal
+                </button>
+                
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

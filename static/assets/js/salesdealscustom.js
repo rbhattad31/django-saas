@@ -247,6 +247,14 @@ $(document).ready(function () {
     paging: true,
     processing: true,
     searching: true,
+     anguage: {
+    paginate: {
+      previous: "Previous",
+      next: "Next "
+    }
+  },
+
+  pagingType: "simple_numbers",
     order: [[7, "desc"]], // Default order by "Submitted Date" descending
     serverSide: true,
     ajax: {
@@ -284,6 +292,22 @@ $(document).ready(function () {
         console.log("Only table rows:", json.data); // 🔍 just the rows
         return json.data; // required — tells DataTables where the table rows are
       },
+       error: function (xhr, status, error) {
+      console.log("entered the error file")
+            if (xhr.status === 403) {
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+                // Option 2: show SweetAlert (if you’re using it)
+                // Swal.fire({
+                //     icon: "error",
+                //     title: "Access Denied",
+                //     text: "You do not have permission to view this page."
+                // });
+            } else {
+                console.error("❌ AJAX Error:", status, error);
+            }
+        },
 
       // complete: function (xhr, status) {
       //   // Log the full response object
@@ -348,7 +372,15 @@ $(document).ready(function () {
       },
     ],
   });
+  $('#filterForm').on('submit', function (e) {
+    e.preventDefault(); // Prevent page reload
+    table.ajax.reload(); // Reload DataTable with new filters
+  });
+
 });
+
+// form search 
+  
 
 // When user clicks the trash icon — open modal
 $(document).on("click", ".delete-btn", function (e) {
@@ -391,10 +423,7 @@ $("#confirmDeleteBtn").on("click", function () {
 //   //     table.ajax.reload();
 //   //   }
 //   // );
-//    $('#filterForm').on('submit', function (e) {
-//     e.preventDefault(); // Prevent page reload
-//     table.ajax.reload(); // Reload DataTable with new filters
-//   });
+//  
 // });
 
 // // dropdown for side nav
@@ -1655,24 +1684,42 @@ function updatefunctionality(urls) {
   ;
 }
 
-function showErrors(validator){
-  	var messages = '';
-  	$.each(validator.errorMap, function (index, value) {
-  		
-  		if (lang=='ar') {
-  			for (var key in form_fields) {
-  				var val = form_fields[key];
-  			
-	  		  	if (key==index) {
-	  		     	messages +=val + ' : ' + value+'\n';
-	  		  	}
-	  		  	else{
-  					// messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
-  				}
-  			}
-  		}else{
-    		messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
-  		}
-    });
-  	swal(msg,messages);
-}
+
+var lang = "";
+      if (lang == "ar") {
+        var oLanguage = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+        var msg = "الرجاء ملء الحقل الإلزامي";
+      } else {
+        var oLanguage = "";
+        var msg = "Please fill mandatory field";
+      }
+
+
+  function showErrors(validator) {
+        var messages = "";
+        console.log(validator, "messages in show errors validator");
+        $.each(validator.errorMap, function (index, value) {
+          if (lang == "ar") {
+            for (var key in form_fields) {
+              var val = form_fields[key];
+
+              if (key == index) {
+                messages += val + " : " + value + "\n";
+              } else {
+                 messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+              }
+            }
+          } else {
+            messages +=
+              index.charAt(0).toUpperCase() +
+              index.slice(1) +
+              " : " +
+              value +
+              "\n";
+
+              console.log(messages, "messages in show errors else");
+          }
+        });
+        console.log(messages);
+        swal(msg, messages);
+      }

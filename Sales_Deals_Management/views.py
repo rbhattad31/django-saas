@@ -14,7 +14,7 @@ from .serializers import SalesDealSerializer, SalesDealSerializerForDraft , filt
 from django.db.models import Q
 from django.template import loader
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from .forms import SalesDealsForm 
 from django.template import TemplateDoesNotExist
@@ -30,7 +30,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from rest_framework import viewsets, status ,permissions
+from rest_framework import viewsets, status, permissions
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import filterSerializer
 # from .pagination import CustomPagination  
@@ -50,6 +51,7 @@ from django.db.models import Q
 class SalesDealViewSet(viewsets.ModelViewSet):
     queryset = SalesDeals.objects.all()
     serializer_class = SalesDealSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_sales(self, request, pk=None):
@@ -74,6 +76,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
     def create_sale_deal(self, request):
+        if not request.user.has_perm("core.add_salesdeals"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
 
         updated_files = {}
@@ -228,6 +232,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get','put'], url_path='update')
     def update_sales_deal(self, request,pk=None):
+        if not request.user.has_perm("core.change_salesdeals"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
         if request.method == 'GET':
             pk = pk
@@ -493,45 +499,61 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         role = user.groups.first().name if user.groups.exists() else ""
         print(role)
         if type_filter:
-            if type_filter == 'pending':
-                if account_id:
-                    if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser: 
-                        print("inside the if condition of pending")
-                        queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
-                    else:
-                        queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
-
-            elif type_filter == 'approved':
-                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                    queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
+    # ---------------- Pending ----------------
+            if type_filter == "pending":
+                if user.has_perm("core.view_pending_sales_deals"):
+                    queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
                 else:
-                    queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
+                    return Response({"detail": "You do not have permission: view_pending_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
-            elif type_filter == 'rejected':
-                if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                    queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
+            # ---------------- Approved ----------------
+            elif type_filter == "approved":
+                if user.has_perm("core.view_approved_sales_deals"):
+                    queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
-                     queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
-                
+                    return Response({"detail": "You do not have permission: view_approved_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
+            # ---------------- Rejected ----------------
+            elif type_filter == "rejected":
+                if user.has_perm("core.view_rejected_sales_deals"):
+                    queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
+                else:
+                    return Response({"detail": "You do not have permission: view_rejected_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
-            elif type_filter == "waiting-finance" :
-                queryset = queryset.filter(is_approved_rejected='F')
+            # ---------------- Waiting Finance ----------------
+            elif type_filter == "waiting-finance":
+                if user.has_perm("core.view_waiting_finance_sales_deals"):
+                    queryset = queryset.filter(is_approved_rejected="F")
+                else:
+                    return Response({"detail": "You do not have permission: view_waiting_finance_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
-            elif type_filter == 'entered-finance':
-                queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
+            # ---------------- Entered Finance ----------------
+            elif type_filter == "entered-finance":
+                if user.has_perm("core.enter_finance_sales_deal"):
+                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete")
+                else:
+                    return Response({"detail": "You do not have permission: enter_finance_sales_deal"}, status=status.HTTP_403_FORBIDDEN)
 
-            elif type_filter == "pending-finance" :
-                queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
+            # ---------------- Pending Finance ----------------
+            elif type_filter == "pending-finance":
+                if user.has_perm("core.view_pending_finance_sales_deal"):
+                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete")
+                else:
+                    return Response({"detail": "You do not have permission: view_pending_finance_sales_deal"}, status=status.HTTP_403_FORBIDDEN)
 
-            elif type_filter == 'draft':
-                queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
-        
-            elif type_filter == "All" :
-                queryset = queryset.filter(form_status = "Complete")  
+            # ---------------- Draft ----------------
+            elif type_filter == "draft":
+                if user.has_perm("core.view_my_draft_sales_deals"):
+                    queryset = queryset.filter(form_status="Incomplete", created_by=user.email)
+                else:
+                    return Response({"detail": "You do not have permission: view_my_draft_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
-            if role == 'Admin' and type_filter == 'draft':
-                queryset = queryset.filter(created_by=user.email)
+            # ---------------- All ----------------
+            elif type_filter == "all":
+                if user.has_perm("core.view_all_sales_deals"):
+                    queryset = queryset.filter(form_status="Complete")
+                else:
+                    return Response({"detail": "You do not have permission: view_all_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
         # Date range filter
         if validated.get("from_date"):
@@ -596,6 +618,7 @@ SalesDealViewSet_create = SalesDealViewSet.as_view({'post': 'create_sale_deal'})
 
  
 @login_required(login_url="/login/")
+@permission_required("core.manage_sales_deals",raise_exception=True)
 def all_sales_deals(request):
     """
     View to list all rental deals.
@@ -613,7 +636,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 @login_required(login_url="/login/")
-
+@permission_required("core.add_salesdeals",raise_exception=True)
 def create_sales_deal_page(request):
    
     agents=Users.objects.filter(is_active=True,account_id=request.user.account_id)
@@ -636,6 +659,7 @@ def create_sales_deal_page(request):
 # render html page of Edit Sale Deal 
 
 @login_required(login_url="/login/")
+@permission_required("core.change_salesdeals",raise_exception=True)
 def edit_sales_deal_page(request, pk):
     sales_deal = get_object_or_404(SalesDeals, pk=pk)
     aws_url = settings.AWS_URL

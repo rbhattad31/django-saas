@@ -1,9 +1,9 @@
-.nav-link.active {
-  background-color: #e9ecef !important; /* Ensure override */
-  color: #0d6efd !important;
+/* .nav-link.active {
+  background-color: #e9ecef !important;  
+  color: #6f42c1 !important;
   font-weight: bold !important;
   border-radius: 4px !important;
-}
+} */
 
 .btn-purple {
   background-color: #6f42c1 !important;
@@ -17,4 +17,152 @@
 .btn-purple:hover {
   background-color: #5a32a3 !important;
   color: white !important;
+}
+
+
+ 
+.navbar-top {
+  background-color:rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.48);
+  
+  
+}
+.nav-item  > .nav-link , .list-group-item >a {
+   
+  color: #0c0c0c  ;
+ 
+ 
+}
+.nav-item  > .nav-link:hover , .list-group-item:hover {
+   background-color: #f7f2fbe1 !important;
+  
+ 
+ 
+}
+ .sidenav .nav-link,
+.sidenav .nav-link:hover,
+.sidenav .nav-link:focus {
+  color: inherit !important;
+   
+}
+
+
+
+.nav-item.active > .nav-link {
+  background-color: #e9dcf5e1 !important;
+  color: #000000 !important;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+
+/* Active submenu item */
+.list-group-item.active  {
+  background-color:  #e9dcf5e1 !important;
+   
+  
+  font-weight: bold;
+  border-radius: 6px;
+}
+.list-group-item.active > a{
+  color: #000000;
+}
+
+/* .main-content{
+  background-color: rgb(244, 244, 246);
+} */
+body{
+  background-color: rgb(242, 242, 245) !important;
+}
+
+
+
+/* data tabel styles  */
+/* Base style for all buttons */
+ /* Pagination container */
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    display: flex;
+    margin-top: 1rem;
+}
+/* tabel datapadding */
+#myTable_wrapper{
+  padding: 1rem;
+}
+#dt-length-0::before{
+  content: "BEfore";
+  padding-left: 1rem;
+
+}
+
+/* Pagination buttons */
+.dt-paging-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 5px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 0;
+    background-color: white;
+    color: #6f42c1;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-left: -1px; /* merge borders */
+    font-size: 14px;
+    min-width: 32px; /* fixed width for numbers */
+}
+
+/* Rounded corners for first/last */
+.dt-paging-button.previous,.dt-paging-button > .previous {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border:1px solid black !important;
+    min-width: 60px!important; /* Prev wider */
+}
+
+
+.dt-paging-button.next,.dt-paging-button > .next {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+     border:1px solid black !important;
+    min-width: 60px !important; /* Next wider */
+}
+
+/* Hover effect */
+.dt-paging-button:hover {
+    background-color: #e9ecef !important;
+    color: #0a58ca !important;
+    border:1px solid black !important;
+}
+
+/* Active page */
+ .dt-paging-button.current {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    border-color: #6f42c1;
+    font-weight: bold;
+    cursor: default;
+    border:1px solid black !important;
+}
+
+/* Disabled state */
+.dt-paging-button.disabled {
+    color: #aaa !important;
+    cursor: not-allowed;
+    background-color: #fff;
+}
+
+
+ /* all hte buttons  */
+
+.btn-primary {
+  background-color: #6f42c1 !important; /* Bootstrap purple */
+  border-color: #6f42c1 !important;
+  border-radius: 40px;
+}
+.btn-primary:hover {
+  background-color: #5a32a3 !important; /* darker shade on hover */
+  border-color: #5a32a3 !important;
 }

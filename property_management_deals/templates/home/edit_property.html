@@ -59,23 +59,40 @@
             <input type="hidden" name="save_as" id="save_as">
             <input type="hidden" name="is_deleted" id="is_deleted" value="N">
             
+  
+
             <div class="col-md-6 form-group">
-              <label for="submitted_by_agent">
-                Deal Submitted By Agent <span class="mandetory_field" style="color: red">*</span>
-              </label>
-              <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
-                <option value="">Select Agent Name</option>
-                <option value="10">Rahul B</option>
-                <option value="11">Anirudh</option>
-              </select>
-              <span class="text-danger" id="submitted_by_agent_error"></span>
+                <label for="submitted_by_agent">
+                    Deal Submitted By Agent <span class="mandetory_field" style="color: red">*</span>
+                </label>
+                <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
+                    <option value="">Select Agent</option>
+                    {% for agent in agents %}
+                        <option value="{{ agent.id }}" 
+                            {% if property.submitted_by_user_id == agent.id %}selected{% endif %}>
+                            {{ agent.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="submitted_by_agent_error"></span>
             </div>
             
-            <div class="col-md-6 form-group mb-3">
+
+
+
+            
+            {% comment %} <div class="col-md-6 form-group mb-3">
               <label for="deal_date">
                 Deal Date <span class="mandetory_field" style="color: red">*</span>
               </label>
               <input type="date" name="deal_date" class="form-control" id="deal_date" value="{{ property.deal_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="deal_date_error"></span>
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group mb-3">
+              <label for="deal_date">
+                Deal Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="deal_date" class="form-control dealDate" id="deal_date" value="{{ property.deal_date|date:'Y-m-d' }}" readonly>
               <span class="error text-danger" id="deal_date_error"></span>
             </div>
 
@@ -119,35 +136,65 @@
               <span class="error text-danger" id="pms_price_error"></span>
             </div>
 
-            <div class="col-md-6 form-group mb-3">
+            {% comment %} <div class="col-md-6 form-group mb-3">
               <label for="pm_start_date">
                 PM Start Date <span class="mandetory_field" style="color: red">*</span>
               </label>
               <input type="date" name="pm_start_date" class="form-control startDate" id="pm_start_date" value="{{ property.pm_start_date|date:'Y-m-d' }}">
               <span class="error text-danger" id="pm_start_date_error"></span>
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group mb-3">
+              <label for="pm_start_date">
+                PM Start Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="pm_start_date" class="form-control startDate" id="pm_start_date" value="{{ property.pm_start_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="pm_start_date_error"></span>
             </div>
 
-            <div class="col-md-6 form-group mb-3">
+            {% comment %} <div class="col-md-6 form-group mb-3">
               <label for="pm_end_date">
                 PM End Date <span class="mandetory_field" style="color: red">*</span>
               </label>
               <input type="date" name="pm_end_date" class="form-control endDate" id="pm_end_date" value="{{ property.pm_end_date|date:'Y-m-d' }}">
               <span class="error text-danger" id="pm_end_date_error"></span>
-            </div>
+            </div> {% endcomment %}
 
             <div class="col-md-6 form-group mb-3">
+              <label for="pm_end_date">
+                PM End Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="pm_end_date" class="form-control endDate" id="pm_end_date" value="{{ property.pm_end_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="pm_end_date_error"></span>
+            </div>
+
+            {% comment %} <div class="col-md-6 form-group mb-3">
               <label for="tenancy_start_date">
                 Tenancy Start Date <span class="mandetory_field" style="color: red">*</span>
               </label>
               <input type="date" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" value="{{ property.tenancy_start_date|date:'Y-m-d' }}">
               <span class="error text-danger" id="tenancy_start_date_error"></span>
-            </div>
+            </div> {% endcomment %}
 
             <div class="col-md-6 form-group mb-3">
+              <label for="tenancy_start_date">
+                Tenancy Start Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" value="{{ property.tenancy_start_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="tenancy_start_date_error"></span>
+            </div>
+
+            {% comment %} <div class="col-md-6 form-group mb-3">
               <label for="tenancy_end_date">
                 Tenancy End Date <span class="mandetory_field" style="color: red">*</span>
               </label>
               <input type="date" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" value="{{ property.tenancy_end_date|date:'Y-m-d' }}">
+              <span class="error text-danger" id="tenancy_end_date_error"></span>
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group mb-3">
+              <label for="tenancy_end_date">
+                Tenancy End Date <span class="mandetory_field" style="color: red">*</span>
+              </label>
+              <input type="text" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" value="{{ property.tenancy_end_date|date:'Y-m-d' }}">
               <span class="error text-danger" id="tenancy_end_date_error"></span>
             </div>
           </div>
@@ -166,16 +213,38 @@
               <input type="text" name="owner_first_name" class="form-control" id="owner_first_name" value="{{ property.owner_first_name }}">
               <span class="error text-danger" id="owner_first_name_error"></span>
             </div>
-            <div class="col-md-6 form-group">
+            {% comment %} <div class="col-md-6 form-group">
               <label for="owner_source">
                 Source <span class="mandetory_field" style="color: red">*</span>
               </label>
-              <select class="form-control" name="owner_source" id="owner_source">
+              <select class="form-control" name="owner_source" id="owner_source" value="{{property.owner_source}}">
                 <option value="">Select source</option>
                 <option value="Referral">Referral</option>
                 <option value="Walk-in">Walk-in</option>
                 <option value="N">N</option>
               </select>                
+            </div> {% endcomment %}
+            <div class="col-md-6 form-group">
+                <label for="owner_source">
+                    Source <span class="mandetory_field" style="color: red">*</span>
+                </label>
+                <select class="selectbox2 form-control" name="owner_source" id="owner_source" required>
+                    <option value="">Select Owner Source</option>
+                    <option value="Dubizzle" {% if property.owner_source == "Dubizzle" %}selected{% endif %}>Dubizzle</option>
+                    <option value="Property finder" {% if property.owner_source == "Property finder" %}selected{% endif %}>Property finder</option>
+                    <option value="Classic Website" {% if property.owner_source == "Classic Website" %}selected{% endif %}>Classic Website</option>
+                    <option value="YZER" {% if property.owner_source == "YZER" %}selected{% endif %}>YZER</option>
+                    <option value="Gulf News" {% if property.owner_source == "Gulf News" %}selected{% endif %}>Gulf News</option>
+                    <option value="Others" {% if property.owner_source == "Others" %}selected{% endif %}>Others</option>
+                    <option value="Reference" {% if property.owner_source == "Reference" %}selected{% endif %}>Reference</option>
+                    <option value="Agent" {% if property.owner_source == "Agent" %}selected{% endif %}>Agent</option>
+                    <option value="Network" {% if property.owner_source == "Network" %}selected{% endif %}>Network</option>
+                    <option value="Social Media" {% if property.owner_source == "Social Media" %}selected{% endif %}>Social Media</option>
+                    <option value="Walk In" {% if property.owner_source == "Walk In" %}selected{% endif %}>Walk In</option>
+                    <option value="Security" {% if property.owner_source == "Security" %}selected{% endif %}>Security</option>
+                    <option value="Developer" {% if property.owner_source == "Developer" %}selected{% endif %}>Developer</option>
+                    <option value="BAYUT" {% if property.owner_source == "BAYUT" %}selected{% endif %}>BAYUT</option>
+                </select>          
             </div>
           </div>
 
@@ -417,7 +486,7 @@
        
           <div class="row">   
                     
-            {% if perms.core.admin_properties_fields_rentalproperties %}          
+            {% comment %} {% if perms.core.admin_properties_fields_rentalproperties %}          
               <div class="col-md-6 form-group">
                 <label for="is_approved_rejected">Approve/Reject</label><br>
                 <div class="row">
@@ -428,10 +497,27 @@
                     <input type="radio" name="is_approved_rejected" value="R" {% if property.is_approved_rejected == 'R' %}checked{% endif %}> Reject
                   </div>
                   <div class="col-6" style="margin-left: -55px">
-                    <input type="radio" name="is_approved_rejected" value="F" {% if property.is_approved_rejected == 'F' %}checked{% endif %}> Waiting for Finance
+                    <input type="radio" name="is_approved_rejected" value="W" {% if property.is_approved_rejected == 'F' %}checked{% endif %}> Waiting for Finance
                   </div>
                 </div>
               </div>
+            {% endif %} {% endcomment %}
+            {% if perms.core.admin_properties_fields_rentalproperties %}
+            <div class="col-md-6 form-group">
+              <label for="is_approved_rejected">Approve/Reject <span class="mandetory_field" style="color:red">*</span></label><br>
+              <div class="row">
+                <div class="col-3">
+                  <input type="radio" id="admin_approve" name="is_approved_rejected" value="A" {% if property.is_approved_rejected == 'A' %}checked{% endif %}> Approve
+                </div>
+                <div class="col-3" style="margin-left: -45px">
+                  <input type="radio" id="admin_reject" name="is_approved_rejected" value="R" {% if property.is_approved_rejected == 'R' %}checked{% endif %}> Reject
+                </div>
+                <div class="col-6" style="margin-left: -55px">
+                  <input type="radio" id="admin_waiting" name="is_approved_rejected" value="W" {% if property.is_approved_rejected == 'W' %}checked{% endif %}> Waiting for Finance
+                </div>
+              </div>
+              <span class="text-danger" id="is_approved_rejected_error"></span>
+            </div>
             {% endif %}
 
            {% comment %} {% for group in request.user.groups.all %}
@@ -771,9 +857,16 @@
             </div>
           </div>
      
-          <div class="row mt-3">
+          {% comment %} <div class="row mt-3">
             <div class="col-sm-12 btn-center mt-3">
               <button type="submit" class="btn btn-primary btn-rounded m-1" name="create_deal" id="create_deal">Submit Property</button> 
+            </div>
+          </div> {% endcomment %}
+          <div class="row mt-3">
+            <div class="col-sm-12 d-flex justify-content-center mt-3">
+              <button type="submit" class="btn btn-primary btn-rounded m-1" name="create_deal" id="create_deal">
+                Submit Property
+              </button>
             </div>
           </div>
         </form>
@@ -791,6 +884,8 @@
         console.log("jQuery loaded, version:", $.fn.jquery);
     }
 </script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script>
     var $j = jQuery.noConflict(true);
@@ -828,6 +923,43 @@ document.addEventListener('DOMContentLoaded', function () {
     screening: []
   };
 
+   $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').each(function() {
+        let val = $j(this).val();
+        if(val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            const parts = val.split('-'); // [yyyy, mm, dd]
+            $j(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
+        }
+    });
+
+// Initialize jQuery UI Datepicker for all date fields
+    $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
+      //dateFormat: 'yy-mm-dd',
+      dateFormat: 'dd-mm-yy',
+      changeMonth: true,
+      changeYear: true
+    });
+
+   $j.validator.addMethod("dateDDMMYYYY", function(value, element) {
+        return this.optional(element) || /^\d{2}-\d{2}-\d{4}$/.test(value);
+    }, "Please enter a valid date in dd-mm-yyyy format");
+
+
+    $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
+        dateFormat: 'yy-mm-dd', // Output format: YYYY-MM-DD
+        changeMonth: true,
+        changeYear: true,
+        beforeShow: function(input, inst) {
+            // Allow manual input in DD-MM-YYYY, but convert to YYYY-MM-DD on select
+            $j(input).datepicker('option', 'altFormat', 'dd-mm-yy');
+            $j(input).datepicker('option', 'altField', input);
+        },
+        onSelect: function(dateText, inst) {
+            // Ensure the input field shows YYYY-MM-DD after selection
+            $j(this).val(dateText);
+        }
+    });
+
+    
 $j(document).on('click', '.remove_file', function () {
     
     var name = $j(this).data("name");
@@ -1147,6 +1279,20 @@ $j(document).ready(function() {
     });
 });
 
+    $j(document).on('change', 'input[name="is_approved_rejected"]', function () {
+        var id = $j(this).attr('id');
+        let fixedValue = '';
+        if (id === 'admin_approve') {
+            fixedValue = 'A';
+        } else if (id === 'admin_reject') {
+            fixedValue = 'R';
+        } else if (id === 'admin_waiting') {
+            fixedValue = 'W';
+        }
+        $j(this).val(fixedValue); // forcefully set correct value
+        console.log("Forced admin approval value set to:", fixedValue);
+    });
+
     // Log changes to is_approved_rejected
     $j('[name="is_approved_rejected"]').on('change', function() {
         console.log("Admin Approval Changed to:", $j(this).val());
@@ -1366,26 +1512,37 @@ $j(document).ready(function() {
         else if (this.id === 'pm_start_date') {
             var pm_start_date = $j('#pm_start_date').val();
             if (pm_start_date) {
-                var inputval = pm_start_date.split('-');
-                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
-                var res = new Date(date);
-                res.setFullYear(res.getFullYear() + 1);
-                var dd = String(res.getDate()).padStart(2, '0');
-                var mm = String(res.getMonth() + 1).padStart(2, '0');
-                var yyyy = res.getFullYear();
-                $j('#pm_end_date').val(`${yyyy}-${mm}-${dd}`);
+                var inputval = pm_start_date.split('-');  // ["21","08","2025"]
+                var day = parseInt(inputval[0], 10);
+                var month = parseInt(inputval[1], 10) - 1;  // months are 0-indexed
+                var year = parseInt(inputval[2], 10);
+                var date = new Date(year, month, day);      // correct: new Date(2025, 7, 21)
+                date.setFullYear(date.getFullYear() + 1);
+                date.setDate(date.getDate() - 1);
+
+                var dd = String(date.getDate()).padStart(2, '0');
+                var mm = String(date.getMonth() + 1).padStart(2, '0');
+                var yyyy = date.getFullYear();
+                $j('#pm_end_date').val(`${dd}-${mm}-${yyyy}`); // optional: keep dd-mm-yyyy format
+                
             }
         } else if (this.id === 'tenancy_start_date') {
             var tenancy_start_date = $j('#tenancy_start_date').val();
             if (tenancy_start_date) {
-                var inputval = tenancy_start_date.split('-');
-                var date = new Date(inputval[0], inputval[1] - 1, inputval[2]);
-                var res = new Date(date);
-                res.setFullYear(res.getFullYear() + 1);
-                var dd = String(res.getDate()).padStart(2, '0');
-                var mm = String(res.getMonth() + 1).padStart(2, '0');
-                var yyyy = res.getFullYear();
-                $j('#tenancy_end_date').val(`${yyyy}-${mm}-${dd}`);
+                var inputval = tenancy_start_date.split('-'); // ["21","08","2025"]
+                var day = parseInt(inputval[0], 10);
+                var month = parseInt(inputval[1], 10) - 1; // JS months are 0-indexed
+                var year = parseInt(inputval[2], 10);
+
+                var date = new Date(year, month, day);
+                date.setFullYear(date.getFullYear() + 1); // add 1 year
+                date.setDate(date.getDate() - 1);         // subtract 1 day
+
+                var dd = String(date.getDate()).padStart(2, '0');
+                var mm = String(date.getMonth() + 1).padStart(2, '0');
+                var yyyy = date.getFullYear();
+
+                $j('#tenancy_end_date').val(`${dd}-${mm}-${yyyy}`); // "20-08-2026"
             }
         }
     });
@@ -1528,6 +1685,54 @@ $j(document).ready(function() {
         }
     });
 });
+
+function loadAgentDropdown(requestdata) {
+    // Get the current selected value from the dropdown (set by the template)
+    const currentAgentId = $j('#submitted_by_agent').val();
+    console.log("loadAgentDropdown: Current submitted_by_agent value from template:", currentAgentId);
+
+    $j.ajax({
+        url: "/api/agents/dropdown/",
+        type: "GET",
+        success: function(agents) {
+            console.log("loadAgentDropdown: Fetched agents:", agents);
+            if (!agents || agents.length === 0) {
+                console.warn("loadAgentDropdown: No agents returned from API");
+                $j('#submitted_by_agent_error').text("No agents available. Please contact support.").show();
+                return;
+            }
+            // Populate dropdowns, preserving the current selection for submitted_by_agent
+            populateAgentDropdown("#submitted_by_agent", agents, currentAgentId || requestdata.submitted_by_agent);
+            populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
+            populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
+            populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
+            // Trigger change to ensure validation
+            $j('#submitted_by_agent').trigger('change');
+        },
+        error: function(xhr, status, error) {
+            console.error("loadAgentDropdown: Failed to load agents:", xhr.responseText);
+            $j('#submitted_by_agent_error').text("Failed to load agents. Preserving existing selection.").show();
+            // Keep the template's pre-filled value if API fails
+            if (currentAgentId) {
+                console.log("loadAgentDropdown: Retaining template value:", currentAgentId);
+            }
+        }
+    });
+}
+
+function populateAgentDropdown(selector, data, selectedId = null) {
+    const $dropdown = $j(selector);
+    $dropdown.empty().append('<option value="">Select Agent</option>');
+    data.forEach(function(agent) {
+        const isSelected = selectedId == agent.id ? "selected" : "";
+        $dropdown.append(`<option value="${agent.id}" ${isSelected}>${agent.name}</option>`);
+    });
+    console.log(`populateAgentDropdown: Populated ${selector} with ${data.length} agents, selectedId: ${selectedId}`);
+    // Ensure the selected value is set
+    if (selectedId) {
+        $dropdown.val(selectedId);
+    }
+}
 
 function loadAgentDropdown(requestdata) {
     $j.ajax({

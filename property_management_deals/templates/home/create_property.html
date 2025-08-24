@@ -147,9 +147,10 @@
                                     {% endif %}
                                     <div class="col-md-6 form-group">
                                         <label for="deal_date">Deal Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" id="deal_date" name="deal_date" class="form-control" required>
+                                        <input type="text" id="deal_date" name="deal_date" class="form-control dealDate" placeholder="Deal Date" required>
                                         <span class="text-danger" id="deal_date_error"></span>
                                     </div>
+                                    
                                     <div class="col-md-6 form-group">
                                         <label for="reference_number">Reference Number<span class="mandetory_field" style="color: red">*</span></label>
                                         <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference No" required>
@@ -175,24 +176,30 @@
                                         <input type="text" name="pms_price" class="form-control" id="pms_price" placeholder="PMS Price" required>
                                         <span class="text-danger" id="pms_price_error"></span>
                                     </div>
+                                    {% comment %} <div class="col-md-6 form-group">
+                                        <label for="pm_start_date">PM Start Date<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input type="text" name="pm_start_date" class="form-control startDate" id="pm_start_date" placeholder="PM Start Date" required>
+                                        <span class="text-danger" id="pm_start_date_error"></span>
+                                    </div> {% endcomment %}
                                     <div class="col-md-6 form-group">
                                         <label for="pm_start_date">PM Start Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" name="pm_start_date" class="form-control startDate" id="pm_start_date" required>
+                                        <input type="text" name="pm_start_date" class="form-control startDate" id="pm_start_date" placeholder="PM Start Date" required>
                                         <span class="text-danger" id="pm_start_date_error"></span>
                                     </div>
+
                                     <div class="col-md-6 form-group">
                                         <label for="pm_end_date">PM End Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" name="pm_end_date" class="form-control endDate" id="pm_end_date" required>
+                                        <input type="text" name="pm_end_date" class="form-control endDate" id="pm_end_date" placeholder="PM End Date" required>
                                         <span class="text-danger" id="pm_end_date_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="tenancy_start_date">Tenancy Start Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" required>
+                                        <input type="text" name="tenancy_start_date" class="form-control startDates" id="tenancy_start_date" placeholder="tenancy_start_date" required>
                                         <span class="text-danger" id="tenancy_start_date_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="tenancy_end_date">Tenancy End Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" required>
+                                        <input type="text" name="tenancy_end_date" class="form-control endDates" id="tenancy_end_date" placeholder="Tenancy End Date" required>
                                         <span class="text-danger" id="tenancy_end_date_error"></span>
                                     </div>
                                 </div>
@@ -219,6 +226,20 @@
                                         <select class="selectbox2 form-control" name="owner_source" id="owner_source" required>
                                             <option value="">Select Owner Source</option>
                                             <option value="Dubizzle">Dubizzle</option>
+                                            <option value="Property finder">Property finder</option>
+                                            <option value="Classic Website">Classic Website</option>
+                                            <option value="YZER">YZER</option>
+                                            <option value="Gulf News">Gulf News</option>
+                                            <option value="Others">Others</option>
+                                            <option value="Reference">Reference</option>
+                                            <option value="Agent">Agent</option>
+                                            <option value="Network">Network</option>
+                                            <option value="Social Media">Social Media</option>
+                                            <option value="Walk In">Walk In</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Developer">Developer</option>
+                                            <option value="BAYUT">BAYUT</option>
+                                            
                                         </select>
                                         <span class="text-danger" id="owner_source_error"></span>
                                     </div>
@@ -301,7 +322,7 @@
                                 <div class="row form-group nav-cheque cheque-date">
                                     <div class="col-md-5 form-group">
                                         <label for="cheque_date_1">Cheque Date<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="date" id="cheque_date_1" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
+                                        <input type="text" id="cheque_date_1" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
                                         <span class="text-danger" id="cheque_date_1_error"></span>
                                     </div>
                                     <div class="col-md-7 form-group">
@@ -467,82 +488,194 @@
                             <!-- Upload Documents -->
                             <div class="tab-pane fade" id="nav-documents" role="tabpanel" aria-labelledby="nav-documents-tab">
                                 <div class="form-group row nav-documents">
+                                    <style>
+                                    /* Optional: slightly adjust spacing under label */
+                                    .form-control-file {
+                                        margin-top: 5px;           /* small gap under label */
+                                        padding: 2px 5px;          /* small inner spacing */
+                                        border-radius: 4px;        /* subtle rounded corners */
+                                        
+                                        background-color: #fff;     /* normal Bootstrap input background */
+                                        width: auto;               /* shrink to content */
+                                    }
+                                    </style>
                                     <!-- PMS Contract -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="pms_contract">PMS Contract<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="pms_contract" type="file" name="pms_contract[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="pms_contract_preview"></div>
                                         <input type="hidden" id="pms_contract_removed" name="pms_contract_removed">
                                         <span class="text-danger" id="pms_contract_error"></span>
-                                    </div>
-                                    <!-- Owner Passport Copy -->
+                                    </div> {% endcomment %}
+
                                     <div class="col-md-6 form-group">
+                                        <label for="pms_contract">PMS Contract<span class="mandetory_field" style="color: red">*</span></label>
+                                        
+                                        <!-- File input without full-width border -->
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="pms_contract" type="file" 
+                                            name="pms_contract[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        
+                                        <div class="file-preview" id="pms_contract_preview"></div>
+                                        <input type="hidden" id="pms_contract_removed" name="pms_contract_removed">
+                                        <span class="text-danger" id="pms_contract_error"></span>
+                                    </div>
+
+                                    
+
+                                    <!-- Owner Passport Copy -->
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="owner_passport_copy">Owner Passport Copy<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="owner_passport_copy" type="file" name="owner_passport_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="owner_passport_copy_preview"></div>
                                         <input type="hidden" id="owner_passport_copy_removed" name="owner_passport_copy_removed">
                                         <span class="text-danger" id="owner_passport_copy_error"></span>
+                                    </div> {% endcomment %}
+
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_passport_copy">Owner Passport Copy<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="owner_passport_copy" type="file" 
+                                            name="owner_passport_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="owner_passport_copy_preview"></div>
+                                        <input type="hidden" id="owner_passport_copy_removed" name="owner_passport_copy_removed">
+                                        <span class="text-danger" id="owner_passport_copy_error"></span>
                                     </div>
                                     <!-- Owner EID Copy -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="owner_eid_copy">Owner EID Copy</label>
                                         <input multiple class="imageUploadInput form-control" id="owner_eid_copy" type="file" name="owner_eid_copy[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="owner_eid_copy_preview"></div>
                                         <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_removed">
                                         <span class="text-danger" id="owner_eid_copy_error"></span>
+                                    </div> {% endcomment %}
+
+                                    <div class="col-md-6 form-group">
+                                        <label for="owner_eid_copy">Owner EID Copy</label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="owner_eid_copy" type="file" 
+                                            name="owner_eid_copy[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="owner_eid_copy_preview"></div>
+                                        <input type="hidden" id="owner_eid_copy_removed" name="owner_eid_copy_removed">
+                                        <span class="text-danger" id="owner_eid_copy_error"></span>
                                     </div>
                                     <!-- PMS Cheque Copy -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="pms_cheque_copy">PMS Cheque Copy<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="pms_cheque_copy" type="file" name="pms_cheque_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="pms_cheque_copy_preview"></div>
                                         <input type="hidden" id="pms_cheque_copy_removed" name="pms_cheque_copy_removed">
                                         <span class="text-danger" id="pms_cheque_copy_error"></span>
-                                    </div>
-                                    <!-- Title Deed -->
+                                    </div> {% endcomment %}
                                     <div class="col-md-6 form-group">
+                                        <label for="pms_cheque_copy">PMS Cheque Copy<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="pms_cheque_copy" type="file" 
+                                            name="pms_cheque_copy[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="pms_cheque_copy_preview"></div>
+                                        <input type="hidden" id="pms_cheque_copy_removed" name="pms_cheque_copy_removed">
+                                        <span class="text-danger" id="pms_cheque_copy_error"></span>
+                                    </div>
+
+                                    <!-- Title Deed -->
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="title_deed">Title Deed<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="title_deed" type="file" name="title_deed[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="title_deed_preview"></div>
                                         <input type="hidden" id="title_deed_removed" name="title_deed_removed">
                                         <span class="text-danger" id="title_deed_error"></span>
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="title_deed">Title Deed<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="title_deed" type="file" 
+                                            name="title_deed[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="title_deed_preview"></div>
+                                        <input type="hidden" id="title_deed_removed" name="title_deed_removed">
+                                        <span class="text-danger" id="title_deed_error"></span>
                                     </div>
                                     <!-- POA PP -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="poa_pp">POA PP</label>
                                         <input multiple class="imageUploadInput form-control" id="poa_pp" type="file" name="poa_pp[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="poa_pp_preview"></div>
                                         <input type="hidden" id="poa_pp_removed" name="poa_pp_removed">
                                         <span class="text-danger" id="poa_pp_error"></span>
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="poa_pp">POA PP</label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="poa_pp" type="file" 
+                                            name="poa_pp[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="poa_pp_preview"></div>
+                                        <input type="hidden" id="poa_pp_removed" name="poa_pp_removed">
+                                        <span class="text-danger" id="poa_pp_error"></span>
                                     </div>
                                     <!-- POA Copy -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="poa_copy">POA Copy</label>
                                         <input multiple class="imageUploadInput form-control" id="poa_copy" type="file" name="poa_copy[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="poa_copy_preview"></div>
                                         <input type="hidden" id="poa_copy_removed" name="poa_copy_removed">
                                         <span class="text-danger" id="poa_copy_error"></span>
+                                    </div> {% endcomment %}
+
+                                    <div class="col-md-6 form-group">
+                                        <label for="poa_copy">POA Copy</label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="poa_copy" type="file" 
+                                            name="poa_copy[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="poa_copy_preview"></div>
+                                        <input type="hidden" id="poa_copy_removed" name="poa_copy_removed">
+                                        <span class="text-danger" id="poa_copy_error"></span>
                                     </div>
                                     <!-- Key Hand Over Form -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="key_hand_over_form">Key Hand Over Form</label>
                                         <input multiple class="imageUploadInput form-control" id="key_hand_over_form" type="file" name="key_hand_over_form[]" accept=".pdf,.jpg,.jpeg,.png">
                                         <div class="file-preview" id="key_hand_over_form_preview"></div>
                                         <input type="hidden" id="key_hand_over_form_removed" name="key_hand_over_form_removed">
                                         <span class="text-danger" id="key_hand_over_form_error"></span>
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="key_hand_over_form">Key Hand Over Form</label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="key_hand_over_form" type="file" 
+                                            name="key_hand_over_form[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <div class="file-preview" id="key_hand_over_form_preview"></div>
+                                        <input type="hidden" id="key_hand_over_form_removed" name="key_hand_over_form_removed">
+                                        <span class="text-danger" id="key_hand_over_form_error"></span>
                                     </div>
                                     <!-- KYC Form -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="kyc_form">KYC Form<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="kyc_form" type="file" name="kyc_form[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="kyc_form_preview"></div>
                                         <input type="hidden" id="kyc_form_removed" name="kyc_form_removed">
                                         <span class="text-danger" id="kyc_form_error"></span>
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="kyc_form">KYC Form<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="kyc_form" type="file" 
+                                            name="kyc_form[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="kyc_form_preview"></div>
+                                        <input type="hidden" id="kyc_form_removed" name="kyc_form_removed">
+                                        <span class="text-danger" id="kyc_form_error"></span>
                                     </div>
                                     <!-- Screening -->
-                                    <div class="col-md-6 form-group">
+                                    {% comment %} <div class="col-md-6 form-group">
                                         <label for="screening">Screening<span class="mandetory_field" style="color: red">*</span></label>
                                         <input multiple class="imageUploadInput form-control" id="screening" type="file" name="screening[]" accept=".pdf,.jpg,.jpeg,.png" required>
+                                        <div class="file-preview" id="screening_preview"></div>
+                                        <input type="hidden" id="screening_removed" name="screening_removed">
+                                        <span class="text-danger" id="screening_error"></span>
+                                    </div> {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="screening">Screening<span class="mandetory_field" style="color: red">*</span></label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="screening" type="file" 
+                                            name="screening[]" accept=".pdf,.jpg,.jpeg,.png" required>
                                         <div class="file-preview" id="screening_preview"></div>
                                         <input type="hidden" id="screening_removed" name="screening_removed">
                                         <span class="text-danger" id="screening_error"></span>
@@ -584,6 +717,9 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <!-- SweetAlert (Version 1) -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script> {% endcomment %}
+
+
 
 
 <script>
@@ -608,7 +744,7 @@ const selectedFiles = {
 };
 
 
-function showErrors(validator) {
+{% comment %} function showErrors(validator) {
     let messages = '';
     let errorCount = 0;
 
@@ -675,6 +811,80 @@ function showErrors(validator) {
         icon: null,
         button: "OK"
     });
+} {% endcomment %}
+ function showErrors(validator) {
+    let messages = '';
+    let errorCount = 0;
+
+    if (validator && Array.isArray(validator.errorList)) {
+        const uniqueErrors = {};
+        $j.each(validator.errorList, function (_, error) {
+            if (!error || !error.element) return;
+
+            const field = $j(error.element);
+            const fieldName = field.attr('name');
+
+            // Get label text
+            let labelText = $j(`label[for="${field.attr('id')}"]`).text().trim();
+            if (!labelText) {
+                labelText = field.closest('.form-group').find('label').first().text().trim() || fieldName;
+            }
+
+            // Clean up label: remove any existing error messages and extra asterisks
+            labelText = labelText
+                .replace(/\*This field is required\.?$/i, '') // Remove error message
+                .replace(/\*$/, '') // Remove trailing asterisk
+                .replace(/This field is required\.?:?\s*/gi, '') // Remove any duplicate error text
+                .trim();
+
+            // Avoid duplicate errors for the same field
+            if (!uniqueErrors[fieldName]) {
+                uniqueErrors[fieldName] = `${labelText}: ${error.message}`;
+            }
+        });
+        const errorList = Object.values(uniqueErrors);
+        messages = errorList.join('\n');
+        errorCount = errorList.length;
+    }
+
+    const titleText = "Please fill mandatory fields";
+
+    // Dynamic modal width based on errors and title length
+    const titleWidthEstimate = titleText.length * 8; // approx 8px per char
+    const errorsWidthEstimate = errorCount * 10 + 300;
+    const dynamicWidth = Math.min(700, Math.max(300, Math.max(titleWidthEstimate, errorsWidthEstimate)));
+
+    // Dynamic padding (5% of modal width)
+    const dynamicPadding = Math.round(dynamicWidth * 0.05);
+
+    // Apply styles dynamically
+    $j("<style>")
+        .prop("type", "text/css")
+        .html(`
+            .swal-modal {
+                width: ${dynamicWidth}px !important;
+            }
+            .swal-title {
+                white-space: normal !important;
+                word-break: break-word !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                padding-left: ${dynamicPadding}px !important;
+                padding-right: ${dynamicPadding}px !important;
+            }
+            .swal-text {
+                text-align: left !important;
+                white-space: pre-line !important;
+            }
+        `)
+        .appendTo("head");
+
+    swal({
+        title: titleText,
+        text: messages || "Please correct the errors in the form.",
+        icon: null,
+        button: "OK"
+    });
 }
 
 
@@ -688,8 +898,9 @@ function showErrors(validator) {
 function validateChequeDates() {
     const numberOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
     const chequeDatesCount = $j('[name="cheque_date[]"]').length;
-    if (numberOfCheques !== chequeDatesCount) {
-        $j('#no_of_cheque_error').text(`Please add exactly ${numberOfCheques} cheque date(s).`);
+    //if (numberOfCheques !== chequeDatesCount) {
+    if (numberOfCheques < chequeDatesCount) {
+        $j('#no_of_cheque_error').text(`Please add exactly or less than ${numberOfCheques} cheque date(s).`);
         return false;
     }
     $j('#no_of_cheque_error').text('');
@@ -767,7 +978,7 @@ function switchTab(tabId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function saveAsDraft() {
+{% comment %} function saveAsDraft() {
     const form = $j('#rental_property_form');
     const validator = form.validate();
 
@@ -846,15 +1057,202 @@ function saveAsDraft() {
     } else {
         showErrors(validator);
     }
-}
+}  {% endcomment %}
+
+function saveAsDraft() {
+    const form = $j('#rental_property_form');
+    const validator = form.validate();
+
+    // Fields that must be required for saving as draft
+    const draftFields = [
+        'submitted_by_agent', 'deal_date','reference_number', 'project_name', 'building_name',
+        'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
+        'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
+        'seller_nationality','screening[]'
+    ];
+
+    // File fields to make optional
+    const fileFields = [
+        'pms_contract[]', 'owner_passport_copy[]', 'pms_cheque_copy[]',
+        'title_deed[]', 'kyc_form[]', 
+        'owner_eid_copy[]', 'poa_pp[]', 'poa_copy[]', 'key_hand_over_form[]'
+    ];
+
+    // Remove all validation rules from all fields
+    $j('#rental_property_form [name]').each(function() {
+        const name = $j(this).attr('name');
+        $j(this).rules('remove'); // Remove all rules (required, atLeastOneFile, etc.)
+        $j(this).removeAttr('required'); // Remove HTML required attribute
+    });
+
+    // Add 'required' rules only to draft fields
+    draftFields.forEach(field => {
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('add', { required: true });
+        });
+    });
+
+    // Explicitly ensure file fields have no validation rules
+    fileFields.forEach(field => {
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('remove'); // Ensure no rules (e.g., atLeastOneFile, fileSize, fileExtension)
+        });
+    });
+
+    if (form.valid()) {
+        const formData = new FormData(form[0]);
+        formData.append('save_as', 'draft');
+
+        // Append files from selectedFiles
+        Object.keys(selectedFiles).forEach(field => {
+            selectedFiles[field].forEach(file => {
+                formData.append(`${field}[]`, file);
+            });
+            // Append removed files
+            const removedField = $j(`#${field}_removed`).val();
+            if (removedField) {
+                formData.append(`${field}_removed`, removedField);
+            }
+        });
+
+        $j.ajax({
+            url: '/rental-properties/create/',
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': $j('input[name="csrfmiddlewaretoken"]').val() },
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
+                    setTimeout(() => $j('#successmsg').hide(), 3000);
+                } else {
+                    //alert('Failed to save draft: ' + (response.message || 'Unknown error'));
+                    // Check for reference number duplicate
+                    //if (response.message && response.message.reference_number) {
+                    //    alert('Reference number already exists: ' + response.message.reference_number);
+                    //} else {
+                    //    alert('Failed to save draft: ' + (response.message || 'Unknown error'));
+                    //}
+                    if (response.message && response.message.reference_number) {
+                        swal({
+                            title: "Error",
+                            text: 'Reference number already exists: ' + response.message.reference_number,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#3085d6"
+                        });
+                    } else {
+                        swal({
+                            title: "Error",
+                            text: 'Failed to save draft: ' + (response.message || 'Unknown error'),
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#3085d6"
+                        });
+                    }
+
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = xhr.responseJSON?.message || 'Unknown error';
+                //if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
+                //    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                //}
+                //alert('Error saving draft: ' + errorMsg);
+
+                //if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
+                    // Check specifically for reference_number
+                //    if (xhr.responseJSON.message.reference_number) {
+                //        errorMsg = 'Reference number already exists: ' + xhr.responseJSON.message.reference_number;
+                //    } else {
+                //        errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                //    }
+                //}
+                //alert('Error saving draft: ' + errorMsg);
+
+
+                if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
+                    if (xhr.responseJSON.message.reference_number) {
+                        errorMsg = 'Reference number already exists: ' + xhr.responseJSON.message.reference_number;
+                    } else {
+                        errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                    }
+                }
+
+                // SweetAlert for AJAX errors
+                swal({
+                    title: "Error",
+                    text: 'Error saving draft: ' + errorMsg,
+                    icon: "error",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#3085d6"
+                });
+            }
+        });
+    } else {
+        showErrors(validator);
+    }
+} 
 
 $j(document).ready(function () {
+    //$j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').each(function() {
+    //    let val = $j(this).val();
+    //    if(val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+    //        const parts = val.split('-'); // [yyyy, mm, dd]
+    //        $j(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
+    //    }
+    //});
+
+
+     $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').each(function() {
+        let val = $j(this).val();
+        if(val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            const parts = val.split('-'); // [yyyy, mm, dd]
+            $j(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
+        } else if($j(this).hasClass('dealDate') && !val) {
+            // If it's the dealDate field and empty, set today's date
+            const today = new Date();
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            const year = today.getFullYear();
+            if(day < 10) day = '0' + day;
+            if(month < 10) month = '0' + month;
+            $j(this).val(day + '-' + month + '-' + year);
+        }
+    });
     // Initialize datepickers
-    $j('.startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
-        dateFormat: 'yy-mm-dd',
+    $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').datepicker({
+        //dateFormat: 'yy-mm-dd',
+        dateFormat: 'dd-mm-yy',
         changeMonth: true,
         changeYear: true
     });
+
+    // 2️⃣ Add custom dd-mm-yyyy validation method
+    $j.validator.addMethod("dateDDMMYYYY", function(value, element) {
+        return this.optional(element) || /^\d{2}-\d{2}-\d{4}$/.test(value);
+    }, "Please enter a valid date in dd-mm-yyyy format");
+
+    // 3️⃣ Initialize form validation
+    $j('#rental_property_form').validate({
+        ignore:"",
+        rules: {
+            deal_date: { dateDDMMYYYY: true },
+            pm_start_date: { dateDDMMYYYY: true },
+            pm_end_date: { dateDDMMYYYY: true },
+            tenancy_start_date: { dateDDMMYYYY: true },
+            tenancy_end_date: { dateDDMMYYYY: true }
+        },
+        messages: {
+            deal_date: { required: "Deal Date is required" },
+            pm_start_date: { required: "PM Start Date is required" },
+            pm_end_date: { required: "PM End Date is required" },
+            tenancy_start_date: { required: "Tenancy Start Date is required" },
+            tenancy_end_date: { required: "Tenancy End Date is required" }
+        }
+    });
+    
 
     // Custom validation methods
     $j.validator.addMethod("alphanum_special", function (value, element) {
@@ -946,11 +1344,12 @@ $j(document).ready(function () {
             'title_deed[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
             'kyc_form[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
             'screening[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
-            'owner_eid_copy[]': { fileSize: true, fileExtension: true },
+            'kyc_form[]': { fileSize: true, fileExtension: true, atLeastOneFile: true },
+            'owner_eid_copy[]': { required: false,fileSize: true, fileExtension: true },
             'poa_pp[]': { fileSize: true, fileExtension: true },
             'poa_copy[]': { fileSize: true, fileExtension: true },
             'key_hand_over_form[]': { fileSize: true, fileExtension: true },
-            screening_comments: { alphanum_special: true, maxlength: 255 }
+            screening_comments: { required: false,alphanum_special: true, maxlength: 255 }
         },
         errorPlacement: function (error, element) {
             if (element.is(":radio")) {
@@ -959,6 +1358,8 @@ $j(document).ready(function () {
                 error.insertAfter(element);
             }
         },
+
+        
         messages: {
             pm_end_date: { dateAfterStart: "PM End Date must be after PM Start Date" },
             tenancy_end_date: { dateAfterStart: "Tenancy End Date must be after Tenancy Start Date" }
@@ -969,6 +1370,8 @@ $j(document).ready(function () {
     let chequeCount = 1;
     const maxChequeFields = 12;
 
+    
+
     $j('#add-cheque-row').on('click', function () {
         const numberOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
         if (chequeCount < maxChequeFields && chequeCount < numberOfCheques) {
@@ -977,7 +1380,7 @@ $j(document).ready(function () {
                 <div class="row form-group nav-cheque cheque-date-row-${chequeCount}">
                     <div class="col-md-5 form-group">
                         <label for="cheque_date_${chequeCount}">Cheque Date<span class="mandetory_field" style="color: red">*</span></label>
-                        <input type="date" id="cheque_date_${chequeCount}" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
+                        <input type="text" id="cheque_date_${chequeCount}" name="cheque_date[]" class="form-control cheque-dates" placeholder="Cheque Date" required>
                         <span class="text-danger" id="cheque_date_${chequeCount}_error"></span>
                     </div>
                     <div class="col-md-7 form-group">
@@ -985,11 +1388,41 @@ $j(document).ready(function () {
                     </div>
                 </div>`;
             $j('.append-cheque-date').append(newField);
-            $j(`#cheque_date_${chequeCount}`).rules('add', { required: true, date: true });
+
+            // Initialize datepicker for the new cheque date input
             $j(`#cheque_date_${chequeCount}`).datepicker({
-                dateFormat: 'yy-mm-dd',
+                dateFormat: 'dd-mm-yy',
                 changeMonth: true,
-                changeYear: true
+                changeYear: true,
+                onSelect: function(dateText) {
+                    $j(this).val(dateText); // Ensure selected date is in dd-mm-yy
+                    $j(this).valid(); // Trigger validation
+                },
+                onClose: function(dateText) {
+                    if (dateText && !/^\d{2}-\d{2}-\d{4}$/.test(dateText)) {
+                        const date = $j(this).datepicker('getDate');
+                        if (date) {
+                            const day = date.getDate().toString().padStart(2, '0');
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                            const year = date.getFullYear();
+                            $j(this).val(`${day}-${month}-${year}`);
+                        }
+                    }
+                    $j(this).valid(); // Trigger validation after manual entry
+                }
+            }).on('change', function() {
+                // Handle manual date entry
+                let val = $j(this).val();
+                if (val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+                    $j(this).val(formatDateToDDMMYY(val));
+                }
+                $j(this).valid(); // Trigger validation
+            });
+
+            // Add validation rules for the new cheque date input
+            $j(`#cheque_date_${chequeCount}`).rules('add', { 
+                required: true, 
+                dateDDMMYYYY: true 
             });
         } else if (chequeCount >= numberOfCheques) {
             alert('Cannot add more cheque dates than specified in Number of Cheques.');
@@ -1121,66 +1554,59 @@ $j(document).ready(function () {
     // Form submission via AJAX
     $j('#rental_property_form').on('submit', function (e) {
         e.preventDefault();
+        console.log("Form submission triggered"); // Debug log
+
         const form = $j(this);
         const validator = form.validate();
 
-        // Validate cheque dates
-        if (!validateChequeDates()) {
-            return false;
-        }
+        // Define draft fields (same as Save as Draft)
+        const createFields = [
+            'reference_number', 'project_name', 'building_name',
+            'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
+            'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
+            'seller_nationality','agency_name','submitted_by_agent','agent_phone','no_of_cheque','cheque_date_1','total_commission','less_outside_commission','net_commission','classic','agent1','agent_name1','is_property_aml','pms_contract[]', 'owner_passport_copy[]',
+            'pms_cheque_copy[]', 'title_deed[]', 
+            'kyc_form[]', 'screening[]',
+            
+        ];
 
-        // Validate required file fields
-        const requiredFileFields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'];
-        let filesValid = true;
-        requiredFileFields.forEach(field => {
-            if (selectedFiles[field].length === 0) {
-                $j(`#${field}_error`).text('At least one file is required.');
-                filesValid = false;
-            } else {
-                $j(`#${field}_error`).text('');
-            }
+
+        
+    // Remove all validation rules from all fields
+    $j('#rental_property_form [name]').each(function() {
+        $j(this).rules('remove');
+        $j(this).removeAttr('required');
+    });
+
+    // Add required rules only for createFields
+    createFields.forEach(field => {
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('add', { required: true });
         });
+    });
+        
 
-        if (!form.valid() || !filesValid) {
+        console.log("Form valid:", form.valid()); // Debug log
+
+        if (!form.valid()) {
+            console.log("Form invalid, showing errors"); // Debug log
             showErrors(validator);
             return;
         }
 
         const formData = new FormData(form[0]);
+        console.log('Form data:', Object.fromEntries(formData));
 
-        // Remove default file inputs from FormData to avoid duplicates
-        Object.keys(selectedFiles).forEach(field => {
-            formData.delete(`${field}[]`);
-        });
-
-        // Append files from selectedFiles
+        // Append files from selectedFiles (optional for Create, as in Save as Draft)
         Object.keys(selectedFiles).forEach(field => {
             selectedFiles[field].forEach(file => {
                 formData.append(`${field}[]`, file);
             });
-            // Append removed files
             const removedField = $j(`#${field}_removed`).val();
             if (removedField) {
                 formData.append(`${field}_removed`, removedField);
             }
         });
-
-        // Collect cheque dates
-        const chequeDates = [];
-        $j('.cheque-dates').each(function () {
-            const dateValue = $j(this).val();
-            if (dateValue) {
-                const parts = dateValue.split('-');
-                if (parts.length === 3) {
-                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert to DD-MM-YYYY
-                    chequeDates.push(formattedDate);
-                }
-            }
-        });
-
-        // Remove individual cheque_date[] fields and append as JSON
-        formData.delete('cheque_date[]');
-        formData.append('cheque_date', JSON.stringify(chequeDates));
 
         $j.ajax({
             url: '/rental-properties/create/',
@@ -1199,21 +1625,48 @@ $j(document).ready(function () {
                         window.location.href = '/rental-properties/list/';
                     }, 3000);
                 } else {
-                    let errorMsg = response.message || 'Unknown error';
-                    if (response.message && typeof response.message === 'object') {
-                        errorMsg = Object.values(response.message).join('\n');
+                    // Check specifically for reference number
+                    if (response.message && response.message.reference_number) {
+                        alert('Reference number already exists: ' + response.message.reference_number);
+                    } else {
+                        let errorMsg = response.message || 'Unknown error';
+                        if (response.message && typeof response.message === 'object') {
+                            errorMsg = Object.values(response.message).join('\n');
+                        }
+                        swal({
+                            title: "Error",
+                            text: 'Failed to create property: ' + errorMsg,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#3085d6"
+                        });
                     }
-                    alert('Failed to create property: ' + errorMsg);
                 }
             },
             error: function (xhr) {
+                console.log("enetere dhte filed of create")
                 let errorMsg = xhr.responseJSON?.message || 'Unknown error';
+
+                // Check specifically for reference_number in error response
                 if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
-                    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                    if (xhr.responseJSON.message.reference_number) {
+                        alert('Reference number already exists: ' + xhr.responseJSON.message.reference_number);
+                        return; // stop further Swal
+                    } else {
+                        errorMsg = Object.values(xhr.responseJSON.message).join('\n');
+                    }
                 }
-                alert('Error creating property: ' + errorMsg);
+
+                swal({
+                    title: "Error",
+                    text: 'Error creating property: ' + errorMsg,
+                    icon: "error",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#3085d6"
+                });
             }
         });
+
     });
 });
 </script>

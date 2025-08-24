@@ -5,12 +5,22 @@ from rest_framework.response import Response
 from django.db.models import Q
 from core.models import Deposits  , Users
 from  Rental_Deal.serializers import AgentDropdownSerializer
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.template.loader import render_to_string
 from .serializers import Deposits_create_Serializer, DepositsSerializer, DepositsfilterSerializer
 from weasyprint import HTML
+from rest_framework.permissions import BasePermission
+from django.contrib.auth.decorators import login_required, permission_required
+
+class CanViewTrhidpartyRecipts(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.has_perm("core.view_deposits")
+    
+class CanChangeTrhidpartyRecipts(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.has_perm("core.chanage_deposits")
 
 class DepositsViewSet(viewsets.ModelViewSet):
     queryset = Deposits.objects.all().order_by('-id')
@@ -20,7 +30,8 @@ class DepositsViewSet(viewsets.ModelViewSet):
             return DepositsfilterSerializer
         return DepositsSerializer
 
-    @action(detail=True, methods=['get'], url_path='view')
+    @action(detail=True, methods=['get'], url_path='view' )
+    @permission_classes([CanViewTrhidpartyRecipts ]) 
     def view_third_party(self, request, pk=None):
         deposit = get_object_or_404(Deposits, pk=pk)
         serializer = DepositsSerializer(deposit,context = {'request': request})
@@ -40,6 +51,8 @@ class DepositsViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='filter')
     def datatable_filter(self, request):
+        if not request.user.has_perm("core.list_third_party_deposits"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         print("Request Data:", request.data)  # Debugging line
         data = DepositsfilterSerializer(data=request.data)
         data.is_valid(raise_exception=True)
@@ -109,6 +122,8 @@ class DepositsViewSet(viewsets.ModelViewSet):
     # create the deposits api view
     @action(detail= False , method = ["post"] , url_path = "create")
     def create_thrid_party_recicept(self,request):
+        if not request.user.has_perm("core.add_deposits"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         print(request.data)
         print(request.user.account_id)
         mutable_data = request.data.copy()
@@ -144,7 +159,10 @@ class DepositsViewSet(viewsets.ModelViewSet):
     
     # edit the deposite or thritd party recipts
     @action(detail=False, methods=['get', 'post'], url_path='update')
+    @permission_classes([CanChangeTrhidpartyRecipts])
     def update_third_party(self, request, pk=None):
+        if not request.user.has_perm("core.change_deposits"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         if request.method  =="GET":
             deposit = get_object_or_404(Deposits, pk=pk)
             serializer = DepositsSerializer(deposit ,context = {'request': request})
@@ -185,14 +203,16 @@ DepositsViewSet_filter =  DepositsViewSet.as_view({
 DepositsViewSet_create = DepositsViewSet.as_view({ "post" : "create_thrid_party_recicept"})
 DepositsViewSet_edit = DepositsViewSet.as_view({'put' : "update_third_party"})
 
-
+@login_required(login_url="/login/")
+@permission_required('core.list_third_party_deposits',raise_exception=True)
 def third_party_receipts_page(request):
     return render(request, 'Third_Party_Receipts.html')
 
 
 
 
-
+@login_required(login_url="/login/")
+@permission_required('core.download_third_party_deposits',raise_exception=True)
 def download_receipt_pdf(request, receipt_id):
     receipt = Deposits.objects.get(id=receipt_id)
     html_string = render_to_string('recicepts_pdf.html', {'receipt': receipt})
@@ -207,11 +227,14 @@ def download_receipt_pdf(request, receipt_id):
     return response
 
 
-
+@login_required(login_url="/login/")
+@permission_required('core.list_third_party_deposits',raise_exception=True)
 def thrid_party_recipt_crete_htmlpage(request):
     return render(request , "createThird_Party.html")
 
 #serving the  create html page
+@login_required(login_url="/login/")
+@permission_required('core.add_deposits',raise_exception=True)
 def thrid_party_recipt_crete_htmlpage(request):
     latest = Deposits.objects.order_by('-deposit_number').first()
     next_receipt = int(latest.deposit_number) + 1 if latest and latest.deposit_number else 1

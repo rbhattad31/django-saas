@@ -17,7 +17,7 @@ from core.models import Users
 from .forms import RentalDealForm, FinanceCommentForm
 
 from rest_framework import viewsets, permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from core.models import RentalDeals,Users,Account,Receipts
@@ -55,6 +55,26 @@ from rest_framework.permissions import BasePermission
 from rest_framework import status
 
 
+class RentalDealPermissions(BasePermission):
+    def has_permission(self, request, view):
+        # Map methods to permissions
+        perms_map = {
+            'GET': 'core.view_rentaldeals',
+            'OPTIONS': 'core.view_rentaldeals',
+            'HEAD': 'core.view_rentaldeals',
+            'POST': 'core.add_rentaldeals',
+            'PUT': 'core.change_rentaldeals',
+            'PATCH': 'core.change_rentaldeals',
+            'DELETE': 'core.delete_rentaldeals',
+        }
+
+        required_perm = perms_map.get(request.method)
+        if required_perm:
+            return request.user.has_perm(required_perm)
+
+        return False
+
+
  
 
 
@@ -65,6 +85,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
        # for default `list`, `retrieve`
     pagination_class = CustomPagination 
     permission_classes = [IsAuthenticated]
+   
     
     def get_serializer_class(self):
         if self.action == 'datatable_filter':
@@ -375,7 +396,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         start = int(data.get("start") )  # Default to 0 if not provided
         length = int(data.get("length")) 
         print(start , length) # Default to 10 if not provided
-        paginated = queryset[start:start + length]
+
+        if length == -1:
+            paginated = queryset
+        else:
+            paginated = queryset[start:start + length]
         print("paginated", paginated)
         
 
@@ -394,9 +419,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         return Response(response_data, status= status.HTTP_200_OK)
     # // create deal
-    @permission_required('core.add_rentaldeals')
+   
     @action(detail=False, methods=['post'], url_path='create-deal')
     def create_deal(self, request):
+        if not request.user.has_perm("core.add_rentaldeals"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
 
         updated_files = {}
@@ -529,9 +556,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
     # edit the data 
     # @action(detail=True, methods=['get', 'post']) 
-    @permission_required('core.change_rentaldeals')
+    # @permission_required('core.change_rentaldeals')
     def custom_update(self, request, pk=None):
         # print("Raw body:", request.body)
+        if not request.user.has_perm("core.change_rentaldeals"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
       
         rental_deal = get_object_or_404(RentalDeals, pk=pk)
 
@@ -780,6 +809,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     # delete the deal soft delete
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_deal(self, request, pk=None):
+        if not request.user.has_perm("core.change_rentaldeals"):
+            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         instance = self.get_object()
         print("instance", instance)
         RentalDeals.objects.filter(pk=instance.pk).update(is_deleted='Y')
@@ -802,7 +833,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             recipt_no = None
         else:
             recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
-            print(recipt_no.id , "this is recipt id ")
+            # print(recipt_no.id , "this is recipt id ")
 
 
 
@@ -933,6 +964,7 @@ def register_user(request):
 
 
 @login_required(login_url="/login/")
+@permission_required('auth.admin_dashboard_access',raise_exception=True)
 def index(request):
     context = {'segment': 'index'}
 
@@ -969,7 +1001,8 @@ def pages(request):
 
 
 # html for the all list of rental deals
-@login_required(login_url="/login/")
+@login_required(login_url="/login/") 
+@permission_required("core.manage_rental_deals",raise_exception=True)
 def all_rental_deals(request):
     """
     View to list all rental deals.
@@ -1038,7 +1071,9 @@ def create_rental_deal_view(request):
 
 
 
- 
+
+def home_redirect(request):
+    return redirect('dashbroad') 
 
 
 

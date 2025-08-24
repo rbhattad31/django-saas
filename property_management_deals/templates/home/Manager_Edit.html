@@ -5,11 +5,6 @@
 
 {% block content %}
 <div class="main-content pt-4">
-  <style>
-    .cheque_no, .bank_name { display: none; }
-    .cheque-field { display: none; }
-    .cheque-field.show { display: block; }
-  </style>
   <div class="col-md-12" id="successmsg" style="display: none">
     <div class="alert alert-primary" id="alert-primary">
       <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close">
@@ -35,7 +30,7 @@
 
             <div class="col-md-6 form-group mb-3">
               <label for="date">Receipt Date <span style="color: red">*</span></label>
-              <input type="date" name="date" class="form-control" id="date" value="{{ receipt.date|date:'Y-m-d' }}">
+              <input type="text" name="date" class="form-control datepicker-input" id="date" value="{{ receipt.date|date:'Y-m-d' }}">
               <span class="error text-danger" id="date_error"></span>
             </div>
 
@@ -80,21 +75,21 @@
               <span class="error text-danger" id="payment_type_error"></span>
             </div>
 
-            <div class="col-md-6 form-group mb-3 cheque-field">
-              <label for="cheque_no">Cheque No <span class="cheque_no" style="color: red">*</span></label>
+            <div class="col-md-6 form-group mb-3">
+              <label for="cheque_no">Cheque No <span class="cheque_no_required" style="color: red; display: none;">*</span></label>
               <input type="text" name="cheque_no" class="form-control" id="cheque_no" value="{{ receipt.cheque_no|default_if_none:'' }}">
               <span class="error text-danger" id="cheque_no_error"></span>
             </div>
 
             <div class="col-md-6 form-group mb-3">
-              <label for="bank">Bank Name <span class="bank_name" style="color: red">*</span></label>
+              <label for="bank">Bank Name <span class="bank_required" style="color: red; display: none;">*</span></label>
               <input type="text" name="bank" class="form-control" id="bank" value="{{ receipt.bank|default_if_none:'' }}">
               <span class="error text-danger" id="bank_error"></span>
             </div>
 
             <div class="col-md-6 form-group mb-3">
               <label for="sec_date">Payment Date <span style="color: red">*</span></label>
-              <input type="date" name="sec_date" class="form-control" id="sec_date" value="{{ receipt.sec_date|date:'Y-m-d' }}">
+              <input type="text" name="sec_date" class="form-control datepicker-input" id="sec_date" value="{{ receipt.sec_date|date:'Y-m-d' }}">
               <span class="error text-danger" id="sec_date_error"></span>
             </div>
 
@@ -165,6 +160,8 @@
         console.log("jQuery loaded, version:", $.fn.jquery);
     }
 </script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script>
     var $j = jQuery.noConflict(true);
@@ -188,29 +185,82 @@
 <script>
 $j(document).ready(function() {
     const receiptId = {{ receipt.id }};
-    //const apiUrl = `/api/management-receipts/${receiptId}/`;
     const apiUrl = `/api/management-receipts/${receiptId}/edit/`;
 
-    // Toggle cheque_no field based on payment_type
-    function toggleChequeField() {
+    // Datepicker Initialization
+    $j('.datepicker-input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: 0
+    }).focus(function() { $j(this).datepicker("show"); });
+
+    // Convert backend date (YYYY-MM-DD) to display dd-mm-yyyy
+    function formatForDisplay(dateString) {
+        if (!dateString) return '';
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        return dateString;
+    }
+
+    // Convert dd-mm-yy to YYYY-MM-DD for backend
+    function formatForBackend(dateString) {
+        if (!dateString) return '';
+        dateString = dateString.trim();
+
+        console.log("Raw input date:", dateString);
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            console.log("Detected YYYY-MM-DD, returning as-is");
+            return dateString;
+        }
+
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            let day = parts[0].padStart(2, '0');
+            let month = parts[1].padStart(2, '0');
+            let year = parts[2];
+
+            if (year.length === 2) {
+                year = '20' + year;
+            } else if (year.length !== 4) {
+                console.warn("Invalid year format in date:", dateString);
+                return '';
+            }
+
+            console.log("Converted to YYYY-MM-DD:", `${year}-${month}-${day}`);
+            return `${year}-${month}-${day}`;
+        }
+
+        console.warn("Invalid date format detected:", dateString);
+        return '';
+    }
+
+    // Toggle required status and asterisk visibility based on payment_type
+    function toggleRequiredFields() {
         const paymentType = $j('#payment_type').val();
         if (paymentType === 'Cheque') {
-            $j('.cheque-field').addClass('show');
-            $j('.cheque_no').show();
-            $j('.bank_name').show();
             $j('#cheque_no').prop('required', true);
+            $j('.cheque_no_required').show();
             $j('#bank').prop('required', true);
-        } else {
-            $j('.cheque-field').removeClass('show');
-            $j('.cheque_no').hide();
-            $j('.bank_name').hide();
+            $j('.bank_required').show();
+        } else if (paymentType === 'Bank Transfer') {
             $j('#cheque_no').prop('required', false).val('');
+            $j('.cheque_no_required').hide();
+            $j('#bank').prop('required', true);
+            $j('.bank_required').show();
+        } else {
+            $j('#cheque_no').prop('required', false).val('');
+            $j('.cheque_no_required').hide();
             $j('#bank').prop('required', false).val('');
+            $j('.bank_required').hide();
         }
     }
 
-    $j('#payment_type').on('change', toggleChequeField);
-    toggleChequeField(); // Run on page load
+    $j('#payment_type').on('change', toggleRequiredFields);
+    toggleRequiredFields(); // Run on page load
 
     // Format date for input
     function formatDateForInput(dateString) {
@@ -232,11 +282,10 @@ $j(document).ready(function() {
             url: apiUrl,
             type: 'GET',
             success: function(data) {
-                // Populate form fields
                 Object.keys(data).forEach(key => {
                     const field = $j(`[name="${key}"]`);
                     if (field.length) {
-                        if (field.is('input[type="date"]')) {
+                        if (field.hasClass('datepicker-input')) {
                             field.val(formatDateForInput(data[key]));
                         } else if (field.is('select')) {
                             field.val(data[key]);
@@ -245,7 +294,7 @@ $j(document).ready(function() {
                         }
                     }
                 });
-                toggleChequeField();
+                toggleRequiredFields();
             },
             error: function(xhr) {
                 console.error('Error fetching receipt:', xhr.responseText);
@@ -282,7 +331,7 @@ $j(document).ready(function() {
                 numeric: true 
             },
             bank: { 
-                required: function() { return $j('#payment_type').val() === 'Cheque'; },
+                required: function() { return $j('#payment_type').val() === 'Cheque' || $j('#payment_type').val() === 'Bank Transfer'; },
                 lettersonly: true 
             },
             sec_date: { required: true },
@@ -326,6 +375,22 @@ $j(document).ready(function() {
 
     // Submit form via AJAX
     function submitForm() {
+        const dateField = $j('#date');        
+        const secDateField = $j('#sec_date'); 
+
+        console.log("Before formatting:");
+        console.log("date:", dateField.val());
+        console.log("sec_date:", secDateField.val());
+
+        const formattedDate = formatForBackend(dateField.val().trim());
+        const formattedSecDate = formatForBackend(secDateField.val().trim());
+
+        console.log("After formatting:");
+        console.log("date (YYYY-MM-DD):", formattedDate);
+        console.log("sec_date (YYYY-MM-DD):", formattedSecDate);
+
+        dateField.val(formattedDate);
+        secDateField.val(formattedSecDate);
         const formData = new FormData($j('#management_receipt_form')[0]);
         const submitBtn = $j('#submit-btn');
         submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');

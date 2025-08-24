@@ -132,6 +132,14 @@ $(document).ready(function () {
     paging: true,
     processing: true,
     serverSide: true,
+    language: {
+    paginate: {
+      previous: "Previous",
+      next: "Next "
+    }
+  },
+
+  pagingType: "simple_numbers",
     ajax: {
       url: "/api/rental-deals/filter",
       type: "POST",
@@ -199,6 +207,9 @@ $(document).ready(function () {
       // },
     },
      
+"aLengthMenu": [[10,25, 50, 75,100, -1], 
+        [10,25, 50, 75,100, "All"]],
+    
     
     
         dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
@@ -314,7 +325,12 @@ $(document).ready(function () {
   }
 });
 
+
 // script to activate delete view
+
+   
+
+  
 
 let selectedDealId = null;
 
@@ -633,7 +649,15 @@ function updatefunctionality(url) {
               );
             });
           });
-        } else {
+        } 
+             else if (err.status === 403){
+           
+      
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+
+        }else {
           const alertmsg = data.message || "Something went wrong!";
           swal("Error", alertmsg, "error");
         }
@@ -1262,11 +1286,13 @@ $("#deal_form").validate({
     } else {
       k = error.insertAfter(element);
       console.log("Error placed after:", k);
+
     }
   },
 });
 
 $(document).on("click", "#create_deal", function (event) {
+  console.log("clcike cthe button")
   $(
     '[name="submitted_by_agent"],[name="owner_agency"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="is_rental_aml"]'
   ).each(function () {
@@ -1296,6 +1322,9 @@ $(document).on("click", "#create_deal", function (event) {
       },
       1000
     );
+    var validator = $("#deal_form").validate();
+          showErrors(validator);
+    
   }
 });
 
@@ -1363,3 +1392,45 @@ function checkKyc() {
   }
   return result;
 }
+
+
+
+
+      var lang = "";
+      if (lang == "ar") {
+        var oLanguage = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+        var msg = "الرجاء ملء الحقل الإلزامي";
+      } else {
+        var oLanguage = "";
+        var msg = "Please fill mandatory field";
+      }
+
+
+  function showErrors(validator) {
+        var messages = "";
+        console.log(validator, "messages in show errors validator");
+        $.each(validator.errorMap, function (index, value) {
+          if (lang == "ar") {
+            for (var key in form_fields) {
+              var val = form_fields[key];
+
+              if (key == index) {
+                messages += val + " : " + value + "\n";
+              } else {
+                 messages += index.charAt(0).toUpperCase() + index.slice(1) + ' : ' + value+'\n';
+              }
+            }
+          } else {
+            messages +=
+              index.charAt(0).toUpperCase() +
+              index.slice(1) +
+              " : " +
+              value +
+              "\n";
+
+              console.log(messages, "messages in show errors else");
+          }
+        });
+        console.log(messages);
+        swal(msg, messages);
+      }

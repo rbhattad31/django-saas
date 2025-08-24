@@ -220,7 +220,11 @@ function getCookie(name) {
               const date = new Date(field.value);
               const formatted = date.toISOString().split("T")[0]; // YYYY-MM-DD
               d[field.name] = formatted;
+            }else{
+              d[field.name]=""
+
             }
+
           } else {
             d[field.name] = field.value;
           }
@@ -234,6 +238,22 @@ function getCookie(name) {
         console.log("Only table rows:", json.data); // 🔍 just the rows
         return json.data; // required — tells DataTables where the table rows are
       },
+      error: function (xhr, status, error) {
+      console.log("entered the error file")
+            if (xhr.status === 403) {
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+                // Option 2: show SweetAlert (if you’re using it)
+                // Swal.fire({
+                //     icon: "error",
+                //     title: "Access Denied",
+                //     text: "You do not have permission to view this page."
+                // });
+            } else {
+                console.error("❌ AJAX Error:", status, error);
+            }
+        },
 
       // complete: function (xhr, status) {
       //   // Log the full response object
@@ -342,6 +362,11 @@ function getCookie(name) {
     ],
     
  
+  });
+
+  $("#filterFormReciepts").on("submit", function (e) {
+    e.preventDefault(); // Prevent page reload
+    table.ajax.reload(); // Reload DataTable with new filters
   });
     $('#filter').click(function(){
       receiptData.draw();

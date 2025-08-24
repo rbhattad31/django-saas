@@ -2,749 +2,758 @@
 
 {% block content %}
 
- 
-
-<div class="main-content pt-4">  <div class="col-md-12" id="successmsg" style="display: none">
-        <div class="alert alert-primary " id="alert-primary">
-            <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
-        </div>
-    </div>
-<div
+ <div
   id="dealMeta"
   class="hidden"
   data-deal-id="{{ deal_id }}"
   style="display: none"
 ></div>
-  <div class="col-md-12">
-    <h4 class="pb-2">Edit Sales Deal<span class="float-right mr-2"> 
-      <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Cancel</a>
-    </h4>
-    <div class="card mb-5">
-    <div class="card-body">
-    <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Property Details</h5></label>
+
+<div class="main-content pt-4"> 
+  <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary " id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+          
+          
+          <div class="card mb-5">
+              <div class="card-header">
+              <h4 class="pb-2">Edit Sales Deal<span class="float-right mr-2"> 
+              <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Cancel</a>
+              </h4>
+            </div>
+              <div class="card-body">
+              <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Property Details</h5></label>
+                          </div>
+                      </div>
+              <form id="sales_form" enctype="multipart/form-data" novalidate="novalidate">
+                    <input type="hidden" value="PLuNRBGyq7pgNZX0bDUjosj3T6eQihtsxFqyOHgH" name="csrf-token" id="token">
+                      <input type="hidden"  name="id" id="id">
+                      <input type="hidden"  name="comments_finance" id="comments_finance">
+                      <input type="hidden"   name="account_id" id="account_id">
+                      <input type="hidden"   name="save_as" id="save_as">
+                        <div class="row">
+                              
+                                                                    <div class="col-md-6 form-group">
+                                        <label for="role">Deal Submitted By Agent<span class="mandetory_field" style="color: red"></span></label>
+                                      <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
+                                        <option >Select Agent Name</option>
+                                                                              <option value="10">Rahul B</option>
+                                                                              <option value="11">Anirudh</option>
+                                                                              <option value="12">Sonia</option>
+                                                                              <option value="13">Anusha</option>
+                                                                              <option value="16">Majid</option>
+                                                                              <option value="125">Hitesh Aswani</option>
+                                                                              <option value="126">Kalash Malani</option>
+                                                                        </select>
+                                    <span class="text-danger" id="submitted_by_agent_error"></span>
+                                    </div>
+                                  
+                              
+                                  <div class="col-md-6 form-group mb-3">
+                                  <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
+                                  <input type="text" name="submitted_date" class="form-control " id="submitted_date" placeholder="Submitted Date"   readonly="readonly">
+                                    <span class="error text-danger" id="submitted_date_error"></span>
+                                </div>
+                    
+                      <div class="col-md-6 form-group mb-3">
+                                  <label for="reference_number">Reference Number<span class="mandetory_field">*</span></label>
+                                  <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference Number"  >
+                                    <span class="error text-danger" id="reference_number_error"></span>
+                                </div> 
+                              <div class="col-md-6 form-group mb-3">
+                                <label for="unit_details">Unit No<span class="mandetory_field">*</span></label>
+                                <input type="text" name="unit_details" class="form-control" id="unit_details" placeholder="Unit No"  >
+                                  <span class="error text-danger" id="unit_details_error"></span>
+                              </div> 
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="builduing_name">Building Name<span class="mandetory_field">*</span></label>
+                                <input type="text" name="builduing_name" class="form-control" id="builduing_name" placeholder="Building Name"  >
+                                  <span class="error text-danger" id="builduing_name_error"></span>
+                              </div> 
+                        
+                              <div class="col-md-6 form-group mb-3">
+                                <label for="project_name">Project Name<span class="mandetory_field">*</span></label>
+                                <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Project Name"  >
+                                  <span class="error text-danger" id="project_name_error"></span>
+                              </div> 
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="deal_amount">Selling Price</label>
+                                <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price"  >
+                                  <span class="error text-danger" id="deal_amount_error"></span>
+                              </div>
+                              
+                          
+                          
+                        </div>             
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Seller Details</h5></label>
+                          </div>
+                      </div>
+                    
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="role">Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="seller_name" class="form-control" id="seller_name" placeholder="Seller Name"  >
+                                  <span class="error text-danger" id="seller_name_error"></span>
+                          </div>
+                          <div class="col-md-6 form-group">
+                          <label for="role">Source<span class="mandetory_field">*</span></label>
+                          <select class="selectbox2 form-control valid" name="seller_source" id="seller_source" aria-required="true" aria-invalid="false">
+                          <option >Select Seller Source</option>
+                                <option value="Dubizzle">Dubizzle</option>
+                                <option value="Property finder">Property finder</option>
+                                <option value="Classic Website">Classic Website</option>
+                                <option value="YZER">YZER</option>
+                                <option value="Gulfnews">Gulfnews</option>
+                                <option value="Others">Others</option>
+                                <option value="Reference">Reference</option>
+                                <option value="Agent">Agent</option>
+                                <option value="Network">Network</option>
+                                <option value="Social Media">Social Media</option>
+                                <option value="Walk In">Walk In</option>
+                                <option value="Security">Security</option>
+                                <option value="Developer">Developer</option>
+                                <option value="BAYUT">BAYUT</option>
+                                </select>                
+                      </div>
+                </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="selller_mobile">Mobile<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="selller_mobile" name="selller_mobile" placeholder="Seller Mobile"  >
+                                <span class="text-danger" id="selller_mobile_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="seller_email">Email<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="email" id="seller_email" name="seller_email" placeholder="Seller Email"  >
+                                <span class="text-danger" id="seller_email_error"></span>
+                          </div> 
+                                            
+                      </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="seller_nationality">Nationality<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="seller_nationality" name="seller_nationality" placeholder="Nationality"  >
+                                <span class="text-danger" id="seller_nationality_error"></span>
+                          </div>
+
+                        
+                                            
+                      </div>
+                      <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Buyer Details</h5></label>
+                          </div>
                   </div>
-              </div>
-      <form id="sales_form" enctype="multipart/form-data" novalidate="novalidate">
-             <input type="hidden" value="PLuNRBGyq7pgNZX0bDUjosj3T6eQihtsxFqyOHgH" name="csrf-token" id="token">
-              <input type="hidden"  name="id" id="id">
-              <input type="hidden"  name="comments_finance" id="comments_finance">
-              <input type="hidden"   name="account_id" id="account_id">
-               <input type="hidden"   name="save_as" id="save_as">
-                 <div class="row">
-                      
-                                                             <div class="col-md-6 form-group">
-                                <label for="role">Deal Submitted By Agent<span class="mandetory_field" style="color: red"></span></label>
-                               <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
-                                 <option >Select Agent Name</option>
-                                                                       <option value="10">Rahul B</option>
-                                                                      <option value="11">Anirudh</option>
-                                                                      <option value="12">Sonia</option>
-                                                                      <option value="13">Anusha</option>
-                                                                      <option value="16">Majid</option>
-                                                                      <option value="125">Hitesh Aswani</option>
-                                                                      <option value="126">Kalash Malani</option>
-                                                                 </select>
-                            <span class="text-danger" id="submitted_by_agent_error"></span>
-                            </div>
-                           
-                       
-                          <div class="col-md-6 form-group mb-3">
-                          <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
-                          <input type="text" name="submitted_date" class="form-control " id="submitted_date" placeholder="Submitted Date"   readonly="readonly">
-                            <span class="error text-danger" id="submitted_date_error"></span>
-                        </div>
-             
-              <div class="col-md-6 form-group mb-3">
-                          <label for="reference_number">Reference Number<span class="mandetory_field">*</span></label>
-                          <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference Number"  >
-                            <span class="error text-danger" id="reference_number_error"></span>
-                        </div> 
-                      <div class="col-md-6 form-group mb-3">
-                        <label for="unit_details">Unit No<span class="mandetory_field">*</span></label>
-                        <input type="text" name="unit_details" class="form-control" id="unit_details" placeholder="Unit No"  >
-                          <span class="error text-danger" id="unit_details_error"></span>
-                      </div> 
-                    <div class="col-md-6 form-group mb-3">
-                        <label for="builduing_name">Building Name<span class="mandetory_field">*</span></label>
-                        <input type="text" name="builduing_name" class="form-control" id="builduing_name" placeholder="Building Name"  >
-                          <span class="error text-danger" id="builduing_name_error"></span>
-                      </div> 
-                
-                      <div class="col-md-6 form-group mb-3">
-                        <label for="project_name">Project Name<span class="mandetory_field">*</span></label>
-                        <input type="text" name="project_name" class="form-control" id="project_name" placeholder="Project Name"  >
-                          <span class="error text-danger" id="project_name_error"></span>
-                      </div> 
-                    <div class="col-md-6 form-group mb-3">
-                        <label for="deal_amount">Selling Price</label>
-                        <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price"  >
-                          <span class="error text-danger" id="deal_amount_error"></span>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="role">Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="buyer_name" class="form-control" id="buyer_name" placeholder="Buyer Name" value="Carlos De Ceballos Cabrillo">
+                                  <span class="error text-danger" id="buyer_name_error"></span>
+                          </div>
+                          <div class="col-md-6 form-group">
+                          <label for="role">Source<span class="mandetory_field">*</span></label>
+                          <select class="selectbox2 form-control" name="buyer_source" id="buyer_source">
+                          <option >Select Buyer Source</option>
+                                <option value="Dubizzle">Dubizzle</option>
+                                <option value="Property finder">Property finder</option>
+                                <option value="Classic Website">Classic Website</option>
+                                <option value="YZER">YZER</option>
+                                <option value="Gulfnews">Gulfnews</option>
+                                <option value="Others">Others</option>
+                                <option value="Reference">Reference</option>
+                                <option value="Agent">Agent</option>
+                                <option value="Network">Network</option>
+                                <option value="Social Media">Social Media</option>
+                                <option value="Walk In">Walk In</option>
+                                <option value="Security">Security</option>
+                                <option value="Developer">Developer</option>
+                                <option value="BAYUT">BAYUT</option>
+                                </select>                
+                      </div>
+                      </div>
+                  <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_mobile">Mobile<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="buyer_mobile" name="buyer_mobile" placeholder="Buyer Mobile"  >
+                                <span class="text-danger" id="buyer_mobile_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_email">Email<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="email" id="buyer_email" name="buyer_email" placeholder="Buyer Email"  >
+                                <span class="text-danger" id="buyer_email_error"></span>
+                          </div>                    
+                      </div>
+                        <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_nationality">Nationality<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="buyer_nationality" name="buyer_nationality" placeholder="Nationality"  >
+                                <span class="text-danger" id="buyer_nationality_error"></span>
+                          </div>
+
+                        
+                                            
+                      </div>
+                      <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Seller Agency Details</h5></label>
+                          </div>
+                  </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="seller_agency">Agency Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="seller_agency" class="form-control" id="seller_agency" placeholder="Seller Agency" >
+                                  <span class="error text-danger" id="seller_agency_error"></span>
+                          </div>
+                          <div class="col-md-6 form-group">
+                              <label for="seller_agent_name">Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="seller_agent_name" class="form-control" id="seller_agent_name" placeholder="Agent Name"  >
+                                  <span class="error text-danger" id="seller_agent_name_error"></span>
+                          </div>
+                      </div>
+                  <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="seller_agency_brn">Agency Brn</label>
+                              <input class="form-control" type="text" id="seller_agency_brn" name="seller_agency_brn" placeholder="Agent Brn"  >
+                                <span class="text-danger" id="seller_agency_brn_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="seller_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="seller_agent_phone" name="seller_agent_phone" placeholder="Agent Phone"  >
+                                <span class="text-danger" id="seller_agent_phone_error"></span>
+                          </div>                    
+                      </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="seller_agent_email">Agent Email</label>
+                              <input class="form-control" type="text" id="seller_agent_email" name="seller_agent_email" placeholder="Agent Email"  >
+                                <span class="text-danger" id="seller_agent_email_error"></span>
+                          </div>                
                       </div>
                       
-                  
-                   
-                </div>             
-                <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Seller Details</h5></label>
+                      <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Buyer Agency Details</h5></label>
+                          </div>
                   </div>
-              </div>
-            
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="role">Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="seller_name" class="form-control" id="seller_name" placeholder="Seller Name"  >
-                          <span class="error text-danger" id="seller_name_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                  <label for="role">Source<span class="mandetory_field">*</span></label>
-                  <select class="selectbox2 form-control valid" name="seller_source" id="seller_source" aria-required="true" aria-invalid="false">
-                  <option >Select Seller Source</option>
-                        <option value="Dubizzle">Dubizzle</option>
-                        <option value="Property finder">Property finder</option>
-                        <option value="Classic Website">Classic Website</option>
-                        <option value="YZER">YZER</option>
-                        <option value="Gulfnews">Gulfnews</option>
-                        <option value="Others">Others</option>
-                        <option value="Reference">Reference</option>
-                        <option value="Agent">Agent</option>
-                        <option value="Network">Network</option>
-                        <option value="Social Media">Social Media</option>
-                        <option value="Walk In">Walk In</option>
-                        <option value="Security">Security</option>
-                        <option value="Developer">Developer</option>
-                        <option value="BAYUT">BAYUT</option>
-                        </select>                
-              </div>
-        </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="selller_mobile">Mobile<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="selller_mobile" name="selller_mobile" placeholder="Seller Mobile"  >
-                        <span class="text-danger" id="selller_mobile_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="seller_email">Email<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="email" id="seller_email" name="seller_email" placeholder="Seller Email"  >
-                        <span class="text-danger" id="seller_email_error"></span>
-                  </div> 
-                                    
-              </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="seller_nationality">Nationality<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="seller_nationality" name="seller_nationality" placeholder="Nationality"  >
-                        <span class="text-danger" id="seller_nationality_error"></span>
-                  </div>
-
-                 
-                                    
-              </div>
-              <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Buyer Details</h5></label>
-                  </div>
-          </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="role">Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="buyer_name" class="form-control" id="buyer_name" placeholder="Buyer Name" value="Carlos De Ceballos Cabrillo">
-                          <span class="error text-danger" id="buyer_name_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                  <label for="role">Source<span class="mandetory_field">*</span></label>
-                  <select class="selectbox2 form-control" name="buyer_source" id="buyer_source">
-                  <option >Select Buyer Source</option>
-                        <option value="Dubizzle">Dubizzle</option>
-                        <option value="Property finder">Property finder</option>
-                        <option value="Classic Website">Classic Website</option>
-                        <option value="YZER">YZER</option>
-                        <option value="Gulfnews">Gulfnews</option>
-                        <option value="Others">Others</option>
-                        <option value="Reference">Reference</option>
-                        <option value="Agent">Agent</option>
-                        <option value="Network">Network</option>
-                        <option value="Social Media">Social Media</option>
-                        <option value="Walk In">Walk In</option>
-                        <option value="Security">Security</option>
-                        <option value="Developer">Developer</option>
-                        <option value="BAYUT">BAYUT</option>
-                        </select>                
-              </div>
-              </div>
-          <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_mobile">Mobile<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="buyer_mobile" name="buyer_mobile" placeholder="Buyer Mobile"  >
-                        <span class="text-danger" id="buyer_mobile_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_email">Email<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="email" id="buyer_email" name="buyer_email" placeholder="Buyer Email"  >
-                        <span class="text-danger" id="buyer_email_error"></span>
-                  </div>                    
-              </div>
-                <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_nationality">Nationality<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="buyer_nationality" name="buyer_nationality" placeholder="Nationality"  >
-                        <span class="text-danger" id="buyer_nationality_error"></span>
-                  </div>
-
-                 
-                                    
-              </div>
-              <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Seller Agency Details</h5></label>
-                  </div>
-          </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="seller_agency">Agency Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="seller_agency" class="form-control" id="seller_agency" placeholder="Seller Agency" >
-                          <span class="error text-danger" id="seller_agency_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="seller_agent_name">Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="seller_agent_name" class="form-control" id="seller_agent_name" placeholder="Agent Name"  >
-                          <span class="error text-danger" id="seller_agent_name_error"></span>
-                  </div>
-              </div>
-          <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="seller_agency_brn">Agency Brn</label>
-                      <input class="form-control" type="text" id="seller_agency_brn" name="seller_agency_brn" placeholder="Agent Brn"  >
-                        <span class="text-danger" id="seller_agency_brn_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="seller_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="seller_agent_phone" name="seller_agent_phone" placeholder="Agent Phone"  >
-                        <span class="text-danger" id="seller_agent_phone_error"></span>
-                  </div>                    
-              </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="seller_agent_email">Agent Email</label>
-                      <input class="form-control" type="text" id="seller_agent_email" name="seller_agent_email" placeholder="Agent Email"  >
-                        <span class="text-danger" id="seller_agent_email_error"></span>
-                  </div>                
-              </div>
-              
-              <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Buyer Agency Details</h5></label>
-                  </div>
-          </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_agency">Agency Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="buyer_agency" class="form-control" id="buyer_agency" placeholder="Buyer Agency"  >
-                          <span class="error text-danger" id="buyer_agency_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_agent_name">Agent Name<span class="mandetory_field">*</span></label>
-                       <input type="text" name="buyer_agent_name" class="form-control" id="buyer_agent_name" placeholder="Agent Name" >
-                          <span class="error text-danger" id="buyer_agent_name_error"></span>
-                  </div>
-              </div>
-          <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_agency_brn">Agency Brn</label>
-                      <input class="form-control" type="text" id="buyer_agency_brn" name="buyer_agency_brn" placeholder="Agent Brn" >
-                        <span class="text-danger" id="buyer_agency_brn_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="buyer_agent_phone" name="buyer_agent_phone" placeholder="Agent Phone"  >
-                        <span class="text-danger" id="buyer_agent_phone_error"></span>
-                  </div>                    
-              </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_agent_email">Agent Email</label>
-                      <input class="form-control" type="email" id="buyer_agent_email" name="buyer_agent_email" placeholder="Agent Email"  >
-                        <span class="text-danger" id="buyer_agent_email_error"></span>
-                  </div>                
-              </div>
-              
-              <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Mediating Agency Details</h5></label>
-                  </div>
-          </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="mediating_agency">Agency Name</label>
-                       <input type="text" name="mediating_agency" class="form-control" id="mediating_agency" placeholder="Mediating Agency" >
-                          <span class="error text-danger" id="mediating_agency_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="mediating_agent_name">Agent Name</label>
-                       <input type="text" name="mediating_agent_name" class="form-control" id="mediating_agent_name" placeholder="Agent Name" >
-                          <span class="error text-danger" id="mediating_agent_name_error"></span>
-                  </div>
-              </div>
-          <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="mediating_agency_brn">Agency Brn</label>
-                      <input class="form-control" type="text" id="mediating_agency_brn" name="mediating_agency_brn" placeholder="Agent Brn" >
-                        <span class="text-danger" id="mediating_agency_brn_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="mediating_agent_phone">Agent Phone</label>
-                      <input class="form-control" type="text" id="mediating_agent_phone" name="mediating_agent_phone" placeholder="Agent Phone" >
-                        <span class="text-danger" id="mediating_agent_phone_error"></span>
-                  </div>                    
-              </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="mediating_agent_email">Agent Email</label>
-                      <input class="form-control" type="text" id="mediating_agent_email" name="mediating_agent_email" placeholder="Agent Email" >
-                        <span class="text-danger" id="mediating_agent_email_error"></span>
-                  </div>                
-              </div>
-              
-              <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Revenue Details</h5></label>
-                  </div>
-          </div>
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="total_commission">Total Commission<span class="mandetory_field">*</span></label>
-                       <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" value="58275">
-                          <span class="error text-danger" id="total_commission_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="less_outsude_commission">Less Outside Commission<span class="mandetory_field">*</span></label>
-                       <input type="text" name="less_outsude_commission" class="form-control" id="less_outsude_commission" placeholder="Less Outside Commission" value="2,775 Vat">
-                          <span class="error text-danger" id="less_outsude_commission_error"></span>
-                  </div>
-              </div>
-          <div class="row">
-                 <div class="col-md-6 form-group">
-                      <label for="net_commission">Net Commission<span class="mandetory_field">*</span></label>
-                       <input type="text" name="net_commission" class="form-control" id="net_commission" placeholder="Net Commission" value="55,500">
-                          <span class="error text-danger" id="net_commission_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                      <label for="classic">Classic<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="classic" name="classic" placeholder="ClassicClassic" value="27,750">
-                        <span class="text-danger" id="classic_error"></span>
-                  </div>                    
-              </div>
-              
-              <div class="row">               
-                  <div class="col-md-6 form-group">
-                      <label for="agent1">Agent1<span class="mandetory_field">*</span></label>
-                      <input class="form-control" type="text" id="agent1" name="agent1" placeholder="Agent Commission" value="27,750">
-                        <span class="text-danger" id="agent1_error"></span>
-                  </div>    
-                  <div class="col-md-6 form-group">  
-                  <label for="agent1"></label>                   
-                   
-                      <select name="agent_name1" class=" form-control " id="agent_name1" value="72">
-                            <option >Select Agent</option>
-                                                                                     
-                                <option value="10">Rahul B</option>
-                                                                                                                   
-                                <option value="11">Anirudh</option>
-                      </select>
-                        <span class="text-danger" id="agent_name1_error"></span>
-                  </div>                  
-              </div>
-              
-              <div class="row">               
-                  <div class="col-md-6 form-group">
-                      <label for="agent2">Agent2</label>
-                      <input class="form-control" type="text" id="agent2" name="agent2" placeholder="Agent Commission" >
-                        <span class="text-danger" id="agent2_error"></span>
-                  </div>    
-                  <div class="col-md-6 form-group">  
-                  <label for="agent2"></label>                   
-                      <select name="agent_name2" class=" form-control " id="agent_name2" >
-                            <option >Select Agent</option>
-                                                                                     
-                                <option value="10">Rahul B</option>
-                                                                                                                   
-                                <option value="11">Anirudh</option>
-                                                                                    </select>
-                  </div>                  
-              </div>
-              <div class="row">               
-                  <div class="col-md-6 form-group">
-                      <label for="agent3">Agent3</label>
-                      <input class="form-control" type="text" id="agent3" name="agent3" placeholder="Agent Commission" >
-                        <span class="text-danger" id="agent3_error"></span>
-                  </div>    
-                  <div class="col-md-6 form-group">  
-                  <label for="agent3"></label>                   
-                       <select name="agent_name3" class=" form-control " id="agent_name3" >
-                            <option >Select Agent</option>
-                                                                                     
-                                <option value="10">Rahul B</option>
-                                                                                                                   
-                                <option value="11">Anirudh</option>
-                                                                                    </select>
-                  </div>                  
-              </div>
-              <div class="row">               
-                  <div class="col-md-6 form-group">
-                      <label for="agent_comment">Comment by Agent</label>
-                      <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">Documents attached including the receipt no are checked - MANJITHA</textarea>
-                        <span class="text-danger" id="agent_comment_error"></span>
-                  </div>  
-                   {% if perms.core.view_admin_sales_fields %}  
-                                     <div class="col-md-6 form-group">
-                      <label for="comments">Comment by Admin</label>
-                      <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
-                        <span class="text-danger" id="comments_error"></span>
-                  </div>
-                  {% endif %}     
-                                 
-              </div>
-              <div class="row">
-                 
-                 <div class="col-md-6 form-group">
-                      <label for="receipt_no">Receipt No<span class="mandetory_field" style="color:red">*</span></label>
-                      <select name="receipt_no" class=" form-control " id="receipt_no">
-                                                                      <option value="8931" selected="">8931</option>
-                          <option value="Null">Null</option>
-                    <option value="No Commision">No Commision</option>
-                            
-                                              <option value="5003">5003</option>
-                                              <option value="4822">4822</option>
-                                              
-                  </select>
-                        <span class="text-danger" id="receipt_no_error"></span>
-                    </div>     
-                        
-                  <div class="col-md-6 form-group">
-                      <label for="kyc_number">KYC Number</label>
-                     <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number" >
-                        <span class="text-danger" id="kyc_number_error"></span>
-                  </div>    
-                                
-              </div>
-
-               <div class="row">
-                {% for group in request.user.groups.all %}
-          {% if "Manager" in group.name %}
-    
-       
-             {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
-
-            <div class="col-md-6 form-group">
-              <label for="receipt_no">Approve/Reject</label><br />
-              <div class="row">
-                <div class="col-3">
-                  <input
-                    type="radio"
-                    name="manager_approved_rejected"
-                    checked=""
-                    value="A"
-                  />
-                  Approve
-                </div>
-                <div class="col-3" style="margin-left: -45px">
-                  <input
-                    type="radio"
-                    name="manager_approved_rejected"
-                    value="R"
-                  />
-                  Reject
-                </div>
-              </div>
-            </div>
-           {% comment %} {% endif %} {% endcomment %}
-            {% comment %} {% break %} {% endcomment %}
-          {% endif %}
-        {% endfor %}
-               </div>
-               
-                <div class="row">  
-                  {% if perms.core.view_admin_sales_fields %}           
-                 <div class="col-md-6 form-group">
-                      <label for="receipt_no">Approve/Reject</label><br>
                       <div class="row">
-                          <div class="col-3">
-                           <input type="radio" name="is_approved_rejected" value="A"> Approve
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_agency">Agency Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="buyer_agency" class="form-control" id="buyer_agency" placeholder="Buyer Agency"  >
+                                  <span class="error text-danger" id="buyer_agency_error"></span>
                           </div>
-                          <div class="col-3" style="margin-left: -45px">
-                           <input type="radio" name="is_approved_rejected" value="R"> Reject
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_agent_name">Agent Name<span class="mandetory_field">*</span></label>
+                              <input type="text" name="buyer_agent_name" class="form-control" id="buyer_agent_name" placeholder="Agent Name" >
+                                  <span class="error text-danger" id="buyer_agent_name_error"></span>
                           </div>
-                          <div class="col-6" style="margin-left: -55px">
-                           <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
-                         </div>
-                      </div>   
-                  </div>
-                  {% endif %}  
-              
-                  {% if perms.core.update_aml_status_sales_deal %}
-                  <div class="col-md-6 form-group">
-                      <label for="kyc_number">AML<span class="mandetory_field">*</span></label><br>
+                      </div>
+                  <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_agency_brn">Agency Brn</label>
+                              <input class="form-control" type="text" id="buyer_agency_brn" name="buyer_agency_brn" placeholder="Agent Brn" >
+                                <span class="text-danger" id="buyer_agency_brn_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_agent_phone">Agent Phone<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="buyer_agent_phone" name="buyer_agent_phone" placeholder="Agent Phone"  >
+                                <span class="text-danger" id="buyer_agent_phone_error"></span>
+                          </div>                    
+                      </div>
                       <div class="row">
-                          <div class="col-3">
-                            <input value="Yes" class="" name="is_sale_aml" type="radio"> Yes
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_agent_email">Agent Email</label>
+                              <input class="form-control" type="email" id="buyer_agent_email" name="buyer_agent_email" placeholder="Agent Email"  >
+                                <span class="text-danger" id="buyer_agent_email_error"></span>
+                          </div>                
+                      </div>
+                      
+                      <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Mediating Agency Details</h5></label>
                           </div>
-                          <div class="col-5" style="margin-left: -75px">
-                            <input value="No" class="" name="is_sale_aml" type="radio"> No
+                  </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="mediating_agency">Agency Name</label>
+                              <input type="text" name="mediating_agency" class="form-control" id="mediating_agency" placeholder="Mediating Agency" >
+                                  <span class="error text-danger" id="mediating_agency_error"></span>
+                          </div>
+                          <div class="col-md-6 form-group">
+                              <label for="mediating_agent_name">Agent Name</label>
+                              <input type="text" name="mediating_agent_name" class="form-control" id="mediating_agent_name" placeholder="Agent Name" >
+                                  <span class="error text-danger" id="mediating_agent_name_error"></span>
+                          </div>
+                      </div>
+                  <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="mediating_agency_brn">Agency Brn</label>
+                              <input class="form-control" type="text" id="mediating_agency_brn" name="mediating_agency_brn" placeholder="Agent Brn" >
+                                <span class="text-danger" id="mediating_agency_brn_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="mediating_agent_phone">Agent Phone</label>
+                              <input class="form-control" type="text" id="mediating_agent_phone" name="mediating_agent_phone" placeholder="Agent Phone" >
+                                <span class="text-danger" id="mediating_agent_phone_error"></span>
+                          </div>                    
+                      </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="mediating_agent_email">Agent Email</label>
+                              <input class="form-control" type="text" id="mediating_agent_email" name="mediating_agent_email" placeholder="Agent Email" >
+                                <span class="text-danger" id="mediating_agent_email_error"></span>
+                          </div>                
+                      </div>
+                      
+                      <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Revenue Details</h5></label>
+                          </div>
+                  </div>
+                      <div class="row">
+                          <div class="col-md-6 form-group">
+                              <label for="total_commission">Total Commission<span class="mandetory_field">*</span></label>
+                              <input type="text" name="total_commission" class="form-control" id="total_commission" placeholder="Total Commission" value="58275">
+                                  <span class="error text-danger" id="total_commission_error"></span>
+                          </div>
+                          <div class="col-md-6 form-group">
+                              <label for="less_outsude_commission">Less Outside Commission<span class="mandetory_field">*</span></label>
+                              <input type="text" name="less_outsude_commission" class="form-control" id="less_outsude_commission" placeholder="Less Outside Commission" value="2,775 Vat">
+                                  <span class="error text-danger" id="less_outsude_commission_error"></span>
+                          </div>
+                      </div>
+                  <div class="row">
+                        <div class="col-md-6 form-group">
+                              <label for="net_commission">Net Commission<span class="mandetory_field">*</span></label>
+                              <input type="text" name="net_commission" class="form-control" id="net_commission" placeholder="Net Commission" value="55,500">
+                                  <span class="error text-danger" id="net_commission_error"></span>
+                          </div>
+
+                          <div class="col-md-6 form-group">
+                              <label for="classic">Classic<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="classic" name="classic" placeholder="ClassicClassic" value="27,750">
+                                <span class="text-danger" id="classic_error"></span>
+                          </div>                    
+                      </div>
+                      
+                      <div class="row">               
+                          <div class="col-md-6 form-group">
+                              <label for="agent1">Agent1<span class="mandetory_field">*</span></label>
+                              <input class="form-control" type="text" id="agent1" name="agent1" placeholder="Agent Commission" value="27,750">
+                                <span class="text-danger" id="agent1_error"></span>
+                          </div>    
+                          <div class="col-md-6 form-group">  
+                          <label for="agent1"></label>                   
+                          
+                              <select name="agent_name1" class=" form-control " id="agent_name1" value="72">
+                                    <option >Select Agent</option>
+                                                                                            
+                                        <option value="10">Rahul B</option>
+                                                                                                                          
+                                        <option value="11">Anirudh</option>
+                              </select>
+                                <span class="text-danger" id="agent_name1_error"></span>
+                          </div>                  
+                      </div>
+                      
+                      <div class="row">               
+                          <div class="col-md-6 form-group">
+                              <label for="agent2">Agent2</label>
+                              <input class="form-control" type="text" id="agent2" name="agent2" placeholder="Agent Commission" >
+                                <span class="text-danger" id="agent2_error"></span>
+                          </div>    
+                          <div class="col-md-6 form-group">  
+                          <label for="agent2"></label>                   
+                              <select name="agent_name2" class=" form-control " id="agent_name2" >
+                                    <option >Select Agent</option>
+                                                                                            
+                                        <option value="10">Rahul B</option>
+                                                                                                                          
+                                        <option value="11">Anirudh</option>
+                                                                                            </select>
+                          </div>                  
+                      </div>
+                      <div class="row">               
+                          <div class="col-md-6 form-group">
+                              <label for="agent3">Agent3</label>
+                              <input class="form-control" type="text" id="agent3" name="agent3" placeholder="Agent Commission" >
+                                <span class="text-danger" id="agent3_error"></span>
+                          </div>    
+                          <div class="col-md-6 form-group">  
+                          <label for="agent3"></label>                   
+                              <select name="agent_name3" class=" form-control " id="agent_name3" >
+                                    <option >Select Agent</option>
+                                                                                            
+                                        <option value="10">Rahul B</option>
+                                                                                                                          
+                                        <option value="11">Anirudh</option>
+                                                                                            </select>
+                          </div>                  
+                      </div>
+                      <div class="row">               
+                          <div class="col-md-6 form-group">
+                              <label for="agent_comment">Comment by Agent</label>
+                              <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">Documents attached including the receipt no are checked - MANJITHA</textarea>
+                                <span class="text-danger" id="agent_comment_error"></span>
                           </div>  
-                          <span class="text-danger" id="is_sale_aml_error"></span>
-                      </div>    
-                  </div>              
-              </div>
-              {% endif %}
-                                           <hr>
-                <div class="row">
-                  <div class="col-md-6 form-group mb-1">
-                      <label><h5>Documents</h5></label>
-                  </div>
-          </div>
-                    <div class="row">                              
-                  <div class="col-md-6 form-group">
-                      <label for="signed_mou">Form F<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="signed_mou" type="file"  name="signed_mou[]">
-                                   
-                                                                                                                                                         
-                         
-                            
-                                          
-                      
-                     
-                              
-                        <span class="text-danger" id="signed_mou_error"></span>
+                          {% if perms.core.view_admin_sales_fields %}  
+                                            <div class="col-md-6 form-group">
+                              <label for="comments">Comment by Admin</label>
+                              <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
+                                <span class="text-danger" id="comments_error"></span>
+                          </div>
+                          {% endif %}     
+                                        
+                      </div>
+                      <div class="row">
                         
-                  </div>    
-                  <div class="col-md-6 form-group">
-                      <label for="new_title_deed">New Title Deed<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="new_title_deed" type="file"  name="new_title_deed[]">
-                         
-                                                                                                                                                         
-                          
-                            
-                                          
-                                  
-                     
-                                    <span class="text-danger" id="new_title_deed_error"></span>
-                  </div>                  
-              </div>
-              <div class="row">                              
-                  <div class="col-md-6 form-group">
-                      <label for="old_title_deed">Old Title Deed<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="old_title_deed" type="file"  name="old_title_deed[]">                     
-                           
-                                                                                                                                 
-                            
-                                          
-                                      
-                    
-                                    <span class="text-danger" id="old_title_deed_error"></span>
-                  </div>    
-                  <div class="col-md-6 form-group">
-                       <label for="owners_passport_copy">Owners Passport Copy<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="owners_passport_copy" type="file"  name="owners_passport_copy[]">                     
-                           
-                                                                                                                                                         
-                        
-                            
-                                
-                     
-                                          <span class="text-danger" id="owners_passport_copy_error"></span>
-                  </div>                  
-              </div>
-              
-              <div class="row">                              
-                  <div class="col-md-6 form-group">
-                      <label for="owner_eid_copy">Owner Eid</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file"  name="owner_eid_copy[]">
-                      
-                         
-                                         
-                    
-                                    <span class="text-danger" id="owner_eid_copy_error"></span>
-                  </div>         
-                  <div class="col-md-6 form-group">
-                      <label for="buyers_passport_copy">Buyers Passport Copy<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyers_passport_copy" type="file"  name="buyers_passport_copy[]">                     
-                         
-                                                                                                                                                         
-                         
-                                                                                        
-                           
-                            
+                        <div class="col-md-6 form-group">
+                              <label for="receipt_no">Receipt No<span class="mandetory_field" style="color:red">*</span></label>
+                              <select name="receipt_no" class=" form-control " id="receipt_no">
+                                                                              <option value="8931" selected="">8931</option>
+                                  <option value="Null">Null</option>
+                            <option value="No Commision">No Commision</option>
                                     
-                    
-                                          <span class="text-danger" id="buyers_passport_copy_error"></span>
-                  </div>                  
-              </div>
-        
-        <div class="row">                              
-                  <div class="col-md-6 form-group">
-                      <label for="buyers_deposit_cheque_copy">Buyers Deposit Cheque Copy<span class="mandetory_field">*</span></label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyers_deposit_cheque_copy" type="file"  name="buyers_deposit_cheque_copy[]">                     
-                           
-                                                                                                                                                         
-                        
-                            
+                                                      <option value="5003">5003</option>
+                                                      <option value="4822">4822</option>
+                                                      
+                          </select>
+                                <span class="text-danger" id="receipt_no_error"></span>
+                            </div>     
                                 
-                   
-                       
-                        <span class="text-danger" id="buyers_deposit_cheque_copy_error"></span>
-                  </div>           
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_eid">Buyer Eid</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyer_eid" type="file"  name="buyer_eid[]">
-                      
-                         
-                                                                                                                                                         
-                          
-                            
+                          <div class="col-md-6 form-group">
+                              <label for="kyc_number">KYC Number</label>
+                            <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number" >
+                                <span class="text-danger" id="kyc_number_error"></span>
+                          </div>    
+                                        
+                      </div>
+
+                      <div class="row">
+                        {% for group in request.user.groups.all %}
+                  {% if "Manager" in group.name %}
+            
               
-                            
-                                
-                 
-                               <span class="text-danger" id="buyer_eid_error"></span>
-                  </div>                    
-              </div>
-              
-              <div class="row">                              
-                  <div class="col-md-6 form-group">
-                      <label for="sellers_deposit_cheque_copy">Sellers Deposit Cheque Copy</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="sellers_deposit_cheque_copy" type="file"  name="sellers_deposit_cheque_copy[]">                    
-                         
-                    
-                       
-                        <span class="text-danger" id="sellers_deposit_cheque_copy_error"></span>
-                  </div>          
-                  <div class="col-md-6 form-group">
-                      <label for="seller_poa_passport_copy">Seller Poa Passport Copy</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_passport_copy" type="file"  name="seller_poa_passport_copy[]">
-                      
-                         
-                                         
-                      
-                                              <span class="text-danger" id="seller_poa_passport_copy_error"></span>
-                  </div>                      
-              </div>  
-              <div class="row">                                                        
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_poa_passport_copy">Buyer Poa Passport Copy</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_passport_copy" type="file"  name="buyer_poa_passport_copy[]">                     
-                         
-                                           
-                      
-                                             <span class="text-danger" id="buyer_poa_passport_copy_error"></span>
-                  </div>                        
-                                       
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_poa_copy">Buyer Poa Copy</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_copy" type="file"  name="buyer_poa_copy[]">                     
-                         
-                                       
-                     
-                                    <span class="text-danger" id="buyer_poa_copy_error"></span>
-                  </div>  
-                  </div>
-              <div class="row">          
-                  <div class="col-md-6 form-group">
-                      <label for="seller_poa_copy">Sellers Poa Copy</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_copy" type="file"  name="seller_poa_copy[]">                     
-                         
-                                       
-                       
-                                     <span class="text-danger" id="seller_poa_copy_error"></span>
-                  </div>                        
-                                         
-                  <div class="col-md-6 form-group">
-                      <label for="buyer_poa_eid">Buyer Poa EID</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="buyer_poa_eid" type="file"  name="buyer_poa_eid[]">                     
-                         
-                                         
-                    
-                                   <span class="text-danger" id="buyer_poa_eid_error"></span>
-                </div>  
-                </div>
-              <div class="row">      
-                  <div class="col-md-6 form-group">
-                      <label for="seller_poa_eid">Sellers Poa EID</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="seller_poa_eid" type="file"  name="seller_poa_eid[]">                     
-                         
-                                         
-                     
-                                    <span class="text-danger" id="seller_poa_eid_error"></span>
-                  </div>                        
-                                         
-                  <div class="col-md-6 form-group">
-                      <label for="sale_kyc_number">KYC/Form I/Referral Agreement/Management Approval Form</label><br>
-                      <input multiple="multiple" class="imageUploadInput" id="sale_kyc_number" type="file"  name="sale_kyc_number[]">                     
-                         
-                                                                                                                                                         
-                          <div class="upload_prev">  </div>
-                            
-                                
-                   
-                                     <span class="text-danger" id="sale_kyc_number_error"></span>
-                  </div>                            
-              </div>
-                    <div class="row">
-                       <div class="col-md-6 form-group">
-        <label for="screening">Screening</label><br>
-        <input multiple="multiple" class="imageUploadInput" id="screening" type="file"  name="screening[]">
-                     
-                                                           
-        
-                                   
-        
-              
-        <span class="text-danger" id="screening_error"></span>
-        </div>     
-         <div class="col-md-6 form-group mb-3">
-          <label for="screening_comments">Screening Comments</label>
-          <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" cols="50" placeholder="Screening Comments">No Match Found</textarea>
-        </div>
-      </div>  
-      <div class="row">
-                       <div class="col-md-6 form-group">
-        <label for="manager_cheque_copy">Manager Cheque Copy</label><br>
-        <input multiple="multiple" class="imageUploadInput" id="manager_cheque_copy" type="file"  name="manager_cheque_copy[]">
-                     
-                                                           
-      
-                                           
-         
-                                   
-       
-                        
-        <span class="text-danger" id="manager_cheque_copy_error"></span>
-        </div>     
-      </div> 
-                <div class="row mt-3">
-                    <div class="col-sm-12 btn-center mt-3 w-100 d-flex justify-content-center">
-                      
-                      <button type="button" class="btn btn-primary btn-rounded m-1" id="update_draft">Update Deal</button> 
-                                                                                  <button type="button" class="btn btn-primary btn-rounded m-1" id="create_deal">Submit Deal</button> 
+                    {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+
+                    <div class="col-md-6 form-group">
+                      <label for="receipt_no">Approve/Reject</label><br />
+                      <div class="row">
+                        <div class="col-3">
+                          <input
+                            type="radio"
+                            name="manager_approved_rejected"
+                            checked=""
+                            value="A"
+                          />
+                          Approve
+                        </div>
+                        <div class="col-3" style="margin-left: -45px">
+                          <input
+                            type="radio"
+                            name="manager_approved_rejected"
+                            value="R"
+                          />
+                          Reject
+                        </div>
+                      </div>
                     </div>
+                  {% comment %} {% endif %} {% endcomment %}
+                    {% comment %} {% break %} {% endcomment %}
+                  {% endif %}
+                {% endfor %}
+                      </div>
+                      
+                        <div class="row">  
+                          {% if perms.core.view_admin_sales_fields %}           
+                        <div class="col-md-6 form-group">
+                              <label for="receipt_no">Approve/Reject</label><br>
+                              <div class="row">
+                                  <div class="col-3">
+                                  <input type="radio" name="is_approved_rejected" value="A"> Approve
+                                  </div>
+                                  <div class="col-3" style="margin-left: -45px">
+                                  <input type="radio" name="is_approved_rejected" value="R"> Reject
+                                  </div>
+                                  <div class="col-6" style="margin-left: -55px">
+                                  <input type="radio" name="is_approved_rejected" value="F"> Waiting for Finance
+                                </div>
+                              </div>   
+                          </div>
+                          {% endif %}  
+                      
+                          {% if perms.core.update_aml_status_sales_deal %}
+                          <div class="col-md-6 form-group">
+                              <label for="kyc_number">AML<span class="mandetory_field">*</span></label><br>
+                              <div class="row">
+                                  <div class="col-3">
+                                    <input value="Yes" class="" name="is_sale_aml" type="radio"> Yes
+                                  </div>
+                                  <div class="col-5" style="margin-left: -75px">
+                                    <input value="No" class="" name="is_sale_aml" type="radio"> No
+                                  </div>  
+                                  <span class="text-danger" id="is_sale_aml_error"></span>
+                              </div>    
+                          </div>              
+                      </div>
+                      {% endif %}
+                                                  <hr>
+                        <div class="row">
+                          <div class="col-md-6 form-group mb-1">
+                              <label><h5>Documents</h5></label>
+                          </div>
+                  </div>
+                            <div class="row">                              
+                          <div class="col-md-6 form-group">
+                              <label for="signed_mou">Form F<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="signed_mou" type="file"  name="signed_mou[]">
+                                          
+                                                                                                                                                                
+                                
+                                    
+                                                  
+                              
+                            
+                                      
+                                <span class="text-danger" id="signed_mou_error"></span>
+                                
+                          </div>    
+                          <div class="col-md-6 form-group">
+                              <label for="new_title_deed">New Title Deed<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="new_title_deed" type="file"  name="new_title_deed[]">
+                                
+                                                                                                                                                                
+                                  
+                                    
+                                                  
+                                          
+                            
+                                            <span class="text-danger" id="new_title_deed_error"></span>
+                          </div>                  
+                      </div>
+                      <div class="row">                              
+                          <div class="col-md-6 form-group">
+                              <label for="old_title_deed">Old Title Deed<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="old_title_deed" type="file"  name="old_title_deed[]">                     
+                                  
+                                                                                                                                        
+                                    
+                                                  
+                                              
+                            
+                                            <span class="text-danger" id="old_title_deed_error"></span>
+                          </div>    
+                          <div class="col-md-6 form-group">
+                              <label for="owners_passport_copy">Owners Passport Copy<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="owners_passport_copy" type="file"  name="owners_passport_copy[]">                     
+                                  
+                                                                                                                                                                
+                                
+                                    
+                                        
+                            
+                                                  <span class="text-danger" id="owners_passport_copy_error"></span>
+                          </div>                  
+                      </div>
+                      
+                      <div class="row">                              
+                          <div class="col-md-6 form-group">
+                              <label for="owner_eid_copy">Owner Eid</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="owner_eid_copy" type="file"  name="owner_eid_copy[]">
+                              
+                                
+                                                
+                            
+                                            <span class="text-danger" id="owner_eid_copy_error"></span>
+                          </div>         
+                          <div class="col-md-6 form-group">
+                              <label for="buyers_passport_copy">Buyers Passport Copy<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyers_passport_copy" type="file"  name="buyers_passport_copy[]">                     
+                                
+                                                                                                                                                                
+                                
+                                                                                                
+                                  
+                                    
+                                            
+                            
+                                                  <span class="text-danger" id="buyers_passport_copy_error"></span>
+                          </div>                  
+                      </div>
+                
+                <div class="row">                              
+                          <div class="col-md-6 form-group">
+                              <label for="buyers_deposit_cheque_copy">Buyers Deposit Cheque Copy<span class="mandetory_field">*</span></label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyers_deposit_cheque_copy" type="file"  name="buyers_deposit_cheque_copy[]">                     
+                                  
+                                                                                                                                                                
+                                
+                                    
+                                        
+                          
+                              
+                                <span class="text-danger" id="buyers_deposit_cheque_copy_error"></span>
+                          </div>           
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_eid">Buyer Eid</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyer_eid" type="file"  name="buyer_eid[]">
+                              
+                                
+                                                                                                                                                                
+                                  
+                                    
+                      
+                                    
+                                        
+                        
+                                      <span class="text-danger" id="buyer_eid_error"></span>
+                          </div>                    
+                      </div>
+                      
+                      <div class="row">                              
+                          <div class="col-md-6 form-group">
+                              <label for="sellers_deposit_cheque_copy">Sellers Deposit Cheque Copy</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="sellers_deposit_cheque_copy" type="file"  name="sellers_deposit_cheque_copy[]">                    
+                                
+                            
+                              
+                                <span class="text-danger" id="sellers_deposit_cheque_copy_error"></span>
+                          </div>          
+                          <div class="col-md-6 form-group">
+                              <label for="seller_poa_passport_copy">Seller Poa Passport Copy</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="seller_poa_passport_copy" type="file"  name="seller_poa_passport_copy[]">
+                              
+                                
+                                                
+                              
+                                                      <span class="text-danger" id="seller_poa_passport_copy_error"></span>
+                          </div>                      
+                      </div>  
+                      <div class="row">                                                        
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_poa_passport_copy">Buyer Poa Passport Copy</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyer_poa_passport_copy" type="file"  name="buyer_poa_passport_copy[]">                     
+                                
+                                                  
+                              
+                                                    <span class="text-danger" id="buyer_poa_passport_copy_error"></span>
+                          </div>                        
+                                              
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_poa_copy">Buyer Poa Copy</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyer_poa_copy" type="file"  name="buyer_poa_copy[]">                     
+                                
+                                              
+                            
+                                            <span class="text-danger" id="buyer_poa_copy_error"></span>
+                          </div>  
+                          </div>
+                      <div class="row">          
+                          <div class="col-md-6 form-group">
+                              <label for="seller_poa_copy">Sellers Poa Copy</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="seller_poa_copy" type="file"  name="seller_poa_copy[]">                     
+                                
+                                              
+                              
+                                            <span class="text-danger" id="seller_poa_copy_error"></span>
+                          </div>                        
+                                                
+                          <div class="col-md-6 form-group">
+                              <label for="buyer_poa_eid">Buyer Poa EID</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="buyer_poa_eid" type="file"  name="buyer_poa_eid[]">                     
+                                
+                                                
+                            
+                                          <span class="text-danger" id="buyer_poa_eid_error"></span>
+                        </div>  
+                        </div>
+                      <div class="row">      
+                          <div class="col-md-6 form-group">
+                              <label for="seller_poa_eid">Sellers Poa EID</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="seller_poa_eid" type="file"  name="seller_poa_eid[]">                     
+                                
+                                                
+                            
+                                            <span class="text-danger" id="seller_poa_eid_error"></span>
+                          </div>                        
+                                                
+                          <div class="col-md-6 form-group">
+                              <label for="sale_kyc_number">KYC/Form I/Referral Agreement/Management Approval Form</label><br>
+                              <input multiple="multiple" class="imageUploadInput" id="sale_kyc_number" type="file"  name="sale_kyc_number[]">                     
+                                
+                                                                                                                                                                
+                                  <div class="upload_prev">  </div>
+                                    
+                                        
+                          
+                                            <span class="text-danger" id="sale_kyc_number_error"></span>
+                          </div>                            
+                      </div>
+                            <div class="row">
+                              <div class="col-md-6 form-group">
+                <label for="screening">Screening</label><br>
+                <input multiple="multiple" class="imageUploadInput" id="screening" type="file"  name="screening[]">
+                            
+                                                                  
+                
+                                          
+                
+                      
+                <span class="text-danger" id="screening_error"></span>
+                </div>     
+                <div class="col-md-6 form-group mb-3">
+                  <label for="screening_comments">Screening Comments</label>
+                  <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" cols="50" placeholder="Screening Comments">No Match Found</textarea>
                 </div>
-          </form>
-    </div>
+              </div>  
+              <div class="row">
+                              <div class="col-md-6 form-group">
+                <label for="manager_cheque_copy">Manager Cheque Copy</label><br>
+                <input multiple="multiple" class="imageUploadInput" id="manager_cheque_copy" type="file"  name="manager_cheque_copy[]">
+                            
+                                                                  
+              
+                                                  
+                
+                                          
+              
+                                
+                <span class="text-danger" id="manager_cheque_copy_error"></span>
+                </div>     
+              </div> 
+                        <div class="row mt-3">
+                            <div class="col-sm-12 btn-center mt-3 w-100 d-flex justify-content-center">
+                              
+                              <button type="button" class="btn btn-primary btn-rounded m-1" id="update_draft">Update Deal</button> 
+                                                                                          <button type="button" class="btn btn-primary btn-rounded m-1" id="create_deal">Submit Deal</button> 
+                            </div>
+                        </div>
+                  </form>
+            </div>
+          </div>
+        </div>
+  
   </div>
-</div>
+
 </div>
 <script>
   awsUrl = "{{ aws_url }}";

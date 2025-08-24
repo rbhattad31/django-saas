@@ -1,41 +1,8 @@
 {% load custom_tags %}
 
-{% comment %} <style>
-  /* For main nav items and submenu items */
-  #sidenav-main .nav-item,
-  #sidenav-main .list-group-item {
-    position: relative;
-    overflow: hidden;
-  }
+ 
 
-  #sidenav-main .nav-item::before,
-  #sidenav-main .list-group-item::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0;
-    background: rgba(0, 123, 255, 0.15); /* light blue highlight */
-    z-index: 0;
-    transition: width 0.3s ease-in-out;
-  }
-
-  /* Expand left → right on hover */
-  #sidenav-main .nav-item:hover::before,
-  #sidenav-main .list-group-item:hover::before {
-    width: 100%;
-  }
-
-  /* Keep text above background (but no color change) */
-  #sidenav-main .nav-item > a,
-  #sidenav-main .list-group-item > a {
-    position: relative;
-    z-index: 1;
-  }
-</style> {% endcomment %}
-
-<nav class="fixed-left navbar navbar-vertical navbar-light bg-white pl-2 h-100vh d-flex justify-content-center align-items-start" id="sidenav-main">
+{% comment %} <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
   <div class="sidebar ">
     <div class="text-center mb-4">
       <h4>bradsol</h4>
@@ -44,25 +11,340 @@
     <ul class="nav flex-column">
 
       <!-- My Dashboard -->
+
+      {% if perms.auth.admin_dashboard_access %}
+       
       <li class="nav-item">
         <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> My Dashboard</a>
       </li>
-
+      {% endif %}
       <!-- Accounts Management -->
+       {% if perms.core.accounts_management %}
       <li class="nav-item">
         <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#accountsSubmenu" aria-expanded="false" aria-controls="accountsSubmenu">
           <span><i class="fas fa-user"></i> Accounts Management</span> <span class="chevron">&#x276F;</span>
         </a>
         <div class="collapse" id="accountsSubmenu">
           <ul class="list-group ms-3">
-            <li class="list-group-item border-0 px-3 py-1"><a href= "#" class="text-decoration-none">Users</a></li>
-
+          {% if perms.core.user_management %}
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "api-user-list" %} class="text-decoration-none"> <i class="fas fa-bell"></i>  </i>Users Management</a></li>
+            {% endif %}
             {% if perms.auth.role_management %}
-            <li class="list-group-item border-0 px-3 py-1"><a href={% url "role-list" %} class="text-decoration-none">Roles Management</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href={% url "role-list" %} class="text-decoration-none"><i class="fas fa-users"></i> Roles Management</a></li>
             {% endif %}
           </ul>
         </div>
       </li>
+        {% endif %}
+
+
+      <!-- Property Management Deals -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#propertySubmenu" aria-expanded="false" aria-controls="propertySubmenu">
+          <span><i class="fas fa-building"></i> Property Management Deals</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="propertySubmenu">
+         <ul class="list-group ms-3">
+              
+ 
+            {% if perms.core.property_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-list' %}" class="text-decoration-none">
+                  <i class="fas fa-users me-2"></i> All Properties
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.draft_rentalproperties %}
+           
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-draft' %}" class="text-decoration-none">
+                  <i class="fas fa-user me-2"></i> My Drafts
+                </a>
+              </li>
+            {% endif %}
+
+        
+            {% if perms.core.approved_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-approved' %}" class="text-decoration-none">
+                  <i class="fas fa-random me-2"></i> Approved Properties
+                </a>
+              </li>
+              {% if perms.core.rejected_properties_rentalproperties %}
+                <li class="list-group-item border-0 px-3 py-1">
+                  <a href="{% url 'rental-property-rejected' %}" class="text-decoration-none">
+                    <i class="fas fa-thumbs-up me-2"></i> Rejected Properties
+                  </a>
+                </li>
+              {% endif %}
+
+              {% if perms.core.pending_properties_rentalproperties %}
+                <li class="list-group-item border-0 px-3 py-1">
+                  <a href="{% url 'rental-property-pending' %}" class="text-decoration-none">
+                    <i class="fas fa-thumbs-down me-2"></i> Pending Properties
+                  </a>
+                </li>
+              {% endif %}
+            {% endif %}
+
+            {% if perms.core.waiting_for_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-waiting' %}" class="text-decoration-none">
+                  <i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Properties
+                </a>
+              </li>
+            {% endif %}
+            
+           
+            {% if perms.core.entered_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-entered-finance' %}" class="text-decoration-none">
+                  <i class="fas fa-user-times me-2"></i> Entered Finance Properties
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.pending_finance_properties_rentalproperties %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="{% url 'rental-property-waiting-finance' %}" class="text-decoration-none">
+                  <i class="fas fa-user-plus me-2"></i> Pending Finance Properties
+                </a>
+              </li>
+            {% endif %}
+            <!-- Management Receipts -->
+              {% if perms.core.list_management_receipts_rentalproperties %}
+            <li class="list-group-item border-0 px-3 py-1">
+              <a href="{% url 'management_receipts_manager' %}" class="text-decoration-none">
+                <i class="fas fa-file-invoice-dollar me-2"></i> Management Receipts
+              </a>
+            </li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </li>
+
+      <!-- Third Party Receipts -->
+       {% if perms.core.add_deposits  or perms.core.view_deposits or perms.core.delete_deposits %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'third_party_receipts_list' %}">
+          <i class="fas fa-receipt"></i> Third Party Receipts
+        </a></li>
+        {% endif %}
+
+      <!-- Settings -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#settingsSubmenu" aria-expanded="false" aria-controls="settingsSubmenu">
+          <span><i class="fas fa-cogs"></i> Settings</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="settingsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">General</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Preferences</a></li>
+          </ul>
+        </div>
+      </li> 
+
+      <!-- Rental Deals Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#rentalDealsSubmenu" aria-expanded="false" aria-controls="rentalDealsSubmenu" id="rentalDealsToggle">
+          <span><i class="fas fa-home"></i> Rental Deals Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="rentalDealsSubmenu">
+          <ul class="list-group ms-3">
+            {% if perms.core.view_all_rental_deals %}
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/list/" class="text-decoration-none rental-link"><i class="fas fa-users me-2"></i> All Rental Deals</a></li>
+            {% endif  %}
+
+             {% if perms.core.view_my_draft_rental_deals %}
+
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/draft/" class="text-decoration-none rental-link"><i class="fas fa-user me-2"></i> My Drafts</a></li>
+            {% endif %}
+
+            {% if perms.core.view_pending_rental_deals  %}
+
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/pending/" class="text-decoration-none rental-link"><i class="fas fa-random me-2"></i> Pending Rental Deals</a></li>
+            {% endif %}
+            {% if perms.core.view_approved_rental_deals %}
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/approved/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-up me-2"></i> Approved Rental Deals</a></li>
+            {% endif %}
+
+            {% if perms.core.view_rejected_rental_deals %}
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/rejected/" class="text-decoration-none rental-link"><i class="fas fa-thumbs-down me-2"></i> Rejected Rental Deals</a></li>
+           
+            {% endif  %}
+
+            {% if perms.core.view_waiting_finance_rental_deals %}
+
+            <li class="list-group-item border-0 px-3 py-1"><a href="/rental-deals/waiting/" class="text-decoration-none rental-link"><i class="fas fa-hourglass-half me-2"></i> Waiting Finance Rental Deals</a></li>
+            {% endif %}
+              
+            {% if perms.core.view_pending_finance_rental_deals %}
+
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-pending-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-times me-2"></i> Pending Finance Rental Deals</a></li>
+            {% endif %}
+
+            {% if perms.core.enter_finance_rental_deals %}
+
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "rental-deal-entered-finance" %} class="text-decoration-none rental-link"><i class="fas fa-user-plus me-2"></i> Entered Finance Rental Deals</a></li> 
+            {% endif %}
+          </ul>
+        </div>
+      </li>
+
+      <!-- Sales Deals Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#salesDealsSubmenu" aria-expanded="false" aria-controls="salesDealsSubmenu">
+          <span><i class="fas fa-clipboard-list"></i> Sales Deals Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="salesDealsSubmenu">
+         
+
+          <ul class="list-group ms-3">
+
+            {% if perms.core.view_all_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/list/" class="text-decoration-none">
+                  <i class="fas fa-users"></i> All Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_my_draft_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/draft/" class="text-decoration-none">
+                  <i class="fas fa-user me-2"></i> My Drafts
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_pending_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/pending/" class="text-decoration-none">
+                  <i class="fas fa-random me-2"></i> Pending Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_approved_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/approved/" class="text-decoration-none">
+                  <i class="fas fa-thumbs-up me-2"></i> Approved Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_rejected_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/rejected/" class="text-decoration-none">
+                  <i class="fas fa-thumbs-down me-2"></i> Rejected Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_waiting_finance_sales_deals %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/waiting/" class="text-decoration-none">
+                  <i class="fas fa-hourglass-half me-2"></i> Waiting For Finance Sales Deals
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.view_pending_finance_sales_deal %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/pending-finance/" class="text-decoration-none">
+                  <i class="fas fa-user-times me-2"></i> Pending Finance Sales Deal
+                </a>
+              </li>
+            {% endif %}
+
+            {% if perms.core.enter_finance_sales_deal %}
+              <li class="list-group-item border-0 px-3 py-1">
+                <a href="/sales-deals/entered-finance/" class="text-decoration-none">
+                  <i class="fas fa-user-plus me-2"></i> Entered Finance Sales Deal
+                </a>
+              </li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </li> 
+
+      <!-- Reports Management -->
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportsSubmenu" aria-expanded="false" aria-controls="reportsSubmenu">
+          <span><i class="fas fa-database"></i> Reports Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="reportsSubmenu">
+          <ul class="list-group ms-3">
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Sales Reports</a></li>
+            <li class="list-group-item border-0 px-3 py-1"><a href="#" class="text-decoration-none">Rental Reports</a></li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Receipt -->
+       {% if perms.core.view_receipts or perms.core.change_receipts or perm.core.delete_receipts  %}
+       <li class="nav-item"><a class="nav-link" href={% url "receipts_list" %}><i class="fas fa-file-invoice"></i> Receipt</a></li>
+       {% endif %}
+
+      <!-- Logout -->
+      <li class="nav-item">  
+         <form method="post" action="{% url 'logout' %}" style="display: inline;">
+      {% csrf_token %}
+        <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none; font-size :16px">
+      <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+      </form>
+      </li>
+
+    </ul>
+  </div>
+
+ 
+</nav> {% endcomment %}
+
+<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main" >
+  <div class="scrollbar-inner">
+    <!-- Brand -->
+    <div class="sidenav-header  align-items-center">
+      <a class="navbar-brand" href="/">
+        <img src="/static/assets/img/brand/blue.png" class="navbar-brand-img" alt="Argon Design - Jinja Template Logo.">
+      </a>
+    </div>
+    <div class="navbar-inner">
+      <!-- Collapse -->
+      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+        <!-- Nav items -->
+    <ul class="nav flex-column">
+
+      <!-- My Dashboard -->
+
+      {% if perms.auth.admin_dashboard_access %}
+       
+      <li class="nav-item">
+        <a class="nav-link" href="/"><i class="fas fa-chart-line"></i> My Dashboard</a>
+      </li>
+      {% endif %}
+      <!-- Accounts Management -->
+       {% if perms.core.accounts_management %}
+      <li class="nav-item">
+        <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#accountsSubmenu" aria-expanded="false" aria-controls="accountsSubmenu">
+          <span><i class="fas fa-user"></i> Accounts Management</span> <span class="chevron">&#x276F;</span>
+        </a>
+        <div class="collapse" id="accountsSubmenu">
+          <ul class="list-group ms-3">
+          {% if perms.core.user_management %}
+            <li class="list-group-item border-0 px-3 py-1"><a href= {% url "api-user-list" %} class="text-decoration-none"> <i class="fas fa-bell"></i>  </i>Users Management</a></li>
+            {% endif %}
+            {% if perms.auth.role_management %}
+            <li class="list-group-item border-0 px-3 py-1"><a href={% url "role-list" %} class="text-decoration-none"><i class="fas fa-users"></i> Roles Management</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </li>
+        {% endif %}
+
 
       <!-- Property Management Deals -->
       <li class="nav-item">
@@ -318,22 +600,30 @@
       <!-- Logout -->
       <li class="nav-item">  
          <form method="post" action="{% url 'logout' %}" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none; font-size :16px">
+      {% csrf_token %}
+        <button type="submit" class="nav-link btn btn-link" style="padding: 0; border: none; background: none; font-size :16px">
       <i class="fas fa-sign-out-alt"></i> Logout
-    </button>
-  </form>
+      </button>
+      </form>
       </li>
 
     </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+        <!-- Heading -->
+        <h6 class="navbar-heading p-0 text-muted">
+          <span class="docs-normal">Resources</span>
+        </h6>
+        <!-- Navigation -->
+       
+      </div>
+    </div>
   </div>
-
- 
 </nav>
 
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
+{% comment %} <script>
+  {% comment %} document.addEventListener("DOMContentLoaded", function () {
   // Get current URL path
   const path = window.location.pathname;
   console.log(path.startsWith("/role/"))
@@ -354,8 +644,8 @@ document.querySelectorAll("#accountsSubmenu a").forEach(function (el) {
   }
 });
   }
-});
-</script>
+}); {% endcomment %}
+</script> {% endcomment %}
 
 {% comment %} <script>
 document.addEventListener("DOMContentLoaded", function () {

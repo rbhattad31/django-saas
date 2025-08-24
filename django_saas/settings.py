@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "Third_Party_Receipts",
     "property_management_deals",
     "rolemanagement",
+    "accounts_management",
     'django_multitenant',
    
 
@@ -99,13 +100,21 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default':  {
+    #     'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
+    #     'NAME': os.getenv('DATABASE_NAME'),  # Default database name
+    #     'USER': os.getenv('DATABASE_USER'),
+    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+    #     'HOST': os.getenv('DATABASE_HOST'),
+    #     'PORT': os.getenv('DATABASE_PORT', '3306'),
+    # }
     'default':  {
         'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME': os.getenv('DATABASE_NAME'),  # Default database name
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT', '3306'),
+        'NAME':  "gopitest",  # Default database name
+        'USER':  "root",
+        'PASSWORD': "root",
+        'HOST':  "localhost",
+        'PORT':  "3306",
     }
   
 }
@@ -150,6 +159,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  # This is your project-level static folder
 ]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

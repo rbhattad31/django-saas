@@ -5,12 +5,12 @@
 } */
 
 
-.actived {
+/* .actived {
   font-weight: bold;
-  background-color: #bbbdc1 !important; /* Bootstrap primary blue */
+  background-color: #bbbdc1 !important;  
   border-top-right-radius: 13px;
   border-bottom-right-radius: 13px;
-}
+} */
 
 label.error {
   color: red;

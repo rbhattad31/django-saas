@@ -6,15 +6,16 @@
 
 
 
-<div class="main-content pt-4"><div class="row">
-	<div class="col-md-12">
+<div class="main-content pt-4">
+  <div class="row">
+    <div class="col-md-12">
 				<div class="card o-hidden mb-4">
-			<div class="card-header">
-				<h3 class="w-50 float-left card-title m-0">List of Roles</h3>
-				 {% if perms.auth.add_group %}
-					<a href="/role/create/" class="btn btn-primary btn-rounded m-1" style="float: right"> Add New Role</a>
-            {% endif %}
-							</div>
+          <div class="card-header">
+            <h3 class="w-50 float-left card-title m-0">List of Roles</h3>
+            {% if perms.auth.add_group %}
+              <a href="/role/create/" class="btn btn-primary btn-rounded m-1" style="float: right"> Add New Role</a>
+                {% endif %}
+          </div>
 			
 			<div class="card-body">
 						  <div class="row">
@@ -24,12 +25,7 @@
                         <div class="form-group">
                           <select class="form-control" name="role" id="filterbyRole">
                             <option value="" hidden="">Please Select</option>
-                            <option value="6">2-Admin</option>
-                            <option value="7">2-Agent</option>
-                            <option value="8">2-Finance</option>
-                            <option value="9">2-Manager</option>
-                            <option value="26">CUSTOMER CARE DEPARTMENT</option>
-                            <option value="27">RENTAL DEALS ONLY</option>
+                          
                           </select>
                         </div>
                     </div>
@@ -71,6 +67,9 @@
 		</div>
 	</div>
 </div>
+ <script>
+  var roles = {{group|safe }}
+ </script>
 
 
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -92,6 +91,20 @@
     <!-- ✅ jQuery Validation plugin -->
 
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+
+<!-- JSZip for Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- pdfmake for PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<!-- Buttons for Excel, PDF, Print -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 
 
@@ -116,7 +129,7 @@ function getCookie(name) {
 
 
 $(document).ready(function () {
-    $('#grouplist_table').DataTable({
+    var table = $('#grouplist_table').DataTable({
         processing: true,
         serverSide: true,   // 🚀 let DataTables send draw/start/length
         ajax: {
@@ -137,8 +150,94 @@ $(document).ready(function () {
             dataSrc: function (json) {
                 console.log("⬅️ Received Data:", json);
                 return json.data || json;  // ✅ supports both {data:[]} and []
-            }
+            },
+             error: function (err) {
+        if (err.status === 400) {
+          const data = err.responseJSON;
+          let messages = "";
+
+          $.each(data, function (field, errors) {
+            const msg = Array.isArray(errors) ? errors[0] : errors;
+            messages += `${field}: ${msg}\n`;
+
+            $.each(data.data, function (index, value) {
+              messages +=
+                index.charAt(0).toUpperCase() +
+                index.slice(1) +
+                " : " +
+                value +
+                "\n";
+            });
+
+            swal("Please fill mandatory field", messages);
+
+            // Show field-wise error messages
+            $.each(data.data, function (key, val) {
+              $("#" + key + "_error")
+                .text(val[0])
+                .show();
+
+              $(document).on("keyup", "input[name='" + key + "']", function () {
+                $("#" + key + "_error").hide();
+              });
+
+              $(document).on(
+                "change",
+                "select[name='" + key + "']",
+                function () {
+                  $("#" + key + "_error").hide();
+                }
+              );
+            });
+          });
+        } 
+        else if (err.status === 403){
+           
+      
+                // Option 1: redirect to your custom 403 page
+                window.location.href = "/forbidden_page/";
+
+
+        }
+        
+        
+        else {
+          const alertmsg = data.message || "Something went wrong!";
+          swal("Error", alertmsg, "error");
+        }
+        // alert("Update failed.");
+        console.error(err);
+      },
+            
+
         },
+        dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
+  "<'row mt-1'<'col-sm-12'tr>>" +
+  "<'row mt-1'<'col-md-6'i><'col-md-6 text-end'p>>",
+       buttons: [
+            {
+                extend: 'excelHtml5',
+                text: ' Excel',
+                titleAttr: 'Excel',
+                  exportOptions: {
+                    columns: [1,2,3]
+                },
+                orientation: 'landscape',
+                pageSize: 'A4',
+            },
+            {
+                extend: 'pdfHtml5',
+                text: ' PDF',
+                 exportOptions: {
+                    columns: [1,2,3]
+                },
+                titleAttr: 'PDF',
+                orientation: 'landscape',
+                pageSize: 'A3',
+            },
+            
+             
+        ],
         columns: [
             { data: "action", title: "Action" },
             { data: "name", title: "Name" },
@@ -146,6 +245,23 @@ $(document).ready(function () {
             
         ]
     });
+    $('#filter').on('click', function (e) {
+    e.preventDefault(); // Prevent page reload
+    table.ajax.reload(); // Reload DataTable with new filters
+  });
+
+      
+
+     
+
+  const $roleSelect = $("#filterbyRole");
+    $.each(roles, function (index, role) {
+      $roleSelect.append(
+        $("<option>", { value: role.id, text: role.name })
+      );
+ 
+ 
+  });
 });
 
 

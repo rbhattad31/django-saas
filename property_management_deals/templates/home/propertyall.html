@@ -306,6 +306,91 @@
     </div>
   </div>
 </div>
+
+<style>
+/* Pagination container */
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+}
+
+/* Pagination list as flex container */
+.dataTables_wrapper .dataTables_paginate .pagination {
+    display: flex !important;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+}
+
+/* Remove gap between items */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item {
+    margin: 0 !important;
+}
+
+/* General page-link style */
+.dataTables_wrapper .dataTables_paginate .pagination .page-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    padding: 5px 12px !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0 !important;
+    background-color: white !important;
+    color: #0d6efd !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+}
+
+/* Join boxes: remove double borders between page items */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item + .page-item .page-link {
+    border-left: none !important;
+}
+
+/* First item - left rounded corners */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
+    border-left: 1px solid #dee2e6 !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+}
+
+/* Last item - right rounded corners */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+    border-right: 1px solid #dee2e6 !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}
+
+/* Number boxes (1,2,3...) - fixed width */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:not(.previous):not(.next) .page-link {
+    width: 32px !important;
+    min-width: 32px !important;
+}
+
+/* Previous / Next boxes - flexible width based on content */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item.previous .page-link,
+.dataTables_wrapper .dataTables_paginate .pagination .page-item.next .page-link {
+    width: auto !important;
+    min-width: 40px !important;
+    padding: 5px 12px !important;
+    flex: none !important; /* content defines width */
+}
+
+/* Hover effect */
+.dataTables_wrapper .dataTables_paginate .pagination .page-link:hover {
+    background-color: #e9ecef !important;
+    color: #0a58ca !important;
+}
+
+/* Active page */
+.dataTables_wrapper .dataTables_paginate .pagination .active .page-link {
+    background-color: #0d6efd !important;
+    color: white !important;
+    border-color: #0d6efd !important;
+    cursor: default !important;
+}
+</style>
+
+
   {% comment %} <script src="/static/assets/vendor/jquery/dist/jquery.min.js"></script>
   <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
