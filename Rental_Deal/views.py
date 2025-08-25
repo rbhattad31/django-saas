@@ -334,7 +334,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 if user.has_perm("core.view_all_rental_deals"):
                     queryset = queryset.filter(form_status="Complete")
                 else:
-                    return Response(serializer.errors,{"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
 
 

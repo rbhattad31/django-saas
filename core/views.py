@@ -389,7 +389,6 @@ from rest_framework.response         import Response
 
 @login_required(login_url="/login/")
 def index(request):
-
     return render(request,'home/index.html')
 
 

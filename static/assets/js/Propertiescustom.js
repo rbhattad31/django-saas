@@ -60,6 +60,8 @@ $(document).ready(function () {
   console.log(getTypeFromURL());
   const table = $("#myTable").DataTable({
     pagingType: "simple_numbers",
+    scrollY: "600px", // Set the height you want
+    scrollCollapse: true,
     renderer: "bootstrap",
     // dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>rtip',
     dom: '<"d-flex justify-content-between align-items-center mb-3"<"dt-buttons-left"B><"dt-filter-right"f>>rti<"d-flex justify-content-end"p><"clear">',

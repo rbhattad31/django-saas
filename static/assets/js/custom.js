@@ -6,7 +6,10 @@ $(document).ready(function () {
   $(".list-group-item a").each(function () {
     let href = this.getAttribute("href");
 
-    if (currentPath.startsWith(href)) {
+    
+    console.log(currentPath.startsWith(href))
+
+    if (href && currentPath.startsWith(href)) {
       // Add active to submenu <li>
       $(this).parent("li").addClass("active");
 
@@ -23,9 +26,9 @@ $(document).ready(function () {
   $(".nav-item > .nav-link").each(function () {
     let href = this.getAttribute("href");
 
-    if (currentPath.startsWith(href)) {
-      $(this).addClass("active");  // highlight the link itself
-      $(this).parent(".nav-item").addClass("active"); // optional for li
+    if (href && currentPath.startsWith(href)) {
+      $(this).addClass("active");
+      $(this).parent(".nav-item").addClass("active");
     }
   });
 
@@ -36,4 +39,5 @@ $(document).ready(function () {
     $(".nav-item").not($(this).parent()).removeClass("active");
   });
 });
+
 
