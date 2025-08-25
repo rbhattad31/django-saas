@@ -496,27 +496,38 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         # Deal Type Filter
         type_filter = validated.get("type")
-        role = user.groups.first().name if user.groups.exists() else ""
+        user_role = user.groups.first().name if user.groups.exists() else ""
+        role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+        print(user_role)
         print(role)
         if type_filter:
     # ---------------- Pending ----------------
             if type_filter == "pending":
                 if user.has_perm("core.view_pending_sales_deals"):
-                    queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
+                    if account_id and (role in ["Manager","Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="P", manager_approved_rejected="A", form_status="Complete")
                 else:
                     return Response({"detail": "You do not have permission: view_pending_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- Approved ----------------
             elif type_filter == "approved":
                 if user.has_perm("core.view_approved_sales_deals"):
-                    queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
                     return Response({"detail": "You do not have permission: view_approved_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_sales_deals"):
-                    queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
+                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
+                        queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
+                    else:
+                        queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
                 else:
                     return Response({"detail": "You do not have permission: view_rejected_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -549,7 +560,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     return Response({"detail": "You do not have permission: view_my_draft_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- All ----------------
-            elif type_filter == "all":
+            elif type_filter == "All":
                 if user.has_perm("core.view_all_sales_deals"):
                     queryset = queryset.filter(form_status="Complete")
                 else:

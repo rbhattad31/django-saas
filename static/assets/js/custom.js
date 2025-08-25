@@ -41,3 +41,24 @@ $(document).ready(function () {
 });
 
 
+
+//  handle the toggle of the d=side nav 
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   const body = document.body;
+//   const toggler = document.querySelector("#customSidebarToggle");
+
+//   toggler.addEventListener("click", function () {
+//     if (body.classList.contains("g-sidenav-pinned")) {
+//       // currently open → close
+//       body.classList.remove("g-sidenav-pinned");
+//       body.classList.add("g-sidenav-hidden");
+//     } else {
+//       // currently closed → open
+//       body.classList.remove("g-sidenav-hidden");
+//       body.classList.add("g-sidenav-pinned");
+//     }
+//   });
+// });
+
+

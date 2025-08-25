@@ -38,7 +38,15 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Account not found"}, status=400)
 
         prefix = f"{account_id}-"  # e.g. "8-"
-        queryset = self.queryset.filter(name__startswith=prefix)
+        
+        queryset = (
+            self.queryset
+            .select_related("profile", "profile__account")   # join with GroupProfile + Account
+            .filter(
+                Q(profile__account_id=account_id) | Q(name__startswith=prefix)
+            )
+        )
+        
 
         # if you want to strip the "8-" part before returning
         roles = GroupSerializer(queryset, many=True , context = {"request" : request})
@@ -57,7 +65,13 @@ class RoleMangementViewSet(viewsets.ModelViewSet):
 
         account_id = user.account_id
         prefix = f"{account_id}-"
-        queryset = Group.objects.filter(name__startswith=prefix)
+        queryset = (
+            self.queryset
+            .select_related("profile", "profile__account")   # join with GroupProfile + Account
+            .filter(
+                Q(profile__account_id=account_id) | Q(name__startswith=prefix)
+            )
+        )
 
 
 

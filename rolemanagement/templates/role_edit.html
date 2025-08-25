@@ -2191,7 +2191,7 @@
 
                 <div class="form-group row">
                   <div class="col-sm-12 btn-center">
-                    <button type="submit" class="btn btn-primary btn-rounded m-1">
+                    <button type="submit" class="btn btn-primary btn-rounded m-1"  id = "role_edit_submit"  >
                       Submit
                     </button>
                   </div>
@@ -2307,6 +2307,8 @@ $('#createRoleForm').validate({
  
     submitHandler: function (form, event) {
         event.preventDefault();
+        let $btn = $("#role_edit_submit")
+        $btn.prop("disabled", true).text("Submitting...");
 
         let selectedPermissions = [];
         $("input[name='Permissions[]']:checked").each(function () {
@@ -2344,6 +2346,9 @@ $('#createRoleForm').validate({
             error: function (xhr) {
                 alert("Error creating role!");
                 console.log(xhr.responseText);
+            },
+             complete: function () {
+            $btn.prop("disabled", false).text("Submit"); // re-enable after request
             }
         });
       }

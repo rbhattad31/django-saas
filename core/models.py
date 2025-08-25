@@ -1005,7 +1005,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
 
         if password :
-            user.setpassword(password)
+            user.set_password(password)
          
         user.save(using=self._db)
         return user

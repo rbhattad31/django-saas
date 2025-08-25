@@ -32,11 +32,11 @@ class DepositsSerializer(serializers.ModelSerializer):
         # View
         if user.has_perm('core.view_deposits'):
             print("it has view permission ifromteh  serlozer")
-            html += f' <a  style = "text-decoration: none;" href="/third_party_receipts/third-party/update/{obj.id}/" title="Edit" class="text-warning mx-1" style="font-size: 16px;"><i class="fas fa-edit"></i> </a>'
+            html += f'<a style = "text-decoration: none;" href="/third_party_receipts/third-party/view/{obj.id}/" title="View" class="text-primary mx-1" style="font-size: 16px;"><i class="fas fa-eye"></i></a>'
 
         # Edit (disallowed if approved unless special permission exists)
         if user.has_perm('core.change_deposits'):
-            html += f'<a style = "text-decoration: none;" href="/third_party_receipts/third-party/view/{obj.id}/" title="View" class="text-primary mx-1" style="font-size: 16px;"><i class="fas fa-eye"></i></a>'
+            html += f' <a  style = "text-decoration: none;" href="/third_party_receipts/third-party/update/{obj.id}/" title="Edit" class="text-warning mx-1" style="font-size: 16px;"><i class="fas fa-edit"></i> </a>'
         else:
             html += ""
 

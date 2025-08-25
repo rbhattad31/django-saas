@@ -2192,7 +2192,7 @@
 
                   <div class="form-group row">
                     <div class="col-sm-12 btn-center">
-                      <button type="submit" class="btn btn-primary btn-rounded m-1">
+                      <button type="submit" class="btn btn-primary btn-rounded m-1" id="role_create_submit"  >
                         Submit
                       </button>
                     </div>
@@ -2276,6 +2276,10 @@ $('#createRoleForm').validate({
  
     submitHandler: function (form, event) {
         event.preventDefault();
+       
+         let $btn = $("#role_create_submit");
+
+    $btn.prop("disabled", true).text("Submitting...");
 
         let selectedPermissions = [];
         $("input[name='Permissions[]']:checked").each(function () {
@@ -2290,7 +2294,7 @@ $('#createRoleForm').validate({
             permissions: selectedPermissions
         };
 
-        if(selectedPermissions.length >= 1){
+      if(selectedPermissions.length >= 1){
         $.ajax({
             url: "/role/api/create/",
             type: "POST",
@@ -2300,21 +2304,27 @@ $('#createRoleForm').validate({
                 "X-CSRFToken": getCookie("csrftoken"),
             },
             success: function (response) {
-                 $("#alert-primary").text('Role Created Successfully ');
-	          $("#successmsg").show();
-	          $('html, body').animate({
+              $('html, body').animate({
 	            scrollTop: $('.main-header').offset().top
 	          }, 1000);
+                 $("#alert-primary").text('Role Created Successfully ');
+	          $("#successmsg").show();
+	          
 	          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
                 console.log(response);
                 $("#createRoleForm")[0].reset();
                 $("input[name='permissions']").prop("checked", false);
+                window.location.href = "/role/list/"
             },
             error: function (xhr) {
                 alert("Error creating role!");
                 console.log(xhr.responseText);
+                
+            },
+             complete: function () {
+            $btn.prop("disabled", false).text("Submit"); // re-enable after request
             }
-        });
+          });
       }
       else{
           console.log("reached top")
@@ -2326,6 +2336,7 @@ $('#createRoleForm').validate({
 	          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
 	        
       }
+
     }
 });
 

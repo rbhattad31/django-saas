@@ -199,7 +199,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # Filterationon types keyword
         type_filter = data.get("type")
         print(type_filter)
-        role = user.groups.first().name if user.groups.exists() else ""
+        user_role = user.groups.first().name if user.groups.exists() else ""
+        role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+        print(user_role)
         print(role)
 
 
@@ -254,7 +256,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Pending ----------------
             if type_filter == "pending":
                 if user.has_perm("core.view_pending_rental_deals"):
-                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager","Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
                     else:
                         queryset = queryset.filter(is_approved_rejected="P", manager_approved_rejected="A", form_status="Complete")
@@ -267,7 +269,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Approved ----------------
             elif type_filter == "approved":
                 if user.has_perm("core.view_approved_rental_deals"):
-                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
                     else:
                         queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
@@ -280,7 +282,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_rental_deals"):
-                    if account_id and (role in [f"{account_id}-Manager", f"{account_id}-Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
                     else:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
