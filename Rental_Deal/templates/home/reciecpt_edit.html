@@ -653,7 +653,11 @@ $('#createReceiptForm').validate({
                 $("#alert-primary").text("Reciecpt Created Successfully");
                 $("#successmsg").show();
                 $("#deal_form")[0].reset();
-                  location.reload(); // Or redirect if needed
+                  // Or redirect if needed
+                  $('html, body').animate({
+                      scrollTop: $('.main-header').offset().top
+                  }, 1000);
+                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
                 }
               },
 

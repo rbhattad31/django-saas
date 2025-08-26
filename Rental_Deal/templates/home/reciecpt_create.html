@@ -333,10 +333,10 @@ $.validator.addMethod("lettersonly", function(value, element) {
                   $("#createReceiptForm")[0].reset();
                     $("#alert-primary").text("Receipt has been created successfully!");
                     $("#successmsg").show();
-                  //  $('html, body').animate({
-                     // scrollTop: $('.main-header').offset().top
-                  //}, 1000);
-                 // setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
+                    $('html, body').animate({
+                      scrollTop: $('.main-header').offset().top
+                  }, 1000);
+                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
                     
                 }
                 else if(data.status=='validation_error'){
