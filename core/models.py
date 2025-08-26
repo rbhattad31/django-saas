@@ -1329,7 +1329,7 @@ class Deposits(models.Model):
     bank = models.CharField(max_length=191 , blank= True  , null=True)
     sec_date = models.DateField()
     being = models.CharField(max_length=191)
-    status = models.CharField(max_length=191)
+    status = models.CharField(max_length=191 ,blank=True, null=True)
     deal_type = models.CharField(max_length=191)
     received_from = models.CharField(max_length=191, null=True, blank=True)
     payment_type = models.CharField(max_length=191, null=True, blank=True)
