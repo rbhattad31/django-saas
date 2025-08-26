@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +12,9 @@ from django_multitenant.utils import get_current_tenant
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 
-class UserListView(LoginRequiredMixin, APIView):
+class UserListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
+    permission_required = "core.view_user"  # <-- replace with your app_label.permission_codename
+    raise_exception = True 
     def get(self, request):
         print("DEBUG: Entering UserListView.get()")
         roles = Group.objects.all()
@@ -42,8 +44,11 @@ class UserListView(LoginRequiredMixin, APIView):
             'site_url': site_url,
         })
 
-class UserDataListView(APIView):
-    permission_classes = [IsAuthenticated]
+class UserDataListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
+    permission_required = "core.view_user"  # <-- replace with your app_label.permission_codename
+    raise_exception = True 
+     
+
 
     def post(self, request):
         print("DEBUG: UserDataListView POST called")

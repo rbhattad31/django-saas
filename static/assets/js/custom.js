@@ -61,4 +61,39 @@ $(document).ready(function () {
 //   });
 // });
 
+$(document).ready(function () {
+  const toggler = $(".sidenav-toggler");
+
+  toggler.on("click", function () {
+    if (window.innerWidth >= 1200) {
+      // Desktop → pinned toggle
+      $("body").removeClass().addClass("g-sidenav-pinned");
+      // If already pinned, unpin
+      if ($("body").hasClass("g-sidenav-pinned")) {
+        $("body").removeClass("g-sidenav-pinned");
+      } else {
+        $("body").addClass("g-sidenav-pinned");
+      }
+    } else {
+      // Mobile → overlay toggle
+      if ($("body").hasClass("g-sidenav-show")) {
+        $("body").removeClass("g-sidenav-show nav-open");
+        $(".sidenav-backdrop").remove();
+      } else {
+        $("body").removeClass().addClass("g-sidenav-show nav-open");
+        $("body").append('<div class="sidenav-backdrop"></div>');
+      }
+    }
+  });
+
+  // Backdrop click always closes
+  $(document).on("click", ".sidenav-backdrop", function () {
+    $("body").removeClass("g-sidenav-show nav-open");
+    $(".sidenav-backdrop").remove();
+  });
+});
+
+//  
+
+
 

@@ -1,4 +1,4 @@
-import datetime
+ 
 from fileinput import filename
 from urllib import request
 from django.shortcuts import render, get_object_or_404
@@ -28,6 +28,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 from .forms import LoginForm, SignUpForm  # Add this import for LoginForm and SignUpForm
 from datetime import datetime
+from datetime import date
 from weasyprint import HTML
 from django.template.loader import render_to_string
 
@@ -753,7 +754,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                  
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
-                mutable_data['submitted_date']= datetime.date.today().strftime("%Y-%m-%d")
+                mutable_data['submitted_date']= date.today().strftime("%Y-%m-%d")
                 
 
  

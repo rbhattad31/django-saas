@@ -602,7 +602,7 @@ function updatefunctionality(url) {
                setTimeout(function () {
                 window.location.href = "/rental-deals/"+url ;
               }, 5000);
-       alert("Rental deal updated successfully!");
+      //  alert("Rental deal updated successfully!");
 
         if (data.status === "success") {
           alert("Rental deal updated successfully!");
