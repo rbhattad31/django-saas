@@ -142,6 +142,7 @@ class Account(models.Model):
                 "comment_finance_sales_deal",
 
                 # Property Management   for admin
+                "property_management_rentalproperties"
                 "add_rentalproperties",
                 "property_rentalproperties",
                 "draft_rentalproperties",  
@@ -287,6 +288,7 @@ class Account(models.Model):
 
 
                 #  Property  Management for the   Manager 
+                "property_management_rentalproperties"
                 "draft_rentalproperties",
                 "view_properties_rentalproperties",
                 
@@ -367,6 +369,7 @@ class Account(models.Model):
                 "edit_draft_sales_deal",
 
                 # Property Managment for the Agent  
+                "property_management_rentalproperties"
                 "property_rentalproperties",
                 "draft_rentalproperties",
                 "add_rentalproperties",
@@ -439,6 +442,7 @@ class Account(models.Model):
                 "comment_finance_sales_deal",
 
                  # Property Managment for the  Finance 
+                "property_management_rentalproperties"
                 "add_rentalproperties",
                 "view_properties_rentalproperties",
                 "list_management_receipts_rentalproperties",
