@@ -271,7 +271,7 @@ def edit_property_page(request, pk):
     print("🔍 Called edit_property_page")
     property_obj = get_object_or_404(RentalProperties, pk=pk)
 
-    agents_raw = Users.objects.all()
+    agents_raw = Users.objects.filter(account_id=request.user.account_id)
  
     # Filter out users with blank/null/whitespace-only names
     agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
@@ -291,8 +291,8 @@ def edit_property_page(request, pk):
     form = PropertyForm(instance=property_obj)
 
     # ✅ Fetch unique, cleaned receipt numbers
-    receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
-    receipt_nos = [rcpt.strip() for rcpt in receipt_nos_raw if rcpt and rcpt.strip()]
+    # receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
+    receipt_nos = ManagementReceipts.objects.filter(account_id=request.user.account_id)
 
     return render(request, 'home/edit_property.html', {
         'form': form,
@@ -511,7 +511,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         from core.models import Users
         form = PropertyForm()
 
-        agents_raw = Users.objects.all()
+        agents_raw = Users.objects.filter(account_id=request.user.account_id)
 
         # Filter out users with blank/null/whitespace-only names
         agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
@@ -522,7 +522,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         print("-----------------------------")
 
         # Fetch unique, non-empty receipt numbers
-        receipt_no = ManagementReceipts.objects.all()
+        receipt_no   = ManagementReceipts.objects.filter(account_id=request.user.account_id)
        
 
         print("----- Valid Receipt Numbers -----")
@@ -1350,7 +1350,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
         
         
-        queryset = RentalProperties.objects.filter(is_deleted='N')
+        queryset = RentalProperties.objects.filter(is_deleted='N' ,account_id = account_id)
         
 
         # Global search
