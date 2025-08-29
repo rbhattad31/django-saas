@@ -48,7 +48,7 @@ from django.core.files.storage import default_storage
 from django.utils.timezone import now  # Add this import
 import time
 import json
-from core.utils import has_cached_permission
+# from core.utils import has_cached_permission
 
 
 from rest_framework.decorators import action, api_view
