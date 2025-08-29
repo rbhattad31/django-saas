@@ -1095,6 +1095,12 @@ class Users(AbstractUser):
 #         db_table = 'videos'
 
 # Renal Deal Management 
+class RentalDealQuerySet(models.QuerySet):
+    def with_user(self):
+        # Optimized join: RentalDeal → submitted_by_user
+        return self.select_related("submitted_by_user")
+
+
 class RentalDeals ( models.Model):
     submitted_date = models.DateField(auto_now_add=True)
     submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -1206,13 +1212,35 @@ class RentalDeals ( models.Model):
 
     # objects = TenantManager()
 
+    objects = RentalDealQuerySet.as_manager()
+
     
     class Meta:
         managed = False
         db_table = 'rental_deals'
+        indexes = [
+            # ✅ Solo indexes
+            models.Index(fields=["form_status"], name="idx_form_status"),
+            models.Index(fields=["is_deleted"], name="idx_is_deleted"),
+            models.Index(fields=["is_approved_rejected"], name="idx_is_approved_rejected"),
+            models.Index(fields=["manager_approved_rejected"], name="idx_manager_approved_rejected"),
+            models.Index(fields=["is_entered_in_finance_system"], name="idx_finance_entered"),
+
+            # ✅ Composite indexes
+            models.Index(fields=["is_deleted", "account"], name="idx_deleted_account"),
+            models.Index(fields=["form_status", "account"], name="idx_formstatus_account"),
+            models.Index(fields=["is_approved_rejected", "form_status"], name="idx_rejected_complete"),
+            models.Index(fields=["manager_approved_rejected", "form_status"], name="idx_mgr_rejected_complete"),
+            models.Index(fields=["is_entered_in_finance_system", "form_status"], name="idx_finance_complete"),
+            models.Index(fields=["form_status", "created_by"], name="idx_draft_admin"),
+            models.Index(fields=["form_status", "submitted_by_user"], name="idx_draft_agent"),
+        ]
 
 
-
+class SaleDealQuerySet(models.QuerySet):
+    def with_user(self):
+        # Optimized join: RentalDeal → submitted_by_user
+        return self.select_related("submitted_by_user").select_related("account")
 
 
 # sale deal management  
@@ -1313,6 +1341,9 @@ class SalesDeals(models.Model):
     buyer_nationality = models.CharField(max_length=191)
     manager_cheque_copy = models.TextField()
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
+
+
+    objects = SaleDealQuerySet.as_manager()
 
     class Meta:
         managed = False
@@ -1497,7 +1528,7 @@ class RentalProperties(models.Model):
     )
 
     class Meta:
-        #managed = False
+        managed = False
         db_table = 'rental_properties'
 
     def debug_form_status(self):

@@ -35,7 +35,7 @@ from core.views import custom_permission_denied_view
 from accounts_management import urls
 from core.views import  custom_permission_denied_view
 from Rental_Deal.views import index
-
+ 
  
 
  
@@ -87,6 +87,9 @@ urlpatterns = [
     path("tenancey/contract/download/<int:pk>/",Rental_DealViewSet_tenancey_contact,name = "tenancey-contact"),
      # Include the Rental_Deal app URLs
     path("forbidden_page/",custom_permission_denied_view , name = "forbidden_page" ),
+    path('silk/', include('silk.urls', namespace='silk')),
+
+  
     
 
  
@@ -100,6 +103,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
 
-
+ 
 
 handler403 =   custom_permission_denied_view

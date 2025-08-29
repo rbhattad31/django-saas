@@ -62,6 +62,7 @@ $(document).ready(function () {
 // });
 
 $(document).ready(function () {
+  console.log("Document is ready");
   const toggler = $(".sidenav-toggler");
 
   toggler.on("click", function () {
@@ -75,13 +76,13 @@ $(document).ready(function () {
         $("body").addClass("g-sidenav-pinned");
       }
     } else {
-      // Mobile → overlay toggle
-      if ($("body").hasClass("g-sidenav-show")) {
-        $("body").removeClass("g-sidenav-show nav-open");
-        $(".sidenav-backdrop").remove();
+      // Mobile: toggle show/hide
+      if ($("body").hasClass("g-sidenav-show nav-open")) {
+        console.log("Closing sidenav");
+        $("body").removeClass().addClass("g-sidenav-hidden");
       } else {
+        console.log("Opening sidenav");
         $("body").removeClass().addClass("g-sidenav-show nav-open");
-        $("body").append('<div class="sidenav-backdrop"></div>');
       }
     }
   });

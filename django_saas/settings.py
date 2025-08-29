@@ -33,6 +33,7 @@ DEBUG =  True
 ALLOWED_HOSTS = ['*']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,19 +60,25 @@ INSTALLED_APPS = [
 
     #filters
     'django_filters',
-    # 'silk',  # Django Silk for profiling and monitoring
-    'storages'
+    'silk',  # Django Silk for profiling and monitoring
+    'storages',
+    # "debug_toolbar",
+
 ]
 
 MIDDLEWARE = [ 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.AccountMiddleware',
+  
+    'silk.middleware.SilkyMiddleware',
+     
  ]
 
 ROOT_URLCONF = 'django_saas.urls'
@@ -117,7 +124,7 @@ DATABASES = {
     #     'PORT':  "3306",
     # }
   
-}
+} 
 
 
 # Password validation
@@ -218,4 +225,15 @@ AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/rental/referencenumber_CP/'
 
 
 ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+ 
 

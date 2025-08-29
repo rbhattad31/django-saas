@@ -206,7 +206,52 @@ body{
 }
 
 
-
-
+@media (max-width: 770px) {
+ 
 
  
+
+  .navbar-nav .nav-item{
+    width: 30px !important;
+     margin-left: 0px !important;
+
+  }
+  
+ .sidenav-toggler {
+    margin-left: auto;   /* push all the way to right */
+    margin-right: 10px;  /* small spacing */
+  }
+   .navbar .navbar-nav:first-child {
+    margin-left: auto !important; /* push it to the right */
+    width: fit-content;
+   
+  }
+
+  #customSidebarToggle {
+    margin-right: 10px; /* little spacing from edge */
+  }
+  #navbarSupportedContent{
+    padding-right: 20px !important;
+  }
+  
+
+
+  /* #navbarSupportedContent {
+    display: flex !important;
+  
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    align-items: end;
+    background-color: red;
+    
+} */
+#customSidebarToggle{
+  margin-right: 10px;
+}
+
+
+}
+ 
+
+
+

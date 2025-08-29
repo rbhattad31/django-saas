@@ -4,6 +4,7 @@ from django.utils.html import format_html
 from rest_framework.reverse import reverse
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
+ 
 
 # class RentalDealSingleFieldSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -61,9 +62,7 @@ class DealSerializer(serializers.ModelSerializer):
     reference_number = serializers.CharField(required=True)  # <-- manually define it!
     
 
-    view_link = serializers.SerializerMethodField()
-    update_link = serializers.SerializerMethodField()
-    delete_link = serializers.SerializerMethodField()
+     
     contract_value = serializers.SerializerMethodField()
 
     email = serializers.CharField(source='submitted_by_user.email', read_only=True)
@@ -79,7 +78,7 @@ class DealSerializer(serializers.ModelSerializer):
     class Meta:
         model = RentalDeals
         fields = '__all__'
-        extra_fields = ['view_link', 'update_link', 'delete_link','agent_username','action']
+        extra_fields = ['agent_username','action']
 
     
     CONDITIONAL_REQUIRED_FIELDS = [
@@ -240,28 +239,7 @@ class DealSerializer(serializers.ModelSerializer):
     #     # Return validated data
     #     return data
 
-    def get_view_link(self, obj): 
-        request = self.context.get('request')
-        
-        print(request)
-        
-        if request:
-            return reverse('rental-deal-view', kwargs={"pk":obj.pk},request=request)
-        return None
-
-    def get_update_link(self, obj):
-        request = self.context.get('request')
-        url = reverse('rental-deal-update', args=[obj.pk])
-        if request:
-            return request.build_absolute_uri(url)
-        return url
-
-    def get_delete_link(self, obj):
-        request = self.context.get('request')
-        url = reverse('rental-deal-delete', args=[obj.pk])
-        if request:
-            return request.build_absolute_uri(url)
-        return url
+   
     
     # to get the full form s of A,P,R,W  
     def get_is_approved_rejected_display(self, obj):
@@ -274,50 +252,7 @@ class DealSerializer(serializers.ModelSerializer):
         return obj.get_is_entered_in_finance_system_display()
 
 
-    can_edit = serializers.SerializerMethodField()
-    can_delete = serializers.SerializerMethodField()
-    can_view = serializers.SerializerMethodField()
-
-    def get_can_view(self, obj):
-        # obj is the RentalDeal instance for the current row
-        request = self.context.get('request')
-        if not request:
-            return False # No request context, cannot determine permissions
-
-        # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
-        # Replace 'your_app.change_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('core.view_rentaldeals')
-        # is_editable_status = obj.status != 'archived' # Example status check
-
-        return has_permission  
-
-    
-
-    def get_can_edit(self, obj):
-        # obj is the RentalDeal instance for the current row
-        request = self.context.get('request')
-        if not request:
-            return False # No request context, cannot determine permissions
-
-        # Example: User must have 'change_rentaldeal' permission and deal must not be 'archived'
-        # Replace 'your_app.change_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('core.change_rentaldeals')
-        # is_editable_status = obj.status != 'archived' # Example status check
-
-        return has_permission  
-
-    def get_can_delete(self, obj):
-        # obj is the RentalDeal instance for the current row
-        request = self.context.get('request')
-        if not request:
-            return False # No request context, cannot determine permissions
-
-        # Example: User must have 'delete_rentaldeal' permission and be the creator of the deal
-        # Replace 'your_app.delete_rentaldeal' with your actual permission string
-        has_permission = request.user.has_perm('core.delete_rentaldeals')
-        # is_owner = (request.user == obj.created_by) if obj.created_by else False # Assuming created_by is a User field
-
-        return has_permission  
+  
     
 
     def get_action(self, obj):
@@ -328,14 +263,13 @@ class DealSerializer(serializers.ModelSerializer):
 
         # View
         if user.has_perm('core.view_rentaldeals'):
-            print("it has view permission ifromteh  serlozer")
+            # print("it has view permission ifromteh  serlozer")
             html += f'<a href="/rental-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
 
         # Edit (disallowed if approved unless special permission exists)
         if user.has_perm('core.change_rentaldeals'):
-            print("thsi is from  ifromnthe serlizer ", obj.is_approved_rejected =='A' )
-            print(type(obj.is_approved_rejected))
-            print("thsi is from  ifromnthe serlizer ", user.has_perm('core.edit_approved_rental_deals')  )
+            # print("thsi is from  ifromnthe serlizer ", obj.is_approved_rejected =='A' )
+            
 
             if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_rental_deals')):
                 print("entered the edit ")
@@ -357,7 +291,7 @@ class DealSerializer(serializers.ModelSerializer):
 
 
     def number_to_indian_words(self, number):
-        print(number ,'the amount number ')
+        # print(number ,'the amount number ')
 
         if not number:
             return "Invalid amount"
@@ -460,6 +394,90 @@ class filterSerializer(serializers.Serializer):
     tenant_name = serializers.CharField(required=False, allow_blank=True)
     owner_mobile = serializers.CharField(required=False, allow_blank=True)
     tenant_mobile = serializers.CharField(required=False, allow_blank=True)
+
+
+
+class DealSerializerfordatatable(serializers.ModelSerializer):
+    date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
+    submitted_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y",
+          read_only=True            # Return DMY to frontend
+    )
+    deal_start_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
+    deal_end_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
+
+
+    reference_number = serializers.CharField(required=True)  # <-- manually define it!
+    
+
+     
+     
+
+    email = serializers.CharField(source="submitted_by_user.email", read_only=True)
+    username = serializers.CharField(source="submitted_by_user.name", read_only=True)
+
+    # is_approved_rejected_display = serializers.SerializerMethodField()
+    # manager_approved_rejected_display = serializers.SerializerMethodField()
+    # is_entered_in_finance_system_display = serializers.SerializerMethodField()
+    action = serializers.SerializerMethodField()
+
+
+
+    class Meta:
+        model = RentalDeals
+        fields =   [
+            "reference_number", "unit_details", "building_name",  "rental_price",
+            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
+            "email", "username","action"
+        ]
+        extra_fields = ['agent_username','action']
+
+
+    def get_action(self, obj):
+        request = self.context.get('request')
+     
+        user = request.user
+        html = ""
+
+        # View
+        if user.has_perm('core.view_rentaldeals'):
+            html += f'<a href="/rental-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
+
+        # Edit (disallowed if approved unless special permission exists)
+        if user.has_perm('core.change_rentaldeals'):
+            if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_rental_deals')):
+                html+=""
+            else:
+                html += f'<a href="/rental-deals/update/{obj.id}/" class="text-warning mx-2" id="editDealBtn" data-deal-id="{obj.id}"><i class="fas fa-edit"></i></a>'
+
+        # Delete
+        if user.has_perm('core.delete_rentaldeals'):
+            html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+
+        return format_html(html)
+    
+
+    def get_is_approved_rejected_display(self, obj):
+        return obj.get_is_approved_rejected_display()
+
+    def get_manager_approved_rejected_display(self, obj):
+        return obj.get_manager_approved_rejected_display()
+    
+    def get_is_entered_in_finance_system_display(self, obj):
+        return obj.get_is_entered_in_finance_system_display()
+    
+    
+
 
     
      

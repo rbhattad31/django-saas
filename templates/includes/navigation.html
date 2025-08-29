@@ -11,6 +11,7 @@
       <!-- Search form -->
      
       <!-- Navbar links -->
+       
       <ul class="navbar-nav align-items-center  ml-md-auto "     >
         <li class="nav-item d-xl-none">
           <!-- Sidenav toggler -->
@@ -184,14 +185,14 @@
           </div>
         </li> {% endcomment %}
       </ul>
-      <ul class="navbar-nav align-items-center border-1 ml-auto ml-md-0 ">
+      <ul class="navbar-nav align-items-center border-1 ml-md-0 ">
         <li class="nav-item dropdown mr-5">
           <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="media align-items-center">
               {% comment %} <span class="avatar avatar-sm rounded-circle">
                 <img alt="Image placeholder" src="/static/assets/img/theme/team-4.jpg">
               </span> {% endcomment %}
-              <div class="media-body  mx-3   d-none d-lg-block">
+              <div class="media-body  mx-2  d-lg-block">
                 <span class="mb-0 text-sm  font-weight-bold text-black" >
                   {{ request.user.email }}
                 </span>

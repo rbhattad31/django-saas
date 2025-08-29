@@ -1,5 +1,7 @@
 import datetime
+from linecache import cache
 import re
+from django.db.models import Subquery, OuterRef
 import time
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -9,6 +11,7 @@ from django.conf import settings
 from Rental_Deal.serializers import ReceiptDropdownSerilizer
 from core.models import Receipts, SalesDeals
 from core.models import Users 
+from django.contrib.auth.models import Group
 from rest_framework.decorators import action
 from .serializers import SalesDealSerializer, SalesDealSerializerForDraft , filterSerializer, AgentDropdownSerializer
 from django.db.models import Q
@@ -48,10 +51,12 @@ from django.urls import reverse
 from django.db.models import Q
 
 
+
 class SalesDealViewSet(viewsets.ModelViewSet):
-    queryset = SalesDeals.objects.all()
+    # queryset = SalesDeals.objects.all()
     serializer_class = SalesDealSerializer
     permission_classes = [IsAuthenticated]
+    
 
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_sales(self, request, pk=None):
@@ -458,13 +463,25 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         print("Validated Data:", validated) 
         print(request.data)
         print(request.data.get("order") ,"togetordering")
-        user = Users.objects.get(email = request.user)
+        user = request.user
         print(request.user)
         account_id = user.account_id
         print( "account_from_request",request.user.account_id)
 
-        queryset = SalesDeals.objects.filter(is_deleted="N", account_id = account_id )
-        print("Initial Queryset:", queryset)  # Debugging line
+        queryset = (
+    SalesDeals.objects.with_user()
+    .filter(is_deleted="N", account_id=account_id)
+    .select_related("submitted_by_user")   # <— prevents N+1 queries
+    .order_by("-date")
+)
+        user = Users.objects.annotate(
+    first_group_name=Subquery(
+        Group.objects.filter(custom_user_set=OuterRef("pk"))
+        .order_by("id")  # ensures consistent first group
+        .values("name")[:1]  # take only the first group's name
+    )
+).get(id=request.user.id)
+        
 
         # Global search
         search_term = validated.get("search", {}).get("value") or ''
@@ -482,11 +499,11 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 Q(submitted_date__icontains=search_term)
             )
             print("Search Term:", search_term)  # Debugging line
-        print("Filtered Queryset:", queryset)  # Debugging line
+        # Debugging line
         # Field-specific filters
         filter_fields = [
             "reference_number", "unit_details", "building_name","seller_source","selller_mobile"
-            "deal_status", "project_name","seller_name","buyer_name","buyer_mobile","buyer_source",
+            "is_approved_rejected", "project_name","seller_name","buyer_name","buyer_mobile","buyer_source",
            ]
         for field in filter_fields:
             value = validated.get(field)
@@ -496,7 +513,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         # Deal Type Filter
         type_filter = validated.get("type")
-        user_role = user.groups.first().name if user.groups.exists() else ""
+        user_role = user.first_group_name or ""
         role = user_role.split("-", 1)[1] if "-" in user_role else user_role
         print(user_role)
         print(role)
@@ -566,22 +583,29 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({"detail": "You do not have permission: view_all_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
+
+
+
         # Date range filter
+
         if validated.get("from_date"):
             queryset = queryset.filter(date__gte=validated.get("from_date"))
         if validated.get("to_date"):
             queryset = queryset.filter(date__lte=validated.get("to_date"))
 
+        total_count = queryset.count()
+
         # Manual Pagination for DataTables
         start = validated.get("start", 0)
         length = validated.get("length", 10)
         paginated = queryset[start:start + length]
+        
 
         serializer = SalesDealSerializer(paginated, many=True,context= {'request': request})
         response_data = {
             "draw": validated.get("draw", 0),
-            "recordsTotal": queryset.count(),
-            "recordsFiltered": queryset.count(),
+            "recordsTotal": total_count,
+            "recordsFiltered": total_count,
             "data": serializer.data,
         }
         return Response(response_data)

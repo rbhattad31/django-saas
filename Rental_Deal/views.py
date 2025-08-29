@@ -1,5 +1,6 @@
  
 from fileinput import filename
+from django.db.models import Subquery, OuterRef, Q, Prefetch
 from urllib import request
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -21,7 +22,7 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from core.models import RentalDeals,Users,Account,Receipts
-from .serializers import DealSerializer, filterSerializer, AgentDropdownSerializer, ReceiptDropdownSerilizer
+from .serializers import DealSerializer, filterSerializer, AgentDropdownSerializer, ReceiptDropdownSerilizer,DealSerializerfordatatable
 from .pagination import CustomPagination  
 from rest_framework.pagination import PageNumberPagination  
 # from django_filters.rest_framework import DjangoFilterBackend
@@ -47,6 +48,7 @@ from django.core.files.storage import default_storage
 from django.utils.timezone import now  # Add this import
 import time
 import json
+from core.utils import has_cached_permission
 
 
 from rest_framework.decorators import action, api_view
@@ -86,6 +88,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
        # for default `list`, `retrieve`
     pagination_class = CustomPagination 
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Optimized: join submitted_by_user in one query
+        return RentalDeals.objects.with_user().all()
    
     
     def get_serializer_class(self):
@@ -96,35 +102,47 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'] ,url_path='filter')
     def datatable_filter(self, request):
-        print(request.data)
-        print(request.data.get("order") ,"togetordering")
-        user = Users.objects.get(email = request.user)
-        print(request.user)
+        # print(request.data)
+        # print(request.data.get("order") ,"togetordering")
+        # user = Users.objects.get(email = request.user)
+        user = request.user
+
+        # print(request.user)
         account_id = user.account_id
-        print( "account_from_request",request.user.account_id)
+        # print( "account_from_request",request.user.account_id)
+        
        
 
          
 
-        queryset = RentalDeals.objects.filter(is_deleted="N", account_id = account_id) # Filter out deleted deals
+        queryset = RentalDeals.objects.with_user().filter(is_deleted="N", account_id = account_id).order_by('-date') # Filter out deleted deals
+        # print("Initial queryset count:", queryset)
 
-        serializer =  filterSerializer()
+        user = Users.objects.annotate(
+    first_group_name=Subquery(
+        Group.objects.filter(custom_user_set=OuterRef("pk"))
+        .order_by("id")  # ensures consistent first group
+        .values("name")[:1]  # take only the first group's name
+    )
+).get(id=request.user.id)
+
+         
        
          
-        user = Users.objects.get(email = request.user)
+        # user = Users.objects.get(email = request.user)
       
         
 
         
-        print("Request data:", request.data)
+        # print("Request data:", request.data)
         data = filterSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         print()
         data = data.validated_data
-        print("validated", data)
+        # print("validated", data)
 
 
-        user = request.user
+       
 
         
 
@@ -136,58 +154,53 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # Global search
         search_term = data.get("search", {}).get("value") or ''
         print(search_term , "point x1")
-        combined_q_object = Q()
-     
-        combined_q_object |= Q(submitted_by_user__name__icontains=search_term)
-        combined_q_object |= Q(reference_number__icontains=search_term)
-        combined_q_object |= Q(unit_details__icontains=search_term)
-        combined_q_object |= Q(building_name__icontains=search_term)
-        combined_q_object |= Q(project_name__icontains=search_term)
-        combined_q_object |= Q(owner_first_name__icontains=search_term)
-        combined_q_object |= Q(owner_last_name__icontains=search_term)
-        combined_q_object |= Q(owner_mobile__icontains=search_term)
-        combined_q_object |= Q(owner_email__icontains=search_term)
-        combined_q_object |= Q(tenant_first_name__icontains=search_term)
-        combined_q_object |= Q(tenant_last_name__icontains=search_term)
-        combined_q_object |= Q(tenant_mobile__icontains=search_term)
-        combined_q_object |= Q(tenant_email__icontains=search_term)
+        if search_term:
+            combined_q_object = Q()
+        
+            combined_q_object |= Q(submitted_by_user__name__icontains=search_term)
+            combined_q_object |= Q(reference_number__icontains=search_term)
+            combined_q_object |= Q(unit_details__icontains=search_term)
+            combined_q_object |= Q(building_name__icontains=search_term)
+            combined_q_object |= Q(project_name__icontains=search_term)
+            combined_q_object |= Q(owner_first_name__icontains=search_term)
+            combined_q_object |= Q(owner_last_name__icontains=search_term)
+            combined_q_object |= Q(owner_mobile__icontains=search_term)
+            combined_q_object |= Q(owner_email__icontains=search_term)
+            combined_q_object |= Q(tenant_first_name__icontains=search_term)
+            combined_q_object |= Q(tenant_last_name__icontains=search_term)
+            combined_q_object |= Q(tenant_mobile__icontains=search_term)
+            combined_q_object |= Q(tenant_email__icontains=search_term)
 
-        # --- Specific Handling for Date Fields ---
-        try:
-            # Attempt to parse the search_term as DD-MM-YYYY
-            parsed_date = datetime.strptime(search_term, '%d-%m-%Y').date()
-            # If successful, format it to YYYY-MM-DD for database comparison
-            formatted_date_for_db = parsed_date.strftime('%Y-%m-%d')
-            print(formatted_date_for_db)
+            # --- Specific Handling for Date Fields ---
+            try:
+                # Attempt to parse the search_term as DD-MM-YYYY
+                parsed_date = datetime.strptime(search_term, '%d-%m-%Y').date()
+                # If successful, format it to YYYY-MM-DD for database comparison
+                formatted_date_for_db = parsed_date.strftime('%Y-%m-%d')
+                print(formatted_date_for_db)
 
-            # Now add these date filters using the correctly formatted date.
-            # For exact date match:
-            combined_q_object |= Q(date=formatted_date_for_db)
-            combined_q_object |= Q(deal_start_date=formatted_date_for_db)
-            combined_q_object |= Q(deal_end_date=formatted_date_for_db)
+                # Now add these date filters using the correctly formatted date.
+                # For exact date match:
+                combined_q_object |= Q(date=formatted_date_for_db)
+                combined_q_object |= Q(deal_start_date=formatted_date_for_db)
+                combined_q_object |= Q(deal_end_date=formatted_date_for_db)
 
-            # If your date fields are DATETIME/TIMESTAMP, you might need a range query
-            # For example, to search for '2017-04-11' in a DATETIME field:
-            # from datetime import timedelta
-            # end_of_day = parsed_date + timedelta(days=1)
-            # combined_q_object |= Q(date__range=(parsed_date, end_of_day))
-            # combined_q_object |= Q(deal_start_date__range=(parsed_date, end_of_day))
-            # combined_q_object |= Q(deal_end_date__range=(parsed_date, end_of_day))
+                
 
 
-        except ValueError:
-            # If search_term is not a valid DD-MM-YYYY date, then skip adding date filters.
-            # This means date fields will not be searched if the input is not a valid date.
-            pass
+            except ValueError:
+                # If search_term is not a valid DD-MM-YYYY date, then skip adding date filters.
+                # This means date fields will not be searched if the input is not a valid date.
+                pass
 
-        # Apply the combined Q object to the queryset
-        print("point x2", queryset)
-        queryset = queryset.filter(combined_q_object).order_by('-date')
+            # Apply the combined Q object to the queryset
+            # print("point x2", queryset)
+            queryset = queryset.filter(combined_q_object)
 
         # Field-specific filters
         filter_fields = [
             "reference_number", "unit_details", "building_name", "deal_type",
-            "deal_status", "project_name", "owner_name", "tenant_name",
+            "is_approved_rejected", "project_name", "owner_name", "tenant_name",
             "owner_mobile", "tenant_mobile"
         ]
         for field in filter_fields:
@@ -199,55 +212,19 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Filterationon types keyword
         type_filter = data.get("type")
-        print(type_filter)
-        user_role = user.groups.first().name if user.groups.exists() else ""
+        # print(type_filter)
+        user_role = user.first_group_name or ""
         role = user_role.split("-", 1)[1] if "-" in user_role else user_role
-        print(user_role)
-        print(role)
+        # print(user_role)
+        # print(role)
 
 
          
         
-        # if type_filter:
-        #     if type_filter == 'pending':
-        #         if account_id:
-        #             if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-        #                 queryset = queryset.filter(manager_approved_rejected='P', form_status='Complete')
-        #             else:
-        #                 queryset = queryset.filter(is_approved_rejected='P', manager_approved_rejected='A', form_status='Complete')
-
-        #     elif type_filter == 'approved':
-        #         if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-        #             queryset = queryset.filter(manager_approved_rejected='A', form_status='Complete')
-        #         else:
-        #             queryset = queryset.filter(is_approved_rejected='A' , form_status='Complete')
-
-        #     elif type_filter == 'rejected':
-        #         if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-        #             queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
-        #         else:
-        #              queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
-                
-
-
-        #     elif type_filter == "waiting-finance" :
-        #         queryset = queryset.filter(is_approved_rejected='F')
-
-        #     elif type_filter == 'entered-finance':
-        #         queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
-
-        #     elif type_filter == "pending-finance" :
-        #         queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
-
-        #     elif type_filter == 'draft':
-        #         queryset = queryset.filter(form_status='Incomplete',submitted_by_user=user)
         
-        #     elif type_filter == "All" :
-        #         queryset = queryset.filter(form_status = "Complete")  
+        # from django.db import connection
 
-        #     if role == 'Admin' and type_filter == 'draft':
-        #         queryset = queryset.filter(created_by=user.email)
-
+        # print(connection.queries)
 
 
         
@@ -335,20 +312,22 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- All ----------------
             elif type_filter == "All":
                 if user.has_perm("core.view_all_rental_deals"):
+                    print("entered all block")
                     queryset = queryset.filter(form_status="Complete")
+                    # print(f"Queryset count after filter: {queryset.count()}")
                 else:
                     return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
 
 
 
-        print(queryset)
+        # print(queryset)
         order = request.data.get("order", [{}])[0]  # ⬅️ Use raw request.data
-        print("Order parameter:", order)
+        # print("Order parameter:", order)
  
         column_index = order.get("column")
         direction = order.get("dir")
-        print(f"Column index: {column_index}, Direction: {direction}")
+        # print(f"Column index: {column_index}, Direction: {direction}")
  
         column_mapping = {
             0: None,  # Action column (not orderable)
@@ -369,7 +348,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             try:
                 column_index = int(column_index)
                 column_name = column_mapping.get(column_index)
-                print(f"Mapped column name: {column_name}")
+                # print(f"Mapped column name: {column_name}")
  
                 if column_name:
                     order_expression = column_name if direction == "asc" else f"-{column_name}"
@@ -380,9 +359,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     for obj in queryset[:5]:
                         print("➡️", obj.id, getattr(obj, column_name.strip("-"), None))
                 else:
-                    print("❌ No mapped column for given index:", column_index)
+                    pass
+                    # print("❌ No mapped column for given index:", column_index)
             except Exception as e:
-                print(f"⚠️ Ordering error: {str(e)}")
+                # print(f"⚠️ Ordering error: {str(e)}")
+                pass
 
          
        
@@ -390,31 +371,34 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Date range filter
         if data.get("from_date"):
-            print( "thsiiis from_data" , data.get("from_date"))
+            # print( "thsiiis from_data" , data.get("from_date"))
             queryset = queryset.filter(date__gte=data.get("from_date"))
         if data.get("to_date"):
-            queryset = queryset.filter(date__lte=data.get("to_date "))
+            queryset = queryset.filter(date__lte=data.get("to_date"))
 
         # Pagination
         start = int(data.get("start") )  # Default to 0 if not provided
         length = int(data.get("length")) 
         print(start , length) # Default to 10 if not provided
 
-        if length == -1:
-            paginated = queryset
+        if length != -1:
+            paginated = list(queryset[start:start + length])
+            # Get total count from a separate count query only if needed
+            total_count = queryset.count() if start > 0 or len(paginated) == length else len(paginated)
         else:
-            paginated = queryset[start:start + length]
-        print("paginated", paginated)
-        
+            paginated = list(queryset)
+            total_count = len(paginated)
+
+ 
 
         data = request.data.copy()  # Copy the original data to include in the responseda
         data.pop('csrfmiddlewaretoken', None)
 
-        serializer =  DealSerializer(paginated, many=True,context={'request': request})
+        serializer = DealSerializerfordatatable(paginated, many=True, context={'request': request})
         response_data = {
             "draw": data.get("draw") ,  # Ensure draw is an integer
-            "recordsTotal": queryset.count(),
-            "recordsFiltered": queryset.count(),
+            "recordsTotal": total_count,
+            "recordsFiltered": total_count,
             "data": serializer.data,
             # "input": data   
               # original input back
@@ -422,6 +406,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         return Response(response_data, status= status.HTTP_200_OK)
     # // create deal
+ 
    
     @action(detail=False, methods=['post'], url_path='create-deal')
     def create_deal(self, request):
@@ -1029,7 +1014,7 @@ def edit_rental_deal_view(request, pk):
     agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id , status= "Unused")
+    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     rental_data = {

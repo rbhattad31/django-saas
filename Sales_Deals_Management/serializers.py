@@ -5,7 +5,7 @@ from django.utils.html import format_html
 
 
 class SalesDealSerializer(serializers.ModelSerializer):
-    submitted_by = serializers.StringRelatedField(read_only=True)
+ 
     email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
     action = serializers.SerializerMethodField()
 
@@ -33,14 +33,13 @@ class SalesDealSerializer(serializers.ModelSerializer):
 
         # View
         if user.has_perm('core.view_salesdeals'):
-            print("it has view permission ifromteh  serlozer")
+            # print("it has view permission ifromteh  serlozer")
             html += f'<a href="/sales-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
 
         # Edit (disallowed if approved unless special permission exists)
         if user.has_perm('core.change_salesdeals'):
-            print("thsi is from  ifromnthe serlizer ", obj.is_approved_rejected =='A' )
-            print(type(obj.is_approved_rejected))
-            print("thsi is from  ifromnthe serlizer ", user.has_perm('core.edit_approved_sales_deals') )
+            
+            
 
             if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_sales_deals')):
                 print("entered the edit ")
