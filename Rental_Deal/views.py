@@ -115,7 +115,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
 
-        queryset = RentalDeals.objects.with_user().filter(is_deleted="N", account_id = account_id).order_by('-date') # Filter out deleted deals
+        queryset = RentalDeals.objects.with_user().filter(is_deleted="N", account_id = account_id).order_by('-date').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected",
+            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
+           "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
+         ) # Filter out deleted deals
         # print("Initial queryset count:", queryset)
 
         user = Users.objects.annotate(

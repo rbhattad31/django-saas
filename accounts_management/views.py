@@ -13,13 +13,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 
 class UserListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
-    permission_required = "core.view_user"  # <-- replace with your app_label.permission_codename
+    permission_required = "core.view_users"  # <-- replace with your app_label.permission_codename
     raise_exception = True 
     def get(self, request):
         print("DEBUG: Entering UserListView.get()")
-        roles = Group.objects.all()
+        roles = (
+    Group.objects
+    .select_related("profile__account")
+    .filter(profile__account_id=request.user.account_id)
+)
         print("DEBUG: Fetched roles:", [role.name for role in roles])
-        accounts = Account.objects.all()
+        accounts = Account.objects.filter(id=request.user.account_id)
         print("Users model fields:")
         for field in Users._meta.get_fields():
             print(field.name, field.get_internal_type())
@@ -32,7 +36,7 @@ class UserListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
         # print("All account names:", [account.name for account in accounts])
         # print("accounts:", [account.name for account in accounts])
         # print("DEBUG: Fetched accounts:", [account.name for account in accounts])
-        users = Users.objects.all()
+        users = Users.objects.filter(account_id=request.user.account_id)
         print("DEBUG: Fetched all users in UserListView:", [{"id": user.id, "name": user.name, "email": user.email, "mobile_number": user.mobile_number } for user in users])
         site_url = request.build_absolute_uri('/')[:-1]  # remove trailing slash
         print("DEBUG: Site URL:", site_url)
@@ -45,7 +49,7 @@ class UserListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
         })
 
 class UserDataListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
-    permission_required = "core.view_user"  # <-- replace with your app_label.permission_codename
+    permission_required = "core.view_users"  # <-- replace with your app_label.permission_codename
     raise_exception = True 
      
 
@@ -104,7 +108,7 @@ class UserDataListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
         print("DEBUG: Current tenant:", current_tenant)
 
         # Base queryset with tenant filtering
-        queryset = Users.objects.all()
+        queryset = Users.objects.filter(account_id = request.user.account_id) 
         print(f"DEBUG: Total records fetched: {queryset.count()}")
     
         # Print details of each user
@@ -198,8 +202,12 @@ class UserDataListView(LoginRequiredMixin,PermissionRequiredMixin, APIView):
     
 class UserCreateView(LoginRequiredMixin, APIView):
     def get(self, request):
-        accounts = Account.objects.all()
-        roles = Group.objects.all()
+        accounts = Account.objects.filter(id=request.user.account_id)
+        roles = (
+    Group.objects
+    .select_related("profile__account")
+    .filter(profile__account_id=request.user.account_id)
+)
         # Hardcoded timezones; make a model if needed
         timezones = [
             {'value': 'Asia/Kolkata', 'text': 'Asia/Kolkata'},
@@ -227,8 +235,12 @@ class UserDetailView(LoginRequiredMixin, APIView):
     def get(self, request, pk):
         user = get_object_or_404(Users, pk=pk)
         serializer = UserSerializer(user)
-        accounts = Account.objects.all()
-        roles = Group.objects.all()
+        accounts = Account.objects.filter(id=request.user.account_id)
+        roles = (
+    Group.objects
+    .select_related("profile__account")
+    .filter(profile__account_id=request.user.account_id)
+)
         timezones = [
             {'value': 'Asia/Kolkata', 'text': 'Asia/Kolkata'},
             {'value': 'Asia/Dubai', 'text': 'Asia/Dubai'}

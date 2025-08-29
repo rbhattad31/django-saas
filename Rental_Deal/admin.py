@@ -113,7 +113,7 @@ class AccountAdmin(admin.ModelAdmin):
     list_display = ('id',"account_domain" )  # fields to show in the list view
     search_fields = ('name',)
     ordering = ('-created_at',)
-    inlines = [UserInline]
+    # inlines = [UserInline]
  
 
 
