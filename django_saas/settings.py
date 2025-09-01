@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "property_management_deals",
     "rolemanagement",
     "accounts_management",
-    "reports_management",
+    # "reports_management",
     'django_multitenant',
    
 
