@@ -705,7 +705,7 @@ def edit_sales_deal_page(request, pk):
     sales_deal = get_object_or_404(SalesDeals, pk=pk)
     aws_url = settings.AWS_URL
     print("AWS URL:", aws_url)
-    serializer = SalesDealSerializer(sales_deal, partial=True)
+    # serializer = SalesDealSerializer(sales_deal, partial=True)
     agents = Users.objects.filter(is_active=True)
     agents = AgentDropdownSerializer(agents, many=True).data
 
