@@ -13,7 +13,7 @@ from core.models import Receipts, SalesDeals
 from core.models import Users 
 from django.contrib.auth.models import Group
 from rest_framework.decorators import action
-from .serializers import SalesDealSerializer, SalesDealSerializerForDraft , filterSerializer, AgentDropdownSerializer
+from .serializers import SalesDealSerializer, SalesDealSerializerForDraft, SalesDealSerializerFordatafilter , filterSerializer, AgentDropdownSerializer
 from django.db.models import Q
 from django.template import loader
 from django.contrib.auth import authenticate, login
@@ -469,12 +469,15 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         print( "account_from_request",request.user.account_id)
 
         queryset = (
-    SalesDeals.objects.with_user()
+    SalesDeals.objects 
     .filter(is_deleted="N", account_id=account_id)
     .select_related("submitted_by_user")   # <— prevents N+1 queries
-    .order_by("-date").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected",
-            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
-           "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
+    .order_by("-date").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
+    "seller_source","buyer_name","buyer_source","buyer_mobile",
+    "selller_mobile","project_name",  "date", "submitted_date", "buyer_name","deal_amount",
+   "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",
+   "submitted_by_user__id",
+        "submitted_by_user__name", "submitted_by_user__email"  
          )
 )
         user = Users.objects.annotate(
@@ -604,7 +607,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         paginated = queryset[start:start + length]
         
 
-        serializer = SalesDealSerializer(paginated, many=True,context= {'request': request})
+        serializer = SalesDealSerializerFordatafilter(paginated, many=True,context= {'request': request})
         response_data = {
             "draw": validated.get("draw", 0),
             "recordsTotal": total_count,

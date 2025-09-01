@@ -141,3 +141,44 @@ class salesdealSerilizerforNon_file_validation(serializers.ModelSerializer):
         model = SalesDeals
         fields = '__all__'
         exclude = []
+
+class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
+
+    email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
+    action = serializers.SerializerMethodField()
+    class Meta:
+        model = SalesDeals
+        fields = ["id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
+    "seller_source","buyer_name","buyer_source","buyer_mobile",
+    "selller_mobile","project_name",  "date", "submitted_date", "buyer_name",
+   "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted","action","email","deal_amount"]
+        
+    def get_action(self, obj):
+        request = self.context.get('request')
+     
+        user = request.user
+        html = ""
+
+        # View
+        if user.has_perm('core.view_salesdeals'):
+            # print("it has view permission ifromteh  serlozer")
+            html += f'<a href="/sales-deals/view/{obj.id}/" class="text-primary mr-2"><i class="fas fa-eye"></i></a>'
+
+        # Edit (disallowed if approved unless special permission exists)
+        if user.has_perm('core.change_salesdeals'):
+            
+            
+
+            if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_sales_deals')):
+                print("entered the edit ")
+                html+=""
+
+            else:
+                html += f'<a href="/sales-deals/{obj.id}/edit/" class="text-warning mx-2" id="editDealBtn" data-deal-id="{obj.id}"><i class="fas fa-edit"></i></a>'
+
+        # Delete
+        if user.has_perm('core.delete_salesdeals'):
+            html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+
+        return format_html(html)
+
