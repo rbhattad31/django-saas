@@ -1250,8 +1250,13 @@ class RentalDeals ( models.Model):
 class SaleDealQuerySet(models.QuerySet):
     def with_user(self):
         # Optimized join: RentalDeal → submitted_by_user
-        return self.select_related("submitted_by_user").select_related("account")
-
+        return self.annotate(
+            user_id=F("submitted_by_user__id"),
+            user_name=F("submitted_by_user__name"),   # 👈 using your custom "name"
+            user_email=F("submitted_by_user__email"),
+            user_mobile=F("submitted_by_user__mobile_number"),
+            
+        )
 
 # sale deal management  
 

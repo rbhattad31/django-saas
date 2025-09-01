@@ -849,18 +849,8 @@ $('input[type="file"]').on("change", function () {
       });
       if (!added) {
         console.log("File already exists in the list, skipping:", filename);
-        $("." + namedata + "_list").append(
-          '<div class="upload_prev">' +
-            '<a class="filenameupload">' +
-            this.files[i].name +
-            "</a>" +
-            '<p class="remove_file" data-name="' +
-            this.files[i].name +
-            '" data-filename="' +
-            namedata +
-            '">X</p>' +
-            "</div>"
-        );
+        $('.'+namedata+'_list').append('<div class="upload_prev">'+'<a class="filenameupload">'+this.files[i].name+'</a>'+'<p class="remove_file" id="'+this.files[i].name+'" data-name="'+namedata+'"'+'>X</p></div>');
+        
       }
     }
     if (filesize / 1024 / 1024 > 3) {

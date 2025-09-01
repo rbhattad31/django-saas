@@ -472,7 +472,10 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     SalesDeals.objects.with_user()
     .filter(is_deleted="N", account_id=account_id)
     .select_related("submitted_by_user")   # <— prevents N+1 queries
-    .order_by("-date")
+    .order_by("-date").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected",
+            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
+           "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
+         )
 )
         user = Users.objects.annotate(
     first_group_name=Subquery(

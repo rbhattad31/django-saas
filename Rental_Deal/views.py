@@ -115,9 +115,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
 
-        queryset = RentalDeals.objects.with_user().filter(is_deleted="N", account_id = account_id).order_by('-date').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected",
+        queryset = RentalDeals.objects.select_related("submitted_by_user").filter(is_deleted="N", account_id = account_id).order_by('-date').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected", "owner_first_name", "tenant_first_name","owner_mobile","tenant_mobile","is_new_deal",
             "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
            "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
+           "submitted_by_user__id",
+        "submitted_by_user__name", "submitted_by_user__email",
          ) # Filter out deleted deals
         # print("Initial queryset count:", queryset)
 
@@ -180,7 +182,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 parsed_date = datetime.strptime(search_term, '%d-%m-%Y').date()
                 # If successful, format it to YYYY-MM-DD for database comparison
                 formatted_date_for_db = parsed_date.strftime('%Y-%m-%d')
-                print(formatted_date_for_db)
+               
 
                 # Now add these date filters using the correctly formatted date.
                 # For exact date match:
@@ -207,7 +209,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             "owner_mobile", "tenant_mobile"
         ]
         for field in filter_fields:
-            print()
+          
             value = data.get(field)
             if value:
                 filter_kwargs = {f"{field}__icontains": value}
@@ -240,7 +242,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     if account_id and (role in ["Manager","Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
                     else:
+                        print( "entere the admin pending")
+                        print(len(queryset))
                         queryset = queryset.filter(is_approved_rejected="P", manager_approved_rejected="A", form_status="Complete")
+                        print(len(queryset))
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -253,6 +258,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
                     else:
+                        
                         queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
                      return Response(

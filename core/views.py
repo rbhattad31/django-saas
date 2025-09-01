@@ -471,12 +471,15 @@ def dashboard_stats(request):
     td_str = request.GET.get('to',   '')
     ag_id  = request.GET.get('select_agent', '')
 
+    print(request.user.account_id , "this is account_id")
+    account_id = request.user.account_id
+
     # base querysets
-    user_q   = Users.objects.all()
-    rental_q = RentalDeals.objects.filter(is_deleted='N')
-    sales_q  = SalesDeals.objects.filter(is_deleted='N')
-    prop_q   = RentalProperties.objects.filter(is_deleted='N')
-    rec_q    = Receipts.objects.all()
+    user_q   = Users.objects.filter(is_active=True,account_id=request.user.account_id)
+    rental_q = RentalDeals.objects.filter(is_deleted='N',account_id=account_id)
+    sales_q  = SalesDeals.objects.filter(is_deleted='N',account_id=request.user.account_id)
+    prop_q   = RentalProperties.objects.filter(is_deleted='N',account_id=request.user.account_id)
+    rec_q    = Receipts.objects.filter(account_id=request.user.account_id)
 
     fd=td=None
     if fd_str:
@@ -509,13 +512,85 @@ def dashboard_stats(request):
             prop_q   = prop_q.filter(submitted_by_user_id=ag_int)
             rec_q    = rec_q.filter(agent_name__iexact=agent.name)
         except: pass
-    
+
+    # aggregate
+    user_stats = user_q.aggregate(
+        total=Count("id"),
+        active=Count("id", filter=Q(is_active=True)),
+        inactive=Count("id", filter=Q(is_active=False)),
+    )
+
+    rental_stats = rental_q.aggregate(
+        total=Count("id"),
+        my_drafts=Count("id", filter=Q(submitted_by_user=request.user,form_status= "Incomplete")),
+        approved=Count("id", filter=Q(is_approved_rejected="A" ,form_status= "Complete")),
+        pending=Count("id", filter=Q(is_approved_rejected="P",form_status= "Complete" ,manager_approved_rejected="A")),
+        rejected=Count("id", filter=Q(is_approved_rejected="R")),
+        waiting_finance=Count("id", filter=Q(is_approved_rejected="F", is_entered_in_finance_system="0")),
+        pending_finance=Count("id", filter=~Q(is_approved_rejected="F"), is_entered_in_finance_system="0"),
+        entered_finance=Count("id", filter=Q(is_entered_in_finance_system="1")),
+        gross_commission=Sum("total_commission"),
+        net_commission=Sum("net_commission"),
+    )
+
+    sales_stats = sales_q.aggregate(
+        total=Count("id"),
+        my_drafts=Count("id", filter=Q(is_approved_rejected="P", submitted_by_user=request.user,form_status= "Incomplete")),
+        approved=Count("id", filter=Q(is_approved_rejected="A")),
+        pending=Count("id", filter=Q(is_approved_rejected="P")),
+        rejected=Count("id", filter=Q(is_approved_rejected="R")),
+        waiting_finance=Count("id", filter=Q(is_approved_rejected="F", is_entered_in_finance_system="0")),
+        pending_finance=Count("id", filter=~Q(is_approved_rejected="F"), is_entered_in_finance_system="0"),
+        entered_finance=Count("id", filter=Q(is_entered_in_finance_system="1")),
+        gross_commission=Sum("total_commission"),
+        net_commission=Sum("net_commission"),
+    )
+
+    prop_stats = prop_q.aggregate(
+        total=Count("id"),
+        my_drafts=Count("id", filter=Q(is_approved_rejected="P", submitted_by_user_id=request.user.id,form_status= "Incomplete")),
+        approved=Count("id", filter=Q(is_approved_rejected="A")),
+        pending=Count("id", filter=Q(is_approved_rejected="P")),
+        rejected=Count("id", filter=Q(is_approved_rejected="R")),
+        waiting_finance=Count("id", filter=Q(is_approved_rejected="F", is_entered_in_finance_system="0")),
+        pending_finance=Count("id", filter=~Q(is_approved_rejected="F"), is_entered_in_finance_system="0"),
+        entered_finance=Count("id", filter=Q(is_entered_in_finance_system="1")),
+        gross_commission=Sum("total_commission"),
+        net_commission=Sum("net_commission"),
+    )
+
+    receipt_stats = rec_q.aggregate(
+        total=Count("id"),
+        third_party=Count("id", filter=Q(deal_type__iexact="Rental") | Q(deal_type__iexact="Sale")),
+        management=Count("id", filter=~(Q(deal_type__iexact="Rental") | Q(deal_type__iexact="Sale"))),
+    )
+
+
+    print(user_stats['total'], "teh active users")
+
+    print("rentalstatus")
+    for key, value in rental_stats.items():
+        print(key, value)
+
+    print("sales status")
+    for key, value in sales_stats.items():
+        print(key, value)
+
+    print("proprtty status")
+    for key, value in prop_stats.items():
+        print(key, value)
+    for key, value in receipt_stats.items():
+        print(key, value)
+
+
+
+
 
     data = {
       'users': {
-        'Total Users':    user_q.count(),
-        'Active Users':   user_q.filter(is_active=True).count(),
-        'Inactive Users': user_q.filter(is_active=False).count(),
+        'Total Users':    user_stats['total'],
+        'Active Users':   user_stats['active'],
+        'Inactive Users': user_stats['inactive'],
       },
       'rentals': {
         'All Rental Deals':      rental_q.count(),
@@ -585,13 +660,13 @@ def dashboard_stats(request):
    
 
 
-
+# when erver the permission denied happens rediredt to 403page
 def custom_permission_denied_view(request,exception=None):
     print("⚠️ Permission Denied triggered")
     return render(request, "home/page-403.html", status=403)
 
 
-
+# when home page is requested no url rediecrt to /dashbroad
 def home_redirect(request):
     return redirect('dashbroad') 
     
