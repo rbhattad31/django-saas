@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "property_management_deals",
     "rolemanagement",
     "accounts_management",
+    "reports_management",
     'django_multitenant',
    
 
@@ -60,7 +61,7 @@ INSTALLED_APPS = [
 
     #filters
     'django_filters',
-    'silk',  # Django Silk for profiling and monitoring
+      # Django Silk for profiling and monitoring
     'storages',
     # "debug_toolbar",
 
@@ -77,7 +78,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
   
-    'silk.middleware.SilkyMiddleware',
+   
      
  ]
 

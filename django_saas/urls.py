@@ -87,7 +87,7 @@ urlpatterns = [
     path("tenancey/contract/download/<int:pk>/",Rental_DealViewSet_tenancey_contact,name = "tenancey-contact"),
      # Include the Rental_Deal app URLs
     path("forbidden_page/",custom_permission_denied_view , name = "forbidden_page" ),
-    path('silk/', include('silk.urls', namespace='silk')),
+    # path('silk/', include('silk.urls', namespace='silk')),
 
   
     
