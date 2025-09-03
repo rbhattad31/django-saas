@@ -336,7 +336,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
                     $('html, body').animate({
                       scrollTop: $('.main-header').offset().top
                   }, 1000);
-                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
+                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list/" }, 5000);
                     
                 }
                 else if(data.status=='validation_error'){
@@ -373,10 +373,8 @@ $.validator.addMethod("lettersonly", function(value, element) {
                     setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
                 }
                 
-            });
-            .fai
-            }
-
+            })
+             
 });
       $(document).ready(function() {
   $("#date").datepicker({
@@ -462,7 +460,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
 
 loadAgentDropdown()
 
-{% comment %} load agents data  {% endcomment %}
+ 
 
  function loadAgentDropdown() {
       agents = recicept_data.agents;
