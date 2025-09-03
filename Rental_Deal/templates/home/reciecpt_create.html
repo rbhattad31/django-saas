@@ -314,12 +314,12 @@ $.validator.addMethod("lettersonly", function(value, element) {
                 method: "POST",
                 headers: {
                         "X-CSRFToken":  getCookie("csrftoken")
-            },  
+                        },  
                url: "/receipt/api/create/",
                 data:new FormData($("#createReceiptForm")[0]),
                 contentType: false,
               processData: false,
-              })
+            })
             .done(function( data, textStatus, xhr, Response ) {
                 $('.loadscreen').hide();
                 console.log(data);
@@ -363,7 +363,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
 
               // Attempt to extract specific error messages from the backend
             
-            }
+              }
                 else{
                    $("#alert-primary").text("Something Went Wrong !");
                     $("#successmsg").show();
@@ -375,8 +375,10 @@ $.validator.addMethod("lettersonly", function(value, element) {
                 
             })
              
-});
-      $(document).ready(function() {
+
+          }
+        });
+  $(document).ready(function() {
   $("#date").datepicker({
        dateFormat: "dd-mm-yy",
        autoclosed:true,
