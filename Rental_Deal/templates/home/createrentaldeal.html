@@ -2727,9 +2727,31 @@
             parseInt($("#" + name + "_new_removed_count").val()) - 1
           );
         }
+
+          const input = document.getElementById(name);
+          const dt = new DataTransfer();
+          const files = input.files;
+
+          for (let i = 0; i < files.length; i++) {
+            if (files[i].name !== value) {
+              dt.items.add(files[i]); // keep only files not being removed
+            }
+          }
+
+          input.files = dt.files;
+
+
+
+
+
         $(this).parent("div").remove();
         $(this).parents("span").remove();
       });
+
+
+
+
+
       $('input[type="file"]').on("change", function () {
         var namedata = $(this).attr("id");
         $("." + namedata + "_list").empty();

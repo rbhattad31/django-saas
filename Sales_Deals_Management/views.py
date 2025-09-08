@@ -89,7 +89,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         base_field_name = ""
         removed_clean_dict = {}
         print(request.data)
-        mutable_data = request.data.copy()
+        mutable_data = request.data.dict().copy()
         print(request.user)
         print(request.user.id)
         print(mutable_data)

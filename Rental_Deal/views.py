@@ -10,6 +10,7 @@ from .Utilities import delete_from_s3, upload_file_to_full_s3_url
 
 # Create your views here.
 from django.contrib.auth import authenticate, login
+
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -129,7 +130,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         .order_by("id")  # ensures consistent first group
         .values("name")[:1]  # take only the first group's name
     )
-).get(id=request.user.id)
+        ).get(id=request.user.id)
 
          
        
@@ -250,7 +251,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                      return Response(
     {"detail": "You do not have permission to access this."},
     status=status.HTTP_403_FORBIDDEN
-)  # 🚨 Forbidden
+                )  # 🚨 Forbidden
 
             # ---------------- Approved ----------------
             elif type_filter == "approved":
@@ -426,7 +427,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         updated_files = {}
         base_field_name = ""
         removed_clean_dict = {}
-        mutable_data = request.data.copy()
+        mutable_data = request.data.dict().copy()
         print(request.user)
         print(request.user.id)
         print(mutable_data)
