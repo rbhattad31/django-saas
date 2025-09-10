@@ -1772,7 +1772,7 @@ def draft_property_list(request):
 
 @login_required
 def management_receipts_manager(request):
-    return render(request, 'home/manager.html')
+    return render(request, 'home/Manager.html')
 
 def edit_management_receipt(request, pk):
     receipt = get_object_or_404(ManagementReceipts, pk=pk)
