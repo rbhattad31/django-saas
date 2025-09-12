@@ -973,14 +973,37 @@ function datepickershow_edit() {
   console.log("Date selected.");
 }
 
-$.validator.addMethod(
-  "alphanum_special",
-  function (value, element) {
-    const cleaned = value.trim();
-    return this.optional(element) || /^[a-zA-Z0-9 _.,\-\/()]*$/.test(cleaned);
-  },
-  "Only alphanumeric and basic special characters allowed."
-);
+   $.validator.addMethod("custom_email", function (value, element) {
+      		var regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
+        	return this.optional(element) || regEx.test(value);
+    		}, "Enter a valid email address.");
+
+        $.validator.addMethod("alpha_numeric", function (value, element, param) {
+              return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+            }, "Enter valid Profile Id");
+
+        $.validator.addMethod("numeric", function (value, element, param) {
+              return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+            }, "Enter only numbers.");
+        $.validator.addMethod("text_special", function(value, element) {
+                return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
+            },"Enter only letters and special characters.");
+        $.validator.addMethod("alphanum_special", function(value, element) {
+            return this.optional(element) || value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/);
+        },"Enter only letters, numbers and special characters.");
+        $.validator.addMethod("lettersonly", function(value, element) {
+          return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
+        }, "Letters only please")
+         
+        $.validator.addMethod(
+          "only_text",
+          function (value, element) {
+            return this.optional(element) || value == value.match(/^[ a-zA-Z][ a-zA-Z_/-]*$/); // Example: allows only letters and spaces
+          },
+          "Please enter only letters."
+        );
+
+ 
 
 $.validator.addMethod(
   "phoneNumber",
@@ -992,13 +1015,7 @@ $.validator.addMethod(
   "Phone number must only contain numbers and +"
 );
 
-$.validator.addMethod(
-  "numeric",
-  function (value, element) {
-    return this.optional(element) || /^[0-9]+$/.test(value);
-  },
-  "Please enter a valid number."
-);
+ 
 
 $.validator.addMethod(
   "only_text",

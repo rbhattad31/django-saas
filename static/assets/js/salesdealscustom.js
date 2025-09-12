@@ -547,7 +547,7 @@ $(document).ready(function () {
 function enterInFinance(id) {
   console.log("Updating finance status for ID:", id);
   $.ajax({
-    url: "/update-single-field/",
+    url: "/sales-deals/update-single-field/",
     method: "PUT",
     contentType: "application/json",
     dataType: "json",

@@ -434,6 +434,10 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
 
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") == "A":
+                mutable_data['approved_rejected_by'] = request.user.email
+
+
 
                  
                  

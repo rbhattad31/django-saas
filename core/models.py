@@ -142,7 +142,7 @@ class Account(models.Model):
                 "comment_finance_sales_deal",
 
                 # Property Management   for admin
-                "property_management_rentalproperties"
+                "property_management_rentalproperties",
                 "add_rentalproperties",
                 "property_rentalproperties",
                 "draft_rentalproperties",  
@@ -288,7 +288,7 @@ class Account(models.Model):
 
 
                 #  Property  Management for the   Manager 
-                "property_management_rentalproperties"
+                "property_management_rentalproperties",
                 "draft_rentalproperties",
                 "view_properties_rentalproperties",
                 
@@ -369,7 +369,7 @@ class Account(models.Model):
                 "edit_draft_sales_deal",
 
                 # Property Managment for the Agent  
-                "property_management_rentalproperties"
+                "property_management_rentalproperties",
                 "property_rentalproperties",
                 "draft_rentalproperties",
                 "add_rentalproperties",
@@ -442,7 +442,7 @@ class Account(models.Model):
                 "comment_finance_sales_deal",
 
                  # Property Managment for the  Finance 
-                "property_management_rentalproperties"
+                "property_management_rentalproperties",
                 "add_rentalproperties",
                 "view_properties_rentalproperties",
                 "list_management_receipts_rentalproperties",
@@ -1113,7 +1113,7 @@ class RentalDealQuerySet(models.QuerySet):
 
 class RentalDeals ( models.Model):
     submitted_date = models.DateField(auto_now_add=True)
-    submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     reference_number = models.CharField(max_length=191, unique=True)
     date = models.DateField()
     unit_details = models.TextField()
@@ -1197,7 +1197,7 @@ class RentalDeals ( models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=191, blank=True, null=True)
     updated_by = models.CharField(max_length=191, blank=True, null=True)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True ,db_column='account_id')
+    account = models.ForeignKey(Account, on_delete=models.DO_NOTHING, null=True, blank=True ,db_column='account_id')
     property = models.ForeignKey('properties', on_delete=models.SET_NULL, blank=True, null=True)
     #branch = models.ForeignKey('branches', on_delete=models.SET_NULL, blank=True, null=True)
     is_deleted = models.CharField(max_length=1, choices=[('Y', 'Y'), ('N', 'N')], default='N')

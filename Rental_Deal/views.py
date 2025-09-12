@@ -761,6 +761,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 print("this is the receipt no", mutable_data['receipt_no'])
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+            
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") == "A":
+                mutable_data['approved_rejected_by'] = request.user.email
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer

@@ -44,7 +44,7 @@ urlpatterns = [
     path('sales-deals/waiting/', views.all_sales_deals, name='Sales-deal-waiting'),
     path('sales-deals/pending-finance/', views.all_sales_deals, name='Sales-deal-pending-finance'),
     path('sales-deals/entered-finance/', views.all_sales_deals, name='Sales-deal-entered-finance'),
-    path('update-single-field/', Sales_DealViewSet_update_single_field, name='update_single_field'),
+    path('sales-deals/update-single-field/', Sales_DealViewSet_update_single_field, name='update_single_field'),
 
     # Auth views
     # path('login/', login_view, name="login"),
