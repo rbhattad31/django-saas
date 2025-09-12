@@ -1445,7 +1445,7 @@ class RentalProperties(models.Model):
     
     pms_contract = models.TextField()
     owner_passport_copy = models.TextField()
-    owner_eid_copy = models.TextField()
+    owner_eid_copy = models.TextField(blank=True ,null=True)
     pms_cheque_copy = models.TextField()
     title_deed = models.TextField()
     poa_pp = models.TextField(blank=True, null=True)
@@ -1514,9 +1514,9 @@ class RentalProperties(models.Model):
     agent_comment = models.TextField(blank=True, null=True)
     is_property_aml = models.CharField(max_length=3)
     screening = models.CharField(max_length=191)
-    screening_comments = models.TextField()
+    screening_comments = models.TextField( blank=True ,null=True)
     seller_nationality = models.CharField(max_length=191)
-    buyer_nationality = models.CharField(max_length=191)
+    buyer_nationality = models.CharField(max_length=191 ,blank=True ,null=True)
     submitted_date = models.DateField()
     
     # manager_approved_rejected = models.CharField(

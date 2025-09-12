@@ -809,6 +809,8 @@ function appendHiddenFileTrackingFields(
 
 // File input change handler
 $('input[type="file"]').on("change", function () {
+
+
   const input = this;
   var namedata = $(this).attr("id");
   $("." + namedata + "_list").empty();
@@ -841,6 +843,22 @@ $('input[type="file"]').on("change", function () {
       var name = files[i].name;
       console.log("File name:", name);
       console.log("File size:", this.files[i].size);
+      extension = "." + (filename.split('.').pop().toLowerCase());
+
+          if (
+            extension != ".pdf" &&
+            extension != ".jpg" &&
+            extension != ".jpeg" &&
+            extension != ".png"
+          ) {
+            $("#" + $(this).attr("id") + "_error")
+              .html("Only pdf, jpg, jpeg, png files are allowed")
+              .show();
+            $("#" + $(this).attr("id")).val("");
+            $("." + namedata + "_list").empty();
+            $("#" + namedata + "_new_removed_count").val("0");
+            return false;
+          }
 
       $.map(result_array, function (name) {
         if (name !== filename) {
@@ -1281,6 +1299,8 @@ $("#deal_form").validate({
   },
 });
 
+
+
 $(document).on("click", "#create_deal", function (event) {
   console.log("clcike cthe button")
   $(
@@ -1359,6 +1379,8 @@ function countMultipleFiles(feild) {
   }
   return result;
 }
+
+
 function checkKyc() {
   var result = true;
   $("#rental_kyc_number_error").empty();
@@ -1424,3 +1446,25 @@ function checkKyc() {
         console.log(messages);
         swal(msg, messages);
       }
+
+
+function ValidateSizeadd(file,id,i){
+	
+    if(!/(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.value))
+    { 
+      alert("Invalid image /pdf file type.");      
+        $('#'+id).val('');  
+        
+        return false;   
+    }   
+      var FileSize = file.files[0].size;
+      
+      if (FileSize > 3000000)
+      {
+        $("#"+id+'_error').html('File size should be less than 3 MB').show();
+        $('#'+id).val('');  
+        return false;
+      }else{
+        $("#"+id+'_error').hide();
+      }
+  }

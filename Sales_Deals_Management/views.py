@@ -71,7 +71,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         print("Sales Deal:", sales_deal)
         serializer = SalesDealSerializer(sales_deal,context ={'request': request})
         # return HttpResponse("hello this is view page")
-        aws_url = settings.AWS_URL
+        aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
 
         receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
         print(receipt_no, "this is receipt id ")
@@ -703,7 +703,7 @@ def create_sales_deal_page(request):
 @permission_required("core.change_salesdeals",raise_exception=True)
 def edit_sales_deal_page(request, pk):
     sales_deal = get_object_or_404(SalesDeals, pk=pk)
-    aws_url = settings.AWS_URL
+    aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
     print("AWS URL:", aws_url)
     # serializer = SalesDealSerializer(sales_deal, partial=True)
     agents = Users.objects.filter(is_active=True)

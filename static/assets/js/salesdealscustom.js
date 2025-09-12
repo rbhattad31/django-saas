@@ -991,6 +991,22 @@ $('input[type="file"]').on("change", function () {
       var name = files[i].name;
       console.log("File name:", name);
       console.log("File size:", this.files[i].size);
+      extension = "." + (filename.split('.').pop().toLowerCase());
+
+          if (
+            extension != ".pdf" &&
+            extension != ".jpg" &&
+            extension != ".jpeg" &&
+            extension != ".png"
+          ) {
+            $("#" + $(this).attr("id") + "_error")
+              .html("Only pdf, jpg, jpeg, png files are allowed")
+              .show();
+            $("#" + $(this).attr("id")).val("");
+            $("." + namedata + "_list").empty();
+            $("#" + namedata + "_new_removed_count").val("0");
+            return false;
+          }
 
       $.map(result_array, function (name) {
         if (name !== filename) {

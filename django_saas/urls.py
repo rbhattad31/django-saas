@@ -88,6 +88,7 @@ urlpatterns = [
      # Include the Rental_Deal app URLs
     path("forbidden_page/",custom_permission_denied_view , name = "forbidden_page" ),
     # path('silk/', include('silk.urls', namespace='silk')),
+    path('', include('reports_management.urls')),
 
   
     

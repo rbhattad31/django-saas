@@ -1,0 +1,313 @@
+{% extends 'layouts/base.html' %}
+{% block title %} List of Users {% endblock title %}
+
+
+{% block extra_styles %}
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- jQuery UI for Datepicker (optional, not used here but kept for consistency) -->
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    {% comment %} <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet"> {% endcomment %}
+
+    <!-- Custom CSS for boxed pagination and table fixes -->
+    
+{% endblock extra_styles %}
+
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card o-hidden mb-4">
+                
+                <div class="card-header">
+                    <h3 class="w-50 float-left card-title m-0">List of Users</h3>
+                    {% if perms.core.add_users %} 
+                            <a href="{% url 'api-user-create' %}" class="btn btn-primary btn-rounded m-1" style="float:right">Add New User</a>
+                    {% endif %} 
+                </div>
+                <div class="card-body">
+                    <!-- Filter Section -->
+                    <div class="row pb-2">
+                        <div class="col-md-12 mb-3 font-size">
+                            {% comment %} <a href="#collapseExample" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" id="filterToggle"> {% endcomment %}
+                            <a href="#collapseExample" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" id="filterToggle">
+
+                                <b style="color: black">Filters By:</b>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="collapse show" id="collapseExample">
+                        <div class="row pb-3">
+                            <div class="col-md-2">User Role</div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="role" id="filterbyRole">
+                                    <option value="">Please Select</option>
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}">{{ role.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">Accounts</div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="account" id="account">
+                                    <option value="">Please Select</option>
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}">{{ account.account_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row pb-1">
+                            <div class="col-6 col-md-1">
+                                <button type="button" class="btn btn-primary btn-rounded" id="filter" name="filter">Filter</button>
+                            </div>
+                            <div class="col-6 col-md-1">
+                                <button type="button" class="btn btn-primary btn-rounded" id="reset" name="reset">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- DataTable -->
+                    <table id="userlist_table" class="table table-bordered text-center" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>User Created Date</th>
+                                <th>Role</th>
+                                <th>Account Name</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+        #userlist_table_wrapper .dataTables_paginate .pagination .page-item .page-link {
+            width: auto !important;
+            min-width: 40px !important;
+            max-width: 180px !important;
+            padding: 6px 12px !important;
+            white-space: nowrap !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 0 !important;
+            border: 1px solid #dee2e6 !important;
+            border-right: none !important;
+            color: black !important;
+            background-color: white !important;
+            box-sizing: border-box !important;
+        }
+
+        #userlist_table_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+            border-right: 1px solid #dee2e6 !important;
+            border-top-right-radius: 4px !important;
+            border-bottom-right-radius: 4px !important;
+        }
+
+        #userlist_table_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
+            border-top-left-radius: 4px !important;
+            border-bottom-left-radius: 4px !important;
+        }
+
+        #userlist_table_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            color: white !important;
+            border-right: 1px solid #007bff !important;
+        }
+
+        
+    </style>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery UI (for datepicker, optional) -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<!-- Bootstrap Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- js-cookie for argon.js -->
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<!-- DataTables core + Bootstrap integration -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<!-- DataTables Export Buttons -->
+{% comment %} <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script> {% endcomment %}
+{% comment %} <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script> {% endcomment %}
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<!-- Custom argon.js -->
+<script src="/static/js/argon.js?v=1.2.0"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            for (let cookie of document.cookie.split(";")) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $(document).ready(function() {
+        // Toggle filter arrow icon
+        $('#filterToggle').on('click', function (e) {
+            e.preventDefault();
+            $('#collapseExample').collapse('toggle');
+        });
+
+        // Change arrow direction on collapse show/hide
+        $('#collapseExample').on('shown.bs.collapse', function () {
+            $('#filterArrow').removeClass('fa-chevron-circle-down').addClass('fa-chevron-circle-up');
+        });
+        $('#collapseExample').on('hidden.bs.collapse', function () {
+            $('#filterArrow').removeClass('fa-chevron-circle-up').addClass('fa-chevron-circle-down');
+        });
+
+        // Initialize DataTable
+        var table = $('#userlist_table').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: true,
+            order: [[1, 'asc']], // Default sort on Name column
+            ajax: {
+                url: '{% url "api-user-data-list" %}',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: function(d) {
+                    console.log("🔍 Preparing data:", d);
+                    d.draw = d.draw;
+                    d.start = d.start;
+                    d.length = d.length;
+                    d.search_value = d.search.value; // Capture DataTable's search input
+                    d.role = $('#filterbyRole').val();
+                    d.account = $('#account').val();
+                    console.log("➡️ Sending Data:", JSON.stringify(d, null, 2));
+                    return d;
+                },
+                dataSrc: function(json) {
+                    console.log("Full JSON response:", json);
+                    console.log("Only table rows:", json.data);
+                    return json.data;
+                },
+                error: function(xhr, status, error) {
+                    console.error("❌ DataTable AJAX Error:", status, error);
+                    console.error("❌ Server Response:", xhr.responseText);
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row) {
+                        console.log("Render called. Data:", data);
+                        console.log("Row object:", row);
+                        let id = row.id;
+                        let actionsHtml = '';
+                        actionsHtml += `
+                            {% if perms.core.change_users %}
+                                <a href="/api/user-detail/${id}/" 
+                                    class="btn btn-link text-primary mr-2 edit-user" 
+                                    title="Edit User">
+                                        <i class="fa fa-pencil-alt"></i>
+                                </a>
+                            {% endif %}
+                             
+                            
+                            {% if perms.core.view_users %}
+                                <a href="/api/user-view/${id}/" 
+                                    class="btn btn-link text-primary mr-2 view-user" 
+                                    title="View User">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            {% endif %}
+                            
+                        `;
+                        return actionsHtml;
+                    }
+                },
+                { data: 'name', orderable: true },
+                { data: 'email', orderable: true },
+                { data: 'mobile_number', orderable: true },
+                { data: 'status', orderable: true },
+                { data: 'created_date', orderable: true },
+                { data: 'role_name', orderable: true },
+                { data: 'account_names', orderable: true }
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+                'excelHtml5',
+                'pdfHtml5'
+            ],
+            scrollX: true,
+            //pageLength: 10,
+            pageLength: 2,
+            lengthMenu: [2,10, 25, 50, 75, 100, -1],
+            lengthMenuText: { '-1': 'All' }
+        });
+        console.log("DataTable initialized:", table);
+
+        // Filter button
+        $('#filter').on('click', function(e) {
+            e.preventDefault();
+            table.ajax.reload();
+        });
+
+        // Reset button
+        $('#reset').on('click', function(e) {
+            e.preventDefault();
+            $('#filterbyRole, #account').val('');
+            table.ajax.reload();
+        });
+
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // jQuery serializeObject plugin
+        $.fn.serializeObject = function() {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    });
+</script>
+
+{% endblock content %}

@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "property_management_deals",
     "rolemanagement",
     "accounts_management",
-    # "reports_management",
+    "reports_management",
     'django_multitenant',
    
 
@@ -108,22 +108,22 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default':  {
-        'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME': os.getenv('DATABASE_NAME'),  # Default database name
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT', '3306'),
-    }
     # 'default':  {
     #     'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-    #     'NAME':  "gopitest",  # Default database name
-    #     'USER':  "root",
-    #     'PASSWORD': "root",
-    #     'HOST':  "localhost",
-    #     'PORT':  "3306",
+    #     'NAME': os.getenv('DATABASE_NAME'),  # Default database name
+    #     'USER': os.getenv('DATABASE_USER'),
+    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+    #     'HOST': os.getenv('DATABASE_HOST'),
+    #     'PORT': os.getenv('DATABASE_PORT', '3306'),
     # }
+    'default':  {
+        'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
+        'NAME':  "gopitest2",  # Default database name
+        'USER':  "root",
+        'PASSWORD': "root",
+        'HOST':  "localhost",
+        'PORT':  "3306",
+    }
   
 } 
 
@@ -222,7 +222,7 @@ AUTH_USER_MODEL = 'core.Users'
 
 # AWS S3 settings
 
-AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/rental/referencenumber_CP/'
+AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
 ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"

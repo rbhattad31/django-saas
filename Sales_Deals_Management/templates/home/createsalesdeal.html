@@ -3,6 +3,10 @@
 
 
 {% block content %}
+
+
+
+
 <div class="main-content pt-4">
     <div class="row">
         <div class="col-md-12" id="successmsg" style="display: none">
@@ -1034,6 +1038,8 @@ $(document).on('click', '.remove_file', function() {
     $(this).parent('div').remove();
     $(this).parents('span').remove();
 });
+
+
 $('input[type="file"]').on('change', function() {
     
     var  namedata =$(this).attr("id");
@@ -1060,6 +1066,24 @@ $('input[type="file"]').on('change', function() {
         for(let i=0; i<this.files.length; i++){        
              filesize = parseFloat(filesize+this.files[i].size);
              var name=files[i].name
+            console.log("File name:", name);
+            console.log("File size:", this.files[i].size);
+             var extension = "." + (filename.split('.').pop().toLowerCase());
+
+          if (
+            extension != ".pdf" &&
+            extension != ".jpg" &&
+            extension != ".jpeg" &&
+            extension != ".png"
+          ) {
+            $("#" + $(this).attr("id") + "_error")
+              .html("Only pdf, jpg, jpeg, png files are allowed")
+              .show();
+            $("#" + $(this).attr("id")).val("");
+            $("." + namedata + "_list").empty();
+            $("#" + namedata + "_new_removed_count").val("0");
+            return false;
+          }
           $.map(result_array, function(name) {
            if (name!== filename) {
             var added=true;
@@ -1567,39 +1591,41 @@ $('#deal_form').validate({
 
 
             $('#property').on('change',function() {
-       var id = $(this).find(':selected').val();
-      $.ajax({
-        method:"POST",
-        url:"http://dealsaws.classicproperties.ae/",
-        data:{
-              "_token": "g8hfpW4JNIgJzPPtxt9j5B8vknyTvX2F6ZJvFmvJ",
-              "id"    : id
-          },
-      })
-      .done(function( data ) {
-         
-        if(data.status=='success'){
-          $('#project_name-error').hide()
-          $('#reference_number-error').hide()
-          $('#builduing_name-error').hide()
-          
-          $('#reference_number').val(data.data.bayut_property_ref_no)
-          $('#project_name').val(data.data.property_title)
-          $('#builduing_name').val(data.data.tower_name)
-         $('#deal_amount').val(data.data.price)
-         
-         
-        }
-        else if(data.status=='fail'){
-          $("#alert-primary").text('Data not Found!');
-          $("#successmsg").show();
-          $('html, body').animate({
-            scrollTop: $('.main-header').offset().top
-          }, 1000);
-          setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
-        }
-      })
+                var id = $(this).find(':selected').val();
+                $.ajax({
+                    method:"POST",
+                    url:"http://dealsaws.classicproperties.ae/",
+                    data:{
+                        "_token": "g8hfpW4JNIgJzPPtxt9j5B8vknyTvX2F6ZJvFmvJ",
+                        "id"    : id
+                    },
+                })
+                .done(function( data ) {
+                    
+                    if(data.status=='success'){
+                    $('#project_name-error').hide()
+                    $('#reference_number-error').hide()
+                    $('#builduing_name-error').hide()
+                    
+                    $('#reference_number').val(data.data.bayut_property_ref_no)
+                    $('#project_name').val(data.data.property_title)
+                    $('#builduing_name').val(data.data.tower_name)
+                    $('#deal_amount').val(data.data.price)
+                    
+                    
+                    }
+                    else if(data.status=='fail'){
+                    $("#alert-primary").text('Data not Found!');
+                    $("#successmsg").show();
+                    $('html, body').animate({
+                        scrollTop: $('.main-header').offset().top
+                    }, 1000);
+                    setTimeout(function(){ $('#successmsg').fadeOut() }, 3000);
+                    }
+                })
   }) 
+
+
 function showErrors(validator){
     var messages = '';
     $.each(validator.errorMap, function (index, value) {

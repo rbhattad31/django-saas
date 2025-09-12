@@ -586,7 +586,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 }
             print("Removed fields:", removed_fields)
 
-            mutable_data = request.data.copy()
+            mutable_data = request.data.dict().copy()
             file_name_to_remove_list = []
             existing_files = []
             new_file_names = []
@@ -825,7 +825,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
         serializer = DealSerializer(rental_deal,context={'request': request})
-        aws_url = settings.AWS_URL
+        aws_url = settings.AWS_URL+"rental/referencenumber_CP/"
         # return HttpResponse("hello this is view page")
         if not rental_deal.receipt_no:
             recipt_no = None
@@ -1013,7 +1013,7 @@ def all_rental_deals(request):
 @permission_required('core.change_rentaldeals',raise_exception=True)
 def edit_rental_deal_view(request, pk): 
     deal = RentalDeals.objects.get(pk=pk)
-    aws_url = settings.AWS_URL
+    aws_url = settings.AWS_URL+"rental/referencenumber_CP/"
     # account_id = request.user.account_id
     # try:
     #     agent_group = Group.objects.get(name="Agent")  # Adjust group name if needed

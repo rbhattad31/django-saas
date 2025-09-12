@@ -8,10 +8,11 @@
         <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h3>List of <span id="saleheading"></span></h3>
-
+                  {% if perms.core.add_salesdeals %}
                   <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
                     >Create Sale Deal</a
                   >
+                  {% endif %}
                 </div>
         </div>
 

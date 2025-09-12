@@ -1,0 +1,1568 @@
+{% extends 'layouts/base.html' %}
+{% comment %} {% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %} Edit User {% endblock title %}
+
+{% block extra_styles %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    label.error {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .card-header .nav-tabs {
+        border-bottom: none;
+    }
+    .card-header .nav-link {
+        color: #495057;
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .card-header .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 0.25rem;
+    }
+    .btn-center {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+{% endblock extra_styles %}
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h4 class="pb-2">
+                Edit User
+                <span class="float-right">
+                    <a class="btn btn-primary btn-rounded" href="{% url 'api-user-list' %}">Back</a>
+                </span>
+            </h4>
+            <div class="card mb-5">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="nav-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-basic-tab" data-toggle="tab" href="#homeBasic" role="tab" aria-controls="homeBasic" aria-selected="true">User Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-basic-tab" data-toggle="tab" href="#profileBasic" role="tab" aria-controls="profileBasic" aria-selected="false">Password</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="myTabContent">
+                        <!-- User Details Tab -->
+                        <div class="tab-pane fade show active" id="homeBasic" role="tabpanel" aria-labelledby="home-basic-tab">
+                            <form id="editUserForm" novalidate="novalidate">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="id">
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="name">Full Name<span style="color: red">*</span></label>
+                                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name">
+                                        <span class="text-danger" id="name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="email">Email<span style="color: red">*</span></label>
+                                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" readonly>
+                                        <span class="text-danger" id="email_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="mobile_number">Mobile Number<span style="color: red">*</span></label>
+                                        <input type="text" name="mobile_number" class="form-control" id="mobile_number" placeholder="Enter Mobile Number">
+                                        <span class="text-danger" id="mobile_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="role">Role<span style="color: red">*</span></label>
+                                        <select name="role" class="form-control" id="role">
+                                            <option value="">Please Select</option>
+                                            {% for role in roles %}
+                                                <option value="{{ role.id }}">{{ role.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="role_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="account">Account<span style="color: red">*</span></label>
+                                        <select name="account" class="form-control" id="account">
+                                            <option value="">Please Select</option>
+                                            {% for acc in accounts %}
+                                                <option value="{{ acc.id }}">{{ acc.account_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="account_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="timezone">Timezone<span style="color: red">*</span></label>
+                                        <select name="timezone" class="form-control" id="timezone">
+                                            <option value="">Please Select</option>
+                                            {% for tz in timezones %}
+                                                <option value="{{ tz.value }}">{{ tz.text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="timezone_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="additional_info">Additional Information</label>
+                                        <textarea name="additional_info" class="form-control" id="additional_info" rows="4"></textarea>
+                                        <span class="text-danger" id="additional_info_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="user_status">User Status</label>
+                                        <label class="switch pr-5 switch-primary mr-3">
+                                            <input type="checkbox" name="is_active" id="is_active">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row col-md-12 btn-center">
+                                    <button type="submit" id="submitUser" class="btn btn-primary btn-rounded mt-1">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Password Tab -->
+                        <div class="tab-pane fade" id="profileBasic" role="tabpanel" aria-labelledby="profile-basic-tab">
+                            <form id="editPasswordForm" novalidate="novalidate">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="password_id">
+                                <div class="form-group row">
+                                    <label for="newPassword" class="col-lg-3 col-form-label">New Password<span style="color: red">*</span></label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter New Password">
+                                        <span class="text-danger" id="newPassword_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="confirmPassword" class="col-lg-3 col-form-label">Confirm Password<span style="color: red">*</span></label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                                        <span class="text-danger" id="confirmPassword_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row col-md-12 btn-center">
+                                    <button type="submit" id="passwordSubmit" class="btn btn-primary btn-rounded mt-3">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+var $j = jQuery.noConflict(true);
+
+$j(document).ready(function() {
+    const userId = window.location.pathname.split('/').filter(Boolean).pop();
+    const apiUrl = `/api/user-detail/${userId}/`;
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Load user data immediately
+    function loadUserData() {
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                $j('#id').val(data.id);
+                $j('#password_id').val(data.id);
+                $j('#name').val(data.name);
+                $j('#email').val(data.email);
+                $j('#mobile_number').val(data.mobile_number);
+                $j('#role').val(data.role_name ? $j('#role option').filter(function() { return $j(this).text() === data.role_name; }).val() : '');
+                $j('#account').val(data.account_names ? $j('#account option').filter(function() { return $j(this).text() === data.account_names; }).val() : '');
+                $j('#timezone').val(data.timezone || '');
+                $j('#additional_info').val(data.additional_info || '');
+                $j('#is_active').prop('checked', data.status === 'Active');
+                console.log("User data loaded successfully:", data);
+            },
+            error: function(xhr) {
+                console.error('Error fetching user data:', xhr.responseText);
+                $j('#successmsg').show().find('#alert-primary').text('Error fetching user data: ' + (xhr.responseJSON ? JSON.stringify(xhr.responseJSON.message) : xhr.responseText));
+            }
+        });
+    }
+
+    // Custom validation methods
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
+    }, "Only letters, numbers, and certain special characters are allowed.");
+
+    $j.validator.addMethod("numeric", function(value, element) {
+        return this.optional(element) || /^[0-9]*$/.test(value);
+    }, "Please enter a valid number.");
+
+    $j.validator.addMethod("custom_email", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
+    }, "Please enter a valid email address.");
+
+    // Validate User Details Form
+    $j('#editUserForm').validate({
+        rules: {
+            name: { required: true, alphanum_special: true, maxlength: 255 },
+            email: { required: true, custom_email: true, maxlength: 100 },
+            mobile_number: { required: true, numeric: true, minlength: 10, maxlength: 10 },
+            role: { required: true },
+            account: { required: true },
+            timezone: { required: true },
+            additional_info: { alphanum_special: true, maxlength: 1000 }
+        },
+        messages: {
+            name: { required: "Full Name is required." },
+            email: { 
+                required: "Email is required.",
+                custom_email: "Enter a valid Email."
+            },
+            mobile_number: { 
+                required: "Mobile Number is required.",
+                numeric: "Enter a valid Mobile Number.",
+                minlength: "Mobile Number must be exactly 10 digits.",
+                maxlength: "Mobile Number must be exactly 10 digits."
+            },
+            role: { required: "Role is required." },
+            account: { required: "Account is required." },
+            timezone: { required: "Timezone is required." },
+            additional_info: { alphanum_special: "Enter valid Additional Information." }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitUserForm();
+        }
+    });
+
+    // Submit User Details Form
+    function submitUserForm() {
+        const formData = $j('#editUserForm').serialize();
+        const submitBtn = $j('#submitUser');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            data: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errors = response.message || { message: 'An error occurred while submitting the form.' };
+                    let errorMessage = '';
+                    if (typeof errors === 'object') {
+                        $j.each(errors, function(field, messages) {
+                            $j(`#${field}_error`).text(messages.join(', '));
+                            errorMessage += `${field}: ${messages.join(', ')}\n`;
+                        });
+                    } else {
+                        errorMessage = errors;
+                    }
+                    $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = '';
+                if (errors.message && typeof errors.message === 'object') {
+                    $j.each(errors.message, function(field, messages) {
+                        $j(`#${field}_error`).text(messages.join(', '));
+                        errorMessage += `${field}: ${messages.join(', ')}\n`;
+                    });
+                } else {
+                    errorMessage = errors.message || 'An unexpected error occurred.';
+                }
+                $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Validate Password Form
+    $j('#editPasswordForm').validate({
+        rules: {
+            newPassword: { required: true, minlength: 6, maxlength: 255 },
+            confirmPassword: { required: true, equalTo: '#newPassword', minlength: 6, maxlength: 255 }
+        },
+        messages: {
+            newPassword: { 
+                required: "New Password is required.",
+                minlength: "Password must be at least 6 characters."
+            },
+            confirmPassword: { 
+                required: "Confirm Password is required.",
+                equalTo: "Passwords do not match.",
+                minlength: "Confirm Password must be at least 6 characters."
+            }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitPasswordForm();
+        }
+    });
+
+    // Submit Password Form
+    function submitPasswordForm() {
+        const formData = $j('#editPasswordForm').serialize();
+        const submitBtn = $j('#passwordSubmit');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errorMessage = response.message || 'An error occurred while updating the password.';
+                    $j('#newPassword_error').text(errorMessage);
+                    $j('#confirmPassword_error').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = errors.message || 'An unexpected error occurred.';
+                $j('#newPassword_error').text(errorMessage);
+                $j('#confirmPassword_error').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Warn on unsaved changes
+    let formChanged = false;
+    $j('#editUserForm, #editPasswordForm').on('change input', 'input, select, textarea', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Load initial data on page load
+    loadUserData();
+});
+</script>
+{% endblock content %} {% endcomment %}
+
+
+
+{% comment %} {% load static %}
+
+{% block title %} Edit User {% endblock title %}
+
+{% block extra_styles %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    label.error {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .card-header .nav-tabs {
+        border-bottom: none;
+    }
+    .card-header .nav-link {
+        color: #495057;
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .card-header .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 0.25rem;
+    }
+    .btn-center {
+        display: flex;
+        justify-content: center;
+    }
+    .custom-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+    .custom-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .custom-toggle .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .custom-toggle .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    .custom-toggle input:checked + .slider {
+        background-color: #007bff;
+    }
+    .custom-toggle input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+</style>
+{% endblock extra_styles %}
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h4 class="pb-2">
+                Edit User
+                <span class="float-right">
+                    <a class="btn btn-primary btn-rounded" href="{% url 'api-user-list' %}">Back</a>
+                </span>
+            </h4>
+            <div class="card mb-5">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="nav-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-basic-tab" data-toggle="tab" href="#homeBasic" role="tab" aria-controls="homeBasic" aria-selected="true">User Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-basic-tab" data-toggle="tab" href="#profileBasic" role="tab" aria-controls="profileBasic" aria-selected="false">Password</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="myTabContent">
+                        <!-- User Details Tab -->
+                        <div class="tab-pane fade show active" id="homeBasic" role="tabpanel" aria-labelledby="home-basic-tab">
+                            <form id="editUserForm" novalidate="novalidate">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="id">
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="name">Full Name<span style="color: red">*</span></label>
+                                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name">
+                                        <span class="text-danger" id="name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="email">Email<span style="color: red">*</span></label>
+                                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" readonly>
+                                        <span class="text-danger" id="email_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="mobile_number">Mobile Number<span style="color: red">*</span></label>
+                                        <input type="text" name="mobile_number" class="form-control" id="mobile_number" placeholder="Enter Mobile Number">
+                                        <span class="text-danger" id="mobile_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="role">Role<span style="color: red">*</span></label>
+                                        <select name="role" class="form-control" id="role">
+                                            <option value="">Please Select</option>
+                                            {% for role in roles %}
+                                                <option value="{{ role.id }}">{{ role.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="role_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="account">Account<span style="color: red">*</span></label>
+                                        <select name="account" class="form-control" id="account">
+                                            <option value="">Please Select</option>
+                                            {% for acc in accounts %}
+                                                <option value="{{ acc.id }}">{{ acc.account_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="account_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="timezone">Timezone<span style="color: red">*</span></label>
+                                        <select name="timezone" class="form-control" id="timezone">
+                                            <option value="">Please Select</option>
+                                            {% for tz in timezones %}
+                                                <option value="{{ tz.value }}">{{ tz.text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="timezone_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="additional_info">Additional Information</label>
+                                        <textarea name="additional_info" class="form-control" id="additional_info" rows="4"></textarea>
+                                        <span class="text-danger" id="additional_info_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="user_status">User Status<span style="color: red">*</span></label>
+                                        <label class="custom-toggle">
+                                            <input type="checkbox" name="is_active" id="is_active">
+                                            <span class="slider"></span>
+                                        </label>
+                                        <span class="text-danger" id="user_status_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row col-md-12 btn-center">
+                                    <button type="submit" id="submitUser" class="btn btn-primary btn-rounded mt-1">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Password Tab -->
+                        <div class="tab-pane fade" id="profileBasic" role="tabpanel" aria-labelledby="profile-basic-tab">
+                            <form id="editPasswordForm" novalidate="novalidate">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="password_id">
+                                <div class="form-group row">
+                                    <label for="newPassword" class="col-lg-3 col-form-label">New Password<span style="color: red">*</span></label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter New Password">
+                                        <span class="text-danger" id="newPassword_error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="confirmPassword" class="col-lg-3 col-form-label">Confirm Password<span style="color: red">*</span></label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                                        <span class="text-danger" id="confirmPassword_error"></span>
+                                    </div>
+                                </div>
+                                <div class="row col-md-12 btn-center">
+                                    <button type="submit" id="passwordSubmit" class="btn btn-primary btn-rounded mt-3">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+var $j = jQuery.noConflict(true);
+
+$j(document).ready(function() {
+    const userId = window.location.pathname.split('/').filter(Boolean).pop();
+    const apiUrl = `/api/user-detail/${userId}/`;
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Load user data immediately
+    function loadUserData() {
+        if (!userId || isNaN(userId) || userId === '0') {
+            $j('#successmsg').show().find('#alert-primary').text('Invalid user ID. Please select a valid user.');
+            return;
+        }
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function(data) {
+                $j('#id').val(data.id);
+                $j('#password_id').val(data.id);
+                $j('#name').val(data.name || '');
+                $j('#email').val(data.email || '');
+                $j('#mobile_number').val(data.mobile_number || '');
+                $j('#role').val(data.role_name ? $j('#role option').filter(function() { return $j(this).text() === data.role_name; }).val() : '');
+                $j('#account').val(data.account_names ? $j('#account option').filter(function() { return $j(this).text() === data.account_names; }).val() : '');
+                $j('#timezone').val(data.timezone || '');
+                $j('#additional_info').val(data.additional_info || '');
+                $j('#is_active').prop('checked', data.status === 'Active');
+                console.log("User data loaded successfully:", data);
+            },
+            error: function(xhr) {
+                console.error('Error fetching user data:', xhr.responseText);
+                $j('#successmsg').show().find('#alert-primary').text('Error fetching user data: ' + (xhr.responseJSON ? JSON.stringify(xhr.responseJSON.message) : xhr.responseText));
+            }
+        });
+    }
+
+    // Custom validation methods
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
+    }, "Only letters, numbers, and certain special characters are allowed.");
+
+    $j.validator.addMethod("numeric", function(value, element) {
+        return this.optional(element) || /^[0-9]*$/.test(value);
+    }, "Please enter a valid number.");
+
+    $j.validator.addMethod("custom_email", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
+    }, "Please enter a valid email address.");
+
+    // Validate User Details Form
+    $j('#editUserForm').validate({
+        rules: {
+            name: { required: true, alphanum_special: true, maxlength: 255 },
+            email: { required: true, custom_email: true, maxlength: 100 },
+            mobile_number: { required: true, numeric: true, minlength: 10, maxlength: 10 },
+            role: { required: true },
+            account: { required: true },
+            timezone: { required: true },
+            additional_info: { alphanum_special: true, maxlength: 1000 },
+            is_active: { required: true }
+        },
+        messages: {
+            name: { required: "Full Name is required." },
+            email: { 
+                required: "Email is required.",
+                custom_email: "Enter a valid Email."
+            },
+            mobile_number: { 
+                required: "Mobile Number is required.",
+                numeric: "Enter a valid Mobile Number.",
+                minlength: "Mobile Number must be exactly 10 digits.",
+                maxlength: "Mobile Number must be exactly 10 digits."
+            },
+            role: { required: "Role is required." },
+            account: { required: "Account is required." },
+            timezone: { required: "Timezone is required." },
+            additional_info: { alphanum_special: "Enter valid Additional Information." },
+            is_active: { required: "User Status is required." }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitUserForm();
+        }
+    });
+
+    // Submit User Details Form
+    function submitUserForm() {
+        const formData = $j('#editUserForm').serialize();
+        const submitBtn = $j('#submitUser');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            data: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errors = response.message || { message: 'An error occurred while submitting the form.' };
+                    let errorMessage = '';
+                    if (typeof errors === 'object') {
+                        $j.each(errors, function(field, messages) {
+                            $j(`#${field}_error`).text(messages.join(', '));
+                            errorMessage += `${field}: ${messages.join(', ')}\n`;
+                        });
+                    } else {
+                        errorMessage = errors;
+                    }
+                    $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = '';
+                if (errors.message && typeof errors.message === 'object') {
+                    $j.each(errors.message, function(field, messages) {
+                        $j(`#${field}_error`).text(messages.join(', '));
+                        errorMessage += `${field}: ${messages.join(', ')}\n`;
+                    });
+                } else {
+                    errorMessage = errors.message || 'An unexpected error occurred.';
+                }
+                $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Validate Password Form
+    $j('#editPasswordForm').validate({
+        rules: {
+            newPassword: { required: true, minlength: 6, maxlength: 255 },
+            confirmPassword: { required: true, equalTo: '#newPassword', minlength: 6, maxlength: 255 }
+        },
+        messages: {
+            newPassword: { 
+                required: "New Password is required.",
+                minlength: "Password must be at least 6 characters."
+            },
+            confirmPassword: { 
+                required: "Confirm Password is required.",
+                equalTo: "Passwords do not match.",
+                minlength: "Confirm Password must be at least 6 characters."
+            }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitPasswordForm();
+        }
+    });
+
+    // Submit Password Form
+    function submitPasswordForm() {
+        const formData = $j('#editPasswordForm').serialize();
+        const submitBtn = $j('#passwordSubmit');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errorMessage = response.message || 'An error occurred while updating the password.';
+                    $j('#newPassword_error').text(errorMessage);
+                    $j('#confirmPassword_error').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = errors.message || 'An unexpected error occurred.';
+                $j('#newPassword_error').text(errorMessage);
+                $j('#confirmPassword_error').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Warn on unsaved changes
+    let formChanged = false;
+    $j('#editUserForm, #editPasswordForm').on('change input', 'input, select, textarea', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Load initial data on page load
+    loadUserData();
+});
+</script>
+{% endblock content %} {% endcomment %}
+
+
+
+
+{% load static %}
+
+{% block title %} Edit User {% endblock title %}
+
+{% block extra_styles %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    label.error {
+        color: #dc3545 !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .card-header .nav-tabs {
+        border-bottom: none;
+    }
+    .card-header .nav-link {
+        color: #495057;
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .card-header .nav-link.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 0.25rem;
+    }
+    .btn-center {
+        display: flex;
+        justify-content: center;
+    }
+    .custom-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        margin: 0 10px;
+        vertical-align: middle;
+    }
+    .custom-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .custom-toggle .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #dc3545; /* Red for Off */
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .custom-toggle .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    .custom-toggle input:checked + .slider {
+        background-color: #28a745; /* Green for On */
+    }
+    .custom-toggle input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    .toggle-label {
+        font-size: 0.9rem;
+        vertical-align: middle;
+    }
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock extra_styles %}
+
+{% block content %}
+<div class="main-content pt-4">
+    <div class="row">
+        <div class="col-md-12" id="successmsg" style="display: none">
+            <div class="alert alert-primary" id="alert-primary">
+                <button class="close float-right" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h4 class="pb-2">
+                Edit User
+                <span class="float-right">
+                    <a class="btn btn-primary btn-rounded" href="{% url 'api-user-list' %}">Back</a>
+                </span>
+            </h4>
+            <div class="card mb-5">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="nav-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-basic-tab" data-toggle="tab" href="#homeBasic" role="tab" aria-controls="homeBasic" aria-selected="true">User Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-basic-tab" data-toggle="tab" href="#profileBasic" role="tab" aria-controls="profileBasic" aria-selected="false">Password</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="myTabContent">
+                        <!-- User Details Tab -->
+                        <div class="tab-pane fade show active" id="homeBasic" role="tabpanel" aria-labelledby="home-basic-tab">
+                            <form id="editUserForm" novalidate="novalidate">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="id" value="{{ user.id }}">
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="name">Full Name<span style="color: red">*</span></label>
+                                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name" value="{{ user.name|default:'' }}">
+                                        <span class="text-danger" id="name_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="email">Email<span style="color: red">*</span></label>
+                                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" readonly value="{{ user.email|default:'' }}">
+                                        <span class="text-danger" id="email_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="mobile_number">Mobile Number<span style="color: red">*</span></label>
+                                        <input type="text" name="mobile_number" class="form-control" id="mobile_number" placeholder="Enter Mobile Number" value="{{ user.mobile_number|default:'' }}">
+                                        <span class="text-danger" id="mobile_number_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="role">Role<span style="color: red">*</span></label>
+                                        <select name="role" class="form-control" id="role">
+                                            <option value="">Please Select</option>
+                                            {% for role in roles %}
+                                                <option value="{{ role.id }}" {% if role.name == user.role_name %}selected{% endif %}>{{ role.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="role_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="account">Account<span style="color: red">*</span></label>
+                                        <select name="account" class="form-control" id="account">
+                                            <option value="">Please Select</option>
+                                            {% for acc in accounts %}
+                                                <option value="{{ acc.id }}" {% if acc.account_name == user.account_names %}selected{% endif %}>{{ acc.account_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="account_error"></span>
+
+                                    </div> 
+
+                                   
+                                    {% comment %} <div class="col-md-6 form-group mb-3">
+                                        <label for="timezone">Timezone<span style="color: red">*</span></label>
+                                        <select name="timezone" class="form-control" id="timezone">
+                                            <option value="">Please Select</option>
+                                            {% for tz in timezones %}
+                                                <option value="{{ tz.value }}" {% if tz.value == user.timezone %}selected{% endif %}>{{ tz.text }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="timezone_error"></span>
+                                    </div> {% endcomment %}
+                                   <div class="col-md-6 form-group mb-3">
+                                        <label for="timezone">Timezone<span style="color: red">*</span></label>
+                                        <select name="timezone" class="form-control" id="timezone">
+                                            {% for tz in timezones %}
+                                                <option value="{{ tz.value }}"
+                                                    {% if user_timezone == tz.value %}selected{% endif %}>
+                                                    {{ tz.text }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="timezone_error"></span>
+                                    </div>
+                                    
+
+                                    
+                                    {% comment %} <div class="col-md-6 form-group mb-3">
+                                        <label for="profile">Profile Picture</label><br>
+                                        <span class="pip" style="display: {% if image_url %}block{% else %}none{% endif %};">  
+                                            <img style="height: 120px; width: 150px;" id="OpenImgUpload" src="{% if image_url %}{{ image_url }}{% else %}#{% endif %}">
+                                            <span class="remove" style="cursor:pointer; color:red;">remove</span>
+                                        </span><br>
+                                        <span class="upload_logo">
+                                            <input type="file" name="image_path" id="image_path" 
+                                                accept="image/x-png,image/png,image/gif,image/jpeg"
+                                                onchange="handleImageChange(this)">
+                                            <span class="error text-danger image_path" id="image_path_error" style="display: none;"></span>
+                                        </span>
+                                        <input type="hidden" name="remove_image" id="remove_image" value="false">
+                                    </div> {% endcomment %}
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="profile">Profile Picture</label><br>
+
+                                        {% if image_url %}
+                                        <span class="pip" style="display: block;">
+                                            <img style="height: 120px; width: 150px;" id="OpenImgUpload" src="{{ image_url }}">
+                                            <span class="remove" style="cursor:pointer; color:red;">remove</span>
+                                        </span>
+                                        {% else %}
+                                        <span class="pip" style="display: none;">
+                                            <img style="height: 120px; width: 150px;" id="OpenImgUpload" src="#">
+                                            <span class="remove" style="cursor:pointer; color:red;">remove</span>
+                                        </span>
+                                        {% endif %}
+
+                                        <br>
+
+                                        <span class="upload_logo">
+                                            <input type="file" name="image_path" id="image_path" 
+                                                accept="image/x-png,image/png,image/gif,image/jpeg"
+                                                onchange="handleImageChange(this)">
+                                            <span class="error text-danger image_path" id="image_path_error" style="display: none;"></span>
+                                        </span>
+
+                                        <input type="hidden" name="remove_image" id="remove_image" value="false">
+                                    </div>
+
+
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="additional_info">Additional Information</label>
+                                        <textarea name="additional_info" class="form-control" id="additional_info" rows="4">{{ user.additional_info|default:'' }}</textarea>
+                                        <span class="text-danger" id="additional_info_error"></span>
+                                    </div>
+                                    
+
+                                        <div class="col-md-6 form-group mb-3">
+                                            <label for="user_status">User Status<span style="color: red">*</span></label>
+                                            <div class="toggle-container">
+                                                <span class="toggle-label" id="status_label">
+                                                    {% if user.status == 'Active' %}Active{% else %}Inactive{% endif %}
+                                                </span>
+                                                <label class="custom-toggle">
+                                                    <!-- Hidden input to ensure is_active=false is sent when unchecked -->
+                                                    <input type="hidden" name="is_active" value="false">
+                                                    <!-- Checkbox overrides with true when checked -->
+                                                    <input type="checkbox" name="is_active" id="is_active" value="true" {% if user.status == 'Active' %}checked{% endif %}>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                            <span class="text-danger" id="user_status_error"></span>
+
+                                            <!-- Inline CSS (unchanged) -->
+                                            <style>
+                                                .custom-toggle {
+                                                    position: relative;
+                                                    display: inline-block;
+                                                    width: 60px;
+                                                    height: 34px;
+                                                    margin: 0 10px;
+                                                    vertical-align: middle;
+                                                }
+                                                .custom-toggle input[type="checkbox"] {
+                                                    display: none;
+                                                }
+                                                .custom-toggle .slider {
+                                                    position: absolute;
+                                                    cursor: pointer;
+                                                    top: 0; left: 0; right: 0; bottom: 0;
+                                                    background-color: #dc3545; /* Red for Inactive */
+                                                    transition: .4s;
+                                                    border-radius: 34px;
+                                                }
+                                                .custom-toggle .slider:before {
+                                                    position: absolute;
+                                                    content: "";
+                                                    height: 26px;
+                                                    width: 26px;
+                                                    left: 4px;
+                                                    bottom: 4px;
+                                                    background-color: white;
+                                                    transition: .4s;
+                                                    border-radius: 50%;
+                                                }
+                                                .custom-toggle input:checked + .slider {
+                                                    background-color: #28a745; /* Green for Active */
+                                                }
+                                                .custom-toggle input:checked + .slider:before {
+                                                    transform: translateX(26px);
+                                                }
+                                                .toggle-label {
+                                                    font-size: 0.9rem;
+                                                    vertical-align: middle;
+                                                    font-weight: bold;
+                                                }
+                                                .toggle-container {
+                                                    display: flex;
+                                                    align-items: center;
+                                                    gap: 10px;
+                                                }
+                                            </style>
+
+                                            <!-- JavaScript for dynamic label -->
+                                            <script>
+                                                document.addEventListener("DOMContentLoaded", function () {
+                                                    const toggle = document.getElementById("is_active");
+                                                    const label = document.getElementById("status_label");
+
+                                                    function updateLabel() {
+                                                        if (toggle.checked) {
+                                                            label.textContent = "Active";
+                                                        } else {
+                                                            label.textContent = "Inactive";
+                                                        }
+                                                    }
+
+                                                    // Run on page load
+                                                    updateLabel();
+
+                                                    // Update on toggle change
+                                                    toggle.addEventListener("change", updateLabel);
+                                                });
+                                            </script>
+                                        </div>
+ 
+
+
+                                </div>
+                                <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" id="submitUser" class="btn btn-primary btn-rounded mt-1">
+                                    Submit
+                                    </button>
+                                </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Password Tab -->
+
+                        {% if perms.core.update_profile_password %}
+                            <div class="tab-pane fade" id="profileBasic" role="tabpanel" aria-labelledby="profile-basic-tab">
+                                <form id="editPasswordForm" novalidate="novalidate">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" id="password_id" value="{{ user.id }}">
+                                    <div class="form-group row">
+                                        <label for="newPassword" class="col-lg-3 col-form-label">New Password<span style="color: red">*</span></label>
+                                        <div class="col-lg-6">
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter New Password">
+                                            <span class="text-danger" id="newPassword_error"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="confirmPassword" class="col-lg-3 col-form-label">Confirm Password<span style="color: red">*</span></label>
+                                        <div class="col-lg-6">
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                                            <span class="text-danger" id="confirmPassword_error"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <button type="submit" id="passwordSubmit" class="btn btn-primary btn-rounded mt-3">
+                                            Submit
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+var $j = jQuery.noConflict(true);
+
+$j(document).ready(function() {
+    const userId = window.location.pathname.split('/').filter(Boolean).pop();
+    const apiUrl = `/api/user-detail/${userId}/`;
+    const existingImageUrl = "{{ image_url|default:'' }}";
+    if (existingImageUrl) {
+        $j('#OpenImgUpload').attr('src', existingImageUrl).show();
+        $j('.pip').show();
+        $j('#remove_image').val("false");
+    } else {
+        $j('.pip').hide();
+    }
+
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Update toggle label dynamically
+    function updateToggleLabel() {
+        const isActive = $j('#is_active').is(':checked');
+        $j('.toggle-label').eq(0).css('font-weight', isActive ? 'normal' : 'bold');
+        $j('.toggle-label').eq(1).css('font-weight', isActive ? 'bold' : 'normal');
+    }
+
+    // Initial toggle label update
+    updateToggleLabel();
+
+    // Update label on toggle change
+    $j('#is_active').on('change', function() {
+        updateToggleLabel();
+    });
+
+    // Custom validation methods
+    $j.validator.addMethod("alphanum_special", function(value, element) {
+        return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
+    }, "Only letters, numbers, and certain special characters are allowed.");
+
+    $j.validator.addMethod("numeric", function(value, element) {
+        return this.optional(element) || /^[0-9]*$/.test(value);
+    }, "Please enter a valid number.");
+
+    $j.validator.addMethod("custom_email", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
+    }, "Please enter a valid email address.");
+
+    // Validate User Details Form
+    $j('#editUserForm').validate({
+        rules: {
+            name: { required: true, alphanum_special: true, minlength: 3, maxlength: 255 },
+            email: { required: true, custom_email: true, maxlength: 100 },
+            mobile_number: { required: true, numeric: true, minlength: 10, maxlength: 10 },
+            role: { required: true },
+            account: { required: true },
+            timezone: { required: true },
+            additional_info: { alphanum_special: true, maxlength: 1000 },
+            is_active: { required: true }
+            
+        },
+        messages: {
+            name: { required: "Full Name is required." },
+            email: { 
+                required: "Email is required.",
+                custom_email: "Enter a valid Email."
+            },
+            mobile_number: { 
+                required: "Mobile Number is required.",
+                numeric: "Enter a valid Mobile Number.",
+                minlength: "Mobile Number must be exactly 10 digits.",
+                maxlength: "Mobile Number must be exactly 10 digits."
+            },
+            role: { required: "Role is required." },
+            account: { required: "Account is required." },
+            timezone: { required: "Timezone is required." },
+            additional_info: { alphanum_special: "Enter valid Additional Information." },
+            is_active: { required: "User Status is required." }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitUserForm();
+        }
+    });
+
+    // Submit User Details Form
+    function submitUserForm() {
+        //const formData = $j('#editUserForm').serialize();
+        //const formData = new FormData($j('#editUserForm')[0]);
+        const form = $j('#editUserForm')[0];
+        const formData = new FormData(form);
+        console.log("DEBUG: Form data being sent:", formData);
+        const submitBtn = $j('#submitUser');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'PUT',
+            //data:new FormData($j("#editUserForm")[0]),
+            data:formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errors = response.message || { message: 'An error occurred while submitting the form.' };
+                    let errorMessage = '';
+                    if (typeof errors === 'object') {
+                        $j.each(errors, function(field, messages) {
+                            $j(`#${field}_error`).text(messages.join(', '));
+                            errorMessage += `${field}: ${messages.join(', ')}\n`;
+                        });
+                    } else {
+                        errorMessage = errors;
+                    }
+                    $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = '';
+                if (errors.message && typeof errors.message === 'object') {
+                    $j.each(errors.message, function(field, messages) {
+                        $j(`#${field}_error`).text(messages.join(', '));
+                        errorMessage += `${field}: ${messages.join(', ')}\n`;
+                    });
+                } else {
+                    errorMessage = errors.message || 'An unexpected error occurred.';
+                }
+                $j('#successmsg').show().find('#alert-primary').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+
+    // Validate Password Form
+    $j('#editPasswordForm').validate({
+        rules: {
+            newPassword: { 
+                required: true, 
+                minlength: 8,      // updated from 6 to 8
+                maxlength: 30      // updated from 255 to 30
+            },
+            confirmPassword: { 
+                required: true, 
+                minlength: 8,      // updated from 6 to 8
+                maxlength: 30,     // updated from 255 to 30
+                equalTo: "#newPassword" 
+            }
+        },
+        messages: {
+            newPassword: { 
+                required: "New Password is required.",
+                minlength: "Password must be at least 8 characters.",  // updated message
+                maxlength: "Password cannot exceed 30 characters."
+            },
+            confirmPassword: { 
+                required: "Confirm Password is required.",
+                equalTo: "Passwords do not match.",  // you can replace with requiredMessageEqual variable if defined
+                minlength: "Confirm Password must be at least 8 characters.",
+                maxlength: "Confirm Password cannot exceed 30 characters."
+            }
+        },
+        errorPlacement: function(error, element) {
+            const name = element.attr("name");
+            $j(`#${name}_error`).html(error);
+        },
+        submitHandler: function(form) {
+            submitPasswordForm();
+        }
+    });
+
+
+    // Submit Password Form
+    function submitPasswordForm() {
+        const formData = $j('#editPasswordForm').serialize();
+        const submitBtn = $j('#passwordSubmit');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+        $j.ajax({
+            url: apiUrl,
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    $j('#successmsg').show().find('#alert-primary').text(response.message);
+                    setTimeout(() => {
+                        window.location.href = '{% url "api-user-list" %}';
+                    }, 2000);
+                } else {
+                    let errorMessage = response.message || 'An error occurred while updating the password.';
+                    $j('#newPassword_error').text(errorMessage);
+                    $j('#confirmPassword_error').text(errorMessage);
+                }
+            },
+            error: function(xhr) {
+                let errors = xhr.responseJSON || { message: 'An unexpected error occurred.' };
+                let errorMessage = errors.message || 'An unexpected error occurred.';
+                $j('#newPassword_error').text(errorMessage);
+                $j('#confirmPassword_error').text(errorMessage);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Submit');
+            }
+        });
+    }
+
+    // Warn on unsaved changes
+    let formChanged = false;
+    $j('#editUserForm, #editPasswordForm').on('change input', 'input, select, textarea', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+        if (formChanged) {
+            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                e.preventDefault();
+            }
+        }
+    });
+});
+
+//code for select image
+$j('#OpenImgUpload').click(function(){ 
+   $j('#image_path').trigger('click');
+});
+ 
+var img = $j('#uploadPic').val();
+if((img == null || img == '' || img == undefined)){
+   $j(".pip").hide();
+}
+
+function ValidateSizeadd(file,id,i){
+    
+    if(!/(\.jpg|\.jpeg|\.png|\.pdf)$/i.test(file.value))
+    { 
+      alert("Invalid image /pdf file type.");      
+        $j('#'+id).val('');  
+        
+        return false;   
+    }   
+      var FileSize = file.files[0].size;
+      
+      if (FileSize > 3000000)
+      {
+        $j("#"+id+'_error').html("File size should be less than 3 MB").show();
+        $j('#'+id).val('');  
+        return false;
+      }else{
+        $j("#"+id+'_error').hide();
+      }
+  }
+
+// code for preview image
+// Preview image
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $j('#OpenImgUpload').attr('src', e.target.result).show();
+            $j('.pip').show();
+            $j('#remove_image').val("false"); // reset removal if new file chosen
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Trigger preview on file input change
+$j("#image_path, #uploadPic").change(function() {
+    readURL(this);
+});
+
+// Remove button (only bind once)
+
+$j(".remove").click(function(){
+    $j('#image_path').val("");
+    $j('#uploadPic').val("");
+    $j('#OpenImgUpload').hide().attr('src', "");
+    $j('.pip').hide();
+    $j('#remove_image').val("true"); // Set flag to indicate image removal
+});
+
+</script>
+{% endblock content %}
