@@ -119,82 +119,89 @@
     </div>
 </div>
 
+ 
+
 <style>
-    table.dataTable thead .sorting,
-    table.dataTable thead .sorting_asc,
-    table.dataTable thead .sorting_desc {
-        background-image: none !important;
-        position: relative;
-    }
+/* Pagination container */
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+}
 
-    table.dataTable thead .sorting::after,
-    table.dataTable thead .sorting_asc::after,
-    table.dataTable thead .sorting_desc::after {
-        font-family: 'Font Awesome 5 Free';
-        font-weight: 900;
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+/* Pagination list as flex container */
+.dataTables_wrapper .dataTables_paginate .pagination {
+    display: flex !important;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+}
 
-    table.dataTable thead .sorting::after {
-        content: '\f0dc';
-        opacity: 0.3;
-    }
+/* Remove gap between items */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item {
+    margin: 0 !important;
+}
 
-    table.dataTable thead .sorting_asc::after {
-        content: '\f0de';
-        opacity: 1;
-    }
+/* General page-link style */
+.dataTables_wrapper .dataTables_paginate .pagination .page-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    padding: 5px 12px !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0 !important;
+    background-color: white !important;
+    color: #6f42c1 !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+}
 
-    table.dataTable thead .sorting_desc::after {
-        content: '\f0dd';
-        opacity: 1;
-    }
+/* Join boxes: remove double borders between page items */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item + .page-item .page-link {
+    border-left: none !important;
+}
 
-    #agentPerformanceReport_wrapper .dataTables_paginate .pagination .page-item .page-link {
-        width: auto !important;
-        min-width: 40px !important;
-        max-width: 180px !important;
-        padding: 6px 12px !important;
-        white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        border-radius: 0 !important;
-        border: 1px solid #dee2e6 !important;
-        border-right: none !important;
-        color: black !important;
-        background-color: white !important;
-        box-sizing: border-box !important;
-    }
-    #agentPerformanceReport_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
-        border-right: 1px solid #dee2e6 !important;
-        border-top-right-radius: 4px !important;
-        border-bottom-right-radius: 4px !important;
-    }
-    #agentPerformanceReport_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
-        border-top-left-radius: 4px !important;
-        border-bottom-left-radius: 4px !important;
-    }
-    #agentPerformanceReport_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
-        background-color: #007bff !important;
-        border-color: #007bff !important;
-        color: white !important;
-        border-right: 1px solid #007bff !important;
-    }
-    #agentPerformanceReport_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover {
-        background-color: #f8f9fa !important;
-    }
+/* First item - left rounded corners */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
+    border-left: 1px solid #dee2e6 !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+}
 
-    #agentPerformanceReport_wrapper .dataTables_paginate {
-        float: right !important;
-        text-align: right !important;
-        margin-top: 10px;
-    }
+/* Last item - right rounded corners */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+    border-right: 1px solid #dee2e6 !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}
+
+/* Number boxes (1,2,3...) - fixed width */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item:not(.previous):not(.next) .page-link {
+    width: 32px !important;
+    min-width: 32px !important;
+}
+
+/* Previous / Next boxes - flexible width based on content */
+.dataTables_wrapper .dataTables_paginate .pagination .page-item.previous .page-link,
+.dataTables_wrapper .dataTables_paginate .pagination .page-item.next .page-link {
+    width: auto !important;
+    min-width: 40px !important;
+    padding: 5px 12px !important;
+    flex: none !important; /* content defines width */
+}
+
+/* Hover effect */
+.dataTables_wrapper .dataTables_paginate .pagination .page-link:hover {
+    background-color: #e9ecef !important;
+    color: #6f42c1 !important;
+}
+
+/* Active page */
+.dataTables_wrapper .dataTables_paginate .pagination .active .page-link {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    border-color: #6f42c1 !important;
+    cursor: default !important;
+}
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
