@@ -187,26 +187,20 @@ class PropertyAPIView(APIView):
  
         # Merge old + new files and only remove explicitly specified ones
         for field in file_fields:
-            removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
+            # removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
+            removed_files = [f.strip() for f in mutable_data.get(f"{field}_mou_removed", "").split(",") if f.strip()]
+ 
             existing_value = getattr(property_obj, field, "") or ""
             existing_files = [f.strip() for f in existing_value.split(",") if f.strip()]
  
-            # If frontend sent manually edited existing values, respect those
-            if f"{field}_existing_values" in mutable_data:
-                existing_values = mutable_data.get(f"{field}_existing_values", "")
-                existing_files = [f.strip() for f in existing_values.split(",") if f.strip()]
- 
+            # Remove explicitly marked files
             existing_files = [f for f in existing_files if f not in removed_files]
+ 
             new_files = updated_files.get(field, [])
             combined_files = existing_files + new_files
  
-            # If nothing changed (no new or removed), keep original
-            if not new_files and not removed_files:
-                mutable_data[field] = existing_value
-            else:
-                mutable_data[field] = ",".join(combined_files)
-            print(f"🔄 {field} Combined: {mutable_data[field]}")
- 
+            mutable_data[field] = ",".join(combined_files)
+            print(f"🔄 {field} Combined Files after removal: {mutable_data[field]}")
         # Validate required file fields
         for field in required_file_fields:
             val = mutable_data.get(field, "") or getattr(property_obj, field, "")

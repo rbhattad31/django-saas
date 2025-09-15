@@ -1027,15 +1027,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
 $j(document).on('click', '.remove_file', function () {
-    
     var name = $j(this).data("name");
     var value = $j(this).attr("id");
     var existingType = $j(this).data("existing");
-
+ 
     console.log("➡️ File URL (id):", value);
     console.log("➡️ Field Name:", name);
     console.log("➡️ Is Existing (Old) File:", existingType === "old");
-
+ 
     // Append to the removed list
     var removedField = $j('#' + name + '_removed');
     if (removedField.val().length == 0) {
@@ -1043,13 +1042,13 @@ $j(document).on('click', '.remove_file', function () {
     } else {
         removedField.val(removedField.val() + ', ' + value);
     }
-
+ 
     console.log("📦 Updated '" + name + "_removed' value:", removedField.val());
-
+ 
     // Decrease count
     if (existingType == "old") {
         var countField = $j('#' + name + '_existing_count');
-        console.log("Before",countField.val());
+        console.log("Before", countField.val());
         countField.val(parseInt(countField.val()) - 1);
         console.log("🔢 Updated '" + name + "_existing_count' to:", countField.val());
     } else {
@@ -1057,53 +1056,38 @@ $j(document).on('click', '.remove_file', function () {
         newCountField.val(parseInt(newCountField.val()) - 1);
         console.log("🔢 Updated '" + name + "_new_removed_count' to:", newCountField.val());
     }
-
-    // Visually remove preview block
-    //var previewDiv = $j(this).closest('.upload_prev');
-    //if (previewDiv.length > 0) {
-    //    previewDiv.remove();
-    //    console.log("✅ Visually removed preview block.");
-    //} else {
-    //    console.warn("⚠️ Could not find preview element to remove.");
-    //}
-    // Determine which preview block to remove
-    var previewDiv = $j(this).closest('div'); // fallback
-
-    if ($j(this).closest('.upload_prev').length > 0) {
-        previewDiv = $j(this).closest('.upload_prev'); // old files
-    } else if ($j(this).closest('.file-preview').length > 0) {
-        previewDiv = $j(this).closest('.file-preview'); // new files
-    }
-
+ 
+    // Remove only the single file preview
+    var previewDiv = $j(this).parent('div');
     if (previewDiv.length > 0) {
         previewDiv.remove();
         console.log("✅ Visually removed preview block.");
     } else {
         console.warn("⚠️ Could not find preview element to remove.");
     }
-
-
+ 
     console.log("✅ File successfully marked as removed.");
 });
-
-
+ 
+ 
+ 
   // Handle new file selection and preview
   $j('.imageUploadInput').on('change', function () {
     const fieldName = this.id;
     const files = this.files;
     const $list = $j(`.${fieldName}_list`);
-
+ 
     console.log(`🟦 Files selected for '${fieldName}':`, files);
-
+ 
     // Clear previous previews
     $list.empty();
     console.log(`🧹 Cleared existing previews for '${fieldName}'`);
-
+ 
     // Add previews for selected files
     Array.from(files).forEach((file, index) => {
       const fileId = `${fieldName}_new_${index}_${Date.now()}`;
       console.log(`➕ Adding preview for file:`, file.name, "→ ID:", fileId);
-
+ 
       $list.append(`
         <div class="file-preview" data-url="${fileId}">
           <span>${file.name}</span>
@@ -1112,6 +1096,10 @@ $j(document).on('click', '.remove_file', function () {
       `);
     });
   });
+
+
+  // Handle new file selection and preview
+   
 });
 
 $j(document).ready(function() {

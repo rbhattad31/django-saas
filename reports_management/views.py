@@ -91,7 +91,7 @@ class AgentCommissionReportViewSet(ViewSet):
 
         # Filter SalesDeals
         #sales_qs = SalesDeals.objects.filter(is_deleted='N')
-        sales_qs = SalesDeals.objects.filter(is_deleted='N').prefetch_related('submitted_by_user')
+        sales_qs = SalesDeals.objects.filter(is_deleted='N',account_id = request.user.account_id ).prefetch_related('submitted_by_user')
 
         if reference_number:
             sales_qs = sales_qs.filter(reference_number__icontains=reference_number)
