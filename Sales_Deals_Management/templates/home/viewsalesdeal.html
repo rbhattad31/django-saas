@@ -985,7 +985,7 @@
                                             </div>
                                             <div class="col-1">:</div>
                                             <div class="col-6">
-                                                {% render_file_links salesdeal.buyer_poa_eid aws_base_url salesdeal.reference_number %}
+                                                {% render_file_links salesdeal.sale_kyc_number aws_base_url salesdeal.reference_number %}
                                             </div>
                                         </div>
                                     </div>  
@@ -1036,7 +1036,7 @@
                                                 <div class="col-6">
                                                     <div id="upload_prevss" class="kyc_number_list">
                                                         {% load customtags %}
-                                                        {% render_file_links manager_cheque_copy base_url reference_number %}
+                                                        {% render_file_links salesdeal.manager_cheque_copy base_url reference_number %}
                                                     </div>
                                                     <span class="text-danger" id="manager_cheque_copy_error"></span>
                                                 </div>
