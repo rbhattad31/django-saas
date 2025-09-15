@@ -41,7 +41,7 @@ def render_file_links(file_string):
         match = re.search(r'([a-zA-Z_]+)\d+', filename)
         label = match.group(1) if match else filename
 
-        html = f'<div class="upload_prev"><a href="{settings.MEDIA_URL}{file_url}" target="_blank">{label} {index}</a></div>'
+        html = f'<div class="upload_prev"><a href="{settings.AWS_URL}{file_url}" target="_blank">{label} {index}</a></div>'
         output.append(html)
 
     return mark_safe("\n".join(output))

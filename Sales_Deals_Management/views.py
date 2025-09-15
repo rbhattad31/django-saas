@@ -74,9 +74,13 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
 
         receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
-        print(receipt_no, "this is receipt id ")
+        if not sales_deal.receipt_no:
+            recipt_no = None
+        else:
+            recipt_no = Receipts.objects.filter(id=sales_deal.receipt_no).first() 
+            print(recipt_no.receipt_number , "this is recipt id ")
 
-        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": receipt_no})
+        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": receipt_no.receipt_number})
 
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
@@ -111,6 +115,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         try:
             receipt_id = int(mutable_data.get("receipt_no", "").strip())
             Receipts.objects.filter(id=receipt_id).update(deal_refer_no=mutable_data['reference_number'])
+            Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
             print(f"Updated receipt_no {receipt_id} with reference_number {mutable_data['reference_number']}")
         except (ValueError, TypeError):
             print("Invalid receipt_no or not provided, skipping update.")
@@ -434,11 +439,16 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
 
-            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") == "A":
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
                 mutable_data['approved_rejected_by'] = request.user.email
+            
+            if mutable_data.get('receipt_no'):
+                print("this is the receipt no", mutable_data['receipt_no'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
 
 
-
+ 
                  
                  
                        
@@ -713,7 +723,7 @@ def edit_sales_deal_page(request, pk):
     agents = Users.objects.filter(is_active=True)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.filter(account_id=request.user.account_id, status="Unused")
+    reciepts_db = Receipts.objects.filter(account_id=request.user.account_id)
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     sales_data = {

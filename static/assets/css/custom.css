@@ -166,6 +166,8 @@ body{
   border-color: #6f42c1 !important;
   border-radius: 40px;
 }
+
+
 .btn-primary:hover {
   background-color: #5a32a3 !important; /* darker shade on hover */
   border-color: #5a32a3 !important;

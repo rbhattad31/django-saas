@@ -663,7 +663,20 @@
                                         <div class="col-1">:</div>
                                         <div class="col-6">
                                             {% comment %} <label for=""><h6 class="value">{{ property.status }}</h6></label> {% endcomment %}
-                                            <label for=""><h6 class="value">{{ property.is_approved_rejected}}</h6></label>
+                                            {% comment %} <label for=""><h6 class="value">{{ property.is_approved_rejected}}</h6></label> {% endcomment %}
+                                            <label for=""><h6 class="value">
+                                                    {% if property.is_approved_rejected == 'A' %}
+                                                        Approved
+                                                    {% elif property.is_approved_rejected == 'R' %}
+                                                        Rejected
+                                                    {% elif property.is_approved_rejected == 'P' %}
+                                                        Pending
+                                                    {% elif property.is_approved_rejected == 'W' %}
+                                                        Waiting for Finance
+                                                    {% else %}
+                                                        Unknown
+                                                    {% endif %}
+                                                </h6></label>
                                         </div>
                                     </div>
                                 </div>
@@ -1157,7 +1170,7 @@ function enterInFinance(propertyId) {
         setTimeout(() => $('#successmsg').hide(), 3000);
         return;
     }
-
+    //const noOfCheque = data.no_of_cheque || $('#nav-cheque .labelname:contains("Number Of Cheque")').next().next().find('.value').text().trim();  
     $.ajax({
         url: `/api/rental-properties/${propertyId}/update-finance/`,
         type: 'POST',
@@ -1165,7 +1178,9 @@ function enterInFinance(propertyId) {
             'X-CSRFToken': csrftoken
         },
         data: {
-            is_entered_in_finance_system: '1'
+            is_entered_in_finance_system: '1',
+            
+            
         },
         success: function(response) {
             console.log("✅ Finance status updated:", response);

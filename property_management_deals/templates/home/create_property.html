@@ -50,10 +50,12 @@
     }
     .file-preview-item .remove_file {
         margin-left: 10px;
-        color: red;
+        color: black;
+        
         cursor: pointer;
         font-weight: bold;
     }
+
 
 
     .swal-custom {
@@ -87,13 +89,24 @@
         background-color: #007bff;
         border-color: #007bff;
         padding: 8px 20px;
-        border-radius: 4px;
+        border-radius: 40px;
     }
 
     .btn.btn-primary:hover {
         background-color: #0056b3;
         border-color: #004085;
     }
+    .btn-primary {
+    background-color: #6f42c1 !important; /* Bootstrap purple */
+    border-color: #6f42c1 !important;
+    border-radius: 40px;
+    }
+
+
+    .btn-primary:hover {
+    background-color: #5a32a3 !important; /* darker shade on hover */
+    border-color: #5a32a3 !important;
+    }  
 </style>
 {% endblock stylesheets %}
 
@@ -144,6 +157,9 @@
                                             </select>
                                             <span class="text-danger" id="submitted_by_agent_error"></span>
                                         </div>
+                                    {% else %}
+                                            <!-- Hidden input with logged-in user's ID -->
+                                            <input type="hidden" name="submitted_by_agent" value="{{ request.user.id }}">
                                     {% endif %}
                                     <div class="col-md-6 form-group">
                                         <label for="deal_date">Deal Date<span class="mandetory_field" style="color: red">*</span></label>
@@ -208,7 +224,7 @@
                                     <div class="col-sm-12 d-flex justify-content-center">
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Next</button>
                                         {% if perms.core.create_draft_property_rentalproperties %}
-                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" onclick="saveAsDraft()">Save As Draft</button>
+                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftProperty" onclick="switchTabSaveDraft('nav-source')">Save As Draft</button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -265,7 +281,7 @@
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-property')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Next</button>
                                         {% if perms.core.create_draft_property_rentalproperties %}
-                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftSource" onclick="saveAsDraft()">Save As Draft</button>
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftSource" onclick="switchTabSaveDraft('nav-agency')">Save As Draft</button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -305,7 +321,7 @@
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-source')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Next</button>
                                         {% if perms.core.create_draft_property_rentalproperties %}
-                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" onclick="saveAsDraft()">Save As Draft</button>
+                                            <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftAgency" onclick="switchTabSaveDraft('nav-cheque')">Save As Draft</button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -338,7 +354,7 @@
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-agency')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-revenue')">Next</button>
                                         {% if perms.core.create_draft_property_rentalproperties %}
-                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftCheque" onclick="saveAsDraft()">Save As Draft</button>
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftCheque" onclick="switchTabSaveDraft('nav-revenue')">Save As Draft</button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -430,7 +446,7 @@
                                             <option value="Null">Null</option>
                                             <option value="No Commision">No Commission</option>
                                             {% for receipt in receipt_nos %}
-                                            <option value="{{ receipt.id }}">{{ receipt.receipt_number }}</option>
+                                            <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
                                             {% endfor %}
                                         </select>
                                         <span class="text-danger" id="receipt_no_error"></span>
@@ -480,7 +496,7 @@
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-cheque')">Previous</button>
                                         <button type="button" class="btn btn-primary btn-rounded m-1" onclick="switchTab('nav-documents')">Next</button>
                                         {% if perms.core.create_draft_property_rentalproperties %}
-                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" onclick="saveAsDraft()">Save As Draft</button>
+                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="saveAsDraftRevenue" onclick="switchTabSaveDraft('nav-documents')">Save As Draft</button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -744,75 +760,8 @@ const selectedFiles = {
 };
 
 
-{% comment %} function showErrors(validator) {
-    let messages = '';
-    let errorCount = 0;
 
-    if (validator && Array.isArray(validator.errorList)) {
-        const uniqueErrors = {};
-        $j.each(validator.errorList, function (_, error) {
-            if (!error || !error.element) return;
-
-            const field = $j(error.element);
-            const fieldName = field.attr('name');
-
-            // Get label text
-            let labelText = $j(`label[for="${field.attr('id')}"]`).text().trim();
-            if (!labelText) {
-                labelText = field.closest('.form-group').find('label').first().text().trim() || fieldName;
-            }
-
-            // Clean up label
-            labelText = labelText.replace(/\*This field is required\.?$/i, '');
-            labelText = labelText.replace(/\*$/, '');
-
-            uniqueErrors[fieldName] = `${labelText}: ${error.message}`;
-        });
-        const errorList = Object.values(uniqueErrors);
-        messages = errorList.join('\n');
-        errorCount = errorList.length;
-    }
-
-    const titleText = "Please fill mandatory fields";
-
-    // Dynamic modal width based on errors and title length
-    const titleWidthEstimate = titleText.length * 8; // approx 8px per char
-    const errorsWidthEstimate = errorCount * 10 + 300;
-    const dynamicWidth = Math.min(700, Math.max(300, Math.max(titleWidthEstimate, errorsWidthEstimate)));
-
-    // Dynamic padding (5% of modal width)
-    const dynamicPadding = Math.round(dynamicWidth * 0.05);
-
-    // Apply styles dynamically
-    $j("<style>")
-        .prop("type", "text/css")
-        .html(`
-            .swal-modal {
-                width: ${dynamicWidth}px !important;
-            }
-            .swal-title {
-                white-space: normal !important; /* allow wrapping */
-                word-break: break-word !important; /* prevent overflow */
-                font-weight: bold !important;
-                text-align: center !important;
-                padding-left: ${dynamicPadding}px !important;
-                padding-right: ${dynamicPadding}px !important;
-            }
-            .swal-text {
-                text-align: left !important;
-                white-space: pre-line !important;
-            }
-        `)
-        .appendTo("head");
-
-    swal({
-        title: titleText,
-        text: messages || "Please correct the errors in the form.",
-        icon: null,
-        button: "OK"
-    });
-} {% endcomment %}
- function showErrors(validator) {
+ {% comment %} function showErrors(validator) {
     let messages = '';
     let errorCount = 0;
 
@@ -885,9 +834,92 @@ const selectedFiles = {
         icon: null,
         button: "OK"
     });
+} {% endcomment %}
+
+
+function showErrors(validator) {
+    let messages = '';
+    let errorCount = 0;
+
+    if (validator && Array.isArray(validator.errorList)) {
+        const uniqueErrors = {};
+        $j.each(validator.errorList, function (_, error) {
+            if (!error || !error.element) return;
+
+            const field = $j(error.element);
+            const fieldName = field.attr('name');
+            const fieldId = field.attr('id');
+
+            // Get label text, ensuring we exclude dynamic error messages
+            let labelText = $j(`label[for="${fieldId}"]`).clone().children().remove().end().text().trim();
+            if (!labelText) {
+                // Fallback to form-group label, excluding error messages
+                labelText = field.closest('.form-group').find('label').not('.error').first().text().trim() || fieldName;
+            }
+
+            // Clean up label: remove duplicates, asterisks, colons, and error-like text
+            labelText = labelText
+                .replace(/[\*:\s]+$/g, '') // Remove trailing asterisks, colons, and spaces
+                .replace(/\*+\s*/g, '') // Remove all asterisks and following spaces
+                .replace(/This field is required\.?\s*/gi, '') // Remove generic error text
+                .replace(/(is required|required\.?|PM Start Date|PM End Date|Tenancy Start Date|Tenancy End Date)\s*/gi, '') // Remove specific error text or duplicates
+                .replace(/\s+/g, ' ') // Normalize multiple spaces
+                .trim();
+
+            // Fallback to a clean label if empty
+            if (!labelText) {
+                labelText = fieldName.replace(/\[.*\]/, ''); // Remove array notation (e.g., '[]')
+            }
+
+            // Avoid duplicate errors for the same field
+            if (!uniqueErrors[fieldName]) {
+                uniqueErrors[fieldName] = `${labelText}: ${error.message}`;
+            }
+        });
+        const errorList = Object.values(uniqueErrors);
+        messages = errorList.join('\n');
+        errorCount = errorList.length;
+    }
+
+    const titleText = "Please fill mandatory fields";
+
+    // Dynamic modal width based on errors and title length
+    const titleWidthEstimate = titleText.length * 8; // approx 8px per char
+    const errorsWidthEstimate = errorCount * 10 + 300;
+    const dynamicWidth = Math.min(700, Math.max(300, Math.max(titleWidthEstimate, errorsWidthEstimate)));
+
+    // Dynamic padding (5% of modal width)
+    const dynamicPadding = Math.round(dynamicWidth * 0.05);
+
+    // Apply styles dynamically
+    $j("<style>")
+        .prop("type", "text/css")
+        .html(`
+            .swal-modal {
+                width: ${dynamicWidth}px !important;
+            }
+            .swal-title {
+                white-space: normal !important;
+                word-break: break-word !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                padding-left: ${dynamicPadding}px !important;
+                padding-right: ${dynamicPadding}px !important;
+            }
+            .swal-text {
+                text-align: left !important;
+                white-space: pre-line !important;
+            }
+        `)
+        .appendTo("head");
+
+    swal({
+        title: titleText,
+        text: messages || "Please correct the errors in the form.",
+        icon: null,
+        button: "OK"
+    });
 }
-
-
 
 
 
@@ -978,86 +1010,6 @@ function switchTab(tabId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-{% comment %} function saveAsDraft() {
-    const form = $j('#rental_property_form');
-    const validator = form.validate();
-
-    const draftFields = [
-        'submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name',
-        'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
-        'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
-        'seller_nationality'
-    ];
-
-    // Add required rules for draft fields
-    draftFields.forEach(field => {
-        $j(`[name="${field}"]`).each(function () {
-            $j(this).rules('add', { required: true });
-        });
-    });
-
-    // Remove required rules for other fields
-    const allFields = [
-        'agency_name', 'agent_name', 'agent_phone', 'brn', 'agent_email', 'no_of_cheque',
-        'cheque_date[]', 'total_commission', 'less_outside_commission', 'net_commission',
-        'classic', 'agent1', 'agent_name1', 'agent2', 'agent_name2', 'agent3', 'agent_name3',
-        'agent_comment', 'comments', 'receipt_no', 'kyc_number', 'is_approved_rejected',
-        'is_property_aml', 'pms_contract[]', 'owner_passport_copy[]', 'owner_eid_copy[]',
-        'pms_cheque_copy[]', 'title_deed[]', 'poa_pp[]', 'poa_copy[]', 'key_hand_over_form[]',
-        'kyc_form[]', 'screening[]', 'screening_comments'
-    ];
-
-    allFields.forEach(field => {
-        $j(`[name="${field}"]`).each(function () {
-            $j(this).rules('remove', 'required');
-        });
-    });
-
-    if (form.valid()) {
-        const formData = new FormData(form[0]);
-        formData.append('save_as', 'draft');
-
-        // Append files from selectedFiles
-        Object.keys(selectedFiles).forEach(field => {
-            selectedFiles[field].forEach(file => {
-                formData.append(`${field}[]`, file);
-            });
-            // Append removed files
-            const removedField = $j(`#${field}_removed`).val();
-            if (removedField) {
-                formData.append(`${field}_removed`, removedField);
-            }
-        });
-
-        $j.ajax({
-            url: '/rental-properties/create/',
-            type: 'POST',
-            data: formData,
-            headers: {
-                'X-CSRFToken': $j('input[name="csrfmiddlewaretoken"]').val()
-            },
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.success) {
-                    $j('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
-                    setTimeout(() => $j('#successmsg').hide(), 3000);
-                } else {
-                    alert('Failed to save draft: ' + (response.message || 'Unknown error'));
-                }
-            },
-            error: function (xhr) {
-                let errorMsg = xhr.responseJSON?.message || 'Unknown error';
-                if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
-                    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
-                }
-                alert('Error saving draft: ' + errorMsg);
-            }
-        });
-    } else {
-        showErrors(validator);
-    }
-}  {% endcomment %}
 
 function saveAsDraft() {
     const form = $j('#rental_property_form');
@@ -1100,20 +1052,30 @@ function saveAsDraft() {
     });
 
     if (form.valid()) {
-        const formData = new FormData(form[0]);
+        // Build FormData explicitly (consistent with submit handler)
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', $j('input[name="csrfmiddlewaretoken"]').val());
         formData.append('save_as', 'draft');
 
-        // Append files from selectedFiles
+        // Append all regular form fields (includes cheque_date[] as multi-value)
+        $j('#rental_property_form').serializeArray().forEach(field => {
+            formData.append(field.name, field.value);
+        });
+
+        // Append files only from selectedFiles (ensures no misses/duplicates)
         Object.keys(selectedFiles).forEach(field => {
             selectedFiles[field].forEach(file => {
                 formData.append(`${field}[]`, file);
             });
-            // Append removed files
             const removedField = $j(`#${field}_removed`).val();
             if (removedField) {
                 formData.append(`${field}_removed`, removedField);
             }
         });
+
+        // Optional: Log to confirm
+        console.log('Draft FormData files for screening[]:', Array.from(formData.getAll('screening[]')).map(f => f.name));
+        console.log('Draft FormData cheque_date[]:', Array.from(formData.getAll('cheque_date[]')));
 
         $j.ajax({
             url: '/rental-properties/create/',
@@ -1126,14 +1088,8 @@ function saveAsDraft() {
                 if (response.success) {
                     $j('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
                     setTimeout(() => $j('#successmsg').hide(), 3000);
+                    window.location.href = '/rental-properties/list/';
                 } else {
-                    //alert('Failed to save draft: ' + (response.message || 'Unknown error'));
-                    // Check for reference number duplicate
-                    //if (response.message && response.message.reference_number) {
-                    //    alert('Reference number already exists: ' + response.message.reference_number);
-                    //} else {
-                    //    alert('Failed to save draft: ' + (response.message || 'Unknown error'));
-                    //}
                     if (response.message && response.message.reference_number) {
                         swal({
                             title: "Error",
@@ -1151,27 +1107,10 @@ function saveAsDraft() {
                             confirmButtonColor: "#3085d6"
                         });
                     }
-
                 }
             },
             error: function (xhr) {
                 let errorMsg = xhr.responseJSON?.message || 'Unknown error';
-                //if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
-                //    errorMsg = Object.values(xhr.responseJSON.message).join('\n');
-                //}
-                //alert('Error saving draft: ' + errorMsg);
-
-                //if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
-                    // Check specifically for reference_number
-                //    if (xhr.responseJSON.message.reference_number) {
-                //        errorMsg = 'Reference number already exists: ' + xhr.responseJSON.message.reference_number;
-                //    } else {
-                //        errorMsg = Object.values(xhr.responseJSON.message).join('\n');
-                //    }
-                //}
-                //alert('Error saving draft: ' + errorMsg);
-
-
                 if (xhr.responseJSON?.message && typeof xhr.responseJSON.message === 'object') {
                     if (xhr.responseJSON.message.reference_number) {
                         errorMsg = 'Reference number already exists: ' + xhr.responseJSON.message.reference_number;
@@ -1180,7 +1119,6 @@ function saveAsDraft() {
                     }
                 }
 
-                // SweetAlert for AJAX errors
                 swal({
                     title: "Error",
                     text: 'Error saving draft: ' + errorMsg,
@@ -1193,18 +1131,130 @@ function saveAsDraft() {
     } else {
         showErrors(validator);
     }
-} 
+}
+
+
+function switchTabSaveDraft(tabId) {
+    const currentTab = document.querySelector('.tab-pane.show.active')?.id;
+    const validator = $j("#rental_property_form").validate();
+
+    const tabOrder = [
+        'nav-property',
+        'nav-source',
+        'nav-agency',
+        'nav-cheque',
+        'nav-revenue',
+        'nav-documents'
+    ];
+
+    const tabFields = {
+        'nav-property': ['submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
+        'nav-source': ['owner_first_name', 'owner_source', 'owner_mobile', 'owner_email', 'seller_nationality'],
+        'nav-agency': [],
+        'nav-cheque': [],
+        'nav-revenue': [],
+        'nav-documents': ['screening[]']
+    };
+
+    // Remove required rules from all fields to avoid interference
+    Object.keys(tabFields).forEach(tab => {
+        tabFields[tab].forEach(field => {
+            $j(`[name="${field}"]`).each(function () {
+                $j(this).rules('remove', 'required');
+            });
+        });
+    });
+
+    // Validate current tab if moving forward
+    const currentIndex = tabOrder.indexOf(currentTab);
+    const targetIndex = tabOrder.indexOf(tabId);
+    const isNext = targetIndex > currentIndex;
+
+    if (isNext && currentTab && tabFields[currentTab].length > 0) {
+        // Add required rules for fields in the current tab
+        tabFields[currentTab].forEach(field => {
+            $j(`[name="${field}"]`).each(function () {
+                $j(this).rules('add', { required: true });
+            });
+        });
+
+        // Validate the current tab
+        const currentTabValid = $j(`#${currentTab}`).find(':input').valid();
+        if (!currentTabValid) {
+            showErrors(validator); // Use showErrors for consistent error display
+            return;
+        }
+
+        // Validate cheque dates for nav-cheque to nav-revenue transition
+        if (currentTab === 'nav-cheque' && tabId === 'nav-revenue') {
+            if (!validateChequeDates()) {
+                return;
+            }
+        }
+
+        // Validate required file fields for nav-documents
+        if (currentTab === 'nav-documents') {
+            const requiredFileFields = ['screening'];
+            for (let field of requiredFileFields) {
+                if (!selectedFiles[field] || selectedFiles[field].length === 0) {
+                    $j(`#${field}_error`).text('At least one file is required.');
+                    return;
+                }
+            }
+        }
+    }
+
+    // Switch to the target tab
+    $j(`#${tabId}-tab`).tab('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+
+
 
 $j(document).ready(function () {
-    //$j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').each(function() {
-    //    let val = $j(this).val();
-    //    if(val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
-    //        const parts = val.split('-'); // [yyyy, mm, dd]
-    //        $j(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
-    //    }
-    //});
 
+    function formatDateToDDMMYYYY(date) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
 
+    // Auto-fill PM End Date 365 days after PM Start Date minus 1 day
+    $j('#pm_start_date').on('change', function() {
+        const val = $j(this).val();
+        if (/^\d{2}-\d{2}-\d{4}$/.test(val)) {
+            const parts = val.split('-');
+            const startDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            const endDateField = $j('#pm_end_date');
+
+            if (!endDateField.val()) {
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 365 - 1); // add 365 days then subtract 1
+                endDateField.val(formatDateToDDMMYYYY(endDate));
+            }
+        }
+    });
+
+    // Auto-fill Tenancy End Date 365 days after Tenancy Start Date minus 1 day
+    $j('#tenancy_start_date').on('change', function() {
+        const val = $j(this).val();
+        if (/^\d{2}-\d{2}-\d{4}$/.test(val)) {
+            const parts = val.split('-');
+            const startDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            const endDateField = $j('#tenancy_end_date');
+
+            if (!endDateField.val()) {
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 365 - 1); // add 365 days then subtract 1
+                endDateField.val(formatDateToDDMMYYYY(endDate));
+            }
+        }
+    });
+
+    
      $j('.dealDate, .startDate, .endDate, .startDates, .endDates, .cheque-dates').each(function() {
         let val = $j(this).val();
         if(val && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
@@ -1594,10 +1644,31 @@ $j(document).ready(function () {
             return;
         }
 
-        const formData = new FormData(form[0]);
-        console.log('Form data:', Object.fromEntries(formData));
+        //const formData = new FormData(form[0]);
+        //console.log('Form data:', Object.fromEntries(formData));
 
         // Append files from selectedFiles (optional for Create, as in Save as Draft)
+        //Object.keys(selectedFiles).forEach(field => {
+        //    selectedFiles[field].forEach(file => {
+        //        formData.append(`${field}[]`, file);
+        //    });
+        //    const removedField = $j(`#${field}_removed`).val();
+        //    if (removedField) {
+        //        formData.append(`${field}_removed`, removedField);
+        //    }
+        //});
+
+
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', $j('input[name="csrfmiddlewaretoken"]').val());
+        formData.append('save_as', 'create');  // Or however you're handling save mode
+
+        // Append all regular form fields
+        $j('#rental_property_form').serializeArray().forEach(field => {
+            formData.append(field.name, field.value);
+        });
+
+        // Append files only from selectedFiles
         Object.keys(selectedFiles).forEach(field => {
             selectedFiles[field].forEach(file => {
                 formData.append(`${field}[]`, file);
@@ -1607,6 +1678,7 @@ $j(document).ready(function () {
                 formData.append(`${field}_removed`, removedField);
             }
         });
+
 
         $j.ajax({
             url: '/rental-properties/create/',

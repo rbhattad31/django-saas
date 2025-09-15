@@ -22,16 +22,31 @@
     .cheque-dates {
       margin-right: 500px;
     } 
-    .remove_file {
+    {% comment %} .remove_file {
       display: inline-block !important;
       cursor: pointer !important;
-      color: red !important;
+      color: black !important;
       padding: 4px;
       font-weight: bold;
       z-index: 9999 !important;
       position: relative !important;
       background: #fff;
-      border: 1px solid #ccc;
+      border: 1px solid #ccc; 
+      
+      
+    } {% endcomment %}
+
+
+
+    .remove_file {
+        display: inline-block;   /* allows <p> to sit inline */
+        vertical-align: middle;  /* aligns it with the <a> */
+        margin-left: 10px;       /* space between link and X */
+        margin-bottom: 0;        /* remove default <p> margin */
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0;              /* optional, remove extra spacing */
     }
   </style>
   <div class="col-md-12" id="successmsg" style="display: none">
@@ -54,7 +69,7 @@
           {% csrf_token %}
           <div class="row">
             <input type="hidden" name="id" id="id" value="{{ property.id }}">
-            <input type="hidden" name="account_id" id="account_id">
+            <input type="hidden" name="account_id" id="account_id" value={{property.account.id}}>
             <input type="hidden" name="comments_finance" id="comments_finance">
             <input type="hidden" name="save_as" id="save_as">
             <input type="hidden" name="is_deleted" id="is_deleted" value="N">
@@ -359,14 +374,14 @@
               <label for="total_commission">
                 Total Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="total_commission" class="form-control" id="total_commission" value="{{ property.total_commission }}">
+              <input type="text" step="0.01" name="total_commission" class="form-control" id="total_commission" value="{{ property.total_commission }}">
               <span class="error text-danger" id="total_commission_error"></span>
             </div>
             <div class="col-md-6 form-group">
               <label for="less_outside_commission">
                 Less Outside Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission }}">
+              <input type="text" step="0.01" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission }}">
               <span class="error text-danger" id="less_outside_commission_error"></span>
             </div>
           </div>
@@ -376,7 +391,7 @@
               <label for="net_commission">
                 Net Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="net_commission" class="form-control" id="net_commission" value="{{ property.net_commission }}">
+              <input type="text" step="0.01" name="net_commission" class="form-control" id="net_commission" value="{{ property.net_commission }}">
               <span class="error text-danger" id="net_commission_error"></span>
             </div>
 
@@ -394,7 +409,7 @@
               <label for="agent1">
                 Agent1 <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input class="form-control" type="number" step="0.01" id="agent1" name="agent1" value="{{ property.agent1 }}">
+              <input class="form-control" type="text" step="0.01" id="agent1" name="agent1" value="{{ property.agent1}}">
               <span class="text-danger" id="agent1_error"></span>
             </div>    
             <div class="col-md-6 form-group">
@@ -417,7 +432,7 @@
           <div class="row">               
             <div class="col-md-6 form-group">
               <label for="agent2">Agent2</label>
-              <input class="form-control" type="number" step="0.01" id="agent2" name="agent2" value="{{ property.agent2 }}">
+              <input class="form-control" type="text" step="0.01" id="agent2" name="agent2" value="{{ property.agent2 }}">
               <span class="text-danger" id="agent2_error"></span>
             </div>    
             <div class="col-md-6 form-group">  
@@ -433,7 +448,7 @@
           <div class="row">               
             <div class="col-md-6 form-group">
               <label for="agent3">Agent3</label>
-              <input class="form-control" type="number" step="0.01" id="agent3" name="agent3" value="{{ property.agent3 }}">
+              <input class="form-control" type="text" step="0.01" id="agent3" name="agent3" value="{{ property.agent3 }}">
               <span class="text-danger" id="agent3_error"></span>
             </div>    
             <div class="col-md-6 form-group">  
@@ -558,7 +573,7 @@
 
 
             {% if perms.core.admin_properties_fields_rentalproperties %}
-              <div class="col-md-6 form-group">
+              {% comment %} <div class="col-md-6 form-group">
                 <label for="is_property_aml">
                   AML <span class="mandetory_field" style="color:red">*</span>
                 </label><br>
@@ -571,7 +586,31 @@
                   </div><br>
                   <span class="text-danger" id="is_property_aml_error"></span>
                 </div>
+              </div> {% endcomment %}
+
+              <div class="col-md-6 form-group">
+                  <label for="is_property_aml">AML <span class="mandetory_field" style="color:red">*</span></label><br>
+                  <div class="row">
+                      <div class="col-3">
+                          <input type="radio" 
+                                name="is_property_aml" 
+                                id="is_property_aml_yes" 
+                                value="Yes"
+                                {% if property.is_property_aml == 'Yes' %}checked{% endif %}> 
+                          <label for="is_property_aml_yes">Yes</label>
+                      </div>
+                      <div class="col-3">
+                          <input type="radio" 
+                                name="is_property_aml" 
+                                id="is_property_aml_no" 
+                                value="No"
+                                {% if property.is_property_aml == 'No' %}checked{% endif %}> 
+                          <label for="is_property_aml_no">No</label>
+                      </div>
+                  </div>
+                  <span class="text-danger" id="is_property_aml_error"></span>
               </div>
+
             {% endif %}
           </div>    
                 
@@ -603,7 +642,8 @@
               <input type="hidden" id="pms_contract_new_removed_count" name="pms_contract_new_removed_count">
               <div id="upload_prevss" class="pms_contract_list"></div>
               <span class="text-danger" id="pms_contract_error"></span>
-            </div>
+            </div> 
+            
 
             <div class="col-md-6 form-group">
               <label for="owner_passport_copy">
@@ -699,7 +739,7 @@
               <span class="text-danger" id="title_deed_error"></span>
             </div>                                        {% endcomment %}
             
-            <div class="col-md-6 form-group">
+            {% comment %} <div class="col-md-6 form-group">
               <label for="title_deed">
                 Title Deed <span class="mandetory_field" style="color:red">*</span>
               </label><br>
@@ -709,7 +749,7 @@
                   {% for file in property.title_deed|split:"," %}
                     <div class="file-preview" data-url="{{ file }}">
                       <a href="{{ file }}" target="_new">title_deed {{ forloop.counter }}</a>
-                      <span class="remove_file" id="{{ file }}" data-name="title_deed" data-existing="old" style="cursor:pointer; color:red; font-weight:bold; margin-left:10px;">X</span>
+                      <span class="remove_file" id="{{ file }}" data-name="title_deed" data-existing="old" style="cursor:pointer; color:black; font-weight:bold; margin-left:10px;">X</span>
                     </div>
                   {% endfor %}
                 {% else %}
@@ -723,7 +763,33 @@
               <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="1">
               <div id="upload_prevss" class="title_deed_list"></div>
               <span class="text-danger" id="title_deed_error"></span>
+            </div> {% endcomment %}
+
+            <div class="col-md-6 form-group">
+              <label for="title_deed">
+                Title Deed <span class="mandetory_field" style="color:red">*</span>
+              </label><br>
+              <input multiple="multiple" class="imageUploadInput" id="title_deed" type="file" name="title_deed[]">
+              <div class="upload_prev">
+                {% if property.title_deed %}
+                  {% for file in property.title_deed|split:"," %}
+                    <a href="{{ file.url }}" target="_new">title_deed {{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="title_deed" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
+                {% endif %}
+              </div>
+              <input type="hidden" id="title_deed_existing_count" name="title_deed_existing_count" value="{% if property.title_deed %}{{ property.title_deed|split:','|length }}{% else %}0{% endif %}">
+              <input type="hidden" id="title_deed_existing_values" name="title_deed_existing_values">
+              <input type="hidden" id="title_deed_removed" name="title_deed_removed">
+              <input type="hidden" id="title_deed_new_removed_count" name="title_deed_new_removed_count">
+              <div id="upload_prevss" class="title_deed_list"></div>
+              <span class="text-danger" id="title_deed_error"></span>
             </div>
+
+
+
 
             <div class="col-md-6 form-group">
               <label for="poa_pp">Poa Pp</label><br>
@@ -993,13 +1059,29 @@ $j(document).on('click', '.remove_file', function () {
     }
 
     // Visually remove preview block
-    var previewDiv = $j(this).closest('.upload_prev');
+    //var previewDiv = $j(this).closest('.upload_prev');
+    //if (previewDiv.length > 0) {
+    //    previewDiv.remove();
+    //    console.log("✅ Visually removed preview block.");
+    //} else {
+    //    console.warn("⚠️ Could not find preview element to remove.");
+    //}
+    // Determine which preview block to remove
+    var previewDiv = $j(this).closest('div'); // fallback
+
+    if ($j(this).closest('.upload_prev').length > 0) {
+        previewDiv = $j(this).closest('.upload_prev'); // old files
+    } else if ($j(this).closest('.file-preview').length > 0) {
+        previewDiv = $j(this).closest('.file-preview'); // new files
+    }
+
     if (previewDiv.length > 0) {
         previewDiv.remove();
         console.log("✅ Visually removed preview block.");
     } else {
         console.warn("⚠️ Could not find preview element to remove.");
     }
+
 
     console.log("✅ File successfully marked as removed.");
 });
@@ -1025,7 +1107,7 @@ $j(document).on('click', '.remove_file', function () {
       $list.append(`
         <div class="file-preview" data-url="${fileId}">
           <span>${file.name}</span>
-          <p class="remove_file" id="${fileId}" data-name="${fieldName}" data-existing="new" style="cursor:pointer;color:red;font-weight:bold;margin-left:10px;">X</p>
+          <p class="remove_file" id="${fileId}" data-name="${fieldName}" data-existing="new" style="cursor:pointer;color:black;font-weight:bold;margin-left:10px;">X</p>
         </div>
       `);
     });
@@ -1279,6 +1361,21 @@ $j(document).ready(function() {
     });
 });
 
+
+    $j(document).on('change', 'input[name="is_property_aml"]', function () {
+        const id = $j(this).attr('id');
+        let fixedValue = '';
+
+        if (id === 'is_property_aml_yes') {
+            fixedValue = 'Yes';
+        } else if (id === 'is_property_aml_no') {
+            fixedValue = 'No';
+        }
+
+        $j(this).val(fixedValue);  // Forcefully set correct value
+        console.log("Forced AML value set to:", fixedValue);
+    });
+
     $j(document).on('change', 'input[name="is_approved_rejected"]', function () {
         var id = $j(this).attr('id');
         let fixedValue = '';
@@ -1474,11 +1571,19 @@ $j(document).ready(function() {
             'cheque_date[]': "Please provide at least one cheque date if number of cheques is greater than 0"
         },
         errorPlacement: function(error, element) {
+
+            if (element.attr('name') === 'is_property_aml') {
+                error.appendTo($('#is_property_aml_error'));
+            } 
             if (element.attr('name').startsWith('cheque_date[')) {
                 const index = element.attr('name').match(/\[(\d+)\]/)[1];
                 error.appendTo($j(`#cheque_date_error_${index}`));
             } else if (element.attr('name') === 'manager_approved_rejected') {
                 error.appendTo($j('#manager_approved_rejected_error'));
+
+            } else if (element.attr('name') === 'is_approved_rejected') {
+                // Append the error to the span you already have
+                error.appendTo($j('#is_approved_rejected_error'));
             } else {
                 error.appendTo($j(`#${element.attr('id')}_error`));
             }
@@ -1556,6 +1661,7 @@ $j(document).ready(function() {
         const formData = new FormData($j('#rental_property_form')[0]);
         const submitBtn = $j('#create_deal');
 
+        
         // Collect cheque dates
         const chequeDates = [];
         $j('.cheque-dates').each(function(index) {
@@ -1593,6 +1699,17 @@ $j(document).ready(function() {
         } else {
             formData.append('cheque_date', JSON.stringify([]));
             console.log("submitForm: Appended empty cheque_date to FormData as JSON: []");
+        }
+
+        // Forcefully set is_property_aml value into formData
+        const amlValue = $j('[name="is_property_aml"]:checked').val();
+        console.log("submitForm: is_property_aml selected value:", amlValue || "None selected");
+
+        if (amlValue) {
+            formData.set('is_property_aml', amlValue);
+        } else {
+            console.warn("submitForm: No AML option selected!"); 
+            formData.set('is_property_aml', '');  // Ensures field is sent as empty instead of undefined
         }
 
         // Log manager_approved_rejected before submission
@@ -1670,20 +1787,20 @@ $j(document).ready(function() {
         formChanged = true;
     });
 
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-        }
-    });
+    //window.addEventListener('beforeunload', function(e) {
+    //    if (formChanged) {
+    //        e.preventDefault();
+    //        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    //    }
+    //});
 
-    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
-        if (formChanged) {
-            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                e.preventDefault();
-            }
-        }
-    });
+    //$j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+    //    if (formChanged) {
+    //        if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+    //            e.preventDefault();
+    //        }
+    //    }
+    //});
 });
 
 function loadAgentDropdown(requestdata) {

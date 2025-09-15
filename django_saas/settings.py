@@ -108,22 +108,22 @@ WSGI_APPLICATION = 'django_saas.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default':  {
-    #     'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-    #     'NAME': os.getenv('DATABASE_NAME'),  # Default database name
-    #     'USER': os.getenv('DATABASE_USER'),
-    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-    #     'HOST': os.getenv('DATABASE_HOST'),
-    #     'PORT': os.getenv('DATABASE_PORT', '3306'),
-    # }
     'default':  {
         'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
-        'NAME':  "gopitest2",  # Default database name
-        'USER':  "root",
-        'PASSWORD': "root",
-        'HOST':  "localhost",
-        'PORT':  "3306",
+        'NAME': os.getenv('DATABASE_NAME'),  # Default database name
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT', '3306'),
     }
+    # 'default':  {
+    #     'ENGINE': 'django.db.backends.mysql',  # or 'sqlite3', 'mysql', etc.
+    #     'NAME':  "gopitest2",  # Default database name
+    #     'USER':  "root",
+    #     'PASSWORD': "root",
+    #     'HOST':  "localhost",
+    #     'PORT':  "3306",
+    # }
   
 } 
 
@@ -199,7 +199,7 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 # Optional: where media files are stored within the bucket
 MEDIA_LOCATION = os.getenv('MEDIA_LOCATION', 'media')
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -762,7 +762,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
             
-            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") == "A":
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
                 mutable_data['approved_rejected_by'] = request.user.email
 
             print("mutable_data", mutable_data)
@@ -834,11 +834,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             recipt_no = None
         else:
             recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
-            # print(recipt_no.id , "this is recipt id ")
+            print(recipt_no.receipt_number , "this is recipt id ")
 
 
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no})
+        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no.receipt_number})
     
     # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):

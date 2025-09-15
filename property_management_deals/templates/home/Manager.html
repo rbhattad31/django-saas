@@ -110,7 +110,7 @@
                         </div>
                     </div>
                     <!-- DataTable -->
-                    <table id="receiptlist_table" class="display" style="width:100%">
+                    <table id="receiptlist_table" class=" table-bordered  " style="width:100%">
                         <thead>
                             <tr>
                                 <th>Action</th>
@@ -138,54 +138,63 @@
         </div>
     </div>
 
-    <style>
-        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item .page-link {
-            width: auto !important;          /* Let width grow based on content */
-            min-width: 40px !important;      /* Minimum clickable width */
-            max-width: 180px !important;     /* Maximum width to avoid breaking */
-            padding: 6px 12px !important;    /* Padding for breathing room */
-            white-space: nowrap !important;  /* Prevent wrapping */
-            overflow: visible !important;    /* Allow content to be fully visible */
-            text-overflow: clip !important;  /* Show full text, no ellipsis */
-            display: inline-flex !important; /* Make it a flex container */
-            align-items: center !important;  /* Center vertically */
-            justify-content: center !important; /* Center horizontally */
-            border-radius: 0 !important;     /* Remove radius here, add to first/last */
+   <style>
+        /* Pagination styling from management_receipts.html */
+        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item .page-link {
+            width: auto !important;
+            min-width: 40px !important;
+            max-width: 180px !important;
+            padding: 6px 12px !important;
+            white-space: nowrap !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 0 !important;
             border: 1px solid #dee2e6 !important;
-            border-right: none !important;   /* Remove right border for all except last */
+            border-right: none !important;
             color: black !important;
             background-color: white !important;
             box-sizing: border-box !important;
         }
-
-        /* Add right border back for last page-link */
-        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
             border-right: 1px solid #dee2e6 !important;
             border-top-right-radius: 4px !important;
             border-bottom-right-radius: 4px !important;
         }
-
-        /* Add left border radius for first page-link */
-        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
+        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
             border-top-left-radius: 4px !important;
             border-bottom-left-radius: 4px !important;
         }
-
-        /* Active page button */
-        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
-            background-color: #6f42c1 !important;
-            border-color: #6f42c1 !important;
+        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
             color: white !important;
-
-            /* Keep all borders on active button */
-            border-right: 1px solid #6f42c1 !important;
+            border-right: 1px solid #007bff !important;
         }
-
-        /* Hover effect */
-        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover_
-
-</style>
-
+        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover {
+            background-color: #f8f9fa !important;
+        }
+        /* Align pagination to bottom-right */
+        #agentCommissionReport_wrapper .dataTables_paginate {
+            float: right !important;
+            text-align: right !important;
+            margin-top: 10px;
+        }
+        /* Ensure DataTables default sorting arrows are visible */
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background-image: none !important; /* Remove any custom background */
+        }
+        /* Rely on dataTables.bootstrap4.min.css for arrows */
+        table.dataTable thead .sorting:after,
+        table.dataTable thead .sorting_asc:after,
+        table.dataTable thead .sorting_desc:after {
+            display: none !important; /* Disable custom pseudo-elements */
+        }
+    </style>
 
 
 
@@ -642,7 +651,7 @@
         can_edit: {{ perms.core.edit_management_receipts_rentalproperties|yesno:"true,false" }},
         can_download: {{ perms.core.download_management_receipts_rentalproperties|yesno:"true,false" }},
     
-    }
+    };
 </script>
 
 <!-- JavaScript -->
