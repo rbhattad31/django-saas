@@ -45,6 +45,7 @@ from .forms import LoginForm, SignUpForm  # Add this import for LoginForm and Si
 from django.template import loader
 from django import template
 from django.urls import reverse
+from django.utils.timezone import now
 
 
 
@@ -221,7 +222,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
 
             
-
+        mutable_data['created_by'] = request.user.email
+        mutable_data['created_at'] = now()
 
         
 
@@ -449,7 +451,9 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
 
  
-                 
+            mutable_data['updated_by'] = request.user.email
+            mutable_data['updated_at'] = now()
+            
                  
                        
 

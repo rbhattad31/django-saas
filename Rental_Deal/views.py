@@ -46,7 +46,7 @@ from django.core.exceptions import PermissionDenied  # <-- Add this import
 import os
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.utils.timezone import now  # Add this import
+from django.utils.timezone import now # Add this import
 import time
 import json
 # from core.utils import has_cached_permission
@@ -546,6 +546,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
 
+        mutable_data['created_by'] = request.user.email
+        mutable_data['created_at'] = now()
+
         print(f"multable data  acoount_id {mutable_data['account']}")
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
@@ -764,6 +767,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             
             if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
                 mutable_data['approved_rejected_by'] = request.user.email
+
+
+            mutable_data['updated_by'] = request.user.email
+            mutable_data['updated_at'] = now()
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer
