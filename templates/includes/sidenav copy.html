@@ -282,13 +282,20 @@
 
             <!-- Reports Management -->
             <li class="nav-item">
+              {% if perms.core.reports_management %}
               <a class="nav-link collapsed d-flex justify-content-between align-items-center text-decoration-none" data-bs-toggle="collapse" href="#reportsSubmenu" aria-expanded="false" aria-controls="reportsSubmenu">
                 <span><i class="fas fa-database"></i> Reports Management</span> <span class="chevron">&#x276F;</span>
               </a>
+              {% endif %}
               <div class="collapse" id="reportsSubmenu">
                 <ul class="list-group ms-3">
+
+                   {% if perms.core.agent_commission_report %}
                   <li class="list-group-item border-0 px-3 py-1"><a href="/agent-commission-report/" class="text-decoration-none"><i class="fas fa-file-invoice-dollar me-2"></i>   Agent Commission Report</a></li>
+                  {% endif %}
+                  {% if  perms.core.agent_performance_report %}
                   <li class="list-group-item border-0 px-3 py-1"><a href="/agent-performance-report/" class="text-decoration-none"> <i class="fas fa-chart-line me-2"></i> Agent Performance Report</a></li>
+                  {% endif %}
                 </ul>
               </div>
             </li>

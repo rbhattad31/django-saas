@@ -142,8 +142,9 @@
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>List of <span id="propertyheading">Properties</span> </h3>
         
+        {% if perms.core.add_rentalproperties %}
         <a href="{% url 'rental-property-create-form' %}" class="btn btn-primary"> Create Property</a>
-
+        {% endif %}
       </div> 
     </div>
       <!-- Bootstrap CSS -->

@@ -263,6 +263,14 @@ class Account(models.Model):
                 "accounts_management",
 
 
+                # Report management permissions for admin
+               
+                'reports_management',
+                "agent_commission_report",
+                "agent_performance_report",
+
+
+
 
             ],
             "Manager": [
