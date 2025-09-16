@@ -1948,7 +1948,7 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         data = serializer.validated_data
         print("✅ Validated Filter Data:", data)
 
-        queryset = ManagementReceipts.objects.all()
+        queryset = ManagementReceipts.objects.filter(account_id = request.user.account_id)
         print(f"🗃 Initial QuerySet Count: {queryset.count()}")
 
         # 🔍 Global Search

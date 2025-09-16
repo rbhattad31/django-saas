@@ -139,45 +139,41 @@
     </div>
 
    <style>
-        /* Pagination styling from management_receipts.html */
-        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item .page-link {
-            width: auto !important;
-            min-width: 40px !important;
-            max-width: 180px !important;
-            padding: 6px 12px !important;
-            white-space: nowrap !important;
-            overflow: visible !important;
-            text-overflow: clip !important;
+             #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item .page-link {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            border-radius: 0 !important;
+            flex: 0 1 auto !important;         /* Prevent shrinking, let it grow */
+            min-width: auto !important;        /* No minimum width */
+            width: auto !important;            /* Let width auto-adjust */
+            max-width: none !important;        /* Remove any max-width limits */
+            padding: 6px 12px !important;      /* Comfortable padding */
+            white-space: nowrap !important;    /* Prevent line break */
+            overflow: visible !important;      /* Show full content */
+            text-overflow: clip !important;    /* No ellipsis, show full text */
+            border-radius: 0 !important;       /* No rounded corners */
             border: 1px solid #dee2e6 !important;
-            border-right: none !important;
             color: black !important;
             background-color: white !important;
             box-sizing: border-box !important;
         }
-        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
+        
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:last-child .page-link {
             border-right: 1px solid #dee2e6 !important;
-            border-top-right-radius: 4px !important;
-            border-bottom-right-radius: 4px !important;
         }
-        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:first-child .page-link {
-            border-top-left-radius: 4px !important;
-            border-bottom-left-radius: 4px !important;
-        }
-        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
-            background-color: #007bff !important;
-            border-color: #007bff !important;
+        
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+            background-color: #6f42c1!important;
+            border-color: #6f42c1 !important;
             color: white !important;
-            border-right: 1px solid #007bff !important;
+            border-right: 1px solid  #6f42c1 !important;
         }
-        #agentCommissionReport_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover {
+        
+        #receiptlist_table_wrapper .dataTables_paginate .pagination .page-item:not(.active) .page-link:hover {
             background-color: #f8f9fa !important;
         }
-        /* Align pagination to bottom-right */
-        #agentCommissionReport_wrapper .dataTables_paginate {
+        
+        #receiptlist_table_wrapper .dataTables_paginate {
             float: right !important;
             text-align: right !important;
             margin-top: 10px;
@@ -198,125 +194,7 @@
 
 
 
-    <!-- Modal for Create/Edit Receipt (commented out as per original) -->
-    {% comment %}
-    <div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="receiptModalLabel">Receipt Form</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="receiptForm">
-                        <input type="hidden" id="receipt_id">
-                        <div class="form-group">
-                            <label for="form_receipt_number">Receipt Number</label>
-                            <input type="number" class="form-control" id="form_receipt_number" name="receipt_number" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_date">Receipt Date</label>
-                            <input type="text" class="form-control hasDatepicker" id="form_date" name="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_cheque_no">Cheque No</label>
-                            <input type="text" class="form-control" id="form_cheque_no" name="cheque_no">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_dhs">Dhs</label>
-                            <input type="number" class="form-control" id="form_dhs" name="dhs" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_fils">Fils</label>
-                            <input type="number" class="form-control" id="form_fils" name="fils">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_payment_type">Payment Type</label>
-                            <select class="form-control" id="form_payment_type" name="payment_type">
-                                <option value="">Select Payment Type</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Cheque">Cheque</option>
-                                <option value="Bank Transfer">Bank Transfer</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_sec_date">Payment Date</label>
-                            <input type="text" class="form-control hasDatepicker" id="form_sec_date" name="sec_date">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_deal_type">Type</label>
-                            <select class="form-control" id="form_deal_type" name="deal_type">
-                                <option value="">Select Type</option>
-                                <option value="Management Fee">Management Fee</option>
-                                <option value="Ejari Fee">Ejari Fee</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_agent_name">Agent Name</label>
-                            <input type="text" class="form-control" id="form_agent_name" name="agent_name">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_deal_refer_no">Reference Number</label>
-                            <input type="text" class="form-control" id="form_deal_refer_no" name="deal_refer_no">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_project_name">Project Name</label>
-                            <input type="text" class="form-control" id="form_project_name" name="project_name">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_building_name">Building Name</label>
-                            <input type="text" class="form-control" id="form_building_name" name="building_name">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_unit_number">Unit Number</label>
-                            <input type="text" class="form-control" id="form_unit_number" name="unit_number">
-                        </div>
-                        <div class="form-group">
-                            <label for="form_status">Status</label>
-                            <select class="form-control" id="form_status" name="status">
-                                <option value="">Select Status</option>
-                                <option value="Used">Used</option>
-                                <option value="Unused">Unused</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="form_received_from">Received From</label>
-                            <input type="text" class="form-control" id="form_received_from" name="received_from">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save_receipt">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endcomment %}
-
-    <!-- Modal for View Receipt (commented out as per original) -->
-    {% comment %}
-    <div class="modal fade" id="viewReceiptModal" tabindex="-1" role="dialog" aria-labelledby="viewReceiptModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewReceiptModalLabel">Receipt Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="view_receipt_content"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endcomment %}
+   
 
     {% comment %} <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

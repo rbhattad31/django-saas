@@ -273,7 +273,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 }
             print("Removed fields:", removed_fields)
 
-            mutable_data = request.data.copy()
+            mutable_data = request.data.dict().copy()
             file_name_to_remove_list = []
             existing_files = []
             new_file_names = []
