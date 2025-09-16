@@ -845,7 +845,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no.receipt_number})
+        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no.receipt_number , "recipt_id":recipt_no.id if recipt_no else None})
     
     # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):

@@ -1218,7 +1218,7 @@
                     ></textarea>
                     <span class="text-danger" id="agent_comment_error"></span>
                   </div>
-
+                  {% if perms.core.view_admin_rental_fields %}
                   <div class="col-md-6 form-group">
                     <label for="comments">Comment by Admin</label>
                     <textarea
@@ -1232,6 +1232,7 @@
                     <span class="text-danger" id="comments_error"></span>
                   </div>
                 </div>
+                {% endif %}
 
                 <div class="row form-group nav-revenue">
                   <!-- <div class="col-md-6 form-group">
