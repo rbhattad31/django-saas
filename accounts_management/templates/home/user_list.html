@@ -132,7 +132,17 @@
             border-right: 1px solid #6f42c1 !important;
         }
 
-        
+        .dt-button.custom-light-grey {
+            background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%) !important;
+            color: #333 !important;
+            border: 1px solid #dcdcdc !important;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1) !important;
+        }
+ 
+        .dt-button.custom-light-grey:hover {
+            background: linear-gradient(to bottom, rgba(230, 230, 230, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%) !important;
+            color: #333 !important;
+        }
     </style>
 
 <!-- jQuery -->
@@ -264,8 +274,24 @@
             ],
             dom: 'lBfrtip',
             buttons: [
-                'excelHtml5',
-                'pdfHtml5'
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    titleAttr: 'Export to Excel',
+                    className: 'btn custom-light-grey btn-sm',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    titleAttr: 'Export to PDF',
+                    className: 'btn custom-light-grey btn-sm',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
             ],
             scrollX: true,
             //pageLength: 10,

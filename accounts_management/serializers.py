@@ -2,6 +2,7 @@ from rest_framework import serializers
 from core.models import Users,Account
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 class UserSerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
@@ -24,7 +25,15 @@ class UserSerializer(serializers.ModelSerializer):
         return 'Active' if obj.is_active else 'Inactive'
 
     def get_created_date(self, obj):
-        return obj.created_at.strftime('%d-%m-%Y') if obj.created_at else 'N/A'
+    # Use created_at or created_date if exists; otherwise use current date
+        if hasattr(obj, 'created_at') and obj.created_at:
+            date_val = obj.created_at
+        elif hasattr(obj, 'created_date') and obj.created_date:
+            date_val = obj.created_date
+        else:
+            date_val = datetime.now()
+        return date_val.strftime('%d-%m-%Y')
+ 
     
     # def get_user_status(self, obj):
     #     return 'Y' if obj.is_active else 'N'
