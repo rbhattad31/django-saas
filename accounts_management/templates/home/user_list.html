@@ -295,8 +295,11 @@
             ],
             scrollX: true,
             //pageLength: 10,
-            pageLength: 2,
-            lengthMenu: [2,10, 25, 50, 75, 100, -1],
+            pageLength: 10,
+            lengthMenu: [
+                [ 10, 25, 50, 75, 100, -1],
+                [ 10, 25, 50, 75, 100, 'All']
+            ],
             lengthMenuText: { '-1': 'All' }
         });
         console.log("DataTable initialized:", table);

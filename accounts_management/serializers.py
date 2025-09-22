@@ -25,14 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         return 'Active' if obj.is_active else 'Inactive'
 
     def get_created_date(self, obj):
-    # Use created_at or created_date if exists; otherwise use current date
-        if hasattr(obj, 'created_at') and obj.created_at:
-            date_val = obj.created_at
-        elif hasattr(obj, 'created_date') and obj.created_date:
-            date_val = obj.created_date
-        else:
-            date_val = datetime.now()
-        return date_val.strftime('%d-%m-%Y')
+        return obj.created_at.strftime('%d-%m-%Y') if obj.created_at else 'N/A'
  
     
     # def get_user_status(self, obj):
@@ -43,10 +36,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
     confirmpassword = serializers.CharField(write_only=True)
     role = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), write_only=True)
     account = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())
+    created_at = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Users
-        fields = ['name', 'email', 'mobile_number', 'password', 'confirmpassword', 'role', 'account', 'timezone', 'additional_info']
+        fields = ['name', 'email', 'mobile_number', 'password', 'confirmpassword', 'role', 'account', 'timezone', 'additional_info',"created_at"]
 
     def validate(self, data):
         if data['password'] != data['confirmpassword']:
@@ -56,6 +50,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         role = validated_data.pop('role')
         confirmpassword = validated_data.pop('confirmpassword')
+        created_at = validated_data.pop('created_at', None)
         user = Users.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
@@ -65,6 +60,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
             additional_info=validated_data.get('additional_info'),
             account=validated_data['account']
         )
+        if created_at:
+            user.created_at = created_at  # Manually set timestamp
+            user.save()
         user.groups.add(role)
         user.save()
         return user

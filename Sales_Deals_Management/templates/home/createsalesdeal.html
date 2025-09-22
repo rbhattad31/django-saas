@@ -56,6 +56,10 @@
                             <!-- Property Details Tab -->
                             <div class="tab-pane fade show active" id="nav-property" role="tabpanel" aria-labelledby="nav-property-tab">
                                 <div class="form-group row nav-property">
+                                     {% for group in request.user.groups.all %}
+                  {% if "Agent" in group.name %}
+                     
+                      {% else %}
                                     <div class="col-md-6 form-group">
                                         <label for="submitted_by_agent">Deal Submitted By Agent<span class="mandetory_field" style="color: red">*</span></label>
                                         <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent" required>
@@ -65,6 +69,9 @@
                                         </select>
                                         <span class="text-danger" id="submitted_by_agent_error"></span>
                                     </div>
+                                    {% endif %}
+                                {% endfor %}
+
                                     <!-- <div class="col-md-6 form-group mb-3">
                                         <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
                                         <input type="date" name="submitted_date" class="form-control" id="submitted_date" placeholder="DD-MM-YYYY">
@@ -98,7 +105,7 @@
                                         <span class="error text-danger" id="project_name_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="deal_amount">Selling Price</label>
+                                        <label for="deal_amount">Selling Price<span class="mandetory_field" style="color: red">*</span></label>
                                         <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price">
                                         <span class="error text-danger" id="deal_amount_error"></span>
                                     </div>
@@ -838,7 +845,7 @@
       $(document).on('click', '#changeTabToSource,#saveAsDraftProperty', function(event) {
             var buttonName=$(this).attr('id')
             
-            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="screening"]').each(function () {
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="screening"] ,[name="deal_amount"]').each(function () {
             $(this).rules('add','required');
       });
 
@@ -1377,7 +1384,7 @@ $('#deal_form').validate({
             $(document).on('click', '#submitDeal', function(event) {  
             event.preventDefault(); 
                           
-           $('[name="submitted_by_agent"],[name="seller_agency"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="seller_nationality"],[name="buyer_nationality"],[name="buyer_email"],[name="receipt_no"],[name="is_sale_aml"],[name="screening"]').each(function () {
+           $('[name="submitted_by_agent"],[name="seller_agency"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="seller_nationality"],[name="buyer_nationality"],[name="buyer_email"],[name="receipt_no"],[name="is_sale_aml"],[name="screening"],[name="deal_amount"]').each(function () {
                  $(this).rules('add','required');
              }); 
         
@@ -1400,7 +1407,7 @@ $('#deal_form').validate({
             $(document).on('click', '#saveDeal', function(event) {  
                 event.preventDefault();
 
-            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="screening"]').each(function () {
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="screening"] , [name="deal_amount"]').each(function () {
                  $(this).rules('add','required');
              });
 

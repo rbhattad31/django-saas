@@ -1,5 +1,7 @@
 # Create your views here.
 from django.shortcuts import render
+from django.utils.timezone import now
+from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -220,7 +222,15 @@ class UserCreateView(LoginRequiredMixin, APIView):
         })
 
     def post(self, request):
-        serializer = CreateUserSerializer(data=request.data)
+        data = request.data.copy()  # Make a mutable copy of incoming data
+        #data['created_at'] = datetime.now()  # Add creation timestamp manually
+        if 'created_at' not in data:
+            data['created_at'] =  now()
+
+        if 'created_by' not in data:
+            data['created_by'] = request.user.email  # Set created_by to current user
+  
+        serializer = CreateUserSerializer(data=data) 
         if serializer.is_valid():
             user = serializer.save()
             return Response({"success": True, "message": "User created successfully", "id": user.id})
@@ -262,7 +272,14 @@ class UserDetailView(LoginRequiredMixin, APIView):
 
     def put(self, request, pk):
         user = get_object_or_404(Users, pk=pk)
-        serializer = UpdateUserSerializer(user, data=request.data, partial=True)
+        data = request.data.copy()  # Make a mutable copy of incoming data
+
+        if 'updated_at' not in data:
+            data['updated_at'] = now()  # Add update timestamp manually
+        if 'updated_by' not in data:
+            data['updated_by'] = request.user.email  # Set updated_by to current user
+        
+        serializer = UpdateUserSerializer(user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             print("DEBUG: Updated user:", {"id": user.id, "timezone": user.timezone, "is_active": user.is_active})

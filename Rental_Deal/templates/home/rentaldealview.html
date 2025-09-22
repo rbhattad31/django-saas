@@ -21,9 +21,10 @@
 
                     <a class="btn btn-primary btn-rounded" href= {% url "rental-deal-list" %}  >Back</a>
 
-
+                                    {% if perms.core.download_receipts %}
                                         <a class="btn btn-primary btn-rounded" href="/receipt/{{recipt_id}}/download/" target="_blank" >Download  Receipt</a> 
-                                    {% if perms.core.view_admin_rental_fields %}
+                                    {% endif %}
+                                        {% if perms.core.view_admin_rental_fields %}
                                         <a class="btn btn-primary btn-rounded" href="/tenancey/contract/download/{{recipt_id}}/" target="_blank" > Generate Tenancy Contract   </a> 
                                         {% endif %}
                                                                                                 </span>

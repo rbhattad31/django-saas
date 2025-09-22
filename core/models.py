@@ -1119,8 +1119,8 @@ class RentalDealQuerySet(models.QuerySet):
             
         )
 
-class RentalDeals ( models.Model):
-    submitted_date = models.DateField(auto_now_add=True)
+class RentalDeals (models.Model):
+    submitted_date = models.DateField(blank=True, null=True)
     submitted_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     reference_number = models.CharField(max_length=191, unique=True)
     date = models.DateField()
@@ -1270,7 +1270,7 @@ class SaleDealQuerySet(models.QuerySet):
 
 class SalesDeals(models.Model):
     id = models.AutoField(primary_key=True) 
-    submitted_date = models.DateField()
+    submitted_date = models.DateField(blank=True, null=True )
     submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
     date = models.DateField()
     reference_number = models.TextField(unique=True)

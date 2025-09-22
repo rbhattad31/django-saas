@@ -224,17 +224,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # print(user_role)
         # print(role)
 
-
-         
-        
-        
-        # from django.db import connection
-
-        # print(connection.queries)
-
-
-        
-        
+ 
 
         if type_filter:
             # ---------------- Pending ----------------
@@ -271,7 +261,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_rental_deals"):
                     if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
-                        queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
+                        queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete") | Q(is_approved_rejected="R", form_status="Complete")) 
                     else:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
                 else:
@@ -526,7 +516,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
         if mutable_data.get('save_as') == "create-deal":
             mutable_data['form_status'] = "Complete"
-            # mutable_data['submitted_date']= datetime.date.today().strftime("%Y-%m-%d")
+            mutable_data['submitted_date']= datetime.date.today()
         else:
             mutable_data['form_status'] = "Incomplete"
         print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
@@ -752,7 +742,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                  
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
-                mutable_data['submitted_date']= date.today().strftime("%Y-%m-%d")
+                mutable_data['submitted_date']= date.today()
                 
 
  
@@ -1015,6 +1005,8 @@ def all_rental_deals(request):
     """
     View to list all rental deals.
     """
+    group = request.user.groups.first()
+    print(group.name)
     return render(request, 'home/rentalall.html')
 
 
@@ -1034,7 +1026,22 @@ def edit_rental_deal_view(request, pk):
     agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
+    group = request.user.groups.first().name
+    print(group)
+    role = group.split("-", 1)[1] if "-" in group else group
+    # user_role = request.user.first_group_name or ""
+    # role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+
+    print(role)
+
+
+
+    if role == "Agent":
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id , status= "Unused" , agent_id = request.user.id)
+    else:
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
+
+
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     rental_data = {
@@ -1065,7 +1072,7 @@ def create_rental_deal_view(request):
     agents = Users.objects.filter(is_active=True , account_id = request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id ,status= "Unused")
+    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id ,status= "Unused" , agent_id = request.user.id)
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 
     rental_data = { 

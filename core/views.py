@@ -391,15 +391,20 @@ from rest_framework.response         import Response
 def index(request):
     return render(request,'home/index.html')
 
-
+# this for the list of the agents 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def agent_list(request):
-    agents=Users.objects.all().order_by('name')
+    group = request.user.groups.first().name
+    print(group)
+    role = group.split("-", 1)[1] if "-" in group else group
+    agents=Users.objects.filter(is_active=True,account_id = request.user.account_id).order_by('name')
     data=[{'id':u.id, 'name':u.name} for u in agents]
     return Response(data)
 
 
+
+# thsiis for hte toalcommission on the right corner
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def total_commission_stats(request):
@@ -417,13 +422,13 @@ def total_commission_stats(request):
         except: td=date.today()
 
     if deal_type.lower() == 'rental':
-        qs=RentalDeals.objects.filter(is_deleted='N')
+        qs=RentalDeals.objects.filter(is_deleted='N',account = request.user.account)
         date_field="date"
     elif deal_type.lower()=='property':
-        qs=RentalProperties.objects.filter(is_deleted='N')
+        qs=RentalProperties.objects.filter(is_deleted='N',account = request.user.account)
         date_field="submitted_date"
     else:
-        qs=SalesDeals.objects.filter(is_deleted='N')
+        qs=SalesDeals.objects.filter(is_deleted='N',account = request.user.account)
         date_field="date"
 
     qs=qs.filter(**{
@@ -464,6 +469,8 @@ def total_commission_stats(request):
     return Response(data)
 
 
+
+# card values for each  dealtype
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dashboard_stats(request):

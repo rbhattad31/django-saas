@@ -453,7 +453,7 @@
                   {% if "Manager" in group.name %}
             
               
-                    {% comment %} {% if perms.core.edit_approved_rental_deals %}  {% endcomment %}
+                   
 
                     <div class="col-md-6 form-group">
                       <label for="receipt_no">Approve/Reject</label><br />
@@ -477,8 +477,7 @@
                         </div>
                       </div>
                     </div>
-                  {% comment %} {% endif %} {% endcomment %}
-                    {% comment %} {% break %} {% endcomment %}
+                   
                   {% endif %}
                 {% endfor %}
                       </div>
@@ -743,7 +742,7 @@
                         <div class="row mt-3">
                             <div class="col-sm-12 btn-center mt-3 w-100 d-flex justify-content-center">
                               
-                              <button type="button" class="btn btn-primary btn-rounded m-1" id="update_draft">Update Deal</button> 
+                              <button type="button" class="btn btn-primary btn-rounded m-1" style = "display:none;"   id="update_draft">Update Deal</button> 
                                                                                           <button type="button" class="btn btn-primary btn-rounded m-1" id="create_deal">Submit Deal</button> 
                             </div>
                         </div>

@@ -222,6 +222,7 @@ body{
  .sidenav-toggler {
     margin-left: auto;   /* push all the way to right */
     margin-right: 10px;  /* small spacing */
+    order:2 !important
   }
    .navbar .navbar-nav:first-child {
     margin-left: auto !important; /* push it to the right */
@@ -230,11 +231,17 @@ body{
   }
 
   #customSidebarToggle {
-    margin-right: 10px; /* little spacing from edge */
+    margin-right: 10px;  /*little spacing from edge */
+    order : 1 !important;
+  
   }
   #navbarSupportedContent{
     padding-right: 20px !important;
   }
+
+  
+
+
   
 
 
@@ -250,6 +257,34 @@ body{
 #customSidebarToggle{
   margin-right: 10px;
 }
+
+
+
+/* added later for   hte ordering */
+
+  #navbarSupportedContent {
+
+    display: flex !important;     /* ensure flex */
+    flex-direction: row-reverse !important;
+
+    justify-content: start !important;
+    align-items: center;      /* stack items vertically */
+  }
+
+  #navbarSupportedContent .navbar-nav:nth-child(1) {
+    order:  1;   /* first ul goes second */
+    width:50px;
+    margin-left: 100px !important;
+    
+   
+  }
+
+  #navbarSupportedContent .navbar-nav:nth-child(2) {
+    order: 2;   /* second ul goes first */
+     margin-left:auto !important;
+     margin-right: 50px;
+  }
+
 
 
 }

@@ -114,309 +114,309 @@
                 role="tabpanel"
                 aria-labelledby="nav-property-tab"
               >
-                <div class="form-group row nav-property">
-                  <div class="col-md-6 form-group">
-                    <label for="role"
-                      >Deal Submitted By Agent<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <select
-                      class="selectbox2 form-control"
-                      name="submitted_by_agent"
-                      id="submitted_by_agent"
-                    >
-                      <option value="">Select Agent Name</option>
-                      <option value="10">Rahul B</option>
-                      <option value="11">Anirudh</option>
-                      <option value="12">Sonia</option>
-                      <option value="13">Anusha</option>
-                      <option value="16">Majid</option>
-                      <option value="17">Rakesh Saldhana</option>
-                      <option value="18">Jamil Mirza</option>
-                      <option value="19">Asad Lohar</option>
-                      <option value="20">Ashwin Radhakrishnan</option>
-                      <option value="21">Seema</option>
-                      <option value="22">Richard Ileogben</option>
-                      <option value="23">SHAHBAZ</option>
-                      <option value="25">Satish</option>
-                    </select>
-                    <span
-                      class="text-danger"
-                      id="submitted_by_agent_error"
-                    ></span>
-                  </div>
+              
 
-                  <!-- <div class="col-md-6 form-group">
-			                  <label for="role">Property<span class="mandetory_field" style="color: red">*</span></label>
-			                  <select class="selectbox2 form-control" name="property" id="property">
-			                     <option value=""hidden>Select Property</option>
-			                     			                     <option value="3">Test</option>
-			                     			                  </select>
-			                  <span class="text-danger" id="property_error"></span>
-			                </div> -->
+                    <div class="form-group row nav-property">
 
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="date"
-                      >Deal Date<span class="mandetory_field" style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="date"
-                      class="form-control"
-                      id="deal_date"
-                      placeholder="Enter Deal Date"
-                      autocomplete="off"
-                      readonly="readOnly"
-                    />
-                    <span class="text-danger" id="date_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="reference_number"
-                      >Reference Number<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-
-                    <input
-                      type="text"
-                      name="reference_number"
-                      class="form-control"
-                      id="reference_number"
-                      placeholder="Reference No"
-                    />
-
-                    <span
-                      class="text-danger"
-                      id="reference_number_error"
-                    ></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="is_new_deal"
-                      >Deal<span class="mandetory_field" style="color: red"
-                        >*</span
-                      ></label
-                    ><br />
-                    <div class="row">
-                      <div class="col-3">
-                        <input
-                          type="radio"
-                          name="is_new_deal"
-                          id="is_new_deal"
-                          value="N"
-                        />
-                        New
+                        {% for group in request.user.groups.all %}
+                  {% if "Agent" in group.name %}
+                     
+                      {% else %}
+                       <div class="col-md-6 form-group">
+                        <label for="role">Deal Submitted By Agent<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label>
+                        <select
+                          class="selectbox2 form-control"
+                          name="submitted_by_agent"
+                          id="submitted_by_agent">
+                          <option value="">Select Agent Name</option>
+                          <option value="10">Rahul B</option>
+                          <option value="11">Anirudh</option>
+                          <option value="12">Sonia</option>
+                          <option value="13">Anusha</option>
+                        
+                        </select>
+                        <span
+                          class="text-danger"
+                          id="submitted_by_agent_error"></span>
                       </div>
-                      <div class="col-4" style="margin-left: -60px">
+
+                      {% endif %}
+                      {% endfor %}
+
+
+                      <!-- <div class="col-md-6 form-group">
+                            <label for="role">Property<span class="mandetory_field" style="color: red">*</span></label>
+                            <select class="selectbox2 form-control" name="property" id="property">
+                              <option value=""hidden>Select Property</option>
+                                                        <option value="3">Test</option>
+                                                      </select>
+                            <span class="text-danger" id="property_error"></span>
+                          </div> -->
+
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="date"
+                          >Deal Date<span class="mandetory_field" style="color: red"
+                            >*</span
+                          ></label
+                        >
                         <input
-                          type="radio"
-                          class="ml-1"
-                          name="is_new_deal"
-                          id="is_new_deal"
-                          value="R"
+                          type="text"
+                          name="date"
+                          class="form-control"
+                          id="deal_date"
+                          placeholder="Enter Deal Date"
+                          autocomplete="off"
+                          readonly="readOnly"
                         />
-                        Renewal <br />
+                        <span class="text-danger" id="date_error"></span>
                       </div>
-                      <span class="text-danger" id="is_new_deal_error"></span>
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="reference_number"
+                          >Reference Number<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label
+                        >
+
+                        <input
+                          type="text"
+                          name="reference_number"
+                          class="form-control"
+                          id="reference_number"
+                          placeholder="Reference No"
+                        />
+
+                        <span
+                          class="text-danger"
+                          id="reference_number_error"
+                        ></span>
+                      </div>
+
+                      <div class="col-md-6 form-group">
+                        <label for="is_new_deal"
+                          >Deal<span class="mandetory_field" style="color: red"
+                            >*</span
+                          ></label
+                        ><br />
+                        <div class="row">
+                          <div class="col-3">
+                            <input
+                              type="radio"
+                              name="is_new_deal"
+                              id="is_new_deal"
+                              value="N"
+                            />
+                            New
+                          </div>
+                          <div class="col-4" style="margin-left: -60px">
+                            <input
+                              type="radio"
+                              class="ml-1"
+                              name="is_new_deal"
+                              id="is_new_deal"
+                              value="R"
+                            />
+                            Renewal <br />
+                          </div>
+                          <span class="text-danger" id="is_new_deal_error"></span>
+                        </div>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="project_name"
+                          >Project Name<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          type="text"
+                          name="project_name"
+                          class="form-control"
+                          id="project_name"
+                          placeholder="Project Name"
+                        />
+                        <span class="text-danger" id="project_name_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="unit_details"
+                          >Unit No<span class="mandetory_field" style="color: red"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          type="text"
+                          name="unit_details"
+                          class="form-control"
+                          id="unit_details"
+                          placeholder="Unit No"
+                        />
+                        <span class="text-danger" id="unit_details_error"></span>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="building_name"
+                          >Building Name<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          type="text"
+                          name="building_name"
+                          class="form-control"
+                          id="building_name"
+                          placeholder="Building Name"
+                        />
+                        <span class="text-danger" id="building_name_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="rental_price">Rental Price</label>
+                        <input
+                          type="text"
+                          name="rental_price"
+                          class="form-control"
+                          id="rental_price"
+                          placeholder="Rental Price"
+                        />
+                        <span class="text-danger" id="rental_price_error"></span>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="deal_start_date"
+                          >Deal Start Date<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          type="text"
+                          name="deal_start_date"
+                          class="form-control startDate"
+                          id="deal_start_date"
+                          placeholder="Deal Start Date"
+                          autocomplete="off"
+                          readonly=""
+                        />
+                        <span class="text-danger" id="deal_start_date_error"></span>
+                      </div>
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="deal_end_date"
+                          >Deal End Date<span
+                            class="mandetory_field"
+                            style="color: red"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          type="text"
+                          name="deal_end_date"
+                          class="form-control endDate"
+                          id="deal_end_date"
+                          placeholder="Deal End Date"
+                          autocomplete="off"
+                          readonly=""
+                        />
+                        <span class="text-danger" id="deal_end_date_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="agent1">Property Usage</label>
+                        <select
+                          name="property_usage"
+                          class="form-control"
+                          id="property_usage"
+                        >
+                          <option value="">Select Property Usage</option>
+                          <option value="industrial">Industrial</option>
+                          <option value="commercial">Commercial</option>
+                          <option value="residential">Residential</option>
+                        </select>
+                        <span class="text-danger" id="property_usage_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group mb-3">
+                        <label for="property_type">Property Type</label>
+                        <input
+                          type="text"
+                          name="property_type"
+                          class="form-control"
+                          id="property_type"
+                          placeholder="Property Type"
+                        />
+                        <span class="text-danger" id="property_type_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group">
+                        <label for="property_size">Property Size</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="property_size"
+                          name="property_size"
+                          placeholder="Property Size"
+                        />
+                        <span class="text-danger" id="property_size_error"></span>
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <label for="premises_no">Premises No</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="premises_no"
+                          name="premises_no"
+                          placeholder="Premises No"
+                        />
+                        <span class="text-danger" id="premises_no_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group">
+                        <label for="security_deposit">Security Deposit</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="security_deposit"
+                          name="security_deposit"
+                          placeholder="Security Deposit"
+                        />
+                        <span
+                          class="text-danger"
+                          id="security_deposit_error"
+                        ></span>
+                      </div>
+
+                      <div class="col-md-6 form-group">
+                        <label for="plot_no">Plot No</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="plot_no"
+                          name="plot_no"
+                          placeholder="Plot No"
+                        />
+                        <span class="text-danger" id="plot_no_error"></span>
+                      </div>
+
+                      <div class="col-md-6 form-group">
+                        <label for="mode_of_payment">Mode of Payment</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          id="mode_of_payment"
+                          name="mode_of_payment"
+                          placeholder="Mode of Payment"
+                        />
+                        <span class="text-danger" id="mode_of_payment_error"></span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="project_name"
-                      >Project Name<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="project_name"
-                      class="form-control"
-                      id="project_name"
-                      placeholder="Project Name"
-                    />
-                    <span class="text-danger" id="project_name_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="unit_details"
-                      >Unit No<span class="mandetory_field" style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="unit_details"
-                      class="form-control"
-                      id="unit_details"
-                      placeholder="Unit No"
-                    />
-                    <span class="text-danger" id="unit_details_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="building_name"
-                      >Building Name<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="building_name"
-                      class="form-control"
-                      id="building_name"
-                      placeholder="Building Name"
-                    />
-                    <span class="text-danger" id="building_name_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="rental_price">Rental Price</label>
-                    <input
-                      type="text"
-                      name="rental_price"
-                      class="form-control"
-                      id="rental_price"
-                      placeholder="Rental Price"
-                    />
-                    <span class="text-danger" id="rental_price_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="deal_start_date"
-                      >Deal Start Date<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="deal_start_date"
-                      class="form-control startDate"
-                      id="deal_start_date"
-                      placeholder="Deal Start Date"
-                      autocomplete="off"
-                      readonly=""
-                    />
-                    <span class="text-danger" id="deal_start_date_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="deal_end_date"
-                      >Deal End Date<span
-                        class="mandetory_field"
-                        style="color: red"
-                        >*</span
-                      ></label
-                    >
-                    <input
-                      type="text"
-                      name="deal_end_date"
-                      class="form-control endDate"
-                      id="deal_end_date"
-                      placeholder="Deal End Date"
-                      autocomplete="off"
-                      readonly=""
-                    />
-                    <span class="text-danger" id="deal_end_date_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="agent1">Property Usage</label>
-                    <select
-                      name="property_usage"
-                      class="form-control"
-                      id="property_usage"
-                    >
-                      <option value="">Select Property Usage</option>
-                      <option value="industrial">Industrial</option>
-                      <option value="commercial">Commercial</option>
-                      <option value="residential">Residential</option>
-                    </select>
-                    <span class="text-danger" id="property_usage_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group mb-3">
-                    <label for="property_type">Property Type</label>
-                    <input
-                      type="text"
-                      name="property_type"
-                      class="form-control"
-                      id="property_type"
-                      placeholder="Property Type"
-                    />
-                    <span class="text-danger" id="property_type_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="property_size">Property Size</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="property_size"
-                      name="property_size"
-                      placeholder="Property Size"
-                    />
-                    <span class="text-danger" id="property_size_error"></span>
-                  </div>
-                  <div class="col-md-6 form-group">
-                    <label for="premises_no">Premises No</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="premises_no"
-                      name="premises_no"
-                      placeholder="Premises No"
-                    />
-                    <span class="text-danger" id="premises_no_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="security_deposit">Security Deposit</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="security_deposit"
-                      name="security_deposit"
-                      placeholder="Security Deposit"
-                    />
-                    <span
-                      class="text-danger"
-                      id="security_deposit_error"
-                    ></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="plot_no">Plot No</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="plot_no"
-                      name="plot_no"
-                      placeholder="Plot No"
-                    />
-                    <span class="text-danger" id="plot_no_error"></span>
-                  </div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="mode_of_payment">Mode of Payment</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="mode_of_payment"
-                      name="mode_of_payment"
-                      placeholder="Mode of Payment"
-                    />
-                    <span class="text-danger" id="mode_of_payment_error"></span>
-                  </div>
-                </div>
+                
                 <br />
 
                 <div class="form-group row mt-3">
