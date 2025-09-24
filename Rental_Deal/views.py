@@ -279,7 +279,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Entered Finance ----------------
             elif type_filter == "entered-finance":
                 if user.has_perm("core.enter_finance_rental_deals"):
-                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete")
+                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete").filter(
+    is_approved_rejected__in=["F", "A"]
+)
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -289,7 +291,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Pending Finance ----------------
             elif type_filter == "pending-finance":
                 if user.has_perm("core.view_pending_finance_rental_deals"):
-                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete")
+                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete").filter(
+    is_approved_rejected__in=["F", "A"]
+)
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -535,11 +539,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
+        mutable_data['submitted_by_agent'] = request.user.id
 
         mutable_data['created_by'] = request.user.email
         mutable_data['created_at'] = now()
 
         print(f"multable data  acoount_id {mutable_data['account']}")
+        print("mutalbel data before the serlizer", mutable_data)
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -742,7 +748,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                  
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
-                mutable_data['submitted_date']= date.today()
+                is_submitted_date = getattr(rental_deal, 'submitted_date' , "")
+                if not is_submitted_date:
+                    mutable_data['submitted_date']= date.today()
+                
                 
 
  

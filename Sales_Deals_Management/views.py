@@ -126,18 +126,19 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
         mutable_data['created_by'] = request.user.id
+        mutable_data['submitted_by_agent'] = request.user.id
        
            
 
 
-        if 'submitted_date' in mutable_data and mutable_data['submitted_date']:
-            dmy_date = mutable_data['submitted_date']  # e.g. "01-08-2025"
-            day, month, year = dmy_date.split("-")
-            ymd_date = f"{year}-{month}-{day}" 
+        # if 'submitted_date' in mutable_data and mutable_data['submitted_date']:
+        #     dmy_date = mutable_data['submitted_date']  # e.g. "01-08-2025"
+        #     day, month, year = dmy_date.split("-")
+        #     ymd_date = f"{year}-{month}-{day}" 
             
-            mutable_data['submitted_date'] = ymd_date  # becomes "2025-08-01"
+        #     mutable_data['submitted_date'] = ymd_date  # becomes "2025-08-01"
 
-        mutable_data['date'] = mutable_data.get("submitted_date") or timezone.now().date()
+        # mutable_data['date'] = mutable_data.get("submitted_date") or timezone.now().date()
 
        
 
@@ -145,6 +146,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         #  check for the  non fiel field  if they are valid then update the serializer 
         print(f"multable data  acoount_id {mutable_data['account']}")
         if mutable_data['form_status']  == "Complete":
+            mutable_data['submitted_date']= datetime.date.today() #changes htes data  to teh submitted date in the froet end
              
             serializer = self.get_serializer(data=mutable_data, partial=True)
         else:
@@ -438,6 +440,9 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
+                is_submitted_date = getattr(sales_deal, 'submitted_date' , "")
+                if not is_submitted_date:
+                    mutable_data['submitted_date']= datetime.date.today()
             else:
                 mutable_data['form_status'] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
@@ -455,6 +460,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
  
             mutable_data['updated_by'] = request.user.email
             mutable_data['updated_at'] = now()
+
+            
             
                  
                        

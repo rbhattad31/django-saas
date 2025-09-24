@@ -294,6 +294,9 @@ class PropertyAPIView(APIView):
         for key in list(mutable_data.keys()):
             if key != 'cheque_date' and isinstance(mutable_data[key], list):
                 mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
+
+        if property_obj.form_status == "Incomplete":
+            mutable_data['submitted_date'] = timezone.now().date()
  
         mutable_data['form_status'] = 'Complete'
  

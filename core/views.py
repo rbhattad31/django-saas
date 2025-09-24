@@ -398,7 +398,11 @@ def agent_list(request):
     group = request.user.groups.first().name
     print(group)
     role = group.split("-", 1)[1] if "-" in group else group
-    agents=Users.objects.filter(is_active=True,account_id = request.user.account_id).order_by('name')
+    print(role)
+    if role == "Agent":
+        agents=Users.objects.filter(is_active=True,account_id = request.user.account_id,id=request.user.id).order_by('name')
+    else:   
+        agents=Users.objects.filter(is_active=True,account_id = request.user.account_id).order_by('name')
     data=[{'id':u.id, 'name':u.name} for u in agents]
     return Response(data)
 
@@ -421,14 +425,31 @@ def total_commission_stats(request):
         try: td = datetime.strptime(td_str, '%Y-%m-%d').date()
         except: td=date.today()
 
+    group = request.user.groups.first().name
+    print(group)
+    role = group.split("-", 1)[1] if "-" in group else group
+    print(role)
+
     if deal_type.lower() == 'rental':
-        qs=RentalDeals.objects.filter(is_deleted='N',account = request.user.account)
+        if role == "Agent":
+            print("enter ht te  Agent in rental")
+            qs=RentalDeals.objects.filter(is_deleted='N',account = request.user.account,submitted_by_user_id = request.user.id)
+        else:
+            qs=RentalDeals.objects.filter(is_deleted='N',account = request.user.account)
         date_field="date"
     elif deal_type.lower()=='property':
-        qs=RentalProperties.objects.filter(is_deleted='N',account = request.user.account)
+        if role == "Agent":
+            print("enter ht te  Agent in Property ")
+            qs=RentalProperties.objects.filter(is_deleted='N',account = request.user.account,submitted_by_user_id = request.user.id)
+        else:
+            qs=RentalProperties.objects.filter(is_deleted='N',account = request.user.account)
         date_field="submitted_date"
     else:
-        qs=SalesDeals.objects.filter(is_deleted='N',account = request.user.account)
+        if role == "Agent":
+            print("enter ht te  Agent in Sale")
+            qs=SalesDeals.objects.filter(is_deleted='N',account = request.user.account ,submitted_by_user_id = request.user.id)
+        else:
+            qs=SalesDeals.objects.filter(is_deleted='N',account = request.user.account)
         date_field="date"
 
     qs=qs.filter(**{
@@ -438,7 +459,10 @@ def total_commission_stats(request):
 
     if ag_id:
         try:
-            qs=qs.filter(submitted_by_user_id=int(ag_id))
+            if role == "Agent":
+                qs=qs.filter(submitted_by_user_id=request.user.id)
+            else:
+                qs=qs.filter(submitted_by_user_id=int(ag_id))
         except ValueError:
             pass
         

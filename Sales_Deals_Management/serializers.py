@@ -7,6 +7,7 @@ from django.utils.html import format_html
 class SalesDealSerializer(serializers.ModelSerializer):
  
     email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
+    username = serializers.CharField( source="submitted_by_user.name" ,read_only=True)
     action = serializers.SerializerMethodField()
 
     # Making the required fields optional and allow blank
@@ -20,6 +21,14 @@ class SalesDealSerializer(serializers.ModelSerializer):
     deal_status = serializers.CharField(required=False, allow_blank=True)
     project_name = serializers.CharField(required=False, allow_blank=True)
     screening_comments = serializers.CharField(required=False, allow_blank=True)
+    date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
+    submitted_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
 
     class Meta:
         model = SalesDeals
@@ -170,7 +179,7 @@ class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
             
 
             if obj.is_approved_rejected == "A" and (not user.has_perm('core.edit_approved_sales_deals')):
-                print("entered the edit ")
+                print("entered the edit approved in serlizer ")
                 html+=""
 
             else:

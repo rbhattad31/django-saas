@@ -78,9 +78,9 @@
                                         <span class="error text-danger" id="submitted_date_error"></span>
                                     </div> -->
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="submitted_date">Submitted Date<span class="mandetory_field">*</span></label>
-                                        <input type="text" name="submitted_date" class="form-control" id="submitted_date" readonly >
-                                        <span class="error text-danger" id="submitted_date_error"></span>
+                                        <label for="date">Deal Date<span class="mandetory_field">*</span></label>
+                                        <input type="text" name="date" class="form-control" id="date" readonly >
+                                        <span class="error text-danger" id="date_error"></span>
                                     </div>
 
 
@@ -1001,7 +1001,7 @@
       });
 
       $(document).ready(function(){
-      $("#submitted_date").datepicker({
+      $("#date").datepicker({
           dateFormat: "dd-mm-yy",
           changeMonth: true,
           changeYear: true,
@@ -1010,8 +1010,8 @@
           yearRange: "-100:+10"
       });
 
-      $('#submitted_date').datepicker('setDate', '+0');
-      $('#submitted_date').attr('readOnly', true);
+      $('#date').datepicker('setDate', '+0');
+      $('#date').attr('readOnly', true);
    });
 
 $(document).on('click', '.remove_file', function() {
@@ -1157,7 +1157,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
 $('#deal_form').validate({
    ignore: "",
   rules: {
-           submitted_date: {
+           date: {
                required: true,
            },
           submitted_by_agent: {
@@ -1469,8 +1469,8 @@ $('#deal_form').validate({
                   $('html, body').animate({
                     scrollTop: $('.main-header').offset().top
                   }, 1000);
-                  if(document.getElementById('submitted_date').disabled == true)
-				 	      document.getElementById('submitted_date').removeAttribute('disabled');
+                  if(document.getElementById('date').disabled == true)
+				 	      document.getElementById('date').removeAttribute('disabled');
                   $.ajax({
                       method: "POST",
                       headers: {
