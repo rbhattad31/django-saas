@@ -110,7 +110,7 @@ class SalesDealSerializerForDraft(serializers.ModelSerializer):
     buyer_agent_phone = serializers.CharField(required=False, allow_blank=True)
     classic = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
     less_outside_commission = serializers.CharField(required=False, allow_blank=True)
-    manager_cheque_copy = serializers.FileField(required=False, allow_null=True)
+     
     net_commission = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
     receipt_no = serializers.CharField(required=False, allow_blank=True)
     seller_agency = serializers.CharField(required=False, allow_blank=True)

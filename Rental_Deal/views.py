@@ -520,7 +520,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
         if mutable_data.get('save_as') == "create-deal":
             mutable_data['form_status'] = "Complete"
-            mutable_data['submitted_date']= datetime.date.today()
+            mutable_data['submitted_date']= date.today()
         else:
             mutable_data['form_status'] = "Incomplete"
         print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
