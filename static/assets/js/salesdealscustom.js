@@ -367,7 +367,12 @@ $(document).ready(function () {
         data: "submitted_date",
         title: "Submitted Date",
         render: function (data) {
+          if (data){
           return new Date(data).toLocaleDateString(); // Format date
+          }
+          else{
+            return "";
+          }
         },
       },
     ],

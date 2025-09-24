@@ -733,7 +733,7 @@ def edit_sales_deal_page(request, pk):
     aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
     print("AWS URL:", aws_url)
     # serializer = SalesDealSerializer(sales_deal, partial=True)
-    agents = Users.objects.filter(is_active=True)
+    agents = Users.objects.filter(is_active=True ,account_id=request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
 
