@@ -119,6 +119,18 @@ class SalesDealSerializerForDraft(serializers.ModelSerializer):
     total_commission = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
     less_outsude_commission = serializers.CharField(required=False, allow_blank=True)
     screening_comments = serializers.CharField(required=False, allow_blank=True)
+    
+
+    date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y"             # Return DMY to frontend
+    )
+    submitted_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y",
+        required=False,  # make it optional
+        allow_null=True              # Return DMY to frontend
+    )
 
 
     class Meta:
