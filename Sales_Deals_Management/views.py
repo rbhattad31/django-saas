@@ -74,14 +74,41 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         # return HttpResponse("hello this is view page")
         aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
 
-        receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
-        if not sales_deal.receipt_no:
-            recipt_no = None
-        else:
-            recipt_no = Receipts.objects.filter(id=sales_deal.receipt_no).first() 
-            print(recipt_no.receipt_number , "this is recipt id ")
+        # receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
+        # if not sales_deal.receipt_no:
+        #     recipt_no = None
+        # else:
+        #     recipt_no = Receipts.objects.filter(id=sales_deal.receipt_no).first() 
+        #     print(recipt_no.receipt_number , "this is recipt id ")
 
-        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": receipt_no.receipt_number})
+        if sales_deal.receipt_no == "Null" or sales_deal.receipt_no == "":
+        # Case 1: Explicit "Null" → no receipt
+            recipt_no = "Null"
+            recipt_id = ""
+            
+         
+
+        elif sales_deal.receipt_no == "No Commission":
+            # Case 2: No Commission special case
+            recipt_no = "No Comission"
+            recipt_id = ""
+            
+
+        
+
+        else:
+            # Case 3: Receipt ID
+            recipt = Receipts.objects.filter(id=sales_deal.receipt_no).first()
+            if recipt:
+                recipt_no = recipt.receipt_number
+                recipt_id = recipt.id
+                print(recipt_no , "this is recipt number ")
+                print(recipt_id , "this is recipt id ")
+            else:
+                recipt_no = ""
+                recipt_id = ""
+
+        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": recipt_no, "receipt_id": recipt_id})
 
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
@@ -114,10 +141,14 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         
         # adding reference number to the table of recipts 
         try:
-            receipt_id = int(mutable_data.get("receipt_no", "").strip())
-            Receipts.objects.filter(id=receipt_id).update(deal_refer_no=mutable_data['reference_number'])
-            Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
-            print(f"Updated receipt_no {receipt_id} with reference_number {mutable_data['reference_number']}")
+            receipt_id = mutable_data.get("receipt_no")
+            if receipt_id.isdigit():
+                Receipts.objects.filter(id=receipt_id).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+                print(f"Updated receipt_no {receipt_id} with reference_number {mutable_data['reference_number']}")
+
+            else:
+                pass
         except (ValueError, TypeError):
             print("Invalid receipt_no or not provided, skipping update.")
         
@@ -157,7 +188,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
 
 
-        # rental_deal = get_object_or_404(RentalDeals, pk=pk)
+        # sales_deal = get_object_or_404(RentalDeals, pk=pk)
         path = f"sales/referencenumber_CP/{mutable_data['reference_number']}"
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")  # Remove [] suffix if present
@@ -167,7 +198,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         
 
             # Get existing value from the DB field (comma-separated filenames)
-            # existing_value = getattr(rental_deal, base_field_name, "")
+            # existing_value = getattr(sales_deal, base_field_name, "")
             # existing_files = existing_value.split(",") if existing_value else []
 
             
@@ -343,7 +374,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             
 
                 # Get existing value from the DB field (comma-separated filenames)
-                # existing_value = getattr(rental_deal, base_field_name, "")
+                # existing_value = getattr(sales_deal, base_field_name, "")
                 # existing_files = existing_value.split(",") if existing_value else []
 
                 
@@ -452,9 +483,12 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 mutable_data['approved_rejected_by'] = request.user.email
             
             if mutable_data.get('receipt_no'):
-                print("this is the receipt no", mutable_data['receipt_no'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+                if mutable_data['receipt_no'].isdigit():
+                    print("this is the receipt no", mutable_data['receipt_no'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+                else:
+                    pass
 
 
  
@@ -470,10 +504,10 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             # Now pass this updated data to serializer
             serializer = self.get_serializer(sales_deal, data=mutable_data, partial=True)
 
-            # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
+            # serializer = self.get_serializer(sales_deal, data=request.data, partial=True)
 
                 # ✅ Update data from form
-                # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
+                # serializer = self.get_serializer(sales_deal, data=request.data, partial=True)
                 
             if serializer.is_valid():
                 serializer.save()

@@ -531,10 +531,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         
         # adding reference number to the table of recipts 
         if mutable_data.get('receipt_no'):
-            print("this is the receipt no", mutable_data['receipt_no'])
-            Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
-            Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
-        
+
+            if mutable_data['receipt_no'].isdigit():
+                print("this is the receipt no", mutable_data['receipt_no'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+            else:
+                pass
 
 
         mutable_data['submitted_by_user'] = request.user.id
@@ -760,9 +763,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
             if mutable_data.get('receipt_no'):
-                print("this is the receipt no", mutable_data['receipt_no'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+                if mutable_data['receipt_no'].isdigit():
+                    print("this is the receipt no", mutable_data['receipt_no'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+                else:
+                    pass
             
             if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
                 mutable_data['approved_rejected_by'] = request.user.email
@@ -836,15 +842,44 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         serializer = DealSerializer(rental_deal,context={'request': request})
         aws_url = settings.AWS_URL+"rental/referencenumber_CP/"
         # return HttpResponse("hello this is view page")
-        if not rental_deal.receipt_no:
-            recipt_no = None
+        # if not rental_deal.receipt_no:
+        #     recipt_no = None
+        # else:
+        #     recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
+        #     print(recipt_no.receipt_number , "this is recipt id ")
+
+        if rental_deal.receipt_no == "Null" or rental_deal.receipt_no == "":
+        # Case 1: Explicit "Null" → no receipt
+            recipt_no = "Null"
+            recipt_id = ""
+            
+         
+
+        elif rental_deal.receipt_no == "No Commission":
+            # Case 2: No Commission special case
+            recipt_no = "No Comission"
+            recipt_id = ""
+            
+
+        
+
         else:
-            recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
-            print(recipt_no.receipt_number , "this is recipt id ")
+            # Case 3: Receipt ID
+            recipt = Receipts.objects.filter(id=rental_deal.receipt_no).first()
+            if recipt:
+                recipt_no = recipt.receipt_number
+                recipt_id = recipt.id
+                print(recipt_no , "this is recipt number ")
+                print(recipt_id , "this is recipt id ")
+            else:
+                recipt_no = ""
+                recipt_id = ""
 
 
+                
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no.receipt_number , "recipt_id":recipt_no.id if recipt_no else None})
+
+        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no  , "recipt_id":recipt_id})
     
     # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):
@@ -1048,7 +1083,7 @@ def edit_rental_deal_view(request, pk):
     if role == "Agent":
         reciepts_db = Receipts.objects.filter(account_id = request.user.account_id , status= "Unused" , agent_id = request.user.id)
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id, status= "Unused")
 
 
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data

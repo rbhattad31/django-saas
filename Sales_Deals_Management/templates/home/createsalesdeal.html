@@ -808,6 +808,8 @@
 
                 const $dropdown = $(selector);
                 $dropdown.empty().append('<option value="">Select Receipt</option>');
+                $dropdown.append('<option value="No Commission">No Commission</option>');
+                $dropdown.append('<option value="Null">Null</option>');
 
                 data.forEach(function (receipt) {
                 $dropdown.append(

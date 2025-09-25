@@ -733,6 +733,19 @@ function populateReceiptDropdown(selector, data, receiptno_from_request) {
   const $dropdown = $(selector);
   $dropdown.empty().append('<option value="">Select Receipt</option>');
 
+
+    const noCommissionSelected =
+    receiptno_from_request === "No Commission" ? "selected" : "";
+  $dropdown.append(
+    `<option value="No Commission" ${noCommissionSelected}>No Commission</option>`
+  );
+
+  // Add "Null" option
+  const nullSelected = receiptno_from_request === "Null" ? "selected" : "";
+  $dropdown.append(
+    `<option value="Null" ${nullSelected}>Null</option>`
+  );
+
   data.forEach(function (receipt) {
     const isSelected =
       receiptno_from_request == receipt.receipt_number ? "selected" : "";

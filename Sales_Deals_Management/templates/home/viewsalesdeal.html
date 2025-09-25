@@ -19,8 +19,8 @@
 	<div class="card mt-2 mb-4">
         <div class="card-header bg-transparent">
             <h4 class="p-2">View Sales Deal<span class="float-right">
-               {% if perms.core.download_receipts %}
-               <a class="btn btn-primary btn-rounded" href="/receipt/{{ receipt_no.id }}/download/" target="_blank" >Download  Receipt</a>
+               {% if perms.core.download_receipts and receipt_id %}
+               <a class="btn btn-primary btn-rounded" href="/receipt/{{ receipt_id }}/download/" target="_blank" >Download  Receipt</a>
                 {% endif %}
                <a class="btn btn-primary btn-rounded" href="{% url 'Sales-deal' %}">Back</a>
                  </span>

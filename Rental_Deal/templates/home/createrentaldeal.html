@@ -3312,7 +3312,17 @@
         console.log(data, "receipt data");
 
         const $dropdown = $(selector);
-        $dropdown.empty().append('<option value="">Select Receipt</option>');
+       // $dropdown.empty().append('<option value=""selected>Select Receipt</option>');
+        
+        $dropdown.empty();
+
+        // Always keep "Select Receipt" as the default
+        $dropdown.append('<option value="" selected>Select Receipt</option>');
+
+        // Add "No Commission" option (not selected by default)
+        $dropdown.append('<option value="No Commission">No Commission</option>');
+        $dropdown.append('<option value="Null">Null</option>');
+
 
         data.forEach(function (receipt) {
           $dropdown.append(
