@@ -17,7 +17,13 @@
                     <h4 class="p-2">View Property
                         <span class="float-right">
                             <a class="btn btn-primary btn-rounded" href="http://dealsaws.classicproperties.ae/rental-property/list">Back</a>
-                            <a class="btn btn-primary btn-rounded" href="/management-receipts/{{receipts.id}}/downloadReceiptPDF/">Download Receipt</a>
+                            {% if perms.core.download_management_receipts_rentalproperties and  receipts.id %}
+                                <a class="btn btn-primary btn-rounded"
+                                href="/management-receipts/{{ receipts.id }}/downloadReceiptPDF/">
+                                Download Receipt
+                                </a>
+                            {% endif %}
+                            {% comment %} <a class="btn btn-primary btn-rounded" href="/management-receipts/{{receipts.id}}/downloadReceiptPDF/">Download Receipt</a> {% endcomment %}
                         </span>
                     </h4>
                 </div>

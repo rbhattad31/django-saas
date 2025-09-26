@@ -1632,7 +1632,7 @@ class RentalProperties(models.Model):
 class ManagementReceipts(models.Model):
     id = models.BigAutoField(primary_key=True)  # 1. Primary Key, Auto Increment, NOT NULL
     date = models.DateField(null=False)  # 2. NOT NULL
-    receipt_number = models.BigIntegerField(null=True,blank=True)  # 3. NOT NULL
+    receipt_number = models.CharField(max_length=100, null=True, blank=True)  # 3. NOT NULL
     dhs = models.CharField(max_length=191, null=False)  # 4. NOT NULL
     fils = models.CharField(max_length=191, null=False)  # 5. NOT NULL
     cheque_no = models.CharField(max_length=15, blank=True, null=True)  # 6. NOT NULL
