@@ -1081,7 +1081,7 @@ def edit_rental_deal_view(request, pk):
 
 
     if role == "Agent":
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id  , agent_id = request.user.id)
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id, agent_id = request.user.id)
     else:
         reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
 
