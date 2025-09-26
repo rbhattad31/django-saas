@@ -2118,7 +2118,7 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='view-receipt')
     def view_receipt(self, request, pk=None):
         receipt = get_object_or_404(ManagementReceipts, pk=pk)
-        return render(request, 'home/Manager_view.html', {'receipt': receipt})
+        return render(request, 'home/Manager_View.html', {'receipt': receipt})
     
     def edit_management(request, pk):
         receipt = get_object_or_404(ManagementReceipts, pk=pk)
