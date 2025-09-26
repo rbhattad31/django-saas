@@ -1081,9 +1081,9 @@ def edit_rental_deal_view(request, pk):
 
 
     if role == "Agent":
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id , status= "Unused" , agent_id = request.user.id)
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id  , agent_id = request.user.id)
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id, status= "Unused")
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
 
 
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
