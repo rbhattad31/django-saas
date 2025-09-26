@@ -196,13 +196,13 @@ $j(document).ready(function() {
     }).focus(function() { $j(this).datepicker("show"); });
 
     // Convert backend date (YYYY-MM-DD) to display dd-mm-yyyy
-    function formatForDisplay(dateString) {
-        if (!dateString) return '';
+   function formatForDisplay(dateString) {
+        if (!dateString || typeof dateString !== 'string') return '';
         const parts = dateString.split('-');
-        if (parts.length === 3) {
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        if (parts.length === 3 && parts[0].length === 4) { // Assuming YYYY-MM-DD
+            return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert to DD-MM-YYYY
         }
-        return dateString;
+        return dateString; // Return as-is if already in correct format
     }
 
     // Convert dd-mm-yy to YYYY-MM-DD for backend
@@ -286,7 +286,7 @@ $j(document).ready(function() {
                     const field = $j(`[name="${key}"]`);
                     if (field.length) {
                         if (field.hasClass('datepicker-input')) {
-                            field.val(formatDateForInput(data[key]));
+                            field.val(formatForDisplay(data[key]));
                         } else if (field.is('select')) {
                             field.val(data[key]);
                         } else {

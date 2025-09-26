@@ -1,7 +1,6 @@
-
 {% extends 'layouts/base.html' %}
 {% block title %} Create Management Receipt {% endblock title %}
-
+ 
 {% block stylesheets %}
 <style>
     .text-danger {
@@ -16,7 +15,7 @@
     }
 </style>
 {% endblock stylesheets %}
-
+ 
 {% block content %}
 <div class="main-content pt-4">
     <div class="row">
@@ -145,7 +144,7 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- jQuery must load first -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- jQuery UI for Datepicker -->
@@ -155,14 +154,33 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- jQuery Validate -->
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-
+ 
 <script>
 var $main = jQuery;
 window.$main = $main;
-
+ 
 $main(document).ready(function () {
+ 
+ 
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+    let yyyy = today.getFullYear();
+    let todayFormatted = dd + '-' + mm + '-' + yyyy;  // dd-mm-yyyy format
+ 
+    $main('#date').val(todayFormatted);
+    $main('#sec_date').val(todayFormatted);
     // Initialize datepickers
-    $main('.datepicker-input').datepicker({
+    //$main('.datepicker-input').datepicker({
+    //    dateFormat: 'dd-mm-yy',
+    //    changeMonth: true,
+    //    changeYear: true,
+    //    maxDate: 0
+    //}).focus(function() {
+    //    $main(this).datepicker("show");
+    //});
+    // Receipt Date: only up to today
+    $main('#date').datepicker({
         dateFormat: 'dd-mm-yy',
         changeMonth: true,
         changeYear: true,
@@ -170,7 +188,17 @@ $main(document).ready(function () {
     }).focus(function() {
         $main(this).datepicker("show");
     });
-
+ 
+    // Payment Date: allow future dates
+    $main('#sec_date').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true
+    }).focus(function() {
+        $main(this).datepicker("show");
+    });
+ 
+   
     // Optional: reformat existing yyyy-mm-dd values to dd-mm-yy
     $main('.datepicker-input').each(function() {
         let val = $main(this).val();
@@ -179,13 +207,13 @@ $main(document).ready(function () {
             $main(this).val(parts[2] + '-' + parts[1] + '-' + parts[0]);
         }
     });
-
+ 
     // Universal date formatter
     function formatForBackend(dateString) {
         if (!dateString) return '';
         dateString = dateString.trim();
         console.log("Raw input date:", dateString);
-
+ 
         let ymdMatch = dateString.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
         if (ymdMatch) {
             let yyyy = ymdMatch[1];
@@ -194,7 +222,7 @@ $main(document).ready(function () {
             console.log("Detected YYYY-MM-DD, returning:", `${yyyy}-${mm}-${dd}`);
             return `${yyyy}-${mm}-${dd}`;
         }
-
+ 
         let dmyMatch = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
         if (dmyMatch) {
             let dd = dmyMatch[1].padStart(2, '0');
@@ -203,7 +231,7 @@ $main(document).ready(function () {
             console.log("Converted D-M-YYYY to YYYY-MM-DD:", `${yyyy}-${mm}-${dd}`);
             return `${yyyy}-${mm}-${dd}`;
         }
-
+ 
         let dmy2Match = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{2})$/);
         if (dmy2Match) {
             let dd = dmy2Match[1].padStart(2, '0');
@@ -212,11 +240,11 @@ $main(document).ready(function () {
             console.log("Converted D-M-YY to YYYY-MM-DD:", `${yyyy}-${mm}-${dd}`);
             return `${yyyy}-${mm}-${dd}`;
         }
-
+ 
         console.warn("Invalid date format detected:", dateString);
         return '';
     }
-
+ 
     $main.validator.addMethod("validDate", function(value, element) {
         if (!value) return false;
         let formats = [
@@ -229,15 +257,15 @@ $main(document).ready(function () {
         }
         return false;
     }, "Please enter a valid date.");
-
+ 
     $main.validator.addMethod("alphanum_special", function (value, element) {
         return this.optional(element) || /^[\w\s.,\-@()/]+$/.test(value);
     }, "Only letters, numbers, and certain special characters are allowed.");
-
+ 
     $main.validator.addMethod("numeric", function (value, element) {
         return this.optional(element) || /^[0-9]*$/.test(value);
     }, "Please enter a valid number.");
-
+ 
     // Initialize form validation
     $main('#createReceiptForm').validate({
         ignore: "",
@@ -297,7 +325,7 @@ $main(document).ready(function () {
             $main(`#${name}_error`).html(error);
         }
     });
-
+ 
     // Toggle validation rules for cheque_no and bank based on payment_type
     $main('#payment_type').on('change', function () {
         const paymentType = $main(this).val();
@@ -307,7 +335,7 @@ $main(document).ready(function () {
         // Update asterisk visibility
         $main('.cheque_no').text(paymentType === 'Cheque' ? '*' : '');
         $main('.bank_name').text(paymentType === 'Cheque' || paymentType === 'Bank Transfer' ? '*' : '');
-
+ 
         if (paymentType === 'Cheque') {
             $main('#cheque_no').rules('add', { required: true, minlength: 3, maxlength: 15 });
             $main('#bank').rules('add', { required: true });
@@ -319,23 +347,23 @@ $main(document).ready(function () {
             $main('#bank').rules('remove', 'required');
         }
     });
-
+ 
     // Form submission via AJAX
     $main('#createReceiptForm').on('submit', function (e) {
         e.preventDefault();
         if ($main(this).valid()) {
             console.log("Raw Receipt Date input:", $main('#date').val());
             console.log("Raw Payment Date input:", $main('#sec_date').val());
-
+ 
             let convertedDate = formatForBackend($main('#date').val());
             let convertedSecDate = formatForBackend($main('#sec_date').val());
-
+ 
             console.log("Converted Receipt Date:", convertedDate);
             console.log("Converted Payment Date:", convertedSecDate);
-
+ 
             $main('#date').val(convertedDate);
             $main('#sec_date').val(convertedSecDate);
-
+ 
             const formData = $main(this).serialize();
             $main.ajax({
                 url: '{% url "management_receipts_create" %}',

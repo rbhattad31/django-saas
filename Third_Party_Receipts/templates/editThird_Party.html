@@ -28,7 +28,7 @@
             <input type="hidden" name="_token" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI">
             <div class="row">
               <input type="hidden" value="XKpjtJFdN1VfI5hDLFKW1KpFlfWsb2Xr2cUX7EvI" name="csrf-token" id="token">
-              <input type="hidden" name="id" value= {{deposit.id}} id="id">
+              
               <input type="hidden" name="account_id" value= {{deposit.account_id}} id="account_id">
               <div class="col-md-6 form-group mb-3">
                 <label for="date">Receipt Date<span style="color: red">*</span></label>
@@ -311,7 +311,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
                 headers: {
                         "X-CSRFToken":  getCookie("csrftoken")
             },  
-               url: "/third_party_receipts/api/deposits/edit/",
+               url: "/third_party_receipts/api/deposits/edit/{{deposit.id}}/",
                 data:new FormData($("#createReceiptForm")[0]),
                 contentType: false,
               processData: false,

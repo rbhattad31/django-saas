@@ -10,7 +10,7 @@ urlpatterns = [
     path('list/', third_party_receipts_page, name='third_party_receipts_list'),
     path('api/deposits/filter/', DepositsViewSet_filter, name='deposits_filter'),
     path('api/deposits/create/',  DepositsViewSet_create, name='deposits_create'),
-    path("api/deposits/edit/" , DepositsViewSet_edit , name = "deposits-edit"),
+    path("api/deposits/edit/<int:pk>/" , DepositsViewSet_edit , name = "deposits-edit"), 
     
 
     path('create/' , thrid_party_recipt_crete_htmlpage , name = "create-page" ),

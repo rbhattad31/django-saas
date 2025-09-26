@@ -171,22 +171,40 @@ class DepositsViewSet(viewsets.ModelViewSet):
                 'deposit': serializer.data
             })
         elif request.method == "PUT":
+            # deposit = get_object_or_404(Deposits, pk=pk)
             
-            mutable_data = request.data.copy()
+            # mutable_data = request.data.copy()
 
-            print(mutable_data)
+            # print(mutable_data)
            
 
 
 
-            serializer = DepositsSerializer( data = mutable_data ,partial=True  ,context = {'request': request})
+            # serializer = DepositsSerializer( instance=deposit, data = mutable_data ,partial=True  ,context = {'request': request})
+            # if serializer.is_valid():
+            #     serializer.save()
+            #     return Response(serializer.data, status=status.HTTP_200_OK)
+            # else:
+            #     return Response("not valid form " , status= status.HTTP_400_BAD_REQUEST)
+            print(pk)
+            deposit = get_object_or_404(Deposits, pk=pk)
+
+            mutable_data = request.data.copy()
+            print(mutable_data)
+
+            serializer = DepositsSerializer(
+                instance=deposit,
+                data=mutable_data,
+                partial=True,
+                context={'request': request}
+            )
+
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response("not valid form " , status= status.HTTP_400_BAD_REQUEST)
-
-    
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
 
 
 

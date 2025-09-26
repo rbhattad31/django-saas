@@ -6,6 +6,9 @@ import datetime
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
+
 
 # Create your views here.
 from django.contrib.auth import authenticate, login
@@ -2144,12 +2147,31 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
             return Response({'success': True, 'message': 'Receipt updated successfully.'})
         return Response(serializer.errors, status=400)
     
+    # @action(detail=False, methods=['get'], url_path='create-form')
+    # def create_form(self, request):
+    #     # Generate the next receipt number
+    #     last_receipt = ManagementReceipts.objects.order_by('-receipt_number').first()
+    #     next_receipt_number = int(last_receipt.receipt_number) + 1 if last_receipt else 1000
+    #     return render(request, 'home/Manager_Create.html', {'next_receipt_number': next_receipt_number})
+
     @action(detail=False, methods=['get'], url_path='create-form')
     def create_form(self, request):
-        # Generate the next receipt number
-        last_receipt = ManagementReceipts.objects.order_by('-receipt_number').first()
-        next_receipt_number = int(last_receipt.receipt_number) + 1 if last_receipt else 1000
-        return render(request, 'home/Manager_Create.html', {'next_receipt_number': next_receipt_number})
+        # Order numerically, not lexicographically
+        last_receipt = (
+            ManagementReceipts.objects
+            .annotate(receipt_num_int=Cast('receipt_number', IntegerField()))
+            .order_by('-receipt_num_int')
+            .first()
+        )
+ 
+        if last_receipt and last_receipt.receipt_number and last_receipt.receipt_number.isdigit():
+            next_receipt_number = str(int(last_receipt.receipt_number) + 1)  # 👈 keep as string
+        else:
+            next_receipt_number = "1000"  # 👈 starting baseline, still string
+ 
+        return render(request, 'home/Manager_Create.html', {
+            'next_receipt_number': next_receipt_number
+        })
 
     @action(detail=False, methods=['post'], url_path='create')
     def create_receipt(self, request):
