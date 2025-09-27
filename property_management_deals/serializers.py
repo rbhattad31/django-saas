@@ -228,7 +228,7 @@ class PropertySerializer(serializers.ModelSerializer):
         allow_blank=False
     )
     is_approved_rejected = serializers.ChoiceField(
-        choices=[('P', 'Pending'), ('A', 'Approved'), ('R', 'Rejected'), ('W', 'Waiting Finance')],
+        choices=[('P', 'Pending'), ('A', 'Approved'), ('R', 'Rejected'), ('F', 'Waiting Finance')],
         default='P',
         allow_blank=False,
         required=False

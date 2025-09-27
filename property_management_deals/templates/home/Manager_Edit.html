@@ -188,12 +188,21 @@ $j(document).ready(function() {
     const apiUrl = `/api/management-receipts/${receiptId}/edit/`;
 
     // Datepicker Initialization
-    $j('.datepicker-input').datepicker({
+    $j('#date').datepicker({
         dateFormat: 'dd-mm-yy',
         changeMonth: true,
         changeYear: true,
         maxDate: 0
     }).focus(function() { $j(this).datepicker("show"); });
+ 
+    // Payment Date → allow future dates also
+    $j('#sec_date').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        // No maxDate → allows all future dates
+    }).focus(function() { $j(this).datepicker("show"); });
+
 
     // Convert backend date (YYYY-MM-DD) to display dd-mm-yyyy
    function formatForDisplay(dateString) {

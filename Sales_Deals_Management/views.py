@@ -479,7 +479,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
 
-            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
                 mutable_data['approved_rejected_by'] = request.user.email
             
             if mutable_data.get('receipt_no'):
@@ -580,6 +580,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         # Deal Type Filter
         type_filter = validated.get("type")
+        print("type_filter", type_filter)
+
         user_role = user.first_group_name or ""
         role = user_role.split("-", 1)[1] if "-" in user_role else user_role
         print(user_role)
@@ -616,7 +618,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     return Response({"detail": "You do not have permission: view_rejected_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- Waiting Finance ----------------
-            elif type_filter == "waiting-finance":
+            elif type_filter == "waiting":
                 if user.has_perm("core.view_waiting_finance_sales_deals"):
                     queryset = queryset.filter(is_approved_rejected="F")
                 else:

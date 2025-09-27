@@ -3055,7 +3055,7 @@
 
             if (xhr.status === 400) {
               // This is your "Bad Request" error
-              console.log("Bad Request details:", xhr.responseJSON);
+              console.log("Bad Request details", xhr.responseJSON);
               scrollTop();
 
               // Attempt to extract specific error messages from the backend
@@ -3073,13 +3073,13 @@
                       }
                     }
                   }
-                  errorMessage = "Bad Request: " + errors.join("; ");
+                  errorMessage =  errors.join("; ");
                 } else {
                   // If backend sends a simple string message
-                  errorMessage = "Bad Request: " + xhr.responseJSON;
+                  errorMessage =   xhr.responseJSON;
                 }
               } else {
-                errorMessage = "Bad Request: Invalid data provided.";
+                errorMessage = "  Invalid data provided.";
               }
             }
             if (xhr.status === 403) {

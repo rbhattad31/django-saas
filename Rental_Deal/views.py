@@ -770,7 +770,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 else:
                     pass
             
-            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
+            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
                 mutable_data['approved_rejected_by'] = request.user.email
 
 

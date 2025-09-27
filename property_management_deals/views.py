@@ -306,7 +306,7 @@ class PropertyAPIView(APIView):
         if request.data.get('receipt_no'):
             ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
  
-        if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
+        if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
                 mutable_data['approved_rejected_by'] = request.user.email
         # Apply updates
         serializer = PropertySerializer(property_obj, data=mutable_data, partial=True)
@@ -1714,7 +1714,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
  
             #Here waitint is related to Waiting for Waiting Finance
             elif deal_type == "waiting" :
-                queryset = queryset.filter(is_approved_rejected='W')
+                queryset = queryset.filter(is_approved_rejected='F')
  
             elif deal_type == 'entered-finance':
                 queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
