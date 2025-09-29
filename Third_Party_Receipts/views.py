@@ -61,7 +61,7 @@ class DepositsViewSet(viewsets.ModelViewSet):
 
         account_id = request.user.account_id
 
-        queryset = Deposits.objects.filter(account_id = account_id)
+        queryset = Deposits.objects.filter(account_id = account_id).order_by("-id")
         print("Initial Queryset:", queryset)  # Debugging line
 
         # Global search

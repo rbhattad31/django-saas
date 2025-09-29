@@ -404,34 +404,18 @@ $.validator.addMethod("lettersonly", function(value, element) {
   
    $("#sec_date").datepicker('setDate', '+0');
    $('#sec_date').attr('readOnly', true);
-  var payment_type = $('#payment_type').val();
-  if(payment_type == '')
-  {
-    $('.bank_name').hide();
-    $('.cheque_no').hide();
-  }
-  else if(payment_type == 'Cash')
-  {
-    $('.bank_name').hide();
-    $('.cheque_no').hide();
-  }
-  else if(payment_type == 'Cheque')
-  {
-    $('.bank_name').show();
-    $('.cheque_no').show();
-  }
-  else if(payment_type == 'Bank Transfer')
-  {
-    $('.bank_name').show();
-    $('.cheque_no').hide();
-  }
+
+
+  
 
   $('#payment_type').on('change', function() {  
     var payment_type = this.value;
     if(payment_type == 'Cheque')
       {
         $('.bank_name').show();
+        $('#bank').rules('add', { required: true });
         $('.cheque_no').show();
+        $('#cheque_no').rules('add', { required: true });
       }
     else if(payment_type == 'Cash')
       {
@@ -441,10 +425,14 @@ $.validator.addMethod("lettersonly", function(value, element) {
       else if(payment_type == 'Bank Transfer')
       { 
         $('.cheque_no').hide();
+        $('#bank').rules('add', { required: true });
         $('.bank_name').show();
       }
   });
-  $("#submit").click(function () {
+
+
+
+  /*$("#submit").click(function () {
     var payment_type = $('#payment_type').val();
     if(payment_type == 'Cash'){
         $('#cheque_no_error').hide();
@@ -456,7 +444,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
         $('#cheque_no_error').hide();
         $('#bank_error').show();
     }
-  });
+  });*/
  
 });
 </script>
