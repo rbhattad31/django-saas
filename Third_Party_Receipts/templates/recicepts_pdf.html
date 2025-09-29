@@ -114,13 +114,18 @@ table, tr {
             </table>
           </td>
  
-          <td style="width:40%;height:80px; text-align:center;margin-left:150px;">
-            <span style="font-weight:bold;font-size:20px;">سند القبض</span><br>
+       <td style="width:40%;height:80px; text-align:center;margin-left:150px;">
+           
+             <span style="font-weight:bold; font-size:18px; border-bottom: 2px solid grey; display:inline-block; padding-bottom:3px;">
+                  Payment on A/c of Client
+              </span><br>
             {% comment %} <span></span><br> {% endcomment %}
             <span style="display: block; height: 5px;"></span>
  
-            <span style="font-weight:bold;font-size:20px;border-top: solid 2px grey;"> Payment on A/C of Client  </span><br>
+            <span style="font-size:16px; ">TRN :100322931500003</span><br>
+ 
           </td>
+ 
  
           <td style="width:28%; height:100px;text-align:left;border:none;padding-right:40px;">
             <span style="font-weight:bold;font-size:13px;"><b> Receipt No:&nbsp;</b></span>
@@ -157,6 +162,20 @@ table, tr {
  
           <td style="width:40%; padding-right:10px; font-weight:bold;">
             <span style="font-size:12px; margin-left:95px; display:inline-block;">: ووردت من السيد / السيدة / م / م</span>
+          </td>
+        </tr>
+
+         <tr>
+          <td style="width:30%; text-align:left; font-weight:bold; font-size:14px; padding-top:25px;">
+            <span style="font-size:13px;"><i>On Behalf of:</i></span>
+          </td>
+          <td style="width:30%; font-size:15px; padding-top:25px;">
+            <span style="display: inline-block; width: 200px; border-bottom: 1px dotted black; margin-left: 85px; border-width: 1px;">
+              <span style="font-size:13px;">{{ receipt.on_behalf_of }}</span>
+            </span>
+          </td>
+          <td style="width:40%; padding-right:10px; font-weight:bold; padding-top:25px;">
+            <span style="font-size:12px; margin-left:95px; display:inline-block;">: نيابة عن</span>
           </td>
         </tr>
  

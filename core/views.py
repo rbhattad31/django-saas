@@ -253,6 +253,17 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
            
             print("Mutable data = ",mutable_data)
+
+            print( "data thet is send is intothe recipt serializer"   , flat_data )
+
+            # now we get id inhte agent name call the database and assign name toit 
+
+            user = Users.objects.filter(id = flat_data['agent_id']).first()
+            print(user.name)
+
+            flat_data['agent_name'] = user.name
+
+
             serializer = ReceiptSerilizer(reciecpt, data= flat_data,partial=True )
             if serializer.is_valid():
                 serializer.save()

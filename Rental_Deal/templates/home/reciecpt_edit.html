@@ -641,27 +641,28 @@ $('#createReceiptForm').validate({
               },
 
               // ✅ Required to send FormData
+            
 
-              success: function (data) {
+              success: function (data,textStatus ,xhr) {
                 // $("#save_draft_deal").removeAttr("disabled");
                 console.log(data.status);
                 //alert("Rental deal updated successfully!");
 
-                if (data.status === "success") {
-                  alert("Rental deal updated successfully!");
-                  scrollTop();
-                $("#alert-primary").text("Reciecpt Created Successfully");
+                if (xhr.status === 200) {
+                   
+                 
+                $("#alert-primary").text("Reciecpt Updated Successfully");
                 $("#successmsg").show();
-                $("#deal_form")[0].reset();
+                $("#createReceiptForm")[0].reset();
                   // Or redirect if needed
                   $('html, body').animate({
                       scrollTop: $('.main-header').offset().top
                   }, 1000);
-                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list" }, 5000);
+                  setTimeout(function(){ $('#successmsg').fadeOut(),window.location.href = " /receipt/list/" }, 3000);
                 }
               },
 
-              error: function (err) {
+              error: function (err,textStatus ,xhr) {
                 if (err.status === 400) {
                   const data = err.responseJSON;
                   let messages = "";
