@@ -32,7 +32,7 @@
               <input type="hidden" name="account_id" value= {{deposit.account_id}} id="account_id">
               <div class="col-md-6 form-group mb-3">
                 <label for="date">Receipt Date<span style="color: red">*</span></label>
-                <input type="text" id="date" name="date" class="form-control hasDatepicker" placeholder="Enter Receipt Date" value="{{deposit.date}}" readonly="">
+                <input type="text" id="date" name="date" class="form-control" placeholder="Enter Receipt Date" value="{{deposit.date}}" readonly="">
                 <span class="error text-danger err-name" id="date_error"></span>
               </div>
               <div class="col-md-6 form-group mb-3">
@@ -88,7 +88,7 @@
               </div>
               <div class="col-md-6 form-group mb-3">
                 <label for="sec_date">Payment Date<span style="color: red">*</span></label>
-                <input type="text" name="sec_date" class="form-control hasDatepicker" id="sec_date" value="{{deposit.sec_date}}" placeholder="Enter Payment Date" readonly="">
+                <input type="text" name="sec_date" class="form-control" id="sec_date" value="{{deposit.sec_date}}" placeholder="Enter Payment Date" readonly="">
                 <span class="error text-danger err-name" id="sec_date_error"></span>
               </div>
               <div class="col-md-6 form-group mb-3">
