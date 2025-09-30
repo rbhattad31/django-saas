@@ -288,26 +288,28 @@ class DealSerializer(serializers.ModelSerializer):
     
     def get_contract_value(self, obj):
         print(obj , "thisis objet for serlizer")
-        return self.number_to_indian_words(obj.rental_price)
+        return self.number_to_international_words(obj.rental_price)
 
 
-    def number_to_indian_words(self, number):
-        # print(number ,'the amount number ')
-
+    def number_to_international_words(self, number):
         if not number:
             return "Invalid amount"
 
-    # Remove commas and extra spaces
+        # Remove commas and spaces
         number = str(number).replace(",", "").strip()
 
         if not number.isdigit():
             return "Invalid amount"
-        
+
         number = int(number)
+        if number == 0:
+            return "Zero"
+
         ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
         teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
-                 "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+                "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
         tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+        thousands = ["", "Thousand", "Million", "Billion", "Trillion"]
 
         def two_digits(n):
             if 10 <= n <= 19:
@@ -325,33 +327,22 @@ class DealSerializer(serializers.ModelSerializer):
             else:
                 return ones[n // 100] + " Hundred" + (" " + two_digits(n % 100) if n % 100 != 0 else "")
 
-        if number == 0:
-            return "Zero"
-        if number > 99999999:
-            return "Number exceeds 1 crore"
+        words = []
+        group_index = 0
 
-        parts = []
-        crore = number // 10000000
-        if crore:
-            parts.append(ones[crore] + " Crore")
-        number %= 10000000
+        while number > 0:
+            group = number % 1000
+            if group != 0:
+                group_words = three_digits(group)
+                if thousands[group_index]:
+                    group_words += " " + thousands[group_index]
+                words.insert(0, group_words.strip())
+            number //= 1000
+            group_index += 1
 
-        lakh = number // 100000
-        if lakh:
-            parts.append(two_digits(lakh) + " Lakh")
-        number %= 100000
+        return " ".join(words).strip()
 
-        thousand = number // 1000
-        if thousand:
-            parts.append(two_digits(thousand) + " Thousand")
-        number %= 1000
 
-        hundred_and_below = three_digits(number)
-        if hundred_and_below:
-            parts.append(hundred_and_below)
-
-        return " ".join(parts)
-    
     def validate_reference_number(self, value):
         """
         Ensure reference_number is unique, even during update.
