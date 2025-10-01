@@ -374,6 +374,12 @@ $main(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
+                        $j("html, body").animate(
+                        {
+                            scrollTop: $j(".main-header").offset().top,
+                        },
+                        1000
+                        );
                         $main('#successmsg').show().find('#alert-primary').text(response.message);
                         setTimeout(() => {
                             window.location.href = '{% url "management_receipts_manager" %}';

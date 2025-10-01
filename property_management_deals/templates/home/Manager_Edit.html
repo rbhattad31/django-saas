@@ -430,8 +430,22 @@ $j(document).ready(function() {
             headers: { 'X-CSRFToken': csrftoken },
             success: function(data) {
                 console.log("Receipt updated successfully:", data);
-                alert('Receipt updated successfully!');
-                window.location.href = "{% url 'management_receipts_manager' %}";
+                //alert('Receipt updated successfully!');
+                $j("html, body").animate(
+                  {
+                    scrollTop: $j(".main-header").offset().top,
+                  },
+                  1000
+                );
+                $j('#successmsg').show().find('#alert-primary').text('Receipt updated successfully!!');
+                    setTimeout(() => {
+                        $j('#successmsg').hide();
+                         window.location.href = "{% url 'management_receipts_manager' %}";
+                         
+                    }, 3000);
+
+
+               
             },
             error: function(xhr) {
                 console.error('Error updating receipt:', xhr.responseText);
@@ -445,7 +459,7 @@ $j(document).ready(function() {
 
     // Warn on unsaved changes
     let formChanged = false;
-    $j('#management_receipt_form').on('change input', 'input, select', function() {
+   /* $j('#management_receipt_form').on('change input', 'input, select', function() {
         formChanged = true;
     });
 
@@ -454,7 +468,7 @@ $j(document).ready(function() {
             e.preventDefault();
             e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
         }
-    });
+    });*/
 
     // Confirm cancel
     $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
