@@ -72,7 +72,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         print("Sales Deal:", sales_deal)
         serializer = SalesDealSerializer(sales_deal,context ={'request': request})
         # return HttpResponse("hello this is view page")
-        aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
+        aws_url = settings.AWS_URL+"sale/referencenumber_CP/"
 
         # receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
         # if not sales_deal.receipt_no:
@@ -641,7 +641,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             # ---------------- Draft ----------------
             elif type_filter == "draft":
                 if user.has_perm("core.view_my_draft_sales_deals"):
-                    queryset = queryset.filter(form_status="Incomplete", created_by=user.email)
+                    queryset = queryset.filter(form_status="Incomplete")
                 else:
                     return Response({"detail": "You do not have permission: view_my_draft_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -653,7 +653,12 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     return Response({"detail": "You do not have permission: view_all_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
 
 
-
+            if role == "Agent" or user_role == "Agent":
+                queryset = queryset.filter(submitted_by_user=user)
+            elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
+                queryset = queryset.filter(created_by=user.email)
+            else:
+                role = "superadmin"
 
         # Date range filter
 
@@ -745,6 +750,14 @@ def create_sales_deal_page(request):
    
     agents=Users.objects.filter(is_active=True,account_id=request.user.account_id)
     agents=AgentDropdownSerializer(agents,many=True).data
+
+    group = request.user.groups.first().name
+    print(group)
+    role = group.split("-", 1)[1] if "-" in group else group
+    # user_role = request.user.first_group_name or ""
+    # role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+
+    print(role)
 
     reciepts_db = Receipts.objects.filter(account_id=request.user.account_id, status="Unused" , agent_id = request.user.id)
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data

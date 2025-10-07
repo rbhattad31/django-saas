@@ -1729,8 +1729,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             elif deal_type == "All" :
                 queryset = queryset.filter(form_status = "Complete")  
  
-            if role == 'Admin' and deal_type == 'draft':
+            if is_admin and deal_type == 'draft':
                 queryset = queryset.filter(created_by=user.email)
+
+            if is_agent :
+                queryset = queryset.filter(submitted_by_user_id=user.id)
+            elif is_admin and deal_type == "draft":
+                queryset = queryset.filter(created_by=user.email)
+            else:
+                role = "superadmin"
  
  
         else:

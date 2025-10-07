@@ -1503,9 +1503,12 @@ $j(document).ready(function () {
         const files = this.files;
         const maxFileSize = 3 * 1024 * 1024; // 3MB
         const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+        const allowedFileNamePattern = /^[a-zA-Z0-9. _-]+$/;
 
         previewElement.empty();
         errorElement.text('');
+
+        
 
         // Clear previous files and update with new ones
         selectedFiles[fieldName] = Array.from(files);
@@ -1521,6 +1524,13 @@ $j(document).ready(function () {
                 }
                 if (file.size > maxFileSize) {
                     errorElement.text(`File "${file.name}" exceeds 3MB.`);
+                    valid = false;
+                    return;
+                }
+
+                const fileName = file.name.split('.').slice(0, -1).join('.');
+                if (!allowedFileNamePattern.test(fileName)) {
+                    errorElement.text(`No special characters are allowed in file name "${file.name}" (e.g., %, @, #, etc.).`);
                     valid = false;
                     return;
                 }

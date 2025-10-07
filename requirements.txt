@@ -8,3 +8,4 @@ Weasyprint
 boto3
 python-dotenv 
 django-storages
+bycrypt

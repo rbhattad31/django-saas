@@ -858,6 +858,17 @@ $('input[type="file"]').on("change", function () {
       console.log("File size:", this.files[i].size);
       extension = "." + (filename.split('.').pop().toLowerCase());
 
+      var validNamePattern = /^[a-zA-Z0-9 ._-]+$/;
+              if (!validNamePattern.test(filename)) {
+                  $("#" + $(this).attr("id") + "_error")
+                    .html("File name contains invalid characters. Allowed: letters, numbers, ., _, -")
+                    .show();
+                  $("#" + $(this).attr("id")).val("");
+                  $("." + namedata + "_list").empty();
+                  $("#" + namedata + "_new_removed_count").val("0");
+                 
+              }
+
           if (
             extension != ".pdf" &&
             extension != ".jpg" &&

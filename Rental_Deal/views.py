@@ -303,10 +303,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Draft ----------------
             elif type_filter == "draft":
                 if user.has_perm("core.view_my_draft_rental_deals"):
-                    if role == "Admin":
-                        queryset = queryset.filter(form_status="Incomplete", created_by=user.email)
-                    else:
-                        queryset = queryset.filter(form_status="Incomplete", submitted_by_user=user)
+                     
+                    queryset = queryset.filter(form_status="Incomplete")
+                     
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -321,6 +320,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     # print(f"Queryset count after filter: {queryset.count()}")
                 else:
                     return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+                
+
+        if role == "Agent" or user_role == "Agent":
+            queryset = queryset.filter(submitted_by_user=user)
+        elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
+            queryset = queryset.filter(created_by=user.email)
+        else:
+            role = "superadmin" 
 
 
 
@@ -960,6 +967,8 @@ def login_view(request):
             # print(user.check_password(password))
             
             user =  authenticate(email = username , password = password)
+            # user =  authenticate(username=username, password=password)
+          
             print(user)
             
             if user is not None:

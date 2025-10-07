@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -146,6 +147,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# password hasher 
+
+# PASSWORD_HASHERS = [
+#     # 'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+#     'django.contrib.auth.hashers.BCryptPasswordHasher',
+#     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+
+# ]
+
+
+
+# AUTHENTICATION_BACKENDS = [
+   
+       
+#     'core.authentication_backend.LaravelBackend',# Custom backend for Laravel auth
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
+
+
+
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -194,12 +217,15 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_BUCKET')
 AWS_S3_REGION_NAME = os.getenv('AWS_DEFAULT_REGION')  # default to Mumbai
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN_live =  'deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties'
 
 # This is the key line: switch from local to S3 for media files
 
 # Optional: where media files are stored within the bucket
 MEDIA_LOCATION = os.getenv('MEDIA_LOCATION', 'media')
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+# deal-saas.s3.ap-southeast-1.amazonaws.com/live/classic_properties/rental/referencenumber_CP
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -222,7 +248,8 @@ AUTH_USER_MODEL = 'core.Users'
 
 # AWS S3 settings
 
-AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+# AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/' used till UAT SERVER
+AWS_URL = f'https://{AWS_S3_CUSTOM_DOMAIN_live}/'
 
 
 ENV = "https://deal-saas.s3.ap-southeast-1.amazonaws.com/live"

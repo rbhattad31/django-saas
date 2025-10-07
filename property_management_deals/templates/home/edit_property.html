@@ -528,7 +528,7 @@
                   <input type="radio" id="admin_reject" name="is_approved_rejected" value="R" {% if property.is_approved_rejected == 'R' %}checked{% endif %}> Reject
                 </div>
                 <div class="col-6" style="margin-left: -55px">
-                  <input type="radio" id="admin_waiting" name="is_approved_rejected" value="W" {% if property.is_approved_rejected == 'W' %}checked{% endif %}> Waiting for Finance
+                  <input type="radio" id="admin_waiting" name="is_approved_rejected" value="F" {% if property.is_approved_rejected == 'F' %}checked{% endif %}> Waiting for Finance
                 </div>
               </div>
               <span class="text-danger" id="is_approved_rejected_error"></span>
@@ -1306,7 +1306,17 @@ $j(document).ready(function() {
             return false;
         }
         const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        const allowedFileNamePattern = /^[a-zA-Z0-9. _-]+$/;
+
         for (let f of file.files) {
+
+            const fileName = f.name.split('.').slice(0, -1).join('.');
+            if (!allowedFileNamePattern.test(fileName)) {
+                $error.html(`No special characters allowed in file name "${f.name}" (e.g., %, @, #, etc.)`).show();
+                $j(`#${id}`).val('');
+                return false;
+            }
+
             if (!validTypes.includes(f.type)) {
                 $error.html(`Invalid file type for ${f.name}. Only JPG, PNG, or PDF allowed.`).show();
                 $j(`#${id}`).val('');

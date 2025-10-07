@@ -73,18 +73,21 @@ class CustomUserAdmin(BaseUserAdmin):
     add_form = CustomUserCreationForm
 
     list_display = ("id",'email', 'is_staff', 'is_superuser','password',"account_id","get_groups", 'account')
+    # list_display = ("id",'email', 'is_staff', 'is_superuser','password', "get_groups")
     list_filter = ('is_staff', 'is_superuser')
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('name',)}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',  'user_permissions' ,"groups",'account')}),
+        # ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',  'user_permissions' ,"groups")}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'name', 'password1', 'password2', "account","groups"  ),
+            # 'fields': ('email', 'name', 'password1', 'password2',  "groups"  ),
         }),
     )
 

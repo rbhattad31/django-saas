@@ -1027,6 +1027,10 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         # extra_fields.setdefault('role', Role.objects.get(id=1))
+
+        if not extra_fields.get('name'):
+            extra_fields['name'] = 'Admin'
+             
         
         
         return self.create_user(email, password, **extra_fields)
@@ -1034,7 +1038,7 @@ class CustomUserManager(BaseUserManager):
 
 class Users(AbstractUser):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=191, blank=False, null=True)
+    name = models.CharField(max_length=191, blank=True, null=True)
     username = None 
     mobile_number = models.CharField(max_length=191)
     # role = models.ForeignKey('Role', on_delete=models.DO_NOTHING, db_column='role', related_name='users' ,null = True,blank=True)
