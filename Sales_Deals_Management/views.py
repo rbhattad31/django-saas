@@ -226,7 +226,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         for base_field_name in all_field_keys:
             reference_number = mutable_data.get("reference_number")
-            path_folder = f"sales/referencenumber_CP/{reference_number}"
+            path_folder = f"sale/referencenumber_CPS/{reference_number}"
 
        
 

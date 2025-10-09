@@ -1025,7 +1025,7 @@ $('input[type="file"]').on("change", function () {
       console.log("File size:", this.files[i].size);
       extension = "." + (filename.split('.').pop().toLowerCase());
 
-      var validNamePattern = /^[a-zA-Z0-9 ._-]+$/;
+      var validNamePattern = /^[a-zA-Z0-9 ._-()]+$/;
         if (!validNamePattern.test(filename)) {
             $("#" + $(this).attr("id") + "_error")
               .html("File name contains invalid characters. Allowed: letters, numbers, ., _, -")

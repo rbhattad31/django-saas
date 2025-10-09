@@ -1509,7 +1509,7 @@ $j(document).ready(function () {
         const files = this.files;
         const maxFileSize = 3 * 1024 * 1024; // 3MB
         const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
-        const allowedFileNamePattern = /^[a-zA-Z0-9. _-]+$/;
+        const allowedFileNamePattern = /^[a-zA-Z0-9. _-()]+$/;
 
         previewElement.empty();
         errorElement.text('');

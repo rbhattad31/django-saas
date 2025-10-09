@@ -872,7 +872,8 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 if file_key in request.FILES:
                     files = request.FILES.getlist(file_key)
                     removed_files = request.data.get(f"{field}_removed", '').split(',') if request.data.get(f"{field}_removed") else []
-                    valid_files = [f for f in files if f.name not in removed_files]
+                    # valid_files = [f for f in files if f.name not in removed_files]
+                    valid_files = list(files)
                     file_paths = []
                     for file in valid_files:
                         timestamp = int(time.time())
