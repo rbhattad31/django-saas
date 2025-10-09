@@ -1317,7 +1317,8 @@ $j(document).ready(function() {
             return false;
         }
         const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-        const allowedFileNamePattern = /^[a-zA-Z0-9. _-()]+$/;
+        const allowedFileNamePattern =  /^[a-zA-Z0-9 ._()-]+$/;
+;
 
         for (let f of file.files) {
 
