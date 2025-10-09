@@ -483,8 +483,8 @@ $(document).ready(function () {
       const referenceNumber = data.reference_number;
 
       datepickershow_edit();
-      loadAgentDropdown(data);
-      loadReceiptDropdown(data);
+      // loadAgentDropdown(data);
+      // loadReceiptDropdown(data);
 
      $.each(data, function (key, value) {
   const $field = $(`[name="${key}"], #${key}`);
@@ -529,6 +529,9 @@ $(document).ready(function () {
     } else {
       $field.val(value);
     }
+
+    loadAgentDropdown(data);
+    loadReceiptDropdown(data);
   }
 });
 
@@ -687,6 +690,7 @@ function scrollTop() {
         );
       }
 
+      
 function loadAgentDropdown(requestdata) {
   agents = rental_data.agents;
   console.log(agents);
@@ -694,26 +698,34 @@ function loadAgentDropdown(requestdata) {
   populateAgentDropdown(
     "#submitted_by_agent",
     agents,
-    requestdata.submitted_by_agent
+    requestdata.submitted_by_user
   );
   populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
   populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
   populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
 }
 
+ 
+
 // populate the user data based on requriement
 
 function populateAgentDropdown(selector, data, selectedId = null) {
   const $dropdown = $(selector);
   $dropdown.empty().append('<option value="">Select Agent</option>');
+  
 
   data.forEach(function (agent) {
     const isSelected = selectedId == agent.id ? "selected" : "";
+    if (isSelected) {
+      console.log("agent after selection", selectedId, agent.id);
+    }
+
     $dropdown.append(
       `<option value="${agent.id}" ${isSelected}>${agent.name}</option>`
     );
   });
 }
+ 
 
 function loadReceiptDropdown(requestdata) {
   receipts = rental_data.receipts;

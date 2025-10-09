@@ -33,6 +33,9 @@ def render_file_links(file_string):
     if not file_string:
         return ""
 
+    AWS_url_base = settings.AWS_URL.rstrip('/').rsplit('/', 1)[0]
+     
+    print(AWS_url_base ,"from render links")
     files = [f.strip() for f in file_string.split(",") if f.strip()]
     output = []
 
@@ -41,7 +44,7 @@ def render_file_links(file_string):
         match = re.search(r'([a-zA-Z_]+)\d+', filename)
         label = match.group(1) if match else filename
 
-        html = f'<div class="upload_prev"><a href="{settings.AWS_URL}{file_url}" target="_blank">{label} {index}</a></div>'
+        html = f'<div class="upload_prev"><a href="{AWS_url_base}{file_url}" target="_blank">{label} {index}</a></div>'
         output.append(html)
 
     return mark_safe("\n".join(output))

@@ -72,7 +72,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         print("Sales Deal:", sales_deal)
         serializer = SalesDealSerializer(sales_deal,context ={'request': request})
         # return HttpResponse("hello this is view page")
-        aws_url = settings.AWS_URL+"sale/referencenumber_CP/"
+        aws_url = settings.AWS_URL+"sale/referencenumber_CPS/"
 
         # receipt_no = Receipts.objects.filter(id =sales_deal.receipt_no).first()
         # if not sales_deal.receipt_no:
@@ -343,7 +343,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     print("value", value)
                     if value:
                         # Remove the file from S3
-                        filepath = f"sales/referencenumber_CP/{sales_deal.reference_number}/{file_name}"
+                        filepath = f"sale/referencenumber_CPS/{sales_deal.reference_number}/{file_name}"
 
                         # is_deleted= delete_from_s3(filepath)
                         # print( "filepath", filepath)
@@ -365,7 +365,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
     # Loop through all uploaded file fields
     # add data 
-            path = f"sales/referencenumber_CP/{mutable_data['reference_number']}"
+            path = f"sale/referencenumber_CPS/{mutable_data['reference_number']}"
             for key in request.FILES.keys():
                 base_field_name = key.rstrip("[]")  # Remove [] suffix if present
                 print("base_field_name", base_field_name)
@@ -422,7 +422,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
             for base_field_name in all_field_keys:
                 reference_number = mutable_data.get("reference_number")
-                path_folder = f"sales/referencenumber_CP/{reference_number}"
+                path_folder = f"sale/referencenumber_CPS/{reference_number}"
 
                 existing_value = getattr(sales_deal, base_field_name, "")
                 existing_files = existing_value.split(",") if existing_value else []
@@ -779,7 +779,7 @@ def create_sales_deal_page(request):
 @permission_required("core.change_salesdeals",raise_exception=True)
 def edit_sales_deal_page(request, pk):
     sales_deal = get_object_or_404(SalesDeals, pk=pk)
-    aws_url = settings.AWS_URL+"sales/referencenumber_CP/"
+    aws_url = settings.AWS_URL+"sale/referencenumber_CPS/"
     print("AWS URL:", aws_url)
     # serializer = SalesDealSerializer(sales_deal, partial=True)
     agents = Users.objects.filter(is_active=True ,account_id=request.user.account_id)

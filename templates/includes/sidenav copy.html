@@ -140,6 +140,7 @@
               {% endif %}
 
             <!-- Settings -->
+             {% if perms.core.admin_properties_fields_rentalproperties %}
             <li class="nav-item">
               <a class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#settingsSubmenu" aria-expanded="false" aria-controls="settingsSubmenu">
                 <span><i class="fas fa-cogs"></i> Settings</span> <span class="chevron">&#x276F;</span>
@@ -151,7 +152,7 @@
                 </ul>
               </div>
             </li> 
-
+            {% endif %}
             <!-- Rental Deals Management -->
             <li class="nav-item">
               {% if perms.core.manage_rental_deals %}

@@ -1759,7 +1759,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
         column_index = order.get("column")
         direction = order.get("dir")
-        #print(f"Column index: {column_index}, Direction: {direction}")
+        print(f"Column index: {column_index}, Direction: {direction}")
 
         column_mapping = {
             0: None,  # Action column (not orderable)

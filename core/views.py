@@ -323,7 +323,7 @@ def edit_recipt_deal_view(request, pk=None):
 @login_required(login_url="/login/")
 @permission_required('core.add_receipts',raise_exception=True)
 def recicept_create(request):
-    latest = Receipts.objects.order_by('-receipt_number').first()
+    latest = Receipts.objects.filter(account_id=request.user.account_id).order_by('-receipt_number').first()
     next_receipt = int(latest.receipt_number) + 1 if latest and latest.receipt_number else 1
 
     agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)

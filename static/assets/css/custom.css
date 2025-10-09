@@ -274,6 +274,7 @@ body{
   #navbarSupportedContent .navbar-nav:nth-child(1) {
     order:  1;   /* first ul goes second */
     width:50px;
+    max-width: auto;
     margin-left: 100px !important;
     
    
@@ -282,6 +283,7 @@ body{
   #navbarSupportedContent .navbar-nav:nth-child(2) {
     order: 2;   /* second ul goes first */
      margin-left:auto !important;
+     width:50px;
      margin-right: 50px;
   }
 

@@ -287,7 +287,9 @@ Role_delete_view = RoleMangementViewSet.as_view({'delete': 'destroy'})
 def role_managementlist_html(request): 
     account_id = request.user.account_id
     prefix = f"{account_id}-"
-    queryset = Group.objects.filter(name__startswith=prefix)
+    # queryset = Group.objects.filter(name__startswith=prefix)
+    queryset = Group.objects.filter(profile__account_id=2).select_related("profile", "profile__account")
+   
 
     group = GroupSerializerforlistHtml(queryset,many=True)
 

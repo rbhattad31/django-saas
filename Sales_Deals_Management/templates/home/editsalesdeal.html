@@ -39,8 +39,11 @@
                       <input type="hidden"   name="account_id" id="account_id">
                       <input type="hidden"   name="save_as" id="save_as">
                         <div class="row">
-                              
-                                                                    <div class="col-md-6 form-group">
+                                                  {% for group in request.user.groups.all %}
+                                      {% if "Agent" in group.name %}
+                                        
+                                          {% else %}
+                                         <div class="col-md-6 form-group">
                                         <label for="role">Deal Submitted By Agent<span class="mandetory_field" style="color: red"></span></label>
                                       <select class="selectbox2 form-control" name="submitted_by_agent" id="submitted_by_agent">
                                         <option >Select Agent Name</option>
@@ -54,6 +57,8 @@
                                                                         </select>
                                     <span class="text-danger" id="submitted_by_agent_error"></span>
                                     </div>
+                                    {% endif %}
+                                    {% endfor %}
                                   
                               
                                   <div class="col-md-6 form-group mb-3">

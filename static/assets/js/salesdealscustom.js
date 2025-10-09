@@ -661,8 +661,7 @@ $(document).ready(function () {
       const referenceNumber = data.reference_number;
 
       datepickershow_edit();
-      loadAgentDropdown(data);
-      loadReceiptDropdown(data);
+      
 
       $.each(data, function (key, value) {
         const $field = $(`[name="${key}"], #${key}`);
@@ -712,14 +711,20 @@ $(document).ready(function () {
           } else {
             $field.val(value);
           }
+          
         }
       });
 
       // ✅ Manually uncheck specific radio groups (overrides)
+
+      loadAgentDropdown(data);
+      loadReceiptDropdown(data);
     },
     error: function () {
       alert("Failed to load data.");
     },
+
+   
   });
 
   // 🔹 Submit form via POST
@@ -849,7 +854,7 @@ function loadAgentDropdown(requestdata) {
   populateAgentDropdown(
     "#submitted_by_agent",
     agents,
-    requestdata.submitted_by_agent
+    requestdata.submitted_by_user
   );
   populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
   populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
@@ -864,6 +869,15 @@ function populateAgentDropdown(selector, data, selectedId = null) {
 
   data.forEach(function (agent) {
     const isSelected = selectedId == agent.id ? "selected" : "";
+
+    if (isSelected) {
+      console.log(
+        "agent afterslection",
+        selectedId,
+        agent.id
+      );
+    }
+
     $dropdown.append(
       `<option value="${agent.id}" ${isSelected}>${agent.name}</option>`
     );

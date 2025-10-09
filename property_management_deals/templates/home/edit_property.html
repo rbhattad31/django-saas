@@ -75,7 +75,10 @@
             <input type="hidden" name="is_deleted" id="is_deleted" value="N">
             
   
-
+             {% for group in request.user.groups.all %}
+                  {% if "Agent" in group.name %}
+                     
+                      {% else %}
             <div class="col-md-6 form-group">
                 <label for="submitted_by_agent">
                     Deal Submitted By Agent <span class="mandetory_field" style="color: red">*</span>
@@ -91,7 +94,9 @@
                 </select>
                 <span class="text-danger" id="submitted_by_agent_error"></span>
             </div>
-            
+            {% endif %}
+            {% endfor %}
+          
 
 
 
@@ -1204,11 +1209,17 @@ $j(document).ready(function() {
                     const fileString = data[field] || '';
                     const files = fileString.split(',').filter(f => f.trim());
                     const $uploadPrev = $j(`#${field}`).siblings('.upload_prev').empty();
+                    let cleanUrl = mediaPrefix.trim().replace(/\/+$/, "");
+
+// 2. Remove the last segment after the final slash
+                        let AWS_url_base = cleanUrl.substring(0, cleanUrl.lastIndexOf("/"));
+
                     files.forEach((file, index) => {
                         const fileUrl = file.trim();
+                        
                         $uploadPrev.append(`
                             <div>
-                                <a href="${mediaPrefix}${fileUrl}" target="_new">${field} ${index + 1}</a>
+                                <a href="${AWS_url_base}${fileUrl}" target="_new">${field} ${index + 1}</a>
                                 <p class="remove_file" id="${fileUrl}" data-name="${field}" data-existing="old">X</p>
                             </div>
                         `);
@@ -1827,7 +1838,7 @@ function loadAgentDropdown(requestdata) {
                 return;
             }
             // Populate dropdowns, preserving the current selection for submitted_by_agent
-            populateAgentDropdown("#submitted_by_agent", agents, currentAgentId || requestdata.submitted_by_agent);
+            populateAgentDropdown("#submitted_by_agent", agents, currentAgentId || requestdata.submitted_by_user_id);
             populateAgentDropdown("#agent_name1", agents, requestdata.agent_name1);
             populateAgentDropdown("#agent_name2", agents, requestdata.agent_name2);
             populateAgentDropdown("#agent_name3", agents, requestdata.agent_name3);
