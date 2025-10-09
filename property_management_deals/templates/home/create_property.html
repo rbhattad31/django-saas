@@ -1089,6 +1089,12 @@ function saveAsDraft() {
                 if (response.success) {
                     $j('#successmsg').show().find('#alert-primary').text('Draft saved successfully!');
                     setTimeout(() => $j('#successmsg').hide(), 3000);
+                    $j("html, body").animate(
+                        {
+                            scrollTop: $j(".main-header").offset().top,
+                        },
+                        1000
+                        );
                     window.location.href = '/rental-properties/list/';
                 } else {
                     if (response.message && response.message.reference_number) {

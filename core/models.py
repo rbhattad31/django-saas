@@ -1366,7 +1366,7 @@ class SalesDeals(models.Model):
     screening_comments = models.TextField()
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
-    manager_cheque_copy = models.TextField()
+    manager_cheque_copy = models.TextField(blank=True, null=True)
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
 
 
