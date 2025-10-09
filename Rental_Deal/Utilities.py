@@ -15,7 +15,11 @@ from django.utils.module_loading import import_string
 def upload_file_to_full_s3_url(file_obj, url):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
     storage = storage_class()
-    saved_path = storage.save(f"{url}", ContentFile(file_obj.read()))
+    saved_path = storage.save(f"live/classic_properties/{url}", ContentFile(file_obj.read()))
+
+    print(f"Uploaded to: {saved_path}")
+
+    
 
     return saved_path
 
@@ -32,12 +36,12 @@ def delete_from_s3(file_path):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
 
     storage = storage_class()
-    if storage.exists(file_path):
-        storage.delete(file_path)
-        print(f"Deleted: {file_path}")
+    if storage.exists(f'live/classic_properties/{file_path}'):
+        storage.delete(f'live/classic_properties/{file_path}')
+        print(f"Deleted: {f'live/classic_properties/{file_path}'}")
         return True
     else:
-        print(f"File not found: {file_path}")
+        print(f"File not found: {f'live/classic_properties/{file_path}'}")
         return False
 
 
