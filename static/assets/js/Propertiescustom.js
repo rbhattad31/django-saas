@@ -79,7 +79,7 @@ $(document).ready(function () {
     processing: true,
     serverSide: true,
     ordering: true,
-    order: [[1, 'asc']], // Default sort on the second column (optional)
+    order: [[1, 'desc']], // Default sort on the second column (optional)
     // dom: 'Bfrtip', // Add buttons to the table
     
     buttons: [
