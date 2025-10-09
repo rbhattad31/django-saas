@@ -132,7 +132,7 @@ class PropertyAPIView(APIView):
         reference_number = mutable_data.get('reference_number') or property_obj.reference_number
         is_property_aml = mutable_data.get('is_property_aml') or property_obj.is_property_aml
        
-        path = f"rental/referencenumber_CP/{reference_number}"
+        path = f"/rental/referencenumber_CP/{reference_number}"
         is_property_aml = mutable_data.get('is_property_aml')
         if not is_property_aml:
             is_property_aml = property_obj.is_property_aml
@@ -650,7 +650,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             # Generate reference_number
             reference_number = request.data.get('reference_number', f"AUTO{account_id}_{int(time.time())}")
             data['reference_number'] = reference_number
-            path = f"rental/referencenumber_CP/{reference_number}"
+            path = f"/rental/referencenumber_CP/{reference_number}"
             print(f"📁 Reference Path: {path}")
  
             # --- DUPLICATE CHECK ---
