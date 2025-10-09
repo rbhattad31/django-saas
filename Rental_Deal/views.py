@@ -205,7 +205,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Field-specific filters
         filter_fields = [
-            "reference_number", "unit_details", "building_name", "is_deal_new",
+            "reference_number", "unit_details", "building_name", "is_new_deal",
             "is_approved_rejected", "project_name", "owner_first_name", "tenant_first_name",
             "owner_mobile", "tenant_mobile"
         ]
