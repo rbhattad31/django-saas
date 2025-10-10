@@ -583,7 +583,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         print("-----------------------------")
 
         # Fetch unique, non-empty receipt numbers
-        receipt_no = ManagementReceipts.objects.filter(account_id = request.user.account_id)
+        receipt_no = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
        
 
         print("----- Valid Receipt Numbers -----")
