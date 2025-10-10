@@ -233,13 +233,13 @@
     table.ajax.reload(); // Reload DataTable with new filters
   });
     $('#filter').click(function(){
-      receiptData.draw();
+       table.ajax.reload();
     });
     $('#reset').click(function(){
-      $('#payment_type,#deal_type').prop('selectedIndex',0);
-      $("#from,#to,#receipt_number,#receipt_trn,#status,#payment_type,#agent_name,#deal_type,#unit_number,#building_name").val('');
-      receiptData.draw();
-    }); 
+    $('#payment_type,#deal_type').prop('selectedIndex',0);
+    $("#from,#to,#deposit_number,#agent_name,#deal_type,#unit_number,#building_name").val('');
+    table.ajax.reload();
+    });
 });
 
 

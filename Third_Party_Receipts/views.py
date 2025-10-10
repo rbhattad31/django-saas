@@ -85,7 +85,7 @@ class DepositsViewSet(viewsets.ModelViewSet):
         print("Filtered Queryset:", queryset)  # Debugging line
         # Field-specific filters
         filter_fields = [
-                        'id', 'deposit_number', 'date', 'dhs', 'fils', 'payment_type',
+                        'deposit_number', 'date', 'dhs', 'fils', 'payment_type',
                         'sec_date', 'deal_type', 'agent_name', 'project_name', 'building_name', 'unit_number'
                     ]
         for field in filter_fields:

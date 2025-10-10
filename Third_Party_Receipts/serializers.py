@@ -57,8 +57,23 @@ class DepositsfilterSerializer(serializers.Serializer):
     search = serializers.DictField(required=False)
 
     
+    
+    # Date range filters
     from_date = serializers.DateField(required=False)
     to_date = serializers.DateField(required=False)
+
+    # Field-specific filters
+    deposit_number = serializers.CharField(required=False, allow_blank=True)
+    date = serializers.CharField(required=False, allow_blank=True)
+    dhs = serializers.CharField(required=False, allow_blank=True)
+    fils = serializers.CharField(required=False, allow_blank=True)
+    payment_type = serializers.CharField(required=False, allow_blank=True)
+    sec_date = serializers.CharField(required=False, allow_blank=True)
+    deal_type = serializers.CharField(required=False, allow_blank=True)
+    agent_name = serializers.CharField(required=False, allow_blank=True)
+    project_name = serializers.CharField(required=False, allow_blank=True)
+    building_name = serializers.CharField(required=False, allow_blank=True)
+    unit_number = serializers.CharField(required=False, allow_blank=True)
 
 
 
