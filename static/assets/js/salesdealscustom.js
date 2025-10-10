@@ -661,6 +661,7 @@ $(document).ready(function () {
       const referenceNumber = data.reference_number;
 
       datepickershow_edit();
+      loadReceiptDropdown(data);
       
 
       $.each(data, function (key, value) {
@@ -718,7 +719,7 @@ $(document).ready(function () {
       // ✅ Manually uncheck specific radio groups (overrides)
 
       loadAgentDropdown(data);
-      loadReceiptDropdown(data);
+      
     },
     error: function () {
       alert("Failed to load data.");

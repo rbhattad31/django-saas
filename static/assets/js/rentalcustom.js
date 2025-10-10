@@ -484,7 +484,7 @@ $(document).ready(function () {
 
       datepickershow_edit();
       // loadAgentDropdown(data);
-      // loadReceiptDropdown(data);
+      loadReceiptDropdown(data);
 
      $.each(data, function (key, value) {
   const $field = $(`[name="${key}"], #${key}`);
@@ -531,7 +531,7 @@ $(document).ready(function () {
     }
 
     loadAgentDropdown(data);
-    loadReceiptDropdown(data);
+    
   }
 });
 
