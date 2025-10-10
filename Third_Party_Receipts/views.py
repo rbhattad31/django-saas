@@ -95,6 +95,53 @@ class DepositsViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(**filter_kwargs)
 
         # Deal Type Filter
+
+
+
+        # Column mapping based on DataTables 'data' order (no hidden ID)
+        column_mapping = {
+            0: None,  # Action column (not orderable)
+            1: "receipt_number",
+            2: "date",
+            3: "cheque_no",
+            4: "dhs",
+            5: "fils",
+            6: "payment_type",
+            7: "sec_date",
+            8: "deal_type",
+            9: "deal_refer_no",
+            10: "agent_name",
+            11: "project_name",
+            12: "building_name",
+            13: "unit_number",
+            14: "status",
+            15: "received_from"
+        }
+
+        # Extract ordering info from DataTables request
+        order = request.data.get("order", [{}])[0]
+        column_index = order.get("column")
+        direction = order.get("dir")
+
+        # Apply ordering dynamically
+        if column_index is not None and direction:
+            try:
+                column_index = int(column_index)
+                column_name = column_mapping.get(column_index)
+
+                if column_name:
+                    order_expression = column_name if direction == "asc" else f"-{column_name}"
+                    print("Ordering expression:", order_expression)  # Debugging
+
+                    queryset = queryset.order_by(order_expression)
+                    print("✅ Ordering applied. SQL:", str(queryset.query))
+
+                    # Optional: preview first 5 rows
+                    for obj in queryset[:5]:
+                        print("➡️", getattr(obj, column_name.strip("-"), None))
+
+            except Exception as e:
+                print(f"⚠️ Ordering error: {str(e)}")
       
 
         # Date range filter
