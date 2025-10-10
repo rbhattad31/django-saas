@@ -2172,7 +2172,7 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
             .first()
         )
  
-        if last_receipt and last_receipt.receipt_number and last_receipt.receipt_number.isdigit():
+        if last_receipt and last_receipt.receipt_number and last_receipt.receipt_number:
             next_receipt_number = str(int(last_receipt.receipt_number) + 1)  # 👈 keep as string
         else:
             next_receipt_number = "1000"  # 👈 starting baseline, still string
