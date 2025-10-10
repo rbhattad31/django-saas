@@ -110,6 +110,7 @@
         {% for group in request.user.groups.all %}
           {% if "Agent" in group.name %}
 
+          {% else %}
           <div class="col-md-5">Agent</div>
           <div class="col-md-12">
             <select type="text" name="select_agent" class="form-control" id="select_agent-card"
