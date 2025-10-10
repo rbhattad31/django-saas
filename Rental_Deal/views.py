@@ -543,6 +543,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 print("this is the receipt no", mutable_data['receipt_no'])
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+
+                reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
+                mutable_data['receipt_id'] = reccicpt.id
+                mutable_data['receipt_no'] = reccicpt.receipt_number
             else:
                 pass
 
@@ -774,6 +778,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     print("this is the receipt no", mutable_data['receipt_no'])
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+
+                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
+                    mutable_data['receipt_id'] = reccicpt.id
+                    mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
                     pass
             

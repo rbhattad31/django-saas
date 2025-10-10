@@ -144,8 +144,14 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             receipt_id = mutable_data.get("receipt_no")
             if receipt_id.isdigit():
                 Receipts.objects.filter(id=receipt_id).update(deal_refer_no=mutable_data['reference_number'])
+                reccicpt = Receipts.objects.filter(id=receipt_id)
+
                 Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
                 print(f"Updated receipt_no {receipt_id} with reference_number {mutable_data['reference_number']}")
+
+                mutable_data['receipt_id'] = receipt_id
+                mutable_data['receipt_no'] = reccicpt[0].receipt_number
+
 
             else:
                 pass
@@ -487,6 +493,10 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     print("this is the receipt no", mutable_data['receipt_no'])
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+
+                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
+                    mutable_data['receipt_id'] = reccicpt.id
+                    mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
                     pass
 
