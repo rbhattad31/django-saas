@@ -170,8 +170,56 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
             print()
             value = validated_data.get(field)
             if value:
-                filter_kwargs = {f"{field}__icontains": value}
-                queryset = queryset.filter(**filter_kwargs)
+                 
+                queryset = queryset.filter(**{f"{field}__icontains": value})
+
+
+
+
+        # Column mapping based on DataTables 'data' order (no hidden ID)
+        column_mapping = {
+            0: None,  # Action column (not orderable)
+            1: "receipt_number",
+            2: "date",
+            3: "cheque_no",
+            4: "dhs",
+            5: "fils",
+            6: "payment_type",
+            7: "sec_date",
+            8: "deal_type",
+            9: "deal_refer_no",
+            10: "agent_name",
+            11: "project_name",
+            12: "building_name",
+            13: "unit_number",
+            14: "status",
+            15: "received_from"
+        }
+
+        # Extract ordering info from DataTables request
+        order = request.data.get("order", [{}])[0]
+        column_index = order.get("column")
+        direction = order.get("dir")
+
+        # Apply ordering dynamically
+        if column_index is not None and direction:
+            try:
+                column_index = int(column_index)
+                column_name = column_mapping.get(column_index)
+
+                if column_name:
+                    order_expression = column_name if direction == "asc" else f"-{column_name}"
+                    print("Ordering expression:", order_expression)  # Debugging
+
+                    queryset = queryset.order_by(order_expression)
+                    print("✅ Ordering applied. SQL:", str(queryset.query))
+
+                    # Optional: preview first 5 rows
+                    for obj in queryset[:5]:
+                        print("➡️", getattr(obj, column_name.strip("-"), None))
+
+            except Exception as e:
+                print(f"⚠️ Ordering error: {str(e)}")
 
 
         # --- Calculate recordsFiltered (after all filters, before pagination) ---
@@ -516,6 +564,11 @@ def dashboard_stats(request):
     print(request.user.account_id , "this is account_id")
     account_id = request.user.account_id
 
+    group = request.user.groups.first().name
+    print(group)
+    role = group.split("-", 1)[1] if "-" in group else group
+    print(role)
+
     # base querysets
     user_q   = Users.objects.filter(is_active=True,account_id=request.user.account_id)
     rental_q = RentalDeals.objects.filter(is_deleted='N',account_id=account_id)
@@ -544,11 +597,20 @@ def dashboard_stats(request):
         sales_q=sales_q.filter(date__lte=td)
         prop_q=prop_q.filter(submitted_date__lte=td)
         rec_q=rec_q.filter(date__lte=td)
-    if ag_id:
+
+
+
+    if role == "Agent":
+        rental_q = rental_q.filter(submitted_by_user_id= request.user.id)
+        sales_q  = sales_q.filter(submitted_by_user_id= request.user.id)
+        prop_q   = prop_q.filter(submitted_by_user_id= request.user.id)
+
+    elif ag_id:
         try:
             ag_int = int(ag_id)
             agent = Users.objects.get(pk=ag_int)
             user_q   = user_q.filter(id=ag_int)
+
             rental_q = rental_q.filter(submitted_by_user_id=ag_int)
             sales_q  = sales_q.filter(submitted_by_user_id=ag_int)
             prop_q   = prop_q.filter(submitted_by_user_id=ag_int)

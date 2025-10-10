@@ -105,7 +105,11 @@
             <span class="error text-danger err-to" id="to_error"></span>
           </div>
         </div>
+
         <div class="col-md-3 form-group mb-3">
+        {% for group in request.user.groups.all %}
+          {% if "Agent" in group.name %}
+
           <div class="col-md-5">Agent</div>
           <div class="col-md-12">
             <select type="text" name="select_agent" class="form-control" id="select_agent-card"
@@ -115,6 +119,9 @@
             <!-- <span class="error text-danger err-selectagent" id="selectagent_error"></span> -->
           </div>
         </div>
+        {% endif %}
+        {% endfor %}
+      
 
 
         <div class="col-sm-1" style="padding-left: 10px;">
