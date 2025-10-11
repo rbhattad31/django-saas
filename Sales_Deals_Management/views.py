@@ -88,7 +88,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             
          
 
-        elif sales_deal.receipt_no == "No Commision":
+        elif sales_deal.receipt_no == "No Commission":
             # Case 2: No Commission special case
             recipt_no = "No Comission"
             recipt_id = ""
@@ -97,9 +97,11 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         
 
         else:
+            print("entered else case ")
             # Case 3: Receipt ID
-            recipt = Receipts.objects.filter(id=sales_deal.receipt_no).first()
+            recipt = Receipts.objects.filter(receipt_number=sales_deal.receipt_no).first()
             if recipt:
+                print("entered if case ")
                 recipt_no = recipt.receipt_number
                 recipt_id = recipt.id
                 print(recipt_no , "this is recipt number ")

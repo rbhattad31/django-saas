@@ -880,7 +880,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         else:
             # Case 3: Receipt ID
-            recipt = Receipts.objects.filter(id=rental_deal.receipt_no).first()
+            recipt = Receipts.objects.filter(receipt_number=rental_deal.receipt_no).first()
             if recipt:
                 recipt_no = recipt.receipt_number
                 recipt_id = recipt.id
