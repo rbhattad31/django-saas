@@ -566,7 +566,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         search_term = validated.get("search", {}).get("value") or ''
         if search_term:
             queryset = queryset.filter(
-                # Q(email__icontains=search_term) |
+                Q(submitted_by_user__email__icontains=search_term) |
                 Q(reference_number__icontains=search_term) |
                 Q(date__icontains=search_term) |
                 Q(unit_details__icontains=search_term) |
