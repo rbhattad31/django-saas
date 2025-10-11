@@ -88,7 +88,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             
          
 
-        elif sales_deal.receipt_no == "No Commission":
+        elif sales_deal.receipt_no == "No Commision":
             # Case 2: No Commission special case
             recipt_no = "No Comission"
             recipt_id = ""
