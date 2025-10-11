@@ -640,14 +640,14 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             # ---------------- Entered Finance ----------------
             elif type_filter == "entered-finance":
                 if user.has_perm("core.enter_finance_sales_deal"):
-                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete")
+                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete",is_approved_rejected__in = ["A","F"])
                 else:
                     return Response({"detail": "You do not have permission: enter_finance_sales_deal"}, status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- Pending Finance ----------------
             elif type_filter == "pending-finance":
                 if user.has_perm("core.view_pending_finance_sales_deal"):
-                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete")
+                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete",is_approved_rejected__in = ["A","F"])
                 else:
                     return Response({"detail": "You do not have permission: view_pending_finance_sales_deal"}, status=status.HTTP_403_FORBIDDEN)
 
