@@ -905,9 +905,9 @@ function populateReceiptDropdown(selector, data, receiptno_from_request) {
 
 
    const noCommissionSelected =
-    receiptno_from_request === "No Commission" ? "selected" : "";
+    receiptno_from_request === "No Commision" ? "selected" : "";
   $dropdown.append(
-    `<option value="No Commission" ${noCommissionSelected}>No Commission</option>`
+    `<option value="No Commision" ${noCommissionSelected}>No Commision</option>`
   );
 
   // Add "Null" option
