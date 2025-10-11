@@ -571,6 +571,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 Q(builduing_name__icontains=search_term) |
                 Q(project_name__icontains=search_term) |
                 Q(unit_details__icontains=search_term) |
+                Q(seller_name__icontains=search_term) |
 
                 Q(deal_amount__icontains=search_term) |
                 Q(submitted_date__icontains=search_term)
@@ -579,14 +580,14 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         # Debugging line
         # Field-specific filters
         filter_fields = [
-            "reference_number", "unit_details", "building_name","seller_source","selller_mobile"
+            "reference_number", "unit_details", "builduing_name","seller_source","selller_mobile"
             "is_approved_rejected", "project_name","seller_name","buyer_name","buyer_mobile","buyer_source",
            ]
         for field in filter_fields:
             value = validated.get(field)
             if value:
-                filter_kwargs = {f"{field}__icontains": value}
-                queryset = queryset.filter(**filter_kwargs)
+                print(f"Filtering {field} by {value}")  # Debugging line
+                queryset = queryset.filter(**{f"{field}__icontains": value})
 
         # Deal Type Filter
         type_filter = validated.get("type")

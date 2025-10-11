@@ -73,14 +73,19 @@ class filterSerializer(serializers.Serializer):
 
     reference_number = serializers.CharField(required=False, allow_blank=True)
     unit_details = serializers.CharField(required=False, allow_blank=True)
-    building_name = serializers.CharField(required=False, allow_blank=True)
+    builduing_name = serializers.CharField(required=False, allow_blank=True)
     deal_type = serializers.CharField(required=False, allow_blank=True)
     deal_status = serializers.CharField(required=False, allow_blank=True)
     project_name = serializers.CharField(required=False, allow_blank=True)
-    owner_name = serializers.CharField(required=False, allow_blank=True)
-    tenant_name = serializers.CharField(required=False, allow_blank=True)
+    buyer_name = serializers.CharField(required=False, allow_blank=True)
+    buyer_source = serializers.CharField(required=False, allow_blank=True)
+     
     owner_mobile = serializers.CharField(required=False, allow_blank=True)
-    tenant_mobile = serializers.CharField(required=False, allow_blank=True)
+    buyer_mobile = serializers.CharField(required=False, allow_blank=True)
+    seller_mobile = serializers.CharField(required=False, allow_blank=True)
+    seller_name = serializers.CharField(required=False, allow_blank=True)
+    seller_source = serializers.CharField(required=False, allow_blank=True)
+    is_approved_rejected = serializers.CharField(required=False, allow_blank=True)
 
     from_date = serializers.DateField(required=False)
     to_date = serializers.DateField(required=False)
