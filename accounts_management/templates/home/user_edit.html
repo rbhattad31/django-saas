@@ -1489,12 +1489,7 @@ $j(document).ready(function() {
         formChanged = true;
     });
 
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-        }
-    });
+   
 
     $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
         if (formChanged) {
