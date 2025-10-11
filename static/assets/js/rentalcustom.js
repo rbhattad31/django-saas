@@ -484,7 +484,7 @@ $(document).ready(function () {
 
       datepickershow_edit();
       // loadAgentDropdown(data);
-      loadReceiptDropdown(data);
+      // loadReceiptDropdown(data);
 
      $.each(data, function (key, value) {
   const $field = $(`[name="${key}"], #${key}`);
@@ -530,11 +530,12 @@ $(document).ready(function () {
       $field.val(value);
     }
 
-    loadAgentDropdown(data);
     
   }
 });
 
+      loadAgentDropdown(data);
+      loadReceiptDropdown(data);
 // ✅ Manually uncheck specific radio groups (overrides)
  
 
