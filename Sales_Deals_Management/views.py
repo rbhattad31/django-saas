@@ -496,7 +496,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
                     Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
 
-                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
+                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first() # recipt id coming from the fronetend
                     mutable_data['receipt_id'] = reccicpt.id
                     mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
