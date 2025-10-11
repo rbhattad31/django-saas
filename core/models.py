@@ -1393,7 +1393,7 @@ class Deposits(models.Model):
     payment_type = models.CharField(max_length=191, null=True, blank=True)
     deal_refer_no = models.CharField(max_length=191 ,null = True , blank = True  )
     sum_of_dhs = models.CharField(max_length=191)
-    agent_name = models.CharField(max_length=191)
+    agent_name = models.CharField(max_length=191, null =True ,blank=True)
     project_name = models.CharField(max_length=191)
     building_name = models.CharField(max_length=191)
     unit_number = models.CharField(max_length=191)
