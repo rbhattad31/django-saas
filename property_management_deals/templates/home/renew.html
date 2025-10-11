@@ -388,14 +388,26 @@
               <label for="receipt_no">
                 Receipt No <span class="mandetory_field" style="color:red">*</span>
               </label>
+              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt. %}selected{% endif %}>
+                    {{ rcpt. }}
+                  </option>
+                {% endfor %}
+              </select> {% endcomment %}
+
               <select name="receipt_no" class="form-control" id="receipt_no">
                 <option value="">-- Select Receipt No --</option>
                 {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt %}selected{% endif %}>
-                    {{ rcpt }}
+                  <option value="{{ rcpt.receipt_number }}"
+                          {% if property.receipt_no == rcpt.receipt_number %}selected{% endif %}>
+                    {{ rcpt.receipt_number }}
                   </option>
                 {% endfor %}
               </select>
+
+
               <span class="text-danger" id="receipt_no_error"></span>
             </div>
           </div>

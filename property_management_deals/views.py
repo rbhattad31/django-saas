@@ -1298,7 +1298,8 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         property_obj = get_object_or_404(RentalProperties, pk=pk)
         form = PropertyForm(instance=property_obj)
         agents = Users.objects.filter(is_active=True)
-        receipt_nos = ManagementReceipts.objects.all()
+        # receipt_nos = ManagementReceipts.objects.filter( acc)
+        receipt_nos = ManagementReceipts.objects.filter(account_id = request.user.account_id)
         print("---- Rendering renew_property_page for Property ID:", pk)
         print("---- Cleaned Agent Names ----")
         for agent in agents:
