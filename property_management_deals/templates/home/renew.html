@@ -43,7 +43,7 @@
           <div class="row">
             <input type="hidden" name="id" id="id" value="{{ property.id }}">
             <input type="hidden" name="submitted_by_user_id" id="submitted_by_user_id" value="{{ request.user.id }}">
-            <input type="hidden" name="account_id" id="account_id">
+            <input type="hidden" name="account_id" id="account_id" value="{{ request.user.account_id }}">
             <input type="hidden" name="save_as" id="save_as">
             <input type="hidden" name="is_deleted" id="is_deleted" value="N">
 
