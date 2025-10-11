@@ -43,7 +43,7 @@
           <div class="row">
             <input type="hidden" name="id" id="id" value="{{ property.id }}">
             <input type="hidden" name="submitted_by_user_id" id="submitted_by_user_id" value="{{ request.user.id }}">
-            <input type="hidden" name="account_id" id="account_id" value="{{ request.user.account_id }}">
+            <input type="hidden" name="account_id" id="account_id" value="{{request.user.account_id}}">
             <input type="hidden" name="save_as" id="save_as">
             <input type="hidden" name="is_deleted" id="is_deleted" value="N">
 
@@ -93,7 +93,7 @@
               <label for="pms_price">
                 PMS Price <span class="mandetory_field" style="color: red">*</span>
               </label>
-              <input type="number" step="0.01" name="pms_price" class="form-control" id="pms_price" value="{{ property.pms_price }}">
+              <input type="number"  name="pms_price" class="form-control" id="pms_price" value="{{ property.pms_price }}">
               <span class="error text-danger" id="pms_price_error"></span>
             </div>
 
@@ -283,14 +283,16 @@
               <label for="total_commission">
                 Total Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="total_commission" class="form-control" id="total_commission" value="{{ property.total_commission }}">
+              <input type="text"  name="total_commission" class="form-control" id="total_commission" value="{{ property.total_commission }}">
               <span class="error text-danger" id="total_commission_error"></span>
             </div>
             <div class="col-md-6 form-group">
               <label for="less_outside_commission">
                 Less Outside Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission }}">
+              {% comment %} <input type="text" step="0.01" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission }}"> {% endcomment %}
+              <input type="text" name="less_outside_commission" class="form-control" id="less_outside_commission" value="{{ property.less_outside_commission }}">
+
               <span class="error text-danger" id="less_outside_commission_error"></span>
             </div>
           </div>
@@ -300,7 +302,7 @@
               <label for="net_commission">
                 Net Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input type="number" step="0.01" name="net_commission" class="form-control" id="net_commission" value="{{ property.net_commission }}">
+              <input type="text"name="net_commission" class="form-control" id="net_commission" value="{{ property.net_commission }}">
               <span class="error text-danger" id="net_commission_error"></span>
             </div>
 
@@ -318,7 +320,7 @@
               <label for="agent1">
                 Agent1 Commission <span class="mandetory_field" style="color:red">*</span>
               </label>
-              <input class="form-control" type="number" step="0.01" id="agent1" name="agent1" value="{{ property.agent1 }}">
+              <input class="form-control" type="text"  id="agent1" name="agent1" value="{{ property.agent1 }}">
               <span class="text-danger" id="agent1_error"></span>
             </div>
             <div class="col-md-6 form-group">
@@ -340,7 +342,7 @@
           <div class="row">
             <div class="col-md-6 form-group">
               <label for="agent2">Agent2 Commission</label>
-              <input class="form-control" type="number" step="0.01" id="agent2" name="agent2" value="{{ property.agent2 }}">
+              <input class="form-control" type="text"  id="agent2" name="agent2" value="{{ property.agent2 }}">
               <span class="text-danger" id="agent2_error"></span>
             </div>
             <div class="col-md-6 form-group">
@@ -360,7 +362,7 @@
           <div class="row">
             <div class="col-md-6 form-group">
               <label for="agent3">Agent3 Commission</label>
-              <input class="form-control" type="number" step="0.01" id="agent3" name="agent3" value="{{ property.agent3 }}">
+              <input class="form-control" type="text"  id="agent3" name="agent3" value="{{ property.agent3 }}">
               <span class="text-danger" id="agent3_error"></span>
             </div>
             <div class="col-md-6 form-group">
@@ -391,8 +393,8 @@
               {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
                 <option value="">-- Select Receipt No --</option>
                 {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt. %}selected{% endif %}>
-                    {{ rcpt. }}
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
+                    {{ rcpt }}
                   </option>
                 {% endfor %}
               </select> {% endcomment %}
@@ -400,14 +402,12 @@
               <select name="receipt_no" class="form-control" id="receipt_no">
                 <option value="">-- Select Receipt No --</option>
                 {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt.receipt_number }}"
+                  <option value="{{ rcpt.receipt_number }}" 
                           {% if property.receipt_no == rcpt.receipt_number %}selected{% endif %}>
                     {{ rcpt.receipt_number }}
                   </option>
                 {% endfor %}
               </select>
-
-
               <span class="text-danger" id="receipt_no_error"></span>
             </div>
           </div>
@@ -749,29 +749,70 @@ $j(document).ready(function() {
                     console.log(`Existing files for ${field}:`, files);
                 });
 
-                let chequeDates = data.cheque_date ? data.cheque_date.split(' ').filter(date => date) : [];
-                if (chequeDates && Array.isArray(chequeDates)) {
-                    $j('.append-cheque-date').empty();
-                    chequeDates.forEach((dateStr, index) => {
-                        const formattedDate = formatDateForInput(dateStr);
-                        const rowHtml = `
-                            <div class="row delete-cheque-date-row${index}">
-                                <div class="col-md-6 form-group">
-                                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
-                                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
-                                </div>
-                                <div class="col-md-2 form-group" style="top:20px;">
-                                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
-                                </div>
-                            </div>`;
-                        $j('.append-cheque-date').append(rowHtml);
-                    });
-                    $j('#no_of_cheque').val(chequeDates.length);
-                } else {
-                    $j('.append-cheque-date').empty();
-                    $j('#no_of_cheque').val(0);
+                //let chequeDates = data.cheque_date ? data.cheque_date.split(' ').filter(date => date) : [];
+                //if (chequeDates && Array.isArray(chequeDates)) {
+                //    $j('.append-cheque-date').empty();
+                //    chequeDates.forEach((dateStr, index) => {
+                //        const formattedDate = formatDateForInput(dateStr);
+                //        const rowHtml = `
+                //            <div class="row delete-cheque-date-row${index}">
+                //                <div class="col-md-6 form-group">
+                //                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                //                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                //                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                //                </div>
+                //                <div class="col-md-2 form-group" style="top:20px;">
+                //                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                ///                </div>
+                //           </div>`;
+               //         $j('.append-cheque-date').append(rowHtml);
+               //     });
+               //     $j('#no_of_cheque').val(chequeDates.length);
+               // } else {
+               //     $j('.append-cheque-date').empty();
+               //     $j('#no_of_cheque').val(0);
+               // }
+               let chequeDates = [];
+                if (Array.isArray(data.cheque_date)) {
+                    chequeDates = data.cheque_date.filter(d => d && d.trim());
+                } else if (typeof data.cheque_date === 'string' && data.cheque_date.trim()) {
+                    chequeDates = data.cheque_date.split(/[,\s]+/).filter(d => d && d.trim());
                 }
+
+                $j('.append-cheque-date').empty();
+                //chequeDates.forEach((dateStr, index) => {
+                //    const formattedDate = formatDateForInput(dateStr);
+                //    const rowHtml = `
+                //        <div class="row delete-cheque-date-row${index}">
+                //            <div class="col-md-6 form-group">
+                //                <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                //                <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                //                <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                //            </div>
+                //            <div class="col-md-2 form-group" style="top:20px;">
+                //                <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                //            </div>
+                //        </div>`;
+                //    $j('.append-cheque-date').append(rowHtml);
+                //});
+                //$j('#no_of_cheque').val(chequeDates.length);
+
+                chequeDates.forEach((dateStr, index) => {
+                  const formattedDate = formatDateForInput(dateStr);
+                  const rowHtml = `
+                      <div class="row delete-cheque-date-row row-cheque" id="cheque_row_${index}">
+                          <div class="col-md-6 form-group">
+                              <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                              <input type="date" name="cheque_date" class="form-control cheque-dates previous-cheque-date" id="cheque_dates_${index}" value="${formattedDate}" style="background-color:white;">
+                              <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                          </div>
+                          <div class="col-md-2 form-group" style="top:20px;">
+                              <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                          </div>
+                      </div>`;
+                  $j('.append-cheque-date').append(rowHtml);
+              });
+
             },
             error: function(xhr, status, error) {
                 console.error('❌ Error fetching property:', xhr.responseText);
@@ -787,30 +828,58 @@ $j(document).ready(function() {
         });
     }
 
+    //$j('#add-cheque-row').on('click', function() {
+    //    const currentCount = $j('.delete-cheque-date-row').length;
+    //    const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
+    //    if (currentCount < maxCheques || maxCheques === 0) {
+    //        const index = currentCount;
+    //        const rowHtml = `
+    //            <div class="row delete-cheque-date-row${index}">
+    //                <div class="col-md-6 form-group">
+    //                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+    //                    <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
+    //                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
+    //                </div>
+    //                <div class="col-md-2 form-group" style="top:20px;">
+    //                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+    //                </div>
+    //            </div>`;
+    //        $j('.append-cheque-date').append(rowHtml);
+           // $j('#no_of_cheque').val(currentCount + 1);
+    //    }
+    //});
+
+
+
     $j('#add-cheque-row').on('click', function() {
-        const currentCount = $j('.delete-cheque-date-row').length;
         const maxCheques = parseInt($j('#no_of_cheque').val()) || 0;
-        if (currentCount < maxCheques || maxCheques === 0) {
-            const index = currentCount;
-            const rowHtml = `
-                <div class="row delete-cheque-date-row${index}">
-                    <div class="col-md-6 form-group">
-                        <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
-                        <input type="date" name="cheque_date[${index}]" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date">
-                        <span class="error text-danger" id="cheque_date_error_${index}"></span>
-                    </div>
-                    <div class="col-md-2 form-group" style="top:20px;">
-                        <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
-                    </div>
-                </div>`;
-            $j('.append-cheque-date').append(rowHtml);
-            $j('#no_of_cheque').val(currentCount + 1);
+        const currentCount = $j('.row-cheque').length; // counts existing + new
+
+        if (currentCount >= maxCheques) {
+            alert(`❌ You already have ${currentCount} cheque(s). Cannot add more than ${maxCheques}.`);
+            return;
         }
+
+        const index = currentCount;
+        const rowHtml = `
+            <div class="row delete-cheque-date-row row-cheque" id="cheque_row_${index}">
+                <div class="col-md-6 form-group">
+                    <label>Cheque Date <span class="mandetory_field" style="color:red">*</span></label>
+                    <input type="date" name="cheque_date" class="form-control cheque-dates" id="cheque_dates_${index}" placeholder="Cheque Date"> 
+                    <span class="error text-danger" id="cheque_date_error_${index}"></span>
+                </div>
+                <div class="col-md-2 form-group" style="top:20px;">
+                    <a class="txt-color btn btn-primary btn-rounded m-1 remove-cheque-date-row" style="float: right; color: white; margin-left: 5px;">Remove</a>
+                </div>
+            </div>`;
+        
+        $j('.append-cheque-date').append(rowHtml);
     });
 
+    
     $j(document).on('click', '.remove-cheque-date-row', function() {
         $j(this).closest('.row').remove();
-        $j('#no_of_cheque').val($j('.delete-cheque-date-row').length);
+       // $j('#no_of_cheque').val($j('.delete-cheque-date-row').length);
     });
 
     function ValidateSizeadd(file, id, i) {
@@ -851,9 +920,16 @@ $j(document).ready(function() {
         return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
     }, "Enter valid Profile Id");
 
+    //$j.validator.addMethod("numeric", function(value, element, param) {
+    //    return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+    //}, "Enter only numbers.");
     $j.validator.addMethod("numeric", function(value, element, param) {
-        return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
+        return true; // Always passes validation
     }, "Enter only numbers.");
+    //$.validator.addMethod("numeric", function(value, element, param) {
+    //    const regex = /^-?(\d+|(\d{1,3}(,\d{2})*(,\d{2,3})?)|(\d{1,3}(,\d{3})+))(\.\d+)?$/;
+     //   return this.optional(element) || regex.test(value);
+    //}, "Enter only numbers.");
 
     $j.validator.addMethod("text_special", function(value, element) {
         return this.optional(element) || value == value.match(/[A-Za-z_~\-!@#'\$%\^&\*\(\)]+$/);
@@ -1187,20 +1263,20 @@ $j(document).ready(function() {
         formChanged = true;
     });
 
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-        }
-    });
+   // window.addEventListener('beforeunload', function(e) {
+   //     if (formChanged) {
+   //         e.preventDefault();
+   //         e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+   //     }
+   // });
 
-    $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
-        if (formChanged) {
-            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                e.preventDefault();
-            }
-        }
-    });
+   // $j('a.btn.btn-primary.btn-rounded').on('click', function(e) {
+   //     if (formChanged) {
+   //         if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+   //             e.preventDefault();
+   //         }
+   //     }
+   // });
 
     function loadAgentDropdown(requestdata) {
         $j.ajax({

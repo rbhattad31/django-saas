@@ -1520,10 +1520,20 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         search_term = data.get("search", {}).get("value") or ''
         if search_term:
             queryset = queryset.filter(
-                Q(reference_number__icontains=search_term) |
-                Q(building_name__icontains=search_term) |
-                Q(project_name__icontains=search_term)
-            )
+                    Q(id__icontains=search_term) |
+                    Q(reference_number__icontains=search_term) |
+                    Q(deal_date__icontains=search_term) |
+                    Q(unit_details__icontains=search_term) |
+                    Q(building_name__icontains=search_term) |
+                    Q(project_name__icontains=search_term) |
+                    Q(pms_price__icontains=search_term) |
+                    Q(pm_start_date__icontains=search_term) |
+                    Q(pm_end_date__icontains=search_term) |
+                    Q(tenancy_start_date__icontains=search_term) |
+                    Q(tenancy_end_date__icontains=search_term) |
+                    Q(submitted_date__icontains=search_term) |
+                    Q(status__icontains=search_term)
+                )
             print("After global search:", queryset)
 
         
@@ -1534,7 +1544,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             "unit_details": "unit_details",  # or "unit_details" depending on model field
             "project_name": "project_name",
             "property_id": "property_id",
-            "approval_status": "approval_status",
+            "approval_status": "is_approved_rejected",
             # add more mappings if needed
         }
 
@@ -1719,11 +1729,11 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(is_approved_rejected='F')
  
             elif deal_type == 'entered-finance':
-                queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete")
+                queryset = queryset.filter(is_entered_in_finance_system='1',form_status= "Complete", is_approved_rejected__in=["A","F"])
             
             #Here waiting-finance is related to pending finance
             elif deal_type == "waiting-finance" :
-                queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete")
+                queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete", is_approved_rejected__in=["A","F"])
  
             elif deal_type == 'draft':
                 queryset = queryset.filter(form_status='Incomplete',submitted_by_user_id=user.id)

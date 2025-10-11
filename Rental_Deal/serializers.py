@@ -386,6 +386,7 @@ class filterSerializer(serializers.Serializer):
     tenant_name = serializers.CharField(required=False, allow_blank=True)
     owner_mobile = serializers.CharField(required=False, allow_blank=True)
     tenant_mobile = serializers.CharField(required=False, allow_blank=True)
+    is_approved_rejected = serializers.CharField(required=False, allow_blank=True)
 
 
 
