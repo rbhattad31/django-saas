@@ -41,7 +41,7 @@ class DepositsSerializer(serializers.ModelSerializer):
             html += ""
 
         # Delete
-        if user.has_perm('core.delete_deposits'):
+        if user.has_perm('core.download_third_party_deposits'):
             html += f'<a style = "text-decoration: none;" target= _blank  href="/third_party_receipts/recipts/download/{obj.id}/" title="Download" class="text-success mx-1" style="font-size: 16px;"> <i class="fas fa-download"></i> </a>'
         
 
