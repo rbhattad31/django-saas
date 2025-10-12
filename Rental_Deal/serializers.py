@@ -295,9 +295,21 @@ class DealSerializer(serializers.ModelSerializer):
         if not number:
             return "Invalid amount"
 
-        # Remove commas and spaces
-        number = str(number).replace(",", "").strip()
+    # Convert to string and clean up
+        number = str(number).upper().strip()
 
+        # Remove currency codes and symbols (case-insensitive because of .upper())
+        for symbol in ["AED", "USD", "$", "DHS", "DIRHAMS"]:
+            number = number.replace(symbol, "")
+
+        # Remove commas and spaces
+        number = number.replace(",", "").strip()
+
+        # Remove decimal part if any
+        if "." in number:
+            number = number.split(".")[0]
+
+        # Validate
         if not number.isdigit():
             return "Invalid amount"
 
@@ -341,6 +353,10 @@ class DealSerializer(serializers.ModelSerializer):
             group_index += 1
 
         return " ".join(words).strip()
+
+        
+
+        
 
 
     def validate_reference_number(self, value):
