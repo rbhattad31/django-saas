@@ -1814,8 +1814,13 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         # Pagination
         start = int(data.get("start", 0))
         length = int(data.get("length", 10))
-        paginated = queryset[start:start + length]
+        # paginated = queryset[start:start + length]
         #print("Paginated queryset:", paginated)
+
+        if length == -1:
+            paginated = queryset[start:]  # Take all rows from `start` to the end
+        else:
+            paginated = queryset[start:start + length]
 
         # Prepare final response
         response_data = {
@@ -2095,7 +2100,12 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         start = int(data.get("start", 0))
         length = int(data.get("length", 10))
         print(f"📌 Pagination - Start: {start}, Length: {length}")
-        paginated = queryset[start:start + length]
+        # paginated = queryset[start:start + length]
+
+        if length == -1:
+            paginated = queryset[start:]  # Take all rows from `start` to the end
+        else:
+            paginated = queryset[start:start + length]
         print(f"📄 Paginated Records Count: {paginated.count()}")
 
         # 🧾 Serialization

@@ -591,6 +591,9 @@
             processing: true,
             serverSide: true,
             //serverSide:false,
+            scrollX: true,
+            scrollY: '600px',
+            scrollCollapse: true,
             ordering: true,
             order: [[1, 'desc']], // Default sort on the second column (receipt_number)
             ajax: {
@@ -721,8 +724,11 @@
             ],
             scrollX: true,
             pageLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100, 125, -1],
-            lengthMenuText: { '-1': 'All' }
+            lengthMenu: [
+                [10, 25, 50, 75, 100, 125, -1],
+                [10, 25, 50, 75, 100, 125, "All"]
+            ],
+            //
         });
         console.log("DataTable initialized:", table);
 
