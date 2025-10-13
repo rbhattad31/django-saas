@@ -125,12 +125,16 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
             # Add fields to global search based on your specific request
             global_q_object |= Q(receipt_number__icontains=global_search_value)
+            global_q_object |= Q(deal_refer_no__icontains=global_search_value)
+            global_q_object |= Q(cheque_no__icontains=global_search_value)
+            global_q_object |= Q(dhs__icontains=global_search_value)
             global_q_object |= Q(payment_type__icontains=global_search_value)
             global_q_object |= Q(deal_type__icontains=global_search_value)
             global_q_object |= Q(status__icontains=global_search_value) # Using 'status' as field name
             global_q_object |= Q(agent_name__icontains=global_search_value)
             global_q_object |= Q(unit_number__icontains=global_search_value)
             global_q_object |= Q(building_name__icontains=global_search_value)
+            global_q_object |= Q(received_from__icontains=global_search_value)
             try:
                 # Attempt to parse the search_term as DD-MM-YYYY
                 parsed_date = datetime.strptime(global_search_value, '%d-%m-%Y').date()
