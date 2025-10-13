@@ -153,7 +153,16 @@ class DepositsViewSet(viewsets.ModelViewSet):
         # Manual Pagination for DataTables
         start = validated.get("start", 0)
         length = validated.get("length", 10)
-        paginated = queryset[start:start + length]
+         
+        print(start , length) # Default to 10 if not provided
+
+        if length != -1:
+            paginated = list(queryset[start:start + length])
+            # Get total count from a separate count query only if needed
+            total_count = queryset.count() if start > 0 or len(paginated) == length else len(paginated)
+        else:
+            paginated = list(queryset)
+            total_count = len(paginated)
 
         serializer = DepositsSerializer(paginated, many=True , context = {'request': request})
         response_data = {
