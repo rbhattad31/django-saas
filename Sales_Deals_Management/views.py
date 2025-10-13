@@ -165,7 +165,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
         mutable_data['created_by'] = request.user.id
-        mutable_data['submitted_by_agent'] = request.user.id
+        # mutable_data['submitted_by_agent'] = request.user.id
        
            
 
@@ -679,13 +679,26 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(date__gte=validated.get("from_date"))
         if validated.get("to_date"):
             queryset = queryset.filter(date__lte=validated.get("to_date"))
+        
+        print("Ordering Info:", validated.get("order"))  # Debugging line
+        order_info = validated.get("order", [])
 
         total_count = queryset.count()
 
         # Manual Pagination for DataTables
         start = validated.get("start", 0)
         length = validated.get("length", 10)
-        paginated = queryset[start:start + length]
+        
+
+        print("Pagination - start:", start, "length:", length)  # Debugging line
+
+        if length != -1:
+            paginated = list(queryset[start:start + length])
+            # Get total count from a separate count query only if needed
+            total_count = queryset.count() if start > 0 or len(paginated) == length else len(paginated)
+        else:
+            paginated = list(queryset)
+            total_count = len(paginated)
         
 
         serializer = SalesDealSerializerFordatafilter(paginated, many=True,context= {'request': request})
