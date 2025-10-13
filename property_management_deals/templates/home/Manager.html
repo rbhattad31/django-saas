@@ -592,7 +592,7 @@
             serverSide: true,
             //serverSide:false,
             ordering: true,
-            order: [[1, 'asc']], // Default sort on the second column (receipt_number)
+            order: [[1, 'desc']], // Default sort on the second column (receipt_number)
             ajax: {
                 url: '{% url "managerdatatablefilter" %}',
                 type: 'POST',
