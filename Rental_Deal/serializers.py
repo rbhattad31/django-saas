@@ -73,13 +73,16 @@ class DealSerializer(serializers.ModelSerializer):
     manager_approved_rejected_display = serializers.SerializerMethodField()
     is_entered_in_finance_system_display = serializers.SerializerMethodField()
     action = serializers.SerializerMethodField()
+    agent_name1_display = serializers.SerializerMethodField()
+    agent_name2_display = serializers.SerializerMethodField()
+    agent_name3_display = serializers.SerializerMethodField()
 
 
 
     class Meta:
         model = RentalDeals
         fields = '__all__'
-        extra_fields = ['agent_username','action']
+        extra_fields = ['agent_username','action' ,'agent_name1_display','agent_name2_display','agent_name3_display' ]
 
     
     CONDITIONAL_REQUIRED_FIELDS = [
@@ -353,6 +356,34 @@ class DealSerializer(serializers.ModelSerializer):
             group_index += 1
 
         return " ".join(words).strip()
+    
+
+    def get_agent_name1_display(self, obj):
+        try:
+            if not obj.agent_name1 :
+                return ""
+            user = User.objects.get(id=obj.agent_name1)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name2_display(self, obj):
+        try:
+            if not obj.agent_name2 :
+                return ""
+            user = User.objects.get(id=obj.agent_name2)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name3_display(self, obj):
+        try:
+            if not obj.agent_name3 :
+                return ""
+            user = User.objects.get(id=obj.agent_name3)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
 
         
 
