@@ -230,9 +230,19 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
         records_filtered = queryset.count()
 
     
+       
+        print(start , length) # Default to 10 if not provided
 
+        if length != -1:
+            paginated = list(queryset[start:start + length])
+            # Get total count from a separate count query only if needed
+            total_count = queryset.count() if start > 0 or len(paginated) == length else len(paginated)
+        else:
+            paginated = list(queryset)
+            total_count = len(paginated)    
         # --- Apply Pagination ---
-        paginated_queryset = queryset[start:start + length]
+        
+        paginated_queryset = paginated
 
         # --- Serialize Data for Response ---
         # Use the ReceiptsSerializer to convert queryset objects to JSON

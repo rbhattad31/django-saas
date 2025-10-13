@@ -73,9 +73,9 @@ class DataTableSearchSerializer(serializers.Serializer):
     including custom search filters.
     """
     # --- Standard DataTables Parameters ---
-    draw = serializers.IntegerField(required=True, min_value=0)
-    start = serializers.IntegerField(required=True, min_value=0)
-    length = serializers.IntegerField(required=True, min_value=1)
+    draw = serializers.IntegerField(required=True,  )
+    start = serializers.IntegerField(required=True,  )
+    length = serializers.IntegerField(required=True,  )
 
     # The 'search' parameter is an object from DataTables
     search =  SearchSerializer(required=False)
