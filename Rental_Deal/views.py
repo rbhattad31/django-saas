@@ -116,7 +116,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
 
-        queryset = RentalDeals.objects.select_related("submitted_by_user").filter(is_deleted="N", account_id = account_id).order_by('-date').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected", "owner_first_name", "tenant_first_name","owner_mobile","tenant_mobile","is_new_deal",
+        queryset = RentalDeals.objects.select_related("submitted_by_user").filter(is_deleted="N", account_id = account_id).order_by('-id').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected", "owner_first_name", "tenant_first_name","owner_mobile","tenant_mobile","is_new_deal",
             "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
            "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
            "submitted_by_user__id",

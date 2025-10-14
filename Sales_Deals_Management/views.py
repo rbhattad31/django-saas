@@ -558,7 +558,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     SalesDeals.objects 
     .filter(is_deleted="N", account_id=account_id)
     .select_related("submitted_by_user")   # <— prevents N+1 queries
-    .order_by("-date").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
+    .order_by("-id").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
     "seller_source","buyer_name","buyer_source","buyer_mobile",
     "selller_mobile","project_name",  "date", "submitted_date", "buyer_name","deal_amount",
    "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",
