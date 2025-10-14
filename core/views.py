@@ -320,10 +320,18 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
             # now we get id inhte agent name call the database and assign name toit 
 
-            user = Users.objects.filter(id = flat_data['agent_id']).first()
+            print(flat_data)
+
+            print(flat_data['agent_id'] , "this is agent id")
+
+            user = Users.objects.filter(id = flat_data['agent_name']).first()
             print(user.name)
 
             flat_data['agent_name'] = user.name
+            flat_data['agent_email'] = user.email
+            flat_data['agent_id'] = user.id
+
+            print(flat_data)
 
 
             serializer = ReceiptSerilizer(reciecpt, data= flat_data,partial=True )
