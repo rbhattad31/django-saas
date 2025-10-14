@@ -162,10 +162,17 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         
         print(mutable_data)
 
-        mutable_data['submitted_by_user'] = request.user.id
+        # mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
         mutable_data['created_by'] = request.user.id
         # mutable_data['submitted_by_agent'] = request.user.id
+
+        if not mutable_data.get('submitted_by_agent'):
+            mutable_data['submitted_by_user'] = request.user.id
+
+        else :
+            mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
+           
        
            
 
@@ -506,6 +513,12 @@ class SalesDealViewSet(viewsets.ModelViewSet):
  
             mutable_data['updated_by'] = request.user.email
             mutable_data['updated_at'] = now()
+
+            if not mutable_data.get('submitted_by_agent'):
+                mutable_data['submitted_by_user'] = request.user.id
+
+            else :
+                mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
 
             
             
