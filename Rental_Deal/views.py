@@ -209,12 +209,17 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             "is_approved_rejected", "project_name", "owner_first_name", "tenant_first_name",
             "owner_mobile", "tenant_mobile"
         ]
+        print(data)
+        print(filter_fields , "point x3")
         for field in filter_fields:
           
             value = data.get(field)
+            print(filter_fields , "point x4")
             if value:
-                filter_kwargs = {f"{field}__icontains": value}
-                queryset = queryset.filter(**filter_kwargs)
+                print(f"Filtering {field} by {value}")
+                print(filter_fields , "point x5")
+                
+                queryset = queryset.filter(**{f"{field}__icontains": value})
 
         # Filterationon types keyword
         type_filter = data.get("type")

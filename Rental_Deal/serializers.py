@@ -76,6 +76,9 @@ class DealSerializer(serializers.ModelSerializer):
     agent_name1_display = serializers.SerializerMethodField()
     agent_name2_display = serializers.SerializerMethodField()
     agent_name3_display = serializers.SerializerMethodField()
+    
+
+
 
 
 
@@ -429,7 +432,7 @@ class filterSerializer(serializers.Serializer):
     deal_type = serializers.CharField(required=False, allow_blank=True)
     deal_status = serializers.CharField(required=False, allow_blank=True)
     project_name = serializers.CharField(required=False, allow_blank=True)
-    owner_name = serializers.CharField(required=False, allow_blank=True)
+    owner_first_name = serializers.CharField(required=False, allow_blank=True)
     tenant_name = serializers.CharField(required=False, allow_blank=True)
     owner_mobile = serializers.CharField(required=False, allow_blank=True)
     tenant_mobile = serializers.CharField(required=False, allow_blank=True)
@@ -463,7 +466,8 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
      
      
 
-    email = serializers.CharField(source="submitted_by_user.email", read_only=True)
+    email =  serializers.SerializerMethodField()
+    # email = serializers.CharField(source='submitted_by_user.email', read_only=True)
     username = serializers.CharField(source="submitted_by_user.name", read_only=True)
 
     # is_approved_rejected_display = serializers.SerializerMethodField()
@@ -515,6 +519,19 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
     
     def get_is_entered_in_finance_system_display(self, obj):
         return obj.get_is_entered_in_finance_system_display()
+    
+    def get_email(self, obj):
+        """
+        Fetches the agent name from the User table using the stored user ID.
+        Returns None if the user doesn't exist.
+        """
+        try:
+            user = Users.objects.get(id=obj.submitted_by_agent)
+            return user.email
+        except (Users.DoesNotExist, TypeError, ValueError):
+            return None
+    
+
     
     
 
