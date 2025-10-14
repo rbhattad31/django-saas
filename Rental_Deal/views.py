@@ -266,7 +266,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_rental_deals"):
                     if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
-                        queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete") | Q(is_approved_rejected="R", form_status="Complete")) 
+                        queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete")) 
                     else:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
                 else:
@@ -330,7 +330,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         if role == "Agent" or user_role == "Agent":
             queryset = queryset.filter(submitted_by_user=user)
         elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
-            queryset = queryset.filter(created_by=user.email)
+            queryset = queryset.filter(submitted_by_user=user)
         else:
             role = "superadmin" 
 
@@ -555,10 +555,24 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             else:
                 pass
 
+        
+        if not mutable_data.get('submitted_by_agent'):
+            mutable_data['submitted_by_user'] = request.user.id
 
-        mutable_data['submitted_by_user'] = request.user.id
+        else :
+            mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
+           
+            
+
+
+
+
+
+
+
+        # mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
-        mutable_data['submitted_by_agent'] = request.user.id
+        # mutable_data['submitted_by_agent'] = request.user.id
 
         mutable_data['created_by'] = request.user.email
         mutable_data['created_at'] = now()
@@ -796,6 +810,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             mutable_data['updated_by'] = request.user.email
             mutable_data['updated_at'] = now()
+
+
+# if admin crea ting the deal on behalf of agent user willbe agent name if  agent creating deal user will be user name
+            if not mutable_data.get('submitted_by_agent'):
+                mutable_data['submitted_by_user'] = request.user.id
+            else :
+                mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer
