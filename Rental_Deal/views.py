@@ -330,7 +330,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         if role == "Agent" or user_role == "Agent":
             queryset = queryset.filter(submitted_by_user=user)
         elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
-            queryset = queryset.filter(submitted_by_user=user)
+            queryset = queryset.filter(created_by=user.email)
         else:
             role = "superadmin" 
 
