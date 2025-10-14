@@ -466,8 +466,8 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
      
      
 
-    email =  serializers.SerializerMethodField()
-    # email = serializers.CharField(source='submitted_by_user.email', read_only=True)
+    # email =  serializers.SerializerMethodField()
+    email = serializers.CharField(source='submitted_by_user.email', read_only=True)
     username = serializers.CharField(source="submitted_by_user.name", read_only=True)
 
     # is_approved_rejected_display = serializers.SerializerMethodField()
