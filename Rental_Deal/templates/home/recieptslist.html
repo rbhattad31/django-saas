@@ -142,7 +142,10 @@
 
   </div>
 </div>
+<div display="none">
+  {{receipt.}} 
 
+</div>
 
 
  
@@ -366,11 +369,8 @@ function getCookie(name) {
          {data:"payment_type" ,title: "payment_type"},
          {data:"sec_date" , title: "Payment Date"},
          {data:"deal_type", title: "Deal_type"},
-         {data:"deal_refer_no",  fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-          $(nTd).html(
-            `<a href='/rental-deals/view/${oData.id}/' class='anchortag text-black text-decoration-none'>${sData}</a>`
-          );
-        }, title:"reference_number"},
+         {data:"reference_link",   
+         title:"reference_number"},
          {data:"agent_name" , title: "Agent Name"},
          {data:"project_name",title: "Project Name"},
          {data:"building_name",title: "Building Name"},

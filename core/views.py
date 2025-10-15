@@ -412,6 +412,8 @@ def recicept_create(request):
 def recicept_view(request,pk=None):
     reciecpt = get_object_or_404(Receipts, pk=pk)
 
+    print(reciecpt.deal_refer_no , "this is the deal refer no")
+
     serializer = ReceiptSerilizer(reciecpt)
     print(serializer.data)
     return render(request, "home/reciecpt_view.html" ,{'recicept':serializer.data})

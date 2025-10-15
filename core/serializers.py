@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from core.models import RentalDeals,Users,Receipts
+from core.models import RentalDeals,Users,Receipts,SalesDeals
 from rest_framework.reverse import reverse
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
+from django.utils.html import format_html
 
 # class RentalDealSingleFieldSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -24,10 +25,13 @@ class ReceiptSerilizer(serializers.ModelSerializer):
     #     input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
     #     format="%d-%m-%Y"             # Return DMY to frontend
     # )
+    reference_link = serializers.SerializerMethodField()
 
     class Meta :
         model = Receipts
         fields = '__all__'
+        extra_fields = {
+            'reference_link'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,7 +63,36 @@ class ReceiptSerilizer(serializers.ModelSerializer):
                 self.fields['cheque_no'].required = True
                 self.fields['bank'].required = True
 
+
+    def get_reference_link(self, obj):
+        html=""
+        print(obj.deal_refer_no ,"thisiss the deal refer no")
+        if obj.deal_refer_no:
+            print(obj.deal_refer_no ,"thisiss the deal refer no entered if condition") 
+            if obj.deal_type == "Rental":
+                deal  = RentalDeals.objects.filter(reference_number=obj.deal_refer_no).first()
+                if deal:
+                    html += f'<a href="/rental-deals/view/{deal.id}/" target="_blank" style="text-decoration: none; color:black">{obj.deal_refer_no}</a>'
+                else:
+                    html +=""
+            elif obj.deal_type == "Sales":
+                deal  = SalesDeals.objects.filter(reference_number=obj.deal_refer_no).first()
+                if deal:
+                    html += f'<a href="/sales-deals/view/{deal.id}/" target="_blank" style="text-decoration: none;color:black ">{obj.deal_refer_no}</a>'
+                else:
+                    html +=""
+
+        
  
+            if deal: 
+                return format_html(html) 
+        else:
+            return format_html(html)
+            
+
+
+ 
+         
 
 
 class SearchSerializer(serializers.Serializer):
