@@ -1223,11 +1223,11 @@ class RentalDeals (models.Model):
     security_deposit = models.CharField(max_length=191, blank=True ,null =True )
     submitted_by_agent = models.IntegerField()
     property_type = models.CharField(max_length=191, blank=True, null=True)
-    tenancy_application_form = models.CharField(max_length=191, blank=True, null=True)
-    screening = models.CharField(max_length=191)
+    tenancy_application_form = models.CharField(blank=True, null=True)
+    screening = models.CharField()
     screening_comments = models.TextField(blank=True)
-    seller_nationality = models.CharField(max_length=191)
-    buyer_nationality = models.CharField(max_length=191)
+    seller_nationality = models.CharField()
+    buyer_nationality = models.CharField()
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
 
     # tenant_id = 'account'  # OR 'user_account_id' if you use db_column
