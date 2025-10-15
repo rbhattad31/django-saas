@@ -815,6 +815,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 # if admin crea ting the deal on behalf of agent user willbe agent name if  agent creating deal user will be user name
             if not mutable_data.get('submitted_by_agent'):
                 mutable_data['submitted_by_user'] = request.user.id
+                mutable_data['submitted_by_agent'] = request.user.id
             else :
                 mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
 
