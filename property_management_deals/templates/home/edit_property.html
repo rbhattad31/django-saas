@@ -933,8 +933,11 @@
               <button type="submit" class="btn btn-primary btn-rounded m-1" name="create_deal" id="create_deal">Submit Property</button> 
             </div>
           </div> {% endcomment %}
-          <div class="row mt-3">
+         <div class="row mt-3">
             <div class="col-sm-12 d-flex justify-content-center mt-3">
+              <button type="button" class="btn btn-primary btn-rounded m-1" name="update_draft" id="update_draft">
+                Update Property
+              </button>
               <button type="submit" class="btn btn-primary btn-rounded m-1" name="create_deal" id="create_deal">
                 Submit Property
               </button>
@@ -1478,76 +1481,147 @@ $j(document).ready(function() {
             owner_mobile: { required: true, mobile_number: true },
             owner_email: { required: true, custom_email: true },
             seller_nationality: { required: true, lettersonly: true },
-            agency_name: { required: true, only_text: true },
-            agent_name: { required: true, lettersonly: true },
-            agent_phone: { required: true, mobile_number: true },
-            no_of_cheque: { required: true, numeric: true, min: 0 },
-            total_commission: { required: true, numeric: true },
-            less_outside_commission: { required: true, numeric: true },
-            net_commission: { required: true, numeric: true },
-            classic: { required: true, alphanum_special: true },
-            agent1: { required: true, numeric: true },
-            agent_name1: { required: true },
-            receipt_no: { required: true },
-            is_property_aml: { required: true },
+            //agency_name: { required: true, only_text: true },
+            //agent_name: { required: true, lettersonly: true },
+            //agent_phone: { required: true, mobile_number: true },
+            //no_of_cheque: { required: true, numeric: true, min: 0 },
+            //total_commission: { required: true, numeric: true },
+            //less_outside_commission: { required: true, numeric: true },
+            //net_commission: { required: true, numeric: true },
+            //classic: { required: true, alphanum_special: true },
+            //agent1: { required: true, numeric: true },
+            //agent_name1: { required: true },
+            //receipt_no: { required: true },
+            //is_property_aml: { required: true },
+            //manager_approved_rejected: {
+            //    required: function(element) {
+            //        return $j('[name="manager_approved_rejected"]').length > 0;
+            //    },
+            //    valid_approval_status: true
+            //},
+            //is_approved_rejected: {
+            //    required: function(element) {
+            //        return $j('[name="is_approved_rejected"]').length > 0;
+            //    }
+            //},
+ 
+             // ⚠️ Optional on draft
+            agency_name: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                only_text: true
+            },
+ 
+            agent_phone: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                mobile_number: true
+            },
+            no_of_cheque: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                numeric: true, min: 0
+            },
+            total_commission: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                numeric: true
+            },
+            less_outside_commission: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                numeric: true
+            },
+            net_commission: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                numeric: true
+            },
+            classic: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                alphanum_special: true
+            },
+            agent1: {
+                required: function() { return $j('#save_as').val() !== 'draft'; },
+                numeric: true
+            },
+            agent_name1: {
+                required: function() { return $j('#save_as').val() !== 'draft'; }
+            },
+            receipt_no: {
+                required: function() { return $j('#save_as').val() !== 'draft'; }
+            },
+            is_property_aml: {
+                required: function() { return $j('#save_as').val() !== 'draft'; }
+            },
             manager_approved_rejected: {
                 required: function(element) {
-                    return $j('[name="manager_approved_rejected"]').length > 0;
+                    return $j('#save_as').val() !== 'draft' && $j('[name="manager_approved_rejected"]').length > 0;
                 },
                 valid_approval_status: true
             },
             is_approved_rejected: {
                 required: function(element) {
-                    return $j('[name="is_approved_rejected"]').length > 0;
+                    return $j('#save_as').val() !== 'draft' && $j('[name="is_approved_rejected"]').length > 0;
                 }
             },
-            'pms_contract[]': { 
+ 
+            //'pms_contract[]': {
+            //    required: function(element) {
+            //        const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
+            //        const files = $j('#pms_contract').get(0).files.length;
+                    //return existingCount === 0 && files === 0;
+            //        return existingCount === 0 && files === 0 && $j('#save_as').val() !== 'draft';
+            //    }
+            //},
+ 
+            'pms_contract[]': {
                 required: function(element) {
+                    if ($j('#save_as').val() === 'draft') return false; // skip for draft
                     const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
                     const files = $j('#pms_contract').get(0).files.length;
                     return existingCount === 0 && files === 0;
                 }
             },
-            'owner_passport_copy[]': { 
+            'owner_passport_copy[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#owner_passport_copy_existing_count').val()) || 0;
                     const files = $j('#owner_passport_copy').get(0).files.length;
-                    return existingCount === 0 && files === 0;
+                    //return existingCount === 0 && files === 0;
+                    return existingCount === 0 && files === 0 && $j('#save_as').val() !== 'draft';
                 }
             },
-            'pms_cheque_copy[]': { 
+            'pms_cheque_copy[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#pms_cheque_copy_existing_count').val()) || 0;
                     const files = $j('#pms_cheque_copy').get(0).files.length;
-                    return existingCount === 0 && files === 0;
+                    //return existingCount === 0 && files === 0;
+                    return existingCount === 0 && files === 0 && $j('#save_as').val() !== 'draft';
                 }
             },
-            'title_deed[]': { 
+            'title_deed[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#title_deed_existing_count').val()) || 0;
                     const files = $j('#title_deed').get(0).files.length;
-                    return existingCount === 0 && files === 0;
+                    //return existingCount === 0 && files === 0;
+                    return existingCount === 0 && files === 0 && $j('#save_as').val() !== 'draft';
                 }
             },
-            'kyc_form[]': { 
+            'kyc_form[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#kyc_form_existing_count').val()) || 0;
                     const files = $j('#kyc_form').get(0).files.length;
-                    return existingCount === 0 && files === 0;
+                    //return existingCount === 0 && files === 0;
+                    return existingCount === 0 && files === 0 && $j('#save_as').val() !== 'draft';
                 }
             },
-            'screening[]': { 
+            'screening[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#screening_existing_count').val()) || 0;
                     const files = $j('#screening').get(0).files.length;
                     return existingCount === 0 && files === 0;
                 }
             },
-            'cheque_date[]': { 
+            'cheque_date[]': {
                 required: function(element) {
                     const noOfCheques = parseInt($j('#no_of_cheque').val()) || 0;
                     const chequeDates = $j('.cheque-dates').filter(function() { return $j(this).val(); }).length;
-                    return noOfCheques > 0 && chequeDates === 0;
+                    //return noOfCheques > 0 && chequeDates === 0;
+                    return noOfCheques > 0 && chequeDates === 0 && $j('#save_as').val() !== 'draft';
                 }
             }
         },
@@ -1616,6 +1690,25 @@ $j(document).ready(function() {
             console.log("❌ Form validation failed:", validator.errorList);
         }
     });
+    // 🟢 Handle Update Property (Draft)
+    $j(document).on('click', '#update_draft', function (e) {
+      e.preventDefault();
+      console.log("📝 Update Property (Draft) clicked");
+      $j('#save_as').val('draft'); // set draft mode
+      submitForm('draft');
+    });
+ 
+    // 🟢 Handle Submit Property (Full Submission)
+    $j(document).on('click', '#create_deal', function (e) {
+      e.preventDefault();
+      console.log("🚀 Submit Property (Full) clicked");
+      $j('#save_as').val('submit'); // set submit mode
+      if ($j('#rental_property_form').valid()) {
+        submitForm('submit');
+      } else {
+        console.warn("❌ Validation failed for full submission");
+      }
+    });
 
     function appendDate() {
         var deal_start_date = $j('#deal_date').val();
@@ -1675,130 +1768,128 @@ $j(document).ready(function() {
     
 
 
-    function submitForm() {
-        console.log("submitForm: Starting form submission process");
-        $j('#is_deleted').val('N');
-        const formData = new FormData($j('#rental_property_form')[0]);
-        const submitBtn = $j('#create_deal');
-
-        
-        // Collect cheque dates
-        const chequeDates = [];
-        $j('.cheque-dates').each(function(index) {
-            const dateValue = $j(this).val();
-            console.log(`submitForm: Processing cheque_date[${index}] = ${dateValue}`);
-            if (dateValue) {
-                // Convert yyyy-mm-dd to dd-mm-yyyy for backend
-                const parts = dateValue.split('-');
-                if (parts.length === 3) {
-                    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                    chequeDates.push(formattedDate);
-                    console.log(`submitForm: Formatted cheque_date[${index}] = ${formattedDate}`);
-                } else {
-                    console.warn(`submitForm: Invalid date format for cheque_date[${index}]: ${dateValue}`);
-                }
+    function submitForm(saveAs = 'update') {
+      console.log(`submitForm: Starting form submission process with save_as=${saveAs}`);
+      $j('#is_deleted').val('N');
+      const formData = new FormData($j('#rental_property_form')[0]);
+      formData.set('save_as', saveAs); // Ensure save_as is set
+      const submitBtn = saveAs === 'draft' ? $j('#update_draft') : $j('#create_deal');
+ 
+      const chequeDates = [];
+      $j('.cheque-dates').each(function(index) {
+        const dateValue = $j(this).val();
+        console.log(`submitForm: Processing cheque_date[${index}] = ${dateValue}`);
+        if (dateValue) {
+          const parts = dateValue.split('-');
+          if (parts.length === 3) {
+            const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            chequeDates.push(formattedDate);
+            console.log(`submitForm: Formatted cheque_date[${index}] = ${formattedDate}`);
+          } else {
+            console.warn(`submitForm: Invalid date format for cheque_date[${index}]: ${dateValue}`);
+          }
+        }
+      });
+ 
+      console.log("submitForm: Collected cheque dates:", chequeDates);
+ 
+      for (let [key] of formData.entries()) {
+        if (key.startsWith('cheque_date[')) {
+          console.log(`submitForm: Removing FormData key: ${key}`);
+          formData.delete(key);
+        }
+      }
+ 
+      if (chequeDates.length > 0) {
+        const chequeDateList = JSON.stringify(chequeDates);
+        formData.append('cheque_date', chequeDateList);
+        console.log(`submitForm: Appended cheque_date to FormData as JSON: ${chequeDateList}`);
+      } else {
+        formData.append('cheque_date', JSON.stringify([]));
+        console.log("submitForm: Appended empty cheque_date to FormData as JSON: []");
+      }
+ 
+      const amlValue = $j('[name="is_property_aml"]:checked').val();
+      console.log("submitForm: is_property_aml selected value:", amlValue || "None selected");
+      if (amlValue) {
+        formData.set('is_property_aml', amlValue);
+      } else {
+        console.warn("submitForm: No AML option selected!");
+        formData.set('is_property_aml', '');
+      }
+ 
+      const managerApproval = $j('[name="manager_approved_rejected"]:checked').val();
+      console.log("submitForm: Manager Approval Value:", managerApproval || "Not selected");
+      console.log("submitForm: Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
+ 
+      if ($j('[name="manager_approved_rejected"]').length > 0 && !managerApproval) {
+        console.warn("submitForm: No manager_approved_rejected value selected, setting default to 'A'");
+        formData.set('manager_approved_rejected', 'A');
+      }
+ 
+      const adminApproval = $j('[name="is_approved_rejected"]:checked').val();
+      console.log("Admin Approval Value:", adminApproval || "Not selected");
+      if ($j('[name="is_approved_rejected"]').length > 0 && !adminApproval) {
+          formData.set('is_approved_rejected', ''); // or default to 'W' or 'A' depending on your logic
+      } else {
+          formData.set('is_approved_rejected', adminApproval);
+      }
+ 
+      console.log("submitForm: FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}: ${value instanceof File ? value.name : value}`);
+      }
+ 
+      submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+ 
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
             }
-        });
-
-        // Log collected cheque dates
-        console.log("submitForm: Collected cheque dates:", chequeDates);
-
-        // Remove individual cheque_date[] fields from FormData
-        for (let [key] of formData.entries()) {
-            if (key.startsWith('cheque_date[')) {
-                console.log(`submitForm: Removing FormData key: ${key}`);
-                formData.delete(key);
-            }
+          }
         }
-
-        // Append cheque_date as a JSON stringified list
-        if (chequeDates.length > 0) {
-            const chequeDateList = JSON.stringify(chequeDates);
-            formData.append('cheque_date', chequeDateList);
-            console.log(`submitForm: Appended cheque_date to FormData as JSON: ${chequeDateList}`);
-        } else {
-            formData.append('cheque_date', JSON.stringify([]));
-            console.log("submitForm: Appended empty cheque_date to FormData as JSON: []");
+        console.log(`submitForm: Retrieved CSRF token for ${name}: ${cookieValue}`);
+        return cookieValue;
+      }
+ 
+      const csrftoken = getCookie('csrftoken');
+      console.log("submitForm: CSRF Token:", csrftoken);
+ 
+      $j.ajax({
+        url: apiUrl,
+        type: 'PUT',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        success: function(data) {
+          console.log(`submitForm: ✅ Property ${saveAs === 'draft' ? 'saved as draft' : 'updated'} successfully:`, data);
+          console.log("submitForm: Backend response data:", JSON.stringify(data, null, 2));
+          alert(`Property ${saveAs === 'draft' ? 'saved as draft' : 'updated'} successfully!`);
+          window.location.href = "{% url 'rental-property-list' %}";
+        },
+        error: function(xhr, status, error) {
+          console.error(`submitForm: ❌ Error ${saveAs === 'draft' ? 'saving draft' : 'updating property'}:`, xhr.responseText);
+          let errorMsg = `Error ${saveAs === 'draft' ? 'saving draft' : 'updating property'}.`;
+          if (xhr.responseJSON) {
+            errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
+            console.log("submitForm: Backend error details:", xhr.responseJSON);
+          }
+          alert(errorMsg);
+        },
+        complete: function() {
+          console.log("submitForm: AJAX request completed");
+          submitBtn.prop('disabled', false).text(saveAs === 'draft' ? 'Update Property' : 'Submit Property');
         }
-
-        // Forcefully set is_property_aml value into formData
-        const amlValue = $j('[name="is_property_aml"]:checked').val();
-        console.log("submitForm: is_property_aml selected value:", amlValue || "None selected");
-
-        if (amlValue) {
-            formData.set('is_property_aml', amlValue);
-        } else {
-            console.warn("submitForm: No AML option selected!"); 
-            formData.set('is_property_aml', '');  // Ensures field is sent as empty instead of undefined
-        }
-
-        // Log manager_approved_rejected before submission
-        const managerApproval = $j('[name="manager_approved_rejected"]:checked').val();
-        console.log("submitForm: Manager Approval Value:", managerApproval || "Not selected");
-        console.log("submitForm: Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
-
-        // Explicitly set manager_approved_rejected if required
-        if ($j('[name="manager_approved_rejected"]').length > 0 && !managerApproval) {
-            console.warn("submitForm: No manager_approved_rejected value selected, setting default to 'A'");
-            formData.set('manager_approved_rejected', 'A');
-        }
-
-        // Log all FormData contents
-        console.log("submitForm: FormData contents:");
-        for (let [key, value] of formData.entries()) {
-            console.log(`  ${key}: ${value instanceof File ? value.name : value}`);
-        }
-
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            console.log(`submitForm: Retrieved CSRF token for ${name}: ${cookieValue}`);
-            return cookieValue;
-        }
-
-        const csrftoken = getCookie('csrftoken');
-        console.log("submitForm: CSRF Token:", csrftoken);
-
-        $j.ajax({
-            url: apiUrl,
-            type: 'PUT',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRFToken': csrftoken
-            },
-            success: function(data) {
-                console.log("submitForm: ✅ Property updated successfully:", data);
-                console.log("submitForm: Backend response data:", JSON.stringify(data, null, 2));
-                alert('Property updated successfully!');
-                window.location.href = "{% url 'rental-property-list' %}";
-            },
-            error: function(xhr, status, error) {
-                console.error("submitForm: ❌ Error updating property:", xhr.responseText);
-                let errorMsg = 'Error updating property.';
-                if (xhr.responseJSON) {
-                    errorMsg += '\n' + JSON.stringify(xhr.responseJSON, null, 2);
-                    console.log("submitForm: Backend error details:", xhr.responseJSON);
-                }
-                alert(errorMsg);
-            },
-            complete: function() {
-                console.log("submitForm: AJAX request completed");
-                submitBtn.prop('disabled', false).text('Submit Property');
-            }
-        });
+      });
     }
     loadPropertyData();
 

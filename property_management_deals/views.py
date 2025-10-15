@@ -84,6 +84,7 @@ import re
 import time
 from datetime import datetime
 import json
+from decimal import Decimal, InvalidOperation
 
 
 
@@ -119,9 +120,218 @@ class PropertyAPIView(APIView):
     
     
 
+    # def put(self, request, pk):
+    #     print("DEBUG: PUT method triggered")
+    #     property_obj = get_object_or_404(RentalProperties, pk=pk)
+    #     mutable_data = {
+    #         key: request.data.getlist(key) if len(request.data.getlist(key)) > 1 else request.data.get(key)
+    #         for key in request.data
+    #     }
+    #     mutable_data.update(request.FILES)
+ 
+    #     updated_files = {}
+    #     reference_number = mutable_data.get('reference_number') or property_obj.reference_number
+    #     is_property_aml = mutable_data.get('is_property_aml') or property_obj.is_property_aml
+       
+    #     path = f"/rental/referencenumber_CP/{reference_number}"
+    #     is_property_aml = mutable_data.get('is_property_aml')
+    #     if not is_property_aml:
+    #         is_property_aml = property_obj.is_property_aml
+ 
+    #     print("Is Property AML:", is_property_aml)
+    #     property_obj.is_property_aml = is_property_aml
+    #     property_obj.save()
+    #     mutable_data['is_property_aml'] = is_property_aml
+    #     mutable_data['receipt_no'] = mutable_data.get('receipt_no') or property_obj.receipt_no
+ 
+    #     print(f"Mutable Data: {mutable_data}")
+ 
+    #     print(f"Is Property aml: {is_property_aml}")
+ 
+    #     print(f"🔍 STARTING UPDATE for Property ID: {pk}")
+    #     print(f"📁 Reference Path: {path}")
+    #     print(f"📥 FILE KEYS: {list(request.FILES.keys())}")
+    #     print(f"📝 FORM DATA: {dict(request.data)}")
+ 
+    #     file_fields = [
+    #         'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
+    #         'title_deed', 'kyc_form', 'screening',
+    #         'poa_pp', 'poa_copy', 'owner_eid_copy', 'key_hand_over_form'
+    #     ]
+    #     required_file_fields = [
+    #         'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
+    #         'title_deed', 'kyc_form', 'screening'
+    #     ]
+ 
+    #     # Upload new files
+    #     if request.FILES:
+    #         for key in request.FILES.keys():
+    #             base_field_name = key.rstrip("[]")
+    #             if base_field_name not in file_fields:
+    #                 print(f"⚠️ Skipping invalid file field: {base_field_name}")
+    #                 continue
+ 
+    #             files = request.FILES.getlist(key)
+    #             for file in files:
+    #                 timestamp = int(time.time())
+    #                 cleaned_name = re.sub(r"[,]+", " ", file.name)
+    #                 filename = f"{base_field_name}{timestamp}_{cleaned_name}"
+    #                 filepath = f"{path}/{filename}"
+    #                 print(f"⬆️ Uploading file: {filename} to {filepath}")
+    #                 is_uploaded = upload_file_to_full_s3_url(file, filepath)  # Assuming this function exists
+    #                 if is_uploaded:
+    #                     updated_files.setdefault(base_field_name, []).append(filepath)
+    #                     print(f"✅ Uploaded: {filename}")
+    #                 else:
+    #                     print(f"❌ Upload failed: {filename}")
+    #                     return Response(
+    #                         {"error": f"Failed to upload file: {filename}"},
+    #                         status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #                     )
+ 
+    #     # Merge old + new files and only remove explicitly specified ones
+    #     for field in file_fields:
+    #         # removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
+    #         removed_files = [f.strip() for f in mutable_data.get(f"{field}_mou_removed", "").split(",") if f.strip()]
+ 
+    #         existing_value = getattr(property_obj, field, "") or ""
+    #         existing_files = [f.strip() for f in existing_value.split(",") if f.strip()]
+ 
+    #         # Remove explicitly marked files
+    #         existing_files = [f for f in existing_files if f not in removed_files]
+ 
+    #         new_files = updated_files.get(field, [])
+    #         combined_files = existing_files + new_files
+ 
+    #         mutable_data[field] = ",".join(combined_files)
+    #         print(f"🔄 {field} Combined Files after removal: {mutable_data[field]}")
+    #     # Validate required file fields
+    #     for field in required_file_fields:
+    #         val = mutable_data.get(field, "") or getattr(property_obj, field, "")
+    #         if not val:
+    #             print(f"❌ Validation failed: {field} is required")
+    #             return Response({"error": f"{field} is required."}, status=status.HTTP_400_BAD_REQUEST)
+ 
+    #     # Handle date fields (including cheque_date)
+    #     date_fields = [
+    #         'deal_date',
+    #         'pm_start_date',
+    #         'pm_end_date',
+    #         'tenancy_start_date',
+    #         'tenancy_end_date',
+    #         #'cheque_date'
+    #     ]
+ 
+    #     accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
+ 
+    #     for field in date_fields:
+    #         if field in mutable_data:
+    #             value = mutable_data[field]
+    #             print(f"\n🔍 Processing field: {field} -> {value}")
+ 
+    #             if isinstance(value, list):
+    #                 formatted_list = []
+    #                 for date_str in value:
+    #                     print(f"   ⏳ Parsing list item: {date_str}")
+    #                     if isinstance(date_str, str) and date_str.strip() and date_str != '0':
+    #                         for fmt in accepted_formats:
+    #                             try:
+    #                                 parsed_date = datetime.strptime(date_str, fmt)
+    #                                 formatted_str = parsed_date.strftime("%d-%m-%Y")
+    #                                 formatted_list.append(formatted_str)
+    #                                 print(f"   ✅ Parsed: {date_str} -> {formatted_str}")
+    #                                 break
+    #                             except ValueError:
+    #                                 continue
+    #                         else:
+    #                             print(f"   ❌ Failed to parse date: {date_str}")
+    #                     else:
+    #                         print(f"   ❌ Non-string, empty, or invalid in list: {date_str}")
+    #                 mutable_data[field] = formatted_list
+    #                 print(f"   🔄 Final list for {field}: {mutable_data[field]}")
+ 
+    #             elif isinstance(value, str) and value.strip() and value != '0':
+    #                 print(f"   ⏳ Parsing single string date: {value}")
+    #                 for fmt in accepted_formats:
+    #                     try:
+    #                         parsed_date = datetime.strptime(value, fmt)
+    #                         formatted_str = parsed_date.strftime("%d-%m-%Y")
+    #                         mutable_data[field] = formatted_str
+    #                         print(f"   ✅ Parsed: {value} -> {formatted_str}")
+    #                         break
+    #                     except ValueError:
+    #                         continue
+    #                 else:
+    #                     print(f"   ❌ Failed to parse string date: {value}")
+ 
+    #      # ====== CHEQUE DATE HANDLING ======
+    #     cheque_date_value = mutable_data.get('cheque_date')
+ 
+    #     if cheque_date_value:
+    #         if isinstance(cheque_date_value, str):
+    #             try:
+    #                 parsed_cheque_dates = json.loads(cheque_date_value)
+    #             except json.JSONDecodeError:
+    #                 parsed_cheque_dates = [cheque_date_value]
+    #         elif isinstance(cheque_date_value, list):
+    #             parsed_cheque_dates = cheque_date_value
+    #         else:
+    #             parsed_cheque_dates = []
+ 
+    #         formatted_cheques = []
+    #         accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
+    #         for date_str in parsed_cheque_dates:
+    #             if date_str and date_str.strip() and date_str != '0':
+    #                 for fmt in accepted_formats:
+    #                     try:
+    #                         parsed_date = datetime.strptime(date_str.strip(), fmt)
+    #                         formatted_cheques.append(parsed_date.strftime("%d-%m-%Y"))
+    #                         break
+    #                     except ValueError:
+    #                         continue
+ 
+    #         mutable_data['cheque_date'] = " ".join(formatted_cheques)
+    #         print("✅ Final formatted cheque_date (update):", mutable_data['cheque_date'])
+    #     # ====== END CHEQUE DATE HANDLING ======
+ 
+    #     # Clean other fields (handle lists from request.POST)
+    #     for key in list(mutable_data.keys()):
+    #         if key != 'cheque_date' and isinstance(mutable_data[key], list):
+    #             mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
+
+    #     if property_obj.form_status == "Incomplete":
+    #         mutable_data['submitted_date'] = timezone.now().date()
+ 
+    #     mutable_data['form_status'] = 'Complete'
+ 
+    #     if request.data.get('receipt_no'):
+    #         ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
+ 
+    #     if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
+    #             mutable_data['approved_rejected_by'] = request.user.email
+    #     # Apply updates
+    #     serializer = PropertySerializer(property_obj, data=mutable_data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         # Save file fields explicitly again if needed
+    #         for field in file_fields:
+    #             setattr(property_obj, field, mutable_data.get(field, ""))
+    #         property_obj.save()
+ 
+    #         # Refresh serialized data
+    #         serializer = PropertySerializer(property_obj)
+    #         print(f"✅ Saved instance put: {serializer.data}")
+    #         return Response(serializer.data)
+ 
+    #     print(f"❌ Serializer errors: {serializer.errors}")
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+   
     def put(self, request, pk):
         print("DEBUG: PUT method triggered")
         property_obj = get_object_or_404(RentalProperties, pk=pk)
+ 
+        # === Prepare mutable data ===
         mutable_data = {
             key: request.data.getlist(key) if len(request.data.getlist(key)) > 1 else request.data.get(key)
             for key in request.data
@@ -130,156 +340,130 @@ class PropertyAPIView(APIView):
  
         updated_files = {}
         reference_number = mutable_data.get('reference_number') or property_obj.reference_number
-        is_property_aml = mutable_data.get('is_property_aml') or property_obj.is_property_aml
-       
-        path = f"/rental/referencenumber_CP/{reference_number}"
-        is_property_aml = mutable_data.get('is_property_aml')
-        if not is_property_aml:
-            is_property_aml = property_obj.is_property_aml
- 
-        print("Is Property AML:", is_property_aml)
-        property_obj.is_property_aml = is_property_aml
-        property_obj.save()
-        mutable_data['is_property_aml'] = is_property_aml
-        mutable_data['receipt_no'] = mutable_data.get('receipt_no') or property_obj.receipt_no
+        path = f"rental/referencenumber_CP/{reference_number}"
  
         print(f"Mutable Data: {mutable_data}")
+        print(f"Reference Path: {path}")
+        print(f"File keys: {list(request.FILES.keys())}")
+         # === Handle AML flag safely ===
+        valid_aml_values = ['Y', 'N']
+        aml_value = mutable_data.get('is_property_aml', property_obj.is_property_aml)
  
-        print(f"Is Property aml: {is_property_aml}")
+        # if isinstance(aml_value, bool):
+        #     aml_value = 'Y' if aml_value else 'N'
+        # elif isinstance(aml_value, str):
+        #     aml_value = aml_value.upper()
+        #     if aml_value not in valid_aml_values:
+        #         aml_value = property_obj.is_property_aml  # fallback to existing
+        # else:
+        #     aml_value = property_obj.is_property_aml  # fallback for None or invalid type
  
-        print(f"🔍 STARTING UPDATE for Property ID: {pk}")
-        print(f"📁 Reference Path: {path}")
-        print(f"📥 FILE KEYS: {list(request.FILES.keys())}")
-        print(f"📝 FORM DATA: {dict(request.data)}")
+        property_obj.is_property_aml = aml_value
+        property_obj.save()
+        mutable_data['is_property_aml'] = property_obj.is_property_aml
+ 
  
         file_fields = [
-            'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
-            'title_deed', 'kyc_form', 'screening',
-            'poa_pp', 'poa_copy', 'owner_eid_copy', 'key_hand_over_form'
+            'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
+            'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
+            'key_hand_over_form', 'kyc_form', 'screening'
         ]
         required_file_fields = [
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
             'title_deed', 'kyc_form', 'screening'
         ]
  
-        # Upload new files
-        if request.FILES:
-            for key in request.FILES.keys():
-                base_field_name = key.rstrip("[]")
-                if base_field_name not in file_fields:
-                    print(f"⚠️ Skipping invalid file field: {base_field_name}")
-                    continue
+        # === Handle AML flag ===
+        property_obj.is_property_aml = mutable_data.get('is_property_aml', property_obj.is_property_aml)
+        property_obj.save()
+        mutable_data['is_property_aml'] = property_obj.is_property_aml
  
-                files = request.FILES.getlist(key)
-                for file in files:
-                    timestamp = int(time.time())
-                    cleaned_name = re.sub(r"[,]+", " ", file.name)
-                    filename = f"{base_field_name}{timestamp}_{cleaned_name}"
-                    filepath = f"{path}/{filename}"
-                    print(f"⬆️ Uploading file: {filename} to {filepath}")
-                    is_uploaded = upload_file_to_full_s3_url(file, filepath)  # Assuming this function exists
-                    if is_uploaded:
-                        updated_files.setdefault(base_field_name, []).append(filepath)
-                        print(f"✅ Uploaded: {filename}")
-                    else:
-                        print(f"❌ Upload failed: {filename}")
-                        return Response(
-                            {"error": f"Failed to upload file: {filename}"},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                        )
+        # === Upload new files ===
+        for key in request.FILES.keys():
+            base_field_name = key.rstrip("[]")
+            if base_field_name not in file_fields:
+                print(f"⚠️ Skipping invalid file field: {base_field_name}")
+                continue
  
-        # Merge old + new files and only remove explicitly specified ones
+            files = request.FILES.getlist(key)
+            removed_files = [f.strip() for f in mutable_data.get(f"{base_field_name}_removed", "").split(",") if f.strip()]
+            seen = set()
+            valid_files = []
+            for f in files:
+                key_tuple = (f.name, f.size)
+                if key_tuple not in seen and f.name not in removed_files:
+                    seen.add(key_tuple)
+                    valid_files.append(f)
+ 
+            file_paths = []
+            for file in valid_files:
+                timestamp = int(time.time() * 1000)
+                cleaned_name = re.sub(r"[,]+", " ", file.name)
+                filename = f"{base_field_name}{timestamp}_{cleaned_name}"
+                filepath = f"{path}/{filename}"
+                if upload_file_to_full_s3_url(file, filepath):
+                    file_paths.append(filepath)
+                    print(f"✅ Uploaded: {filename}")
+                else:
+                    print(f"❌ Upload failed: {filename}")
+                    return Response({"error": f"Failed to upload file: {filename}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+ 
+            updated_files[base_field_name] = file_paths
+ 
+        # === Merge old + new files, remove explicitly removed ones ===
         for field in file_fields:
-            # removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
-            removed_files = [f.strip() for f in mutable_data.get(f"{field}_mou_removed", "").split(",") if f.strip()]
- 
-            existing_value = getattr(property_obj, field, "") or ""
-            existing_files = [f.strip() for f in existing_value.split(",") if f.strip()]
- 
-            # Remove explicitly marked files
+            removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
+            existing_files = [f.strip() for f in (getattr(property_obj, field, "") or "").split(",") if f.strip()]
             existing_files = [f for f in existing_files if f not in removed_files]
- 
             new_files = updated_files.get(field, [])
             combined_files = existing_files + new_files
- 
             mutable_data[field] = ",".join(combined_files)
-            print(f"🔄 {field} Combined Files after removal: {mutable_data[field]}")
-        # Validate required file fields
-        for field in required_file_fields:
-            val = mutable_data.get(field, "") or getattr(property_obj, field, "")
-            if not val:
-                print(f"❌ Validation failed: {field} is required")
-                return Response({"error": f"{field} is required."}, status=status.HTTP_400_BAD_REQUEST)
  
-        # Handle date fields (including cheque_date)
-        date_fields = [
-            'deal_date',
-            'pm_start_date',
-            'pm_end_date',
-            'tenancy_start_date',
-            'tenancy_end_date',
-            #'cheque_date'
-        ]
+        # === Determine draft vs full submission ===
+        save_as = mutable_data.get('save_as', 'submit')
+        is_draft = save_as != 'submit'
+        mutable_data['form_status'] = 'Incomplete' if is_draft else 'Complete'
  
+        # === Validate required files for full submission ===
+        if not is_draft:
+            for field in required_file_fields:
+                combined_files = mutable_data.get(field, "")
+                if not combined_files:
+                    return Response({"error": f"{field} is required for full submission."}, status=status.HTTP_400_BAD_REQUEST)
+ 
+        # === Format date fields ===
+        date_fields = ['deal_date', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date']
         accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
- 
         for field in date_fields:
-            if field in mutable_data:
+            if field in mutable_data and mutable_data[field]:
                 value = mutable_data[field]
-                print(f"\n🔍 Processing field: {field} -> {value}")
- 
                 if isinstance(value, list):
-                    formatted_list = []
-                    for date_str in value:
-                        print(f"   ⏳ Parsing list item: {date_str}")
-                        if isinstance(date_str, str) and date_str.strip() and date_str != '0':
-                            for fmt in accepted_formats:
-                                try:
-                                    parsed_date = datetime.strptime(date_str, fmt)
-                                    formatted_str = parsed_date.strftime("%d-%m-%Y")
-                                    formatted_list.append(formatted_str)
-                                    print(f"   ✅ Parsed: {date_str} -> {formatted_str}")
-                                    break
-                                except ValueError:
-                                    continue
-                            else:
-                                print(f"   ❌ Failed to parse date: {date_str}")
-                        else:
-                            print(f"   ❌ Non-string, empty, or invalid in list: {date_str}")
-                    mutable_data[field] = formatted_list
-                    print(f"   🔄 Final list for {field}: {mutable_data[field]}")
+                    value = value[0]
+                for fmt in accepted_formats:
+                    try:
+                        parsed_date = datetime.strptime(value.strip(), fmt)
+                        mutable_data[field] = parsed_date.strftime("%d-%m-%Y")
+                        break
+                    except ValueError:
+                        continue
+                else:
+                    return Response({field: f"Invalid date format: {value}"}, status=status.HTTP_400_BAD_REQUEST)
  
-                elif isinstance(value, str) and value.strip() and value != '0':
-                    print(f"   ⏳ Parsing single string date: {value}")
-                    for fmt in accepted_formats:
-                        try:
-                            parsed_date = datetime.strptime(value, fmt)
-                            formatted_str = parsed_date.strftime("%d-%m-%Y")
-                            mutable_data[field] = formatted_str
-                            print(f"   ✅ Parsed: {value} -> {formatted_str}")
-                            break
-                        except ValueError:
-                            continue
-                    else:
-                        print(f"   ❌ Failed to parse string date: {value}")
- 
-         # ====== CHEQUE DATE HANDLING ======
+        # === Handle cheque_date separately ===
         cheque_date_value = mutable_data.get('cheque_date')
- 
+        formatted_cheques = []
         if cheque_date_value:
             if isinstance(cheque_date_value, str):
                 try:
-                    parsed_cheque_dates = json.loads(cheque_date_value)
+                    parsed_cheques = json.loads(cheque_date_value)
                 except json.JSONDecodeError:
-                    parsed_cheque_dates = [cheque_date_value]
+                    parsed_cheques = [cheque_date_value]
             elif isinstance(cheque_date_value, list):
-                parsed_cheque_dates = cheque_date_value
+                parsed_cheques = cheque_date_value
             else:
-                parsed_cheque_dates = []
+                parsed_cheques = []
  
-            formatted_cheques = []
-            accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
-            for date_str in parsed_cheque_dates:
+            for date_str in parsed_cheques:
                 if date_str and date_str.strip() and date_str != '0':
                     for fmt in accepted_formats:
                         try:
@@ -288,44 +472,89 @@ class PropertyAPIView(APIView):
                             break
                         except ValueError:
                             continue
+        mutable_data['cheque_date'] = " ".join(formatted_cheques)
  
-            mutable_data['cheque_date'] = " ".join(formatted_cheques)
-            print("✅ Final formatted cheque_date (update):", mutable_data['cheque_date'])
-        # ====== END CHEQUE DATE HANDLING ======
- 
-        # Clean other fields (handle lists from request.POST)
+        # === Clean other list fields ===
         for key in list(mutable_data.keys()):
             if key != 'cheque_date' and isinstance(mutable_data[key], list):
                 mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
-
-        if property_obj.form_status == "Incomplete":
-            mutable_data['submitted_date'] = timezone.now().date()
  
-        mutable_data['form_status'] = 'Complete'
- 
+        # === Handle receipt update ===
         if request.data.get('receipt_no'):
-            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
  
-        if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
-                mutable_data['approved_rejected_by'] = request.user.email
-        # Apply updates
-        serializer = PropertySerializer(property_obj, data=mutable_data, partial=True)
+        if mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
+            mutable_data['approved_rejected_by'] = request.user.email
+        # ✅ Ensure default value 'P' for is_approved_rejected if missing or invalid
+        if not mutable_data.get("is_approved_rejected") or mutable_data.get("is_approved_rejected") not in ["A", "R", "W"]:
+            print("ℹ️ Setting default 'P' for is_approved_rejected")
+            mutable_data["is_approved_rejected"] = "P"
+ 
+        # === Normalize optional fields ===
+        # for field in ['agency_name', 'agent_name', 'agent_phone', 'total_commission',
+        #             'less_outside_commission', 'net_commission', 'classic', 'agent1']:
+        #     if field not in mutable_data or mutable_data[field] in [None, '', []]:
+        #         mutable_data[field] = ''
+ 
+        for field in ['agency_name', 'agent_name', 'agent_phone', 'classic', 'agent1']:
+            # These are CharFields → allow blank string
+            if field not in mutable_data or mutable_data[field] in [None, '', []]:
+                mutable_data[field] = ''
+ 
+       
+        # for field in ['total_commission', 'less_outside_commission', 'net_commission']:
+        #     value = mutable_data.get(field)
+ 
+        #     # ✅ Allow blank or missing values gracefully
+        #     if value in [None, '', [], 'null', 'None']:
+        #         mutable_data[field] = ''
+        #         continue
+ 
+        #     # ✅ Clean numeric values (still as string to avoid serializer conflict)
+        #     try:
+        #         Decimal(str(value))  # just to validate it's numeric if given
+        #         mutable_data[field] = str(value).strip()
+        #     except (ValueError, InvalidOperation):
+        #         return Response({field: f"Invalid decimal value: {value}"}, status=status.HTTP_400_BAD_REQUEST)
+           
+ 
+        for field in ['total_commission', 'less_outside_commission', 'net_commission']:
+            raw_value = mutable_data.get(field)
+ 
+            # ✅ Allow blank, None, or missing values
+            if raw_value in [None, '', [], 'null', 'None']:
+                mutable_data[field] = ''
+                continue
+ 
+            # ✅ Validate numeric pattern (accept commas)
+            cleaned = str(raw_value).replace(',', '').replace(' ', '').strip()
+ 
+            # Try validating as number — but keep original commas
+            try:
+                Decimal(cleaned)
+                mutable_data[field] = str(raw_value).strip()  # keep original format with commas
+            except (ValueError, InvalidOperation):
+                return Response(
+                    {field: f"Invalid number format: {raw_value}"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+ 
+ 
+        # === Save via serializer ===
+        #serializer = PropertySerializer(property_obj, data=mutable_data, partial=True)
+        serializer = PropertySerializer(
+            property_obj,
+            data=mutable_data,
+            partial=True,
+            draft=is_draft  # <-- this is the fix
+        )
         if serializer.is_valid():
             serializer.save()
-            # Save file fields explicitly again if needed
-            for field in file_fields:
-                setattr(property_obj, field, mutable_data.get(field, ""))
-            property_obj.save()
- 
-            # Refresh serialized data
-            serializer = PropertySerializer(property_obj)
-            print(f"✅ Saved instance put: {serializer.data}")
-            return Response(serializer.data)
- 
+            return Response(PropertySerializer(property_obj).data)
         print(f"❌ Serializer errors: {serializer.errors}")
+       
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
-   
 
 
 def edit_property_page(request, pk):
