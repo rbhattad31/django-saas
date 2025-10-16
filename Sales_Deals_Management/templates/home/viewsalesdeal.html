@@ -1025,7 +1025,7 @@
                                     </div>
                                 </div>
                             <div class="row">
-                                <div class="col-md-6 form-group mb-3 gopi"> 
+                                <div class="col-md-12 form-group mb-3 gopi"> 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
                                             <div class="row">
@@ -1037,6 +1037,22 @@
                                                     <div id="upload_prevss" class="kyc_number_list">
                                                         {% load customtags %}
                                                         {% render_file_links salesdeal.manager_cheque_copy aws_base_url salesdeal.reference_number %}
+                                                    </div>
+                                                    <span class="text-danger" id="manager_cheque_copy_error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                          <div class="col-md-6 form-group mb-3">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label for=""><h6 class="labelname"> Owner EID</h6></label>
+                                                </div>
+                                                <div class="col-1">:</div>
+                                                <div class="col-6">
+                                                    <div id="upload_prevss" class="kyc_number_list">
+                                                        {% load customtags %}
+                                                        {% render_file_links salesdeal.owner_eid_copy aws_base_url salesdeal.reference_number %}
                                                     </div>
                                                     <span class="text-danger" id="manager_cheque_copy_error"></span>
                                                 </div>
