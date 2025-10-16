@@ -611,6 +611,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             print("rental_deal", rental_deal)
 
+            user = Users.objects.annotate(
+            first_group_name=Subquery(
+                Group.objects.filter(custom_user_set=OuterRef("pk"))
+                .order_by("id")  # ensures consistent first group
+                .values("name")[:1]  # take only the first group's name
+            )
+                ).get(id=request.user.id)
+
             #
             removed_fields = {
                 key[:-8]: value.strip()
@@ -779,11 +787,19 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
 
-                 
+            print("user role is", user.first_group_name) 
+            user_role = user.first_group_name or ""
+            role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+            print(user_role)
+            print(role)
+
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
                 is_submitted_date = getattr(rental_deal, 'submitted_date' , "")
-                if not is_submitted_date:
+                print("is_submitted_date", is_submitted_date)
+
+                if is_submitted_date and role in ["Agent"]:
+                    print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= date.today()
                 
                 

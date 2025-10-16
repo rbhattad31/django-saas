@@ -162,7 +162,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         
         print(mutable_data)
 
-        mutable_data['submitted_by_user'] = request.user.id
+        # mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
         mutable_data['created_by'] = request.user.id
         # mutable_data['submitted_by_agent'] = request.user.id
@@ -315,6 +315,14 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print("Declared file fields:", declared_file_fields)
 
             print("sales_deal", sales_deal)
+
+            user = Users.objects.annotate(
+            first_group_name=Subquery(
+                Group.objects.filter(custom_user_set=OuterRef("pk"))
+                .order_by("id")  # ensures consistent first group
+                .values("name")[:1]  # take only the first group's name
+            )
+                ).get(id=request.user.id)
 
             #
             removed_fields = {
@@ -483,12 +491,18 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
 
 
-            
+            print("user role is", user.first_group_name) 
+            user_role = user.first_group_name or ""
+            role = user_role.split("-", 1)[1] if "-" in user_role else user_role
+            print(user_role)
+            print(role)
 
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
                 is_submitted_date = getattr(sales_deal, 'submitted_date' , "")
-                if not is_submitted_date:
+                print("is_submitted_date", is_submitted_date)
+                if is_submitted_date and role in ["Agent"]:
+                    print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= datetime.date.today()
             else:
                 mutable_data['form_status'] = "Incomplete"
