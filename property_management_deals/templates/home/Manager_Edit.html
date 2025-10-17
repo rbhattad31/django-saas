@@ -330,7 +330,7 @@ $j(document).ready(function() {
         rules: {
             date: { required: true },
             receipt_number: { required: true, numeric: true },
-            received_from: { required: true, lettersonly: true },
+            received_from: { required: true, alphanum_special: true },
             dhs: { required: true, numeric: true },
             fils: { required: true, numeric: true },
             sum_of_dhs: { required: true, lettersonly: true },
