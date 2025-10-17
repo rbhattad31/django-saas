@@ -2,13 +2,17 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from core.models import SalesDeals,Users
 from django.utils.html import format_html
+from django.contrib.auth import get_user_model
 
-
+User = get_user_model()
 class SalesDealSerializer(serializers.ModelSerializer):
  
     email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
     username = serializers.CharField( source="submitted_by_user.name" ,read_only=True)
     action = serializers.SerializerMethodField()
+    agent_name1_display = serializers.SerializerMethodField()
+    agent_name2_display = serializers.SerializerMethodField()
+    agent_name3_display = serializers.SerializerMethodField()
 
     # Making the required fields optional and allow blank
     reference_number = serializers.CharField(required=False, allow_blank=True, validators=[
@@ -33,6 +37,7 @@ class SalesDealSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesDeals
         fields = '__all__'
+        extra_fields = ['action','agent_name1_display','agent_name2_display','agent_name3_display']
 
     def get_action(self, obj):
         request = self.context.get('request')
@@ -62,6 +67,37 @@ class SalesDealSerializer(serializers.ModelSerializer):
             html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
 
         return format_html(html)
+    
+
+    def get_agent_name1_display(self, obj):
+        try:
+            if not obj.agent_name1 :
+                return ""
+            user = User.objects.get(id=obj.agent_name1)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name2_display(self, obj):
+        try:
+            if not obj.agent_name2 :
+                return ""
+            user = User.objects.get(id=obj.agent_name2)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name3_display(self, obj):
+        try:
+            if not obj.agent_name3 :
+                return ""
+            user = User.objects.get(id=obj.agent_name3)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+
+
+
 
 
 class filterSerializer(serializers.Serializer):
