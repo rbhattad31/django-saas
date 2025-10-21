@@ -8,6 +8,7 @@ from datetime import date, datetime
 import re
 from django.db.models import Q
 from core.models import RentalProperties, Account as Accounts
+
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
@@ -29,11 +30,19 @@ class DealSerializer(serializers.ModelSerializer):
     class Meta:
         model = RentalProperties
         fields = '__all__'
+        extra_fields = {
+            'can_edit', 'can_delete', 'can_view', 'can_edit_approved', 'agent_name1_display', 'agent_name2_display', 'agent_name3_display'
+        }
+        
 
     can_edit = serializers.SerializerMethodField()
     can_delete = serializers.SerializerMethodField()
     can_view = serializers.SerializerMethodField()
     can_edit_approved = serializers.SerializerMethodField()
+    agent_name1_display = serializers.SerializerMethodField()
+    agent_name2_display = serializers.SerializerMethodField()
+    agent_name3_display = serializers.SerializerMethodField()
+
  
     def get_can_view(self, obj):
         # obj is the RentalDeal instance for the current row
@@ -81,6 +90,33 @@ class DealSerializer(serializers.ModelSerializer):
         
         has_permission = request.user.has_perm('core.edit_approved_properties_rentalproperties')
         return has_permission
+    
+    def get_agent_name1_display(self, obj):
+        try:
+            if not obj.agent_name1 :
+                return ""
+            user = User.objects.get(id=obj.agent_name1)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name2_display(self, obj):
+        try:
+            if not obj.agent_name2 :
+                return ""
+            user = User.objects.get(id=obj.agent_name2)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name3_display(self, obj):
+        try:
+            if not obj.agent_name3 :
+                return ""
+            user = User.objects.get(id=obj.agent_name3)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
    
  
  
