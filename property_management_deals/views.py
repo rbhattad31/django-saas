@@ -2216,6 +2216,13 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
             print(f"🔎 Performing Global Search with term: '{search_term}'")
             queryset = queryset.filter(
                 Q(receipt_number__icontains=search_term) |
+                Q(deal_refer_no__icontains=search_term) |
+                Q(date__icontains=search_term) |
+                Q(cheque_no__icontains=search_term) |
+                Q(dhs__icontains=search_term) |
+                Q(fils__icontains=search_term) |
+                Q(payment_type__icontains=search_term) |
+
                 Q(agent_name__icontains=search_term) |
                 Q(building_name__icontains=search_term) |
                 Q(unit_number__icontains=search_term) |

@@ -433,7 +433,7 @@ class filterSerializer(serializers.Serializer):
     deal_status = serializers.CharField(required=False, allow_blank=True)
     project_name = serializers.CharField(required=False, allow_blank=True)
     owner_first_name = serializers.CharField(required=False, allow_blank=True)
-    tenant_name = serializers.CharField(required=False, allow_blank=True)
+    tenant_first_name = serializers.CharField(required=False, allow_blank=True)
     owner_mobile = serializers.CharField(required=False, allow_blank=True)
     tenant_mobile = serializers.CharField(required=False, allow_blank=True)
     is_approved_rejected = serializers.CharField(required=False, allow_blank=True)

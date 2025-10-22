@@ -223,12 +223,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Filterationon types keyword
         type_filter = data.get("type")
-        # print(type_filter)
+        print(type_filter)
         user_role = user.first_group_name or ""
         role = user_role.split("-", 1)[1] if "-" in user_role else user_role
         # print(user_role)
         # print(role)
-
+        print(queryset)
  
 
         if type_filter:
@@ -257,10 +257,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                         
                         queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
-                     return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-)
+                     return Response({"detail": "You do not have permission to access this."},
+    status=status.HTTP_403_FORBIDDEN)
 
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
@@ -285,8 +283,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             elif type_filter == "entered-finance":
                 if user.has_perm("core.enter_finance_rental_deals"):
                     queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete").filter(
-    is_approved_rejected__in=["F", "A"]
-)
+            is_approved_rejected__in=["F", "A"]
+            )
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -321,18 +319,19 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             elif type_filter == "All":
                 if user.has_perm("core.view_all_rental_deals"):
                     print("entered all block")
-                    queryset = queryset.filter(form_status="Complete")
+                    queryset = queryset.filter(form_status="Complete") 
+                    print(queryset)
                     # print(f"Queryset count after filter: {queryset.count()}")
                 else:
                     return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
                 
 
-        if role == "Agent" or user_role == "Agent":
-            queryset = queryset.filter(submitted_by_user=user)
-        elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
-            queryset = queryset.filter(created_by=user.email)
-        else:
-            role = "superadmin" 
+            if role == "Agent" or user_role == "Agent":
+                queryset = queryset.filter(submitted_by_user=user)
+            elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
+                queryset = queryset.filter(created_by=user.email)
+            else:
+                role = "superadmin" 
 
 
 
@@ -405,6 +404,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             paginated = list(queryset)
             total_count = len(paginated)
 
+        print(queryset)
+        print(paginated)
  
 
         data = request.data.copy()  # Copy the original data to include in the responseda
