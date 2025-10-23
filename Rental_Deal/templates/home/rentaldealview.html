@@ -1393,7 +1393,7 @@
                                 </div>
                             </div>
 
-                            {% if perms.core.comment_finance_rental_deals %}  
+                           
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">
@@ -1408,11 +1408,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            {% endif %} 
+                             
                             
                             </div> 
 
-                        {% if perms.core.comment_finance_rental_deals %}  
+                          
                         <div class="form-group row">
                             <div class="col-2 ">
                                 <label for="">
@@ -1439,7 +1439,7 @@
                                             <h6 class="value editCommentText" id="existing_comment">{{ rentaldeal.comments_finance|default_if_none:"" }}</h6>
                                         </label>
                                         </div>
-
+                                        {% if perms.core.comment_finance_rental_deals %}
                                     <!-- Add/Edit button -->
                                     <input 
                                         type="button"
@@ -1447,11 +1447,12 @@
                                         class="btn btn-sm btn-info ml-3 editComment"
                                         style="margin-top:-15px"
                                     >
+                                    {% endif %} 
                                 </div>
                            
                             </div>
                         </div>   
-                        {% endif %}      
+                             
                                         
                             <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">
