@@ -165,7 +165,7 @@ class DealSerializer(serializers.ModelSerializer):
 
     # when edit ting the recored it thins as anew record creationto bypass that
     def validate_reference_number(self, value):
-        qs = RentalDeals.objects.filter(reference_number=value)
+        qs = RentalDeals.objects.filter(reference_number=value , is_deleted='N')
         if self.instance:
             if self.instance.reference_number == value:
                 return value
@@ -399,7 +399,7 @@ class DealSerializer(serializers.ModelSerializer):
         """
         # If creating new record
         if self.instance is None:
-            if RentalDeals.objects.filter(reference_number=value).exists():
+            if RentalDeals.objects.filter(reference_number=value, is_deleted="N").exists():
                 raise serializers.ValidationError("This reference number is already taken.")
         else:
             # Updating existing record — exclude current instance
