@@ -19,9 +19,18 @@ def upload_file_to_full_s3_url(file_obj, url):
 
     print(f"Uploaded to: {saved_path}")
 
+    files_is_presnet = storage.exists(f'{saved_path}')
+
+    print(f"File exists after upload: {files_is_presnet}")
+
+    if not files_is_presnet:
+        return False
+    else:
+        return True
+
     
 
-    return saved_path
+    
 
 def delete_from_s3(file_path):
     """

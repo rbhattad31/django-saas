@@ -263,7 +263,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_rental_deals"):
-                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager"] or user.is_superuser):
                         queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete")) 
                     else:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
@@ -328,6 +328,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             if role == "Agent" or user_role == "Agent":
                 queryset = queryset.filter(submitted_by_user=user)
+
+                if type_filter == "rejected":
+                    queryset = queryset.filter(Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"), form_status="Complete")
+                elif type_filter == "approved":
+                    queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+
             elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
                 queryset = queryset.filter(created_by=user.email)
             else:
@@ -842,6 +848,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             mutable_data['submitted_by_agent'] = request.user.id
 
             print("mutable_data", mutable_data)
+
+            print("Before saving serializer data:", mutable_data.keys())
             # Now pass this updated data to serializer
             serializer = self.get_serializer(rental_deal, data=mutable_data, partial=True)
 
@@ -851,6 +859,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
                 
             if serializer.is_valid():
+                print("Before saving serializer data:", mutable_data.keys())
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

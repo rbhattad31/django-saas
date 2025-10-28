@@ -62,7 +62,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_sales(self, request, pk=None):
         sales = get_object_or_404(SalesDeals, pk=pk)
-        sales.delete()
+        SalesDeals.objects.filter(pk=pk).update(is_deleted='Y')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -476,6 +476,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                     if is_uploaded:
                         new_file_names.append(filename)
+                    else : 
+                        return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
                 # ✅ Combine and update mutable_data + DB dict
                 combined_files = updated_existing_files + new_file_names
@@ -651,7 +653,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_sales_deals"):
-                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
                     else:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
@@ -695,7 +697,15 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
 
             if role == "Agent" or user_role == "Agent":
+                print("inside agent role filter")
                 queryset = queryset.filter(submitted_by_user=user)
+
+                if type_filter == "rejected":
+                    print("inside rejected filter")
+                    queryset = queryset.filter(Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"), form_status="Complete")
+                elif type_filter == "approved":
+                    queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+
             elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
                 queryset = queryset.filter(created_by=user.email)
             else:
