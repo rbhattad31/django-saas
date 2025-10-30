@@ -469,10 +469,13 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
     # email =  serializers.SerializerMethodField()
     email = serializers.CharField(source='submitted_by_user.email', read_only=True)
     username = serializers.CharField(source="submitted_by_user.name", read_only=True)
+    agent_name1_display = serializers.SerializerMethodField()
+    agent_name2_display = serializers.SerializerMethodField()
+    agent_name3_display = serializers.SerializerMethodField()
 
-    # is_approved_rejected_display = serializers.SerializerMethodField()
-    # manager_approved_rejected_display = serializers.SerializerMethodField()
-    # is_entered_in_finance_system_display = serializers.SerializerMethodField()
+    is_approved_rejected_display = serializers.SerializerMethodField()
+    manager_approved_rejected_display = serializers.SerializerMethodField()
+    is_entered_in_finance_system_display = serializers.SerializerMethodField()
     action = serializers.SerializerMethodField()
 
 
@@ -480,11 +483,112 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
     class Meta:
         model = RentalDeals
         fields =   [
-            "reference_number", "unit_details", "building_name",  "rental_price",
-            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
-            "email", "username","action"
+             "id",
+        "submitted_date",
+        "submitted_by_user",
+        "reference_number",
+        "date",
+        "unit_details",
+        "building_name",
+        "project_name",
+        "is_new_deal",
+        "owner_title",
+        "owner_first_name",
+        "owner_last_name",
+        "owner_source",
+        "owner_mobile",
+        "owner_email",
+        "tenant_title",
+        "tenant_first_name",
+        "tenant_last_name",
+        "tenant_source",
+        "tenant_mobile",
+        "tenant_email",
+        "owner_agency",
+        "agent_first_name",
+        "agent_last_name",
+        "agent_phone",
+        "agent_email",
+        "brn",
+        "tenant_agency",
+        "tenant_agent_first_name",
+        "tenant_agent_last_name",
+        "tenant_agent_phone",
+        "tenant_agent_email",
+        "tenant_brn",
+        "tenancy_contract",
+        "owner_passport_copy",
+        "tenant_passport_visa_copy",
+        "tenant_emirates_id",
+        "rental_deposit_cheque_copy",
+        "title_deed",
+        "owner_poa_pp_copy",
+        "key_hand_over_form",
+        "total_commission",
+        "less_outsude_commission",
+        "net_commission",
+        "classic",
+        "agent1",
+        "agent2",
+        "agent3",
+        "is_approved_rejected",
+        "approved_rejected_by",
+        "is_entered_in_finance_system",
+        "comments",
+        "rental_price",
+        "ejari",
+        "agent_name1",
+        "agent_name2",
+        "agent_name3",
+        "owner_eid_copy",
+        "agent_comment",
+        "mediating_agency",
+        "mediating_agent_name",
+        "mediating_agent_phone",
+        "mediating_agent_email",
+        "mediating_agency_brn",
+        "poa_copy",
+        "deal_start_date",
+        "deal_end_date",
+        "receipt_no",
+        "form_status",
+        "rental_kyc_number",
+        "is_rental_aml",
+        "kyc_number",
+        "comments_finance",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "account",
+        "property",
+        "is_deleted",
+        "plot_no",
+        "mode_of_payment",
+        "deal_agent",
+        "receipt_id",
+        "property_usage",
+        "property_size",
+        "premises_no",
+        "security_deposit",
+        "submitted_by_agent",
+        "property_type",
+        "tenancy_application_form",
+        "screening",
+        "screening_comments",
+        "seller_nationality",
+        "buyer_nationality",
+        "manager_approved_rejected",
+            "email", "username","action",       
+            "agent_name1_display",
+            "agent_name2_display",
+            "agent_name3_display",
+            "is_approved_rejected_display",
+            "manager_approved_rejected_display",
+            "is_entered_in_finance_system_display"
+            
         ]
-        extra_fields = ['agent_username','action']
+        extra_fields = ['agent_username','action','agent_name1_display','agent_name2_display','agent_name3_display' ]
 
 
     def get_action(self, obj):
@@ -529,6 +633,33 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
             user = Users.objects.get(id=obj.submitted_by_agent)
             return user.email
         except (Users.DoesNotExist, TypeError, ValueError):
+            return None
+        
+    def get_agent_name1_display(self, obj):
+        try:
+            if not obj.agent_name1 :
+                return ""
+            user = User.objects.get(id=obj.agent_name1)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name2_display(self, obj):
+        try:
+            if not obj.agent_name2 :
+                return ""
+            user = User.objects.get(id=obj.agent_name2)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name3_display(self, obj):
+        try:
+            if not obj.agent_name3 :
+                return ""
+            user = User.objects.get(id=obj.agent_name3)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
             return None
     
 

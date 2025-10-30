@@ -116,12 +116,115 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
          
 
-        queryset = RentalDeals.objects.select_related("submitted_by_user").filter(is_deleted="N", account_id = account_id).order_by('-id').only("id","reference_number", "unit_details", "building_name",  "rental_price","is_approved_rejected", "owner_first_name", "tenant_first_name","owner_mobile","tenant_mobile","is_new_deal",
-            "project_name",  "date", "submitted_date","deal_start_date","deal_end_date",
-           "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",  
-           "submitted_by_user__id",
-        "submitted_by_user__name", "submitted_by_user__email",
-         ) # Filter out deleted deals
+        queryset = (
+    RentalDeals.objects.select_related("submitted_by_user")
+    .filter(is_deleted="N", account_id=account_id)
+    .order_by("-id")
+    .only(
+        # === Core fields ===
+        "id",
+        "submitted_date",
+        "submitted_by_user",
+        "reference_number",
+        "date",
+        "unit_details",
+        "building_name",
+        "project_name",
+        "is_new_deal",
+        "owner_title",
+        "owner_first_name",
+        "owner_last_name",
+        "owner_source",
+        "owner_mobile",
+        "owner_email",
+        "tenant_title",
+        "tenant_first_name",
+        "tenant_last_name",
+        "tenant_source",
+        "tenant_mobile",
+        "tenant_email",
+        "owner_agency",
+        "agent_first_name",
+        "agent_last_name",
+        "agent_phone",
+        "agent_email",
+        "brn",
+        "tenant_agency",
+        "tenant_agent_first_name",
+        "tenant_agent_last_name",
+        "tenant_agent_phone",
+        "tenant_agent_email",
+        "tenant_brn",
+        "tenancy_contract",
+        "owner_passport_copy",
+        "tenant_passport_visa_copy",
+        "tenant_emirates_id",
+        "rental_deposit_cheque_copy",
+        "title_deed",
+        "owner_poa_pp_copy",
+        "key_hand_over_form",
+        "total_commission",
+        "less_outsude_commission",
+        "net_commission",
+        "classic",
+        "agent1",
+        "agent2",
+        "agent3",
+        "is_approved_rejected",
+        "approved_rejected_by",
+        "is_entered_in_finance_system",
+        "comments",
+        "rental_price",
+        "ejari",
+        "agent_name1",
+        "agent_name2",
+        "agent_name3",
+        "owner_eid_copy",
+        "agent_comment",
+        "mediating_agency",
+        "mediating_agent_name",
+        "mediating_agent_phone",
+        "mediating_agent_email",
+        "mediating_agency_brn",
+        "poa_copy",
+        "deal_start_date",
+        "deal_end_date",
+        "receipt_no",
+        "form_status",
+        "rental_kyc_number",
+        "is_rental_aml",
+        "kyc_number",
+        "comments_finance",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "account",
+        "property",
+        "is_deleted",
+        "plot_no",
+        "mode_of_payment",
+        "deal_agent",
+        "receipt_id",
+        "property_usage",
+        "property_size",
+        "premises_no",
+        "security_deposit",
+        "submitted_by_agent",
+        "property_type",
+        "tenancy_application_form",
+        "screening",
+        "screening_comments",
+        "seller_nationality",
+        "buyer_nationality",
+        "manager_approved_rejected",
+        # === Related user fields ===
+        "submitted_by_user__id",
+        "submitted_by_user__name",
+        "submitted_by_user__email",
+    )
+)
+ # Filter out deleted deals
         # print("Initial queryset count:", queryset)
 
         user = Users.objects.annotate(
@@ -512,6 +615,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                 if is_uploaded:
                     new_file_names.append(filename)
+                else :
+                    return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
             # ✅ Combine and update mutable_data + DB dict
             combined_files =   new_file_names
@@ -778,6 +883,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                     if is_uploaded:
                         new_file_names.append(filename)
+                    else :
+                        return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
                 # ✅ Combine and update mutable_data + DB dict
                 combined_files = updated_existing_files + new_file_names
