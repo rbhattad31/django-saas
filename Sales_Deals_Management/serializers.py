@@ -15,11 +15,7 @@ class SalesDealSerializer(serializers.ModelSerializer):
     agent_name3_display = serializers.SerializerMethodField()
 
     # Making the required fields optional and allow blank
-    reference_number = serializers.CharField(required=False, allow_blank=True, validators=[
-            UniqueValidator(
-                queryset=SalesDeals.objects.all(),
-                message="This reference number already exists."
-            )])
+    reference_number = serializers.CharField(required=False, allow_blank=True, )
     unit_details = serializers.CharField(required=False, allow_blank=True)
     building_name = serializers.CharField(required=False, allow_blank=True)
     deal_status = serializers.CharField(required=False, allow_blank=True)
