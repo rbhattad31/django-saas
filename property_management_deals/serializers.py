@@ -31,7 +31,7 @@ class DealSerializer(serializers.ModelSerializer):
         model = RentalProperties
         fields = '__all__'
         extra_fields = {
-            'can_edit', 'can_delete', 'can_view', 'can_edit_approved', 'agent_name1_display', 'agent_name2_display', 'agent_name3_display'
+            'can_edit', 'can_delete', 'can_view', 'can_edit_approved', 'agent_name1_display', 'agent_name2_display', 'agent_name3_display' ,'is_approved_rejected_display','manager_approved_rejected_display','is_entered_in_finance_system_display'
         }
         
 
@@ -42,6 +42,12 @@ class DealSerializer(serializers.ModelSerializer):
     agent_name1_display = serializers.SerializerMethodField()
     agent_name2_display = serializers.SerializerMethodField()
     agent_name3_display = serializers.SerializerMethodField()
+
+    # dispaly filds for the excel download
+    is_approved_rejected_display = serializers.SerializerMethodField()
+    manager_approved_rejected_display =serializers.SerializerMethodField()  
+    is_entered_in_finance_system_display =serializers.SerializerMethodField()
+
 
  
     def get_can_view(self, obj):
@@ -117,6 +123,22 @@ class DealSerializer(serializers.ModelSerializer):
             return user.get_full_name() or user.name
         except User.DoesNotExist:
             return None
+        
+    def get_is_approved_rejected_display(self, obj):
+        return obj.get_is_approved_rejected_display()
+
+    def get_manager_approved_rejected_display(self, obj):
+        return obj.get_manager_approved_rejected_display()
+    
+    def get_is_entered_in_finance_system_display(self, obj):
+         
+        if obj.is_entered_in_finance_system == '0':
+            return "No"
+        elif obj.is_entered_in_finance_system == '1':
+            return "Yes"
+        else:
+            return None
+ 
    
  
  

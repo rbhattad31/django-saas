@@ -518,7 +518,7 @@ class PropertyAPIView(APIView):
         #     except (ValueError, InvalidOperation):
         #         return Response({field: f"Invalid decimal value: {value}"}, status=status.HTTP_400_BAD_REQUEST)
            
- 
+        mutable_data['updated_by'] = request.user.email
         for field in ['total_commission', 'less_outside_commission', 'net_commission']:
             raw_value = mutable_data.get(field)
  
@@ -926,6 +926,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     ),
                     'submitted_date': timezone.now().date(),
                     'created_at': timezone.now(),
+                    "created_by": request.user.email ,
                     'updated_at': timezone.now(),
                     'is_property_aml': request.data.get('is_property_aml', 'No'),
                     'screening_comments': request.data.get('screening_comments', ''),
@@ -1216,6 +1217,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 'is_deleted': request.data.get('is_deleted', 'N'),
                 'status': 'Active',
                 'created_at': timezone.now(),
+                "created_by": request.user.email if request.user.is_authenticated else 'system',
                 'updated_at': timezone.now(),
                 'is_property_aml': request.data.get('is_property_aml', 'No'),
                 'screening_comments': request.data.get('screening_comments', ''),
