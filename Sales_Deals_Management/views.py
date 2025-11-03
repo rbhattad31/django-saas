@@ -257,6 +257,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                 if is_uploaded:
                     new_file_names.append(filename)
+                else :
+                    return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
             # ✅ Combine and update mutable_data + DB dict
             combined_files =   new_file_names
@@ -575,12 +577,87 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     SalesDeals.objects 
     .filter(is_deleted="N", account_id=account_id)
     .select_related("submitted_by_user")   # <— prevents N+1 queries
-    .order_by("-id").only("id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
-    "seller_source","buyer_name","buyer_source","buyer_mobile",
-    "selller_mobile","project_name",  "date", "submitted_date", "buyer_name","deal_amount",
-   "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted",
-   "submitted_by_user__id",
-        "submitted_by_user__name", "submitted_by_user__email"  
+    .order_by("-id").only(    "id",
+    "account_id",
+    "reference_number",
+      # if you have this field in your model
+
+    # Deal info
+    "date",                     # Deal Date
+    "submitted_date",           # Submission / Start Date
+    "deal_amount",              # Deal Amount / Rental Price
+    "project_name",
+    "builduing_name",
+    "unit_details",
+
+    # Approval / status info
+    "form_status",
+    "manager_approved_rejected",
+    "is_approved_rejected", 
+    "approved_rejected_by",
+    "is_deleted",
+
+    # Submitted by user (related table)
+    "submitted_by_user",
+    "submitted_by_user__email",
+    "submitted_by_user__name",
+
+    # Owner (Seller) info
+    "seller_name",
+    "seller_source",
+    "selller_mobile",
+    "seller_email",
+    "seller_nationality",
+    "seller_agency",
+    "seller_agent_name",
+    "seller_agent_phone",
+    "seller_agent_email",
+    "seller_agency_brn",
+
+    # Tenant (Buyer) info
+    "buyer_name",
+    "buyer_source",
+    "buyer_mobile",
+    "buyer_email",
+    "buyer_nationality",
+    "buyer_agency",
+    "buyer_agent_name",
+    "buyer_agent_phone",
+    "buyer_agent_email",
+    "buyer_agency_brn",
+
+    # Mediating agency info
+    "mediating_agency",
+    "mediating_agent_name",
+    "mediating_agent_phone",
+    "mediating_agent_email",
+    "mediating_agency_brn",
+
+    # Commission info
+    "total_commission",
+    "less_outsude_commission",
+    "net_commission",
+    "classic",
+    "agent1",
+    "agent2",
+    "agent3",
+    "agent_name1",
+    "agent_name2",
+    "agent_name3",
+
+    # Finance info
+    "receipt_no",
+    "kyc_number",
+    "is_sale_aml",
+    "is_entered_in_finance_system",
+
+    # Comments & metadata
+    "comments",
+    "agent_comment",
+    "comments_finance",
+    "created_at",
+    "created_by",
+    "updated_by",  
          )
 )
         user = Users.objects.annotate(

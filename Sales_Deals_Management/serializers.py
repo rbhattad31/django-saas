@@ -209,16 +209,108 @@ class salesdealSerilizerforNon_file_validation(serializers.ModelSerializer):
         fields = '__all__'
         exclude = []
 
+
+# Serializer for data table with action field
 class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
 
     email = serializers.CharField( source="submitted_by_user.email" ,read_only=True)
+    username = serializers.CharField(source="submitted_by_user.name", read_only=True)
     action = serializers.SerializerMethodField()
+
+    # display agent names for the three agents
+    agent_name1_display = serializers.SerializerMethodField()
+    agent_name2_display = serializers.SerializerMethodField()
+    agent_name3_display = serializers.SerializerMethodField()
+
+    # display approved/rejected status
+    is_approved_rejected_display = serializers.SerializerMethodField() 
+    manager_approved_rejected_display =serializers.SerializerMethodField()
+    is_entered_in_finance_system_display =serializers.SerializerMethodField()
+
+
     class Meta:
         model = SalesDeals
-        fields = ["id","reference_number", "unit_details", "builduing_name",   "is_approved_rejected","project_name", "seller_name",
-    "seller_source","buyer_name","buyer_source","buyer_mobile",
-    "selller_mobile","project_name",  "date", "submitted_date", "buyer_name",
-   "submitted_by_user","form_status","manager_approved_rejected","account_id","is_deleted","action","email","deal_amount"]
+        fields = ["id",
+    "account_id",
+    "reference_number",
+      # if you have this field in your model
+
+    # Deal info
+    "date",                     # Deal Date
+    "submitted_date",           # Submission / Start Date
+    "deal_amount",              # Deal Amount / Rental Price
+    "project_name",
+    "builduing_name",
+    "unit_details",
+
+    # Approval / status info
+    "form_status",
+    "manager_approved_rejected",
+    "is_approved_rejected",
+    "approved_rejected_by",
+    "is_deleted",
+
+    # Submitted by user (related table)
+    "submitted_by_user",
+    
+
+    # Owner (Seller) info
+    "seller_name",
+    "seller_source",
+    "selller_mobile",
+    "seller_email",
+    "seller_nationality",
+    "seller_agency",
+    "seller_agent_name",
+    "seller_agent_phone",
+    "seller_agent_email",
+    "seller_agency_brn",
+
+    # Tenant (Buyer) info
+    "buyer_name",
+    "buyer_source",
+    "buyer_mobile",
+    "buyer_email",
+    "buyer_nationality",
+    "buyer_agency",
+    "buyer_agent_name",
+    "buyer_agent_phone",
+    "buyer_agent_email",
+    "buyer_agency_brn",
+
+    # Mediating agency info
+    "mediating_agency",
+    "mediating_agent_name",
+    "mediating_agent_phone",
+    "mediating_agent_email",
+    "mediating_agency_brn",
+
+    # Commission info
+    "total_commission",
+    "less_outsude_commission",
+    "net_commission",
+    "classic",
+    "agent1",
+    "agent2",
+    "agent3",
+    "agent_name1",
+    "agent_name2",
+    "agent_name3",
+
+    # Finance info
+    "receipt_no",
+    "kyc_number",
+    "is_sale_aml",
+    "is_entered_in_finance_system",
+
+    # Comments & metadata
+    "comments",
+    "agent_comment",
+    "comments_finance",
+    "created_at",
+    "created_by",
+    "updated_by",
+    "action","email","deal_amount","username","agent_name1_display","agent_name2_display","agent_name3_display","is_approved_rejected_display","manager_approved_rejected_display","is_entered_in_finance_system_display"]
         
     def get_action(self, obj):
         request = self.context.get('request')
@@ -248,4 +340,43 @@ class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
             html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
 
         return format_html(html)
+    
+    # display agent names for the three agents
+    
+    def get_agent_name1_display(self, obj):
+        try:
+            if not obj.agent_name1 :
+                return ""
+            user = User.objects.get(id=obj.agent_name1)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name2_display(self, obj):
+        try:
+            if not obj.agent_name2 :
+                return ""
+            user = User.objects.get(id=obj.agent_name2)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+        
+    def get_agent_name3_display(self, obj):
+        try:
+            if not obj.agent_name3 :
+                return ""
+            user = User.objects.get(id=obj.agent_name3)
+            return user.get_full_name() or user.name
+        except User.DoesNotExist:
+            return None
+    
+    # dispaly the  approved and rejected statusof the deals 
+    def get_is_approved_rejected_display(self, obj):
+        return obj.get_is_approved_rejected_display()
+
+    def get_manager_approved_rejected_display(self, obj):
+        return obj.get_manager_approved_rejected_display()
+    
+    def get_is_entered_in_finance_system_display(self, obj):
+        return obj.get_is_entered_in_finance_system_display()
 
