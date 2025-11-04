@@ -11,10 +11,12 @@ from django.core.files.base import ContentFile
 from django.utils.module_loading import import_string
 # print("UTILS STORAGE INIT:", type(get_storage_class()))
 # print("UTILS STORAGE INIT:", )
+from django.core.files.storage import default_storage
 
 def upload_file_to_full_s3_url(file_obj, url):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
     storage = storage_class()
+    print("Uploading file to S3 at URL:", url)
     saved_path = storage.save(f"live/classic_properties/{url}", ContentFile(file_obj.read()))
 
     print(f"Uploaded to: {saved_path}")
@@ -53,6 +55,20 @@ def delete_from_s3(file_path):
         print(f"File not found: {f'live/classic_properties/{file_path}'}")
         return False
 
+
+
+def s3_file_exists(filepath):
+    storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
+    storage = storage_class()
+    try:
+        print(f"Checking existence for {filepath}")
+        url = f"/live/classic_properties/{filepath}"
+        is_present =  storage.exists(url)
+        print(f"Checked existence for {filepath}: {is_present}")
+        return is_present
+    except Exception as e:
+        print(f"S3 existence check failed for {filepath}: {e}")
+        return False
 
 
 

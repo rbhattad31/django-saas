@@ -5,7 +5,7 @@ from urllib import request
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 import re
-from .Utilities import delete_from_s3, upload_file_to_full_s3_url
+from .Utilities import delete_from_s3, upload_file_to_full_s3_url, s3_file_exists
 
 
 # Create your views here.
@@ -693,9 +693,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(f"multable data  acoount_id {mutable_data['account']}")
         print("mutalbel data before the serlizer", mutable_data)
         serializer = self.get_serializer(data=mutable_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     # edit the data 
     # @action(detail=True, methods=['get', 'post']) 
@@ -867,8 +865,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     if file_name in files_to_remove:
                         relative_path = f"{path_folder}/{file_name}"
                         is_deleted = delete_from_s3(relative_path)
-                        if not is_deleted:
-                            updated_existing_files.append(file_name)  # keep if deletion failed
+                        # if is_deleted:
+                        #     updated_existing_files.append(file_name)  # keep if deletion failed
                     else:
                         updated_existing_files.append(file_name)
 
