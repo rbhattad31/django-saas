@@ -695,6 +695,33 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=mutable_data)
 
 
+        for key, value in final_updated_values.items():
+            print(f"Final updated value - {key}: {value}")
+
+        time.sleep(2)
+
+        missing_files = []
+        for base_field_name, files_str in final_updated_values.items():
+            for fname in files_str.split(","):
+                relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number']}/{fname}"
+                if not s3_file_exists(relative_path):
+                    missing_files.append(fname)
+        
+        if missing_files:
+            return Response(
+                {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+
+
+
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # edit the data 
     # @action(detail=True, methods=['get', 'post']) 
     # @permission_required('core.change_rentaldeals')
@@ -956,6 +983,26 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             print("Before saving serializer data:", mutable_data.keys())
             # Now pass this updated data to serializer
+
+
+            print("final UPdate values are " , final_updated_values)
+            for key, value in final_updated_values.items():
+                print(f"Final updated value - {key}: {value}")
+
+            
+
+            missing_files = []
+            for base_field_name, files_str in final_updated_values.items():
+                for fname in files_str.split(","):
+                    relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number']}/{fname}"
+                    if not s3_file_exists(relative_path):
+                        missing_files.append(fname)
+            
+            if missing_files:
+                return Response(
+                    {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             serializer = self.get_serializer(rental_deal, data=mutable_data, partial=True)
 
             # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)

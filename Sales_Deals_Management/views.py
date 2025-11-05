@@ -24,7 +24,7 @@ from django.template import TemplateDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from Rental_Deal.Utilities import upload_file_to_full_s3_url, delete_from_s3
+from Rental_Deal.Utilities import upload_file_to_full_s3_url, delete_from_s3, s3_file_exists
 
 
 # Create your views here.
@@ -287,6 +287,27 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         else:
             serializer = SalesDealSerializerForDraft(data=mutable_data )
 
+
+        for key, value in final_updated_values.items():
+            print(f"Final updated value - {key}: {value}")
+
+       
+
+        missing_files = []
+        for base_field_name, files_str in final_updated_values.items():
+            for fname in files_str.split(","):
+                relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number']}/{fname}"
+                if not s3_file_exists(relative_path):
+                    missing_files.append(fname)
+        
+        if missing_files:
+            return Response(
+                {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+
         serializer.is_valid(raise_exception=True)
 
         
@@ -462,8 +483,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     if file_name in files_to_remove:
                         relative_path = f"{path_folder}/{file_name}"
                         is_deleted = delete_from_s3(relative_path)
-                        if not is_deleted:
-                            updated_existing_files.append(file_name)  # keep if deletion failed
+                        # if not is_deleted:
+                        #     updated_existing_files.append(file_name)  # keep if deletion failed
                     else:
                         updated_existing_files.append(file_name)
 
@@ -546,6 +567,27 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
             print("mutable_data", mutable_data)
             # Now pass this updated data to serializer
+
+            for key, value in final_updated_values.items():
+                print(f"Final updated value - {key}: {value}")
+
+       
+
+            missing_files = []
+            for base_field_name, files_str in final_updated_values.items():
+                for fname in files_str.split(","):
+                    relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number']}/{fname}"
+                    if not s3_file_exists(relative_path):
+                        missing_files.append(fname)
+            
+            if missing_files:
+                return Response(
+                    {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+
+
             serializer = self.get_serializer(sales_deal, data=mutable_data, partial=True)
 
             # serializer = self.get_serializer(sales_deal, data=request.data, partial=True)

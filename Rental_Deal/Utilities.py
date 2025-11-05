@@ -40,7 +40,9 @@ def delete_from_s3(file_path):
 
     :param file_path: Relative path from MEDIA_ROOT (e.g., 'rental/docs/file.jpg')
     :return: True if deleted, False if file doesn't exist
+
     """
+    
     file_path = os.path.normpath(file_path.lstrip('/'))
     full_path = os.path.join(settings.MEDIA_LOCATION, file_path)
 
