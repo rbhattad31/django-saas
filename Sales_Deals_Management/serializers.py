@@ -183,6 +183,18 @@ class SalesDealSerializerForDraft(serializers.ModelSerializer):
         model = SalesDeals
         fields = '__all__'
 
+    def validate_reference_number(self, value):
+        qs = SalesDeals.objects.filter(reference_number=value , is_deleted='N')
+        if self.instance:
+            if self.instance.reference_number == value:
+                return value
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError("This reference number is already used.")
+        return value
+
+
 
 
 
