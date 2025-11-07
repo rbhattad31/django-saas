@@ -1017,7 +1017,9 @@
                 </textarea>
                 <span class="text-danger" id="agent_comment_error"></span>
               </div>
-              {% if perms.core.view_admin_rental_fields %}
+
+              {% for group in request.user.groups.all %}
+              {% if perms.core.view_admin_rental_fields  or "Manager" in group.name %}
 
               <div class="col-md-6 form-group">
                 <label for="comments">Comment by Admin</label>
@@ -1032,6 +1034,7 @@
                 <span class="text-danger" id="comments_error"></span>
               </div>
               {% endif %}
+              {% endfor %}
             </div>
 
             <div class="row">
@@ -1072,7 +1075,8 @@
             </div>
 
             <div class="row">
-              {% if perms.core.view_admin_rental_fields %}
+              
+              {% if perms.core.view_admin_rental_fields  %}
               <div class="col-md-6 form-group">
                 <label for="receipt_no">Approve/Reject</label><br />
                 <div class="row">

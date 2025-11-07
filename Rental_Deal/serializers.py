@@ -658,6 +658,7 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
             if not obj.agent_name3 :
                 return ""
             user = User.objects.get(id=obj.agent_name3)
+            print(user.name)
             return user.get_full_name() or user.name
         except User.DoesNotExist:
             return None

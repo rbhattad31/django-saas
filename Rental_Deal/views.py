@@ -114,8 +114,6 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         
        
 
-         
-
         queryset = (
     RentalDeals.objects.select_related("submitted_by_user")
     .filter(is_deleted="N", account_id=account_id)
@@ -354,10 +352,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ---------------- Approved ----------------
             elif type_filter == "approved":
                 if user.has_perm("core.view_approved_rental_deals"):
-                    if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
+                    if account_id and (role in ["Manager"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
-                    else:
-                        
+                    elif role not in ["Agent"]:
                         queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
                      return Response({"detail": "You do not have permission to access this."},
@@ -368,8 +365,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 if user.has_perm("core.view_rejected_rental_deals"):
                     if account_id and (role in ["Manager"] or user.is_superuser):
                         queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete")) 
-                    else:
+                    elif role not in ["Agent"]:
+                        print("enter the admin rejected block finace")
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
+                        print(queryset)
                 else:
                      return Response(
     {"detail": "You do not have permission to access this."},
@@ -431,11 +430,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             if role == "Agent" or user_role == "Agent":
                 queryset = queryset.filter(submitted_by_user=user)
-
-                if type_filter == "rejected":
+                if type_filter == "rejected": 
                     queryset = queryset.filter(Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"), form_status="Complete")
                 elif type_filter == "approved":
-                    queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+                    queryset = queryset.filter(Q(is_approved_rejected="A") , form_status="Complete")
 
             elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
                 queryset = queryset.filter(created_by=user.email)
@@ -548,7 +546,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(request.user.id)
         print(mutable_data)
         # rental_deal = get_object_or_404(RentalDeals, pk=pk)
-        path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+        path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")  # Remove [] suffix if present
             print("base_field_name", base_field_name)
@@ -584,7 +582,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
 
         for base_field_name in all_field_keys:
-            reference_number = mutable_data.get("reference_number")
+            reference_number = mutable_data.get("reference_number").strip()
             path_folder = f"rental/referencenumber_CP/{reference_number}"
 
             # existing_value = getattr(rental_deal, base_field_name, "")
@@ -698,12 +696,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         for key, value in final_updated_values.items():
             print(f"Final updated value - {key}: {value}")
 
-        time.sleep(2)
+        
 
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
-                relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number']}/{fname}"
+                relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
                 if not s3_file_exists(relative_path):
                     missing_files.append(fname)
         
@@ -821,7 +819,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
     # Loop through all uploaded file fields
     # add data 
-            path = f"rental/referencenumber_CP/{mutable_data['reference_number']}"
+            path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
             for key in request.FILES.keys():
                 base_field_name = key.rstrip("[]")  # Remove [] suffix if present
                 print("base_field_name", base_field_name)
@@ -877,7 +875,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
 
             for base_field_name in all_field_keys:
-                reference_number = mutable_data.get("reference_number")
+                reference_number = mutable_data.get("reference_number").strip()
                 path_folder = f"rental/referencenumber_CP/{reference_number}"
 
                 existing_value = getattr(rental_deal, base_field_name, "")
@@ -994,7 +992,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
-                    relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number']}/{fname}"
+                    relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
                     if not s3_file_exists(relative_path):
                         missing_files.append(fname)
             

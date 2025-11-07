@@ -241,7 +241,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
 
         for base_field_name in all_field_keys:
-            reference_number = mutable_data.get("reference_number")
+            reference_number = mutable_data.get("reference_number").strip()
             path_folder = f"sale/referencenumber_CPS/{reference_number}"
 
        
@@ -296,7 +296,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
-                relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number']}/{fname}"
+                relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number'].strip()}/{fname}"
                 if not s3_file_exists(relative_path):
                     missing_files.append(fname)
         
@@ -468,7 +468,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
 
             for base_field_name in all_field_keys:
-                reference_number = mutable_data.get("reference_number")
+                reference_number = mutable_data.get("reference_number").strip()
                 path_folder = f"sale/referencenumber_CPS/{reference_number}"
 
                 existing_value = getattr(sales_deal, base_field_name, "")
@@ -576,7 +576,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
-                    relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number']}/{fname}"
+                    relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number'].strip()}/{fname}"
                     if not s3_file_exists(relative_path):
                         missing_files.append(fname)
             
@@ -764,7 +764,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 if user.has_perm("core.view_approved_sales_deals"):
                     if account_id and (role in ["Manager", "Agent"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
-                    else:
+                    elif role not in ["Agent"]:
                         queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
                 else:
                     return Response({"detail": "You do not have permission: view_approved_sales_deals"}, status=status.HTTP_403_FORBIDDEN)
@@ -774,7 +774,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 if user.has_perm("core.view_rejected_sales_deals"):
                     if account_id and (role in ["Manager"] or user.is_superuser):
                         queryset = queryset.filter(manager_approved_rejected="R", form_status="Complete")
-                    else:
+                    elif role not in ["Agent"]:
                         queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
                 else:
                     return Response({"detail": "You do not have permission: view_rejected_sales_deals"}, status=status.HTTP_403_FORBIDDEN)

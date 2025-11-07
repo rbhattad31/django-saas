@@ -420,13 +420,18 @@
                               <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">Documents attached including the receipt no are checked - MANJITHA</textarea>
                                 <span class="text-danger" id="agent_comment_error"></span>
                           </div>  
-                          {% if perms.core.view_admin_sales_fields %}  
+
+                              {% for group in request.user.groups.all %}
+              
+                          {% if perms.core.view_admin_sales_fields or "Manager" in group.name %}  
                                             <div class="col-md-6 form-group">
                               <label for="comments">Comment by Admin</label>
                               <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments"></textarea>
                                 <span class="text-danger" id="comments_error"></span>
                           </div>
-                          {% endif %}     
+                          {% endif %}   
+                          
+                          {% endfor %}  
                                         
                       </div>
                       <div class="row">
@@ -467,7 +472,7 @@
                           <input
                             type="radio"
                             name="manager_approved_rejected"
-                            checked=""
+                          
                             value="A"
                           />
                           Approve
