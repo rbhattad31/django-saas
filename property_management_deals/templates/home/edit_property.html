@@ -472,14 +472,16 @@
               <textarea class="form-control" name="agent_comment" id="agent_comment" rows="5" cols="50" placeholder="Agent Comments">{{ property.agent_comment }}</textarea>
               <span class="text-danger" id="agent_comment_error"></span>
             </div>
-                   
-            {% if perms.core.admin_properties_fields_rentalproperties %}
+            {% for group in request.user.groups.all %}
+            {% if perms.core.admin_properties_fields_rentalproperties or "manager" in group.name|lower %}
               <div class="col-md-6 form-group">
                 <label for="comments">Comment by Admin</label>
                 <textarea class="form-control" name="comments" id="comments" rows="5" cols="50" placeholder="Admin Comments">{{ property.comments }}</textarea>
                 <span class="text-danger" id="comments_error"></span>
               </div>
-            {% endif %}     
+            {% endif %} 
+            {% endfor %}
+         
           </div>
           <div class="row">
             <div class="col-md-6 form-group">
