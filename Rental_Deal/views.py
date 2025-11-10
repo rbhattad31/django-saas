@@ -935,7 +935,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 is_submitted_date = getattr(rental_deal, 'submitted_date' , "")
                 print("is_submitted_date", is_submitted_date)
 
-                if (is_submitted_date and role in ["Agent"]) or (not is_submitted_date and role in ["Agent"]) :
+                if (not is_submitted_date and role in ["Agent"]) :
                     print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= date.today()
                 
