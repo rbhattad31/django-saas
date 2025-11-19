@@ -1229,6 +1229,8 @@ class RentalDeals (models.Model):
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
+    re_submitted_date = models.DateField( blank=True, null=True)
+
 
     # tenant_id = 'account'  # OR 'user_account_id' if you use db_column
 
@@ -1275,9 +1277,10 @@ class SaleDealQuerySet(models.QuerySet):
 class SalesDeals(models.Model):
     id = models.AutoField(primary_key=True) 
     submitted_date = models.DateField(blank=True, null=True )
+    re_submitted_date = models.DateField( blank=True, null=True)
     submitted_by_user = models.ForeignKey(Users, models.DO_NOTHING)
     date = models.DateField()
-    reference_number = models.TextField(unique=True)
+    reference_number = models.TextField()
     unit_details = models.TextField()
     builduing_name = models.TextField()
     project_name = models.TextField()

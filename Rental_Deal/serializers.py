@@ -450,6 +450,13 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
         format="%d-%m-%Y",
           read_only=True            # Return DMY to frontend
     )
+
+    re_submitted_date = serializers.DateField(
+        input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
+        format="%d-%m-%Y",
+          read_only=True            # Return DMY to frontend
+    )
+
     deal_start_date = serializers.DateField(
         input_formats=["%d-%m-%Y"],   # Accept DMY from frontend
         format="%d-%m-%Y"             # Return DMY to frontend
@@ -485,6 +492,7 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
         fields =   [
              "id",
         "submitted_date",
+        "re_submitted_date",
         "submitted_by_user",
         "reference_number",
         "date",
