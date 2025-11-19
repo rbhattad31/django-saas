@@ -933,11 +933,18 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             if mutable_data.get('save_as') == "update-deal":
                 mutable_data['form_status'] = "Complete"
                 is_submitted_date = getattr(rental_deal, 'submitted_date' , "")
+                form_status = getattr(rental_deal, 'form_status' , "")
+                print("form_status", form_status)
                 print("is_submitted_date", is_submitted_date)
 
-                if (not is_submitted_date and role in ["Agent"]) :
+
+                if (not is_submitted_date and role in ["Agent"] or form_status == "Incomplete" and role in ["Agent"]): 
                     print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= date.today()
+                    # this the re submitted date block to handle rejection and  resubbmission
+                elif is_submitted_date and role in ["Agent"]:
+                    mutable_data['re_submitted_date']= date.today()
+                    print("this is resubmitted date block", mutable_data['re_submitted_date'])
                 
                 
 
