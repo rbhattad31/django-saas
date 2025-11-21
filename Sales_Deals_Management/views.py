@@ -1,5 +1,6 @@
 import datetime
 from linecache import cache
+import logging
 import re
 from django.db.models import Subquery, OuterRef
 import time
@@ -51,6 +52,8 @@ from django.utils.timezone import now
 
 from django.db.models import Q
 
+logger = logging.getLogger('Sales_Deals_Management')
+
 
 
 class SalesDealViewSet(viewsets.ModelViewSet):
@@ -68,6 +71,31 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='view')
     def view_sales_deal(self, request, pk=None):
+
+
+        def get_receipt_info(receipt_no):
+            """
+            Returns (receipt_no_output, receipt_id)
+            based on your business logic.
+            """
+            if receipt_no in ["Null", ""," ", None]:
+                return "Null", ""
+
+            if receipt_no == "No Commission":
+                return "No Commission", ""
+
+            # Find receipt
+            rec = Receipts.objects.filter(receipt_number=receipt_no).first()
+            if rec:
+                return rec.receipt_number, rec.id
+
+            return "", ""
+
+
+
+
+
+
         sales_deal = get_object_or_404(SalesDeals, pk=pk)
         print("Sales Deal:", sales_deal)
         serializer = SalesDealSerializer(sales_deal,context ={'request': request})
@@ -110,7 +138,17 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 recipt_no = ""
                 recipt_id = ""
 
-        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": recipt_no, "receipt_id": recipt_id})
+
+        recipt_no_1, recipt_id_1 = get_receipt_info(sales_deal.receipt_no)
+        # Receipt No 2
+        recipt_no_2, recipt_id_2 = get_receipt_info(sales_deal.receipt_no2)
+
+        # Receipt No 3
+        recipt_no_3, recipt_id_3 = get_receipt_info(sales_deal.receipt_no3)
+        
+        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": recipt_no, "receipt_id": recipt_id,  
+                                                           "receipt_no_2":recipt_no_2 , "receipt_id_2":recipt_id_2 ,
+        "receipt_no_3":recipt_no_3 , "receipt_id_3":recipt_id_3})
 
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
@@ -159,7 +197,34 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 pass
         except (ValueError, TypeError):
             print("Invalid receipt_no or not provided, skipping update.")
-        
+
+        if mutable_data.get('receipt_no2'):
+                if mutable_data['receipt_no2'].isdigit():
+                    print("this is the receipt no2", mutable_data['receipt_no2'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
+
+                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no2']).first()
+                    mutable_data['receipt_id2'] = reccicpt2.id
+                    mutable_data['receipt_no2'] = reccicpt2.receipt_number
+                    print("this is the receipt id2", mutable_data['receipt_id2'])
+                    print("this is the receipt no2", mutable_data['receipt_no2'])
+                else:
+                    pass
+
+        if mutable_data.get('receipt_no3'):
+                if mutable_data['receipt_no3'].isdigit():
+                    print("this is the receipt no3", mutable_data['receipt_no3'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
+
+                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no3']).first()
+                    mutable_data['receipt_id3'] = reccicpt2.id
+                    mutable_data['receipt_no3'] = reccicpt2.receipt_number
+                    print("this is the receipt id3", mutable_data['receipt_id3'])
+                    print("this is the receipt no3", mutable_data['receipt_no3'])
+                else:
+                    pass
         print(mutable_data)
 
         # mutable_data['submitted_by_user'] = request.user.id
@@ -287,7 +352,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         else:
             serializer = SalesDealSerializerForDraft(data=mutable_data )
 
-
+        # thsis is to check if the fiel are present in the s3 bucket or not
         for key, value in final_updated_values.items():
             print(f"Final updated value - {key}: {value}")
 
@@ -299,8 +364,11 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number'].strip()}/{fname}"
                 if not s3_file_exists(relative_path):
                     missing_files.append(fname)
+
+         
         
         if missing_files:
+            logger.error("Missing files before update for rental id=%s missing=%s", SalesDeals.pk, missing_files)
             return Response(
                 {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -526,9 +594,15 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 mutable_data['form_status'] = "Complete"
                 is_submitted_date = getattr(sales_deal, 'submitted_date' , "")
                 print("is_submitted_date", is_submitted_date)
-                if  (not is_submitted_date and role in ["Agent"]) :
+                if  (not is_submitted_date and role in ["Agent"] or sales_deal.form_status == "Incomplete" and role in ["Agent"]):
                     print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= datetime.date.today()
+
+                    # handle resubmited date block
+                elif is_submitted_date and role in ["Agent"]:
+                    mutable_data['re_submitted_date']= datetime.date.today()
+                    print("this is resubmitted date block", mutable_data['re_submitted_date'])
+                
             else:
                 mutable_data['form_status'] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
@@ -548,6 +622,29 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
                     pass
+            if mutable_data.get('receipt_no2'):
+                if mutable_data['receipt_no2'].isdigit():
+                    print("this is the receipt no", mutable_data['receipt_no2'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
+
+                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no2']).first() # recipt id coming from the fronetend
+                    mutable_data['receipt_id2'] = reccicpt.id
+                    mutable_data['receipt_no2'] = reccicpt.receipt_number
+                else:
+                    pass
+            if mutable_data.get('receipt_no3'):
+                if mutable_data['receipt_no3'].isdigit():
+                    print("this is the receipt no", mutable_data['receipt_no3'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
+
+                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no3']).first() # recipt id coming from the fronetend
+                    mutable_data['receipt_id3'] = reccicpt.id
+                    mutable_data['receipt_no3'] = reccicpt.receipt_number
+                else:
+                    pass
+            
 
 
  
@@ -572,7 +669,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 print(f"Final updated value - {key}: {value}")
 
        
-
+            time.sleep(20)
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):

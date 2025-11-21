@@ -455,6 +455,20 @@
                                         <span class="text-danger" id="receipt_no_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group">
+                                        <label for="receipt_no2">Receipt No 2</label>
+                                        <select name="receipt_no2" class="form-control" id="receipt_no2">
+                                           
+                                        </select>
+                                        <span class="text-danger" id="receipt_no2_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no3">Receipt No 3</label>
+                                        <select name="receipt_no3" class="form-control" id="receipt_no3">
+                                           
+                                        </select>
+                                        <span class="text-danger" id="receipt_no3_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
                                         <label for="kyc_number">KYC Number</label>
                                         <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number">
                                         <span class="text-danger" id="kyc_number_error"></span>
@@ -799,6 +813,15 @@
                 console.log("loaded teh reciepts");
                 // Add more dropdowns if needed, e.g.:
                 // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+
+                 populateReceiptDropdown("#receipt_no2", receipts);
+
+                console.log("loaded teh reciepts no 2" , receipts);
+
+                 populateReceiptDropdown("#receipt_no3", receipts);
+
+                console.log("loaded teh reciepts no 2" , receipts);
+
             }
 
             // Helper function to populate the receipt dropdown
@@ -955,11 +978,11 @@
 
 
       $('#previousTab3').on('click', function() {
-            $('#nav-tab a[href="#nav-agency"]').tab('show');
+        console.log("Previous tab 3 clicked");
+        $('#nav-tab a[href="#nav-agency"]').tab('show');
       });
 
-
-      $(document).on('click', '#changeTabToDocuments,#saveAsDraftRevenue', function(event) {
+    $(document).on('click', '#changeTabToDocuments,#saveAsDraftRevenue', function(event) {
 
             var buttonName=$(this).attr('id');
             
@@ -995,7 +1018,8 @@
             var validator = $("#deal_form").validate();
             showErrors(validator);
         }
-      });
+      })
+ 
 
 
       $('#previousTab4').on('click', function() {
@@ -1167,6 +1191,34 @@ $.validator.addMethod("alphanum_special", function(value, element) {
 $.validator.addMethod("lettersonly", function(value, element) {
   return this.optional(element) || /^[a-zA-Z][ a-zA-Z0-9_@,.!$/#&+-]*$/i.test(value);
 }, "Letters only please")
+
+ $.validator.addMethod("receiptDuplicate", function (value, element) {
+
+            var r1 = $("#receipt_no").val()?.trim();
+            var r2 = $("#receipt_no2").val()?.trim();
+            var r3 = $("#receipt_no3").val()?.trim();
+
+            // Determine which field is being validated
+            var id = $(element).attr("id");
+
+            if (id === "receipt_no") {
+                if (value && r2 && value === r2) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no2") {
+                if (value && r1 && value === r1) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no3") {
+                if (value && r1 && value === r1) return false;
+                if (value && r2 && value === r2) return false;
+            }
+
+            return true;
+        }, "Duplicate receipt number is not allowed.");
+
 
 
 $('#deal_form').validate({
@@ -1371,6 +1423,17 @@ $('#deal_form').validate({
             required: true,
             alphanum_special: true,
             maxlength: 100,
+            receiptDuplicate: true,
+           },
+             receipt_no2: {
+            alphanum_special: true,
+            maxlength: 100,
+            receiptDuplicate: true,
+           },
+             receipt_no3: {
+            alphanum_special: true,
+            maxlength: 100,
+            receiptDuplicate: true,
            },
           
            is_sale_aml: {

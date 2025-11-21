@@ -1,5 +1,6 @@
  
 from fileinput import filename
+import logging
 from django.db.models import Subquery, OuterRef, Q, Prefetch
 from urllib import request
 from django.shortcuts import render, get_object_or_404
@@ -57,6 +58,9 @@ from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework.permissions import BasePermission
 from rest_framework import status
+
+
+logger = logging.getLogger('Rental_Deal')
 
 
 class RentalDealPermissions(BasePermission):
@@ -537,6 +541,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm("core.add_rentaldeals"):
             return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
 
+        logger.info(
+            "create_deal called: user=%s id=%s",
+            getattr(request.user, "email", None),
+            getattr(request.user, "id", None),
+        )
 
         updated_files = {}
         base_field_name = ""
@@ -590,17 +599,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             # updated_existing_files = []
 
-            # ✅ Remove files if present in removed_clean_dict
-            # files_to_remove = removed_clean_dict.get(base_field_name, [])
-            # for file_name in existing_files:
-            #     file_name = file_name.strip()
-            #     if file_name in files_to_remove:
-            #         relative_path = f"{path_folder}/{file_name}"
-            #         is_deleted = delete_from_s3(relative_path)
-            #         if not is_deleted:
-            #             updated_existing_files.append(file_name)  # keep if deletion failed
-            #     else:
-            #         updated_existing_files.append(file_name)
+      
 
             # ✅ Add new files
             new_file_names = []
@@ -614,6 +613,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 if is_uploaded:
                     new_file_names.append(filename)
                 else :
+                    logger.error(
+                        "Failed to upload file %s for field %s reference=%s user=%s",
+                        filename,
+                        base_field_name,
+                        reference_number,
+                        getattr(request.user, "email", None),
+                    )
                     return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
             # ✅ Combine and update mutable_data + DB dict
@@ -662,8 +668,39 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
                 mutable_data['receipt_id'] = reccicpt.id
                 mutable_data['receipt_no'] = reccicpt.receipt_number
+                print("this is the receipt id", mutable_data['receipt_id'])
+                print("this is the receipt no", mutable_data['receipt_no'])
             else:
                 pass
+
+        if mutable_data.get('receipt_no2'):
+            if mutable_data['receipt_no2'].isdigit():
+                print("this is the receipt no2", mutable_data['receipt_no2'])
+                Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
+
+                reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no2']).first()
+                mutable_data['receipt_id2'] = reccicpt2.id
+                mutable_data['receipt_no2'] = reccicpt2.receipt_number
+                print("this is the receipt id2", mutable_data['receipt_id2'])
+                print("this is the receipt no2", mutable_data['receipt_no2'])
+            else:
+                pass
+        if mutable_data.get('receipt_no3'):
+            if mutable_data['receipt_no3'].isdigit():
+                print("this is the receipt no3", mutable_data['receipt_no3'])
+                Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
+                Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
+
+                reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no3']).first()
+                mutable_data['receipt_id3'] = reccicpt2.id
+                mutable_data['receipt_no3'] = reccicpt2.receipt_number
+                print("this is the receipt id3", mutable_data['receipt_id3'])
+                print("this is the receipt no3", mutable_data['receipt_no3'])
+            else:
+                pass
+
+
 
         
         if not mutable_data.get('submitted_by_agent'):
@@ -706,6 +743,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     missing_files.append(fname)
         
         if missing_files:
+
+            logger.error(
+                "Missing files in S3 for reference=%s user=%s missing=%s",
+                mutable_data.get("reference_number"),
+                getattr(request.user, "email", None),
+                missing_files,
+            )
             return Response(
                 {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -718,6 +762,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        logger.info(
+            "Rental deal created reference_number=%s id=%s by=%s",
+            serializer.data.get("reference_number"),
+            serializer.data.get("id"),
+            getattr(request.user, "email", None),)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # edit the data 
@@ -890,6 +940,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     if file_name in files_to_remove:
                         relative_path = f"{path_folder}/{file_name}"
                         is_deleted = delete_from_s3(relative_path)
+                        logger.info("delete_from_s3 called for %s result=%s", relative_path, is_deleted)
                         # if is_deleted:
                         #     updated_existing_files.append(file_name)  # keep if deletion failed
                     else:
@@ -906,7 +957,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                     if is_uploaded:
                         new_file_names.append(filename)
+                        logger.info("Uploaded file added: %s for field %s", filename, base_field_name)
+
                     else :
+                        logger.error("Failed to upload file %s for field %s reference=%s user=%s", filename, base_field_name, reference_number, getattr(request.user, "email", None))
+
                         return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
 
                 # ✅ Combine and update mutable_data + DB dict
@@ -964,6 +1019,33 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
                     pass
+
+            if mutable_data.get('receipt_no2'):
+                if mutable_data['receipt_no2'].isdigit():
+                    print("this is the receipt no2", mutable_data['receipt_no2'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
+
+                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no2']).first()
+                    mutable_data['receipt_id2'] = reccicpt2.id
+                    mutable_data['receipt_no2'] = reccicpt2.receipt_number
+                    print("this is the receipt id2", mutable_data['receipt_id2'])
+                    print("this is the receipt no2", mutable_data['receipt_no2'])
+                else:
+                    pass
+            if mutable_data.get('receipt_no3'):
+                if mutable_data['receipt_no3'].isdigit():
+                    print("this is the receipt no3", mutable_data['receipt_no3'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
+
+                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no3']).first()
+                    mutable_data['receipt_id3'] = reccicpt2.id
+                    mutable_data['receipt_no3'] = reccicpt2.receipt_number
+                    print("this is the receipt id3", mutable_data['receipt_id3'])
+                    print("this is the receipt no3", mutable_data['receipt_no3'])
+                else:
+                    pass
             
             if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
                 mutable_data['approved_rejected_by'] = request.user.email
@@ -993,6 +1075,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             print("final UPdate values are " , final_updated_values)
             for key, value in final_updated_values.items():
                 print(f"Final updated value - {key}: {value}")
+                logger.debug("Final updated value - %s: %s", key, value)
+
 
             
 
@@ -1000,10 +1084,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
                     relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
+                    logger.info("checking hte path send to s3 %s", relative_path)
                     if not s3_file_exists(relative_path):
                         missing_files.append(fname)
             
             if missing_files:
+                logger.error("Missing files before update for rental id=%s missing=%s", rental_deal.pk, missing_files)
+
                 return Response(
                     {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -1060,9 +1147,41 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print("instance", instance)
         return Response({'detail': 'Rental deal deleted'}, status=status.HTTP_200_OK)
     
+    # recipt helper function 
+    
+
+    
     # view the rental deal
     @action(detail=True, methods=['get'], url_path='view')
     def view_rental_deal(self, request, pk=None):
+
+        logger.info("Rental deal view is opened successfully")
+        logger.error("Something went wrong")
+
+        def get_receipt_info(receipt_no):
+            print(receipt_no)
+            """
+            Returns (receipt_no_output, receipt_id)
+            based on your business logic.
+            """
+            if receipt_no in ["Null", "", None]:
+                return "Null", ""
+
+            elif receipt_no == "No Commission":
+                return "No Commission", ""
+
+            # Find receipt
+            else:
+                rec = Receipts.objects.filter(receipt_number=receipt_no).first()
+                if rec:
+                    return rec.receipt_number, rec.id
+             
+
+            return "", ""
+
+
+
+
         rental_deal = get_object_or_404(RentalDeals, pk=pk)
 
 
@@ -1078,38 +1197,44 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         #     recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
         #     print(recipt_no.receipt_number , "this is recipt id ")
 
-        if rental_deal.receipt_no == "Null" or rental_deal.receipt_no == "":
-        # Case 1: Explicit "Null" → no receipt
+        receipt_no = (rental_deal.receipt_no or "").strip()   # NORMALIZE
+        print(receipt_no, "normalized receipt_no")
+
+        # CASE 1: empty or Null
+        if receipt_no in ["", "Null"]:
             recipt_no = "Null"
             recipt_id = ""
-            
-         
 
-        elif rental_deal.receipt_no == "No Commission":
-            # Case 2: No Commission special case
-            recipt_no = "No Comission"
+        # CASE 2: No Commission
+        elif receipt_no == "No Commission":
+            recipt_no = "No Commission"
             recipt_id = ""
-            
 
-        
-
+        # CASE 3: Valid numeric receipt
         else:
-            # Case 3: Receipt ID
-            recipt = Receipts.objects.filter(receipt_number=rental_deal.receipt_no).first()
+            recipt = Receipts.objects.filter(receipt_number=receipt_no).first()
             if recipt:
                 recipt_no = recipt.receipt_number
                 recipt_id = recipt.id
-                print(recipt_no , "this is recipt number ")
-                print(recipt_id , "this is recipt id ")
             else:
                 recipt_no = ""
                 recipt_id = ""
 
 
+
                 
+        recipt_no_1, recipt_id_1 = get_receipt_info(rental_deal.receipt_no)
+        # Receipt No 2
+        recipt_no_2, recipt_id_2 = get_receipt_info(rental_deal.receipt_no2)
+
+        # Receipt No 3
+        recipt_no_3, recipt_id_3 = get_receipt_info(rental_deal.receipt_no3)
 
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no  , "recipt_id":recipt_id})
+        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no  , "recipt_id":recipt_id ,
+        "recipt_no_2":recipt_no_2 , "recipt_id_2":recipt_id_2 ,
+        "recipt_no_3":recipt_no_3 , "recipt_id_3":recipt_id_3
+        })
     
     # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):

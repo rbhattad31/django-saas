@@ -12,18 +12,20 @@ from django.utils.module_loading import import_string
 # print("UTILS STORAGE INIT:", type(get_storage_class()))
 # print("UTILS STORAGE INIT:", )
 from django.core.files.storage import default_storage
+import logging
+logger = logging.getLogger('Rental_Deal')
 
 def upload_file_to_full_s3_url(file_obj, url):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
     storage = storage_class()
-    print("Uploading file to S3 at URL:", url)
+    logger.info("Uploading file to S3 at URL: %s", url)
     saved_path = storage.save(f"live/classic_properties/{url}", ContentFile(file_obj.read()))
 
-    print(f"Uploaded to: {saved_path}")
+    logger.info("Uploaded to: %s", saved_path)
 
     files_is_presnet = storage.exists(f'{saved_path}')
 
-    print(f"File exists after upload: {files_is_presnet}")
+    logger.info("File exists after upload: %s", files_is_presnet)
 
     if not files_is_presnet:
         return False
@@ -51,10 +53,10 @@ def delete_from_s3(file_path):
     storage = storage_class()
     if storage.exists(f'live/classic_properties/{file_path}'):
         storage.delete(f'live/classic_properties/{file_path}')
-        print(f"Deleted: {f'live/classic_properties/{file_path}'}")
+        logger.info("Deleted: %s", f'live/classic_properties/{file_path}')
         return True
     else:
-        print(f"File not found: {f'live/classic_properties/{file_path}'}")
+        logger.info("File not found: %s", f'live/classic_properties/{file_path}')
         return False
 
 
@@ -63,13 +65,13 @@ def s3_file_exists(filepath):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
     storage = storage_class()
     try:
-        print(f"Checking existence for {filepath}")
+        logger.info("Checking existence for %s", filepath)
         url = f"/live/classic_properties/{filepath}"
         is_present =  storage.exists(url)
-        print(f"Checked existence for {filepath}: {is_present}")
+        logger.info("Checked existence for %s: %s", filepath, is_present)
         return is_present
     except Exception as e:
-        print(f"S3 existence check failed for {filepath}: {e}")
+        logger.exception("S3 existence check failed for %s: %s", filepath, e)
         return False
 
 

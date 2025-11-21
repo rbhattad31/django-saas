@@ -249,7 +249,8 @@ class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
 
     # Deal info
     "date",                     # Deal Date
-    "submitted_date",           # Submission / Start Date
+    "submitted_date",   
+    "re_submitted_date",        # Submission / Start Date
     "deal_amount",              # Deal Amount / Rental Price
     "project_name",
     "builduing_name",

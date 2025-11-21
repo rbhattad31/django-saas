@@ -741,12 +741,48 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <label for="">
-                                                <h6 class="labelname">Receipt No</h6>
+                                                <h6 class="labelname">Receipt No 1</h6>
                                             </label>
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-6 format-value">
                                             <label for=""><h6 class="value">{{receipt_no}}</h6></label>
+                                            {% if perms.core.download_receipts and receipt_id %}
+                                                <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_id}}/download/" target="_blank" >Download</a> 
+                                                {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No 2 </h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{receipt_no_2}}</h6></label>
+                                            {% if perms.core.download_receipts and receipt_id_2 %}
+                                                <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_id_2}}/download/" target="_blank" >Download</a> 
+                                                {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No 3</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{receipt_no_3}}</h6></label>
+                                            {% if perms.core.download_receipts and receipt_id_3 %}
+                                                <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_id_3}}/download/" target="_blank" >Download</a> 
+                                                {% endif %}
                                         </div>
                                     </div>
                                 </div>
