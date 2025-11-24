@@ -89,9 +89,9 @@ $(document).ready(function () {
             text: '<i class=""></i> Excel',
             titleAttr: 'Export to Excel',
             className: 'btn btn-success btn-sm', // Custom styling
-            exportOptions: {
-                columns: ':visible' // Export only visible columns
-            }
+            // exportOptions: {
+            //     columns: ':visible' // Export only visible columns
+            // }
         },
         {
             extend: 'pdfHtml5',
@@ -100,9 +100,9 @@ $(document).ready(function () {
             className: 'btn btn-danger btn-sm',
             orientation: 'landscape',
             pageSize: 'A4',
-            exportOptions: {
-                columns: ':visible'
-            }
+            // exportOptions: {
+            //     columns: ':visible'
+            // }
         }
     ],
     drawCallback: function () {
@@ -293,6 +293,53 @@ $(document).ready(function () {
         render: data => new Date(data).toLocaleDateString()
       },
       { data: "status", title: "Status" },
+
+      // addtional fields which adre invisible for the  Excel data export
+      { data: "owner_first_name", title: "Owner First Name", visible: false },
+      { data: "owner_source", title: "Owner Source", visible: false },
+      { data: "owner_mobile", title: "Owner Mobile", visible: false },
+      { data: "owner_email", title: "Owner Email", visible: false },
+      { data: "agency_name", title: "Agency Name", visible: false },
+      { data: "agent_name", title: "Agent Name", visible: false },
+      { data: "brn", title: "BRN", visible: false },
+      { data: "agent_phone", title: "Agent Phone", visible: false },
+      { data: "agent_email", title: "Agent Email", visible: false },
+      { data: "no_of_cheque", title: "No of Cheque", visible: false },
+      { data: "cheque_date", title: "Cheque Date", visible: false },
+      
+      { data: "kyc_number", title: "KYC Number", visible: false },
+      { data: "total_commission", title: "Total Commission", visible: false },
+      { data: "less_outside_commission", title: "Less Outside Commission", visible: false },
+      { data: "net_commission", title: "Net Commission", visible: false },
+      { data: "classic", title: "Classic", visible: false },
+      { data: "agent1", title: "Agent 1", visible: false },
+      { data: "agent2", title: "Agent 2", visible: false },
+      { data: "agent3", title: "Agent 3", visible: false },
+      { data: "comments", title: "Comments", visible: false },
+      { data: "agent_name1_display", title: "Agent Name 1", visible: false },
+      { data: "agent_name2_display", title: "Agent Name 2", visible: false },
+      { data: "agent_name3_display", title: "Agent Name 3", visible: false },
+      { data: "receipt_no", title: "Receipt No", visible: false },
+      { data: "form_status", title: "Form Status", visible: false },
+      { data: "created_at", title: "Created At", visible: false },
+      { data: "updated_at", title: "Updated At", visible: false },
+      { data: "created_by", title: "Created By", visible: false },
+      { data: "updated_by", title: "Updated By", visible: false },
+      { data: "status", title: "Status", visible: false },
+      { data: "deal_sno", title: "Deal SNO", visible: false },
+      { data: "is_approved_rejected_display", title: "Approved/Rejected", visible: false },
+      { data: "approved_rejected_by", title: "Approved Rejected By", visible: false },
+      { data: "is_entered_in_finance_system_display", title: "Entered Finance System", visible: false },
+      { data: "comments_finance", title: "Finance Comments", visible: false },
+      { data: "submitted_by_user_id", title: "Submitted By User ID", visible: false },
+      { data: "is_deleted", title: "Is Deleted", visible: false },
+      { data: "agent_comment", title: "Agent Comment", visible: false },
+      { data: "is_property_aml", title: "Property AML", visible: false },
+      { data: "screening", title: "Screening", visible: false },
+      { data: "screening_comments", title: "Screening Comments", visible: false },
+      { data: "seller_nationality", title: "Seller Nationality", visible: false },
+      { data: "buyer_nationality", title: "Buyer Nationality", visible: false },
+      // { data: "manager_approved_rejected", title: "Manager Approval", visible: false },
 
       
     ],

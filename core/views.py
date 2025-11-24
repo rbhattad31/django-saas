@@ -275,6 +275,7 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
         mutable_data['account_id'] = request.user.account_id
         mutable_data['mail_status'] = "sent"
+        mutable_data['created_at'] = datetime.now()
 
 
         serializer = ReceiptSerilizer(data=mutable_data)
@@ -330,6 +331,7 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
             flat_data['agent_name'] = user.name
             flat_data['agent_email'] = user.email
             flat_data['agent_id'] = user.id
+            flat_data['updated_at'] = datetime.now()
 
             print(flat_data)
 

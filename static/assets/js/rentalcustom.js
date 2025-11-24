@@ -239,6 +239,7 @@ $(document).ready(function () {
      {data: "action",
         title: "Action ",},
       { data: "email", title: "submitted_by_user" },
+      {data: "username", title: "submitted_by_user_name",visible: false},
       {
         data: "reference_number",
         fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
@@ -285,6 +286,78 @@ $(document).ready(function () {
         //   return new Date(data).toLocaleDateString(); // ✅ format: M/D/YYYY
         // },
       },
+      {data: "re_submitted_date",title: "RE Submitted Date",},
+      { data: "property_usage", title: "Property Usage",visible: false },
+      { data: "property_size", title: "Property Size",visible: false },
+      { data: "property_type", title: "Property Type",visible: false },
+      { data: "premises_no", title: "Premises Number",visible: false },
+      { data: "plot_no", title: "Plot Number",visible: false },
+      { data: "security_deposit", title: "Security Deposit",visible: false },
+      { data: "owner_first_name", title: "Owner Name", visible: false },
+{ data: "owner_source", title: "Owner Source", visible: false },
+{ data: "owner_mobile", title: "Owner Mobile", visible: false },
+{ data: "owner_email", title: "Owner Email", visible: false },
+{ data: "seller_nationality", title: "Owner Nationality", visible: false },
+
+// Tenant details (hidden)
+{ data: "tenant_first_name", title: "Tenant Name", visible: false },
+{ data: "tenant_source", title: "Tenant Source", visible: false },
+{ data: "tenant_mobile", title: "Tenant Mobile", visible: false },
+{ data: "tenant_email", title: "Tenant Email", visible: false },
+{ data: "buyer_nationality", title: "Tenant Nationality", visible: false },
+
+// Owner Agency details (hidden)
+{ data: "owner_agency", title: "Owner Agency", visible: false },
+{ data: "agent_first_name", title: "Owner Agent Name", visible: false },
+{ data: "agent_phone", title: "Owner Agent Phone", visible: false },
+{ data: "agent_email", title: "Owner Agent Email", visible: false },
+{ data: "brn", title: "Owner Agency Brn", visible: false },
+
+// Tenant Agency details (hidden)
+{ data: "tenant_agency", title: "Tenant Agency", visible: false },
+{ data: "tenant_agent_first_name", title: "Tenant Agent Name", visible: false },
+{ data: "tenant_agent_phone", title: "Tenant Agent Phone", visible: false },
+{ data: "tenant_agent_email", title: "Tenant Agent Email", visible: false },
+{ data: "tenant_brn", title: "Tenant Agency Brn", visible: false },
+
+// Mediating Agency (hidden)
+{ data: "mediating_agency", title: "Mediating Agency", visible: false },
+{ data: "mediating_agent_name", title: "Mediating Agent Name", visible: false },
+{ data: "mediating_agent_phone", title: "Mediating Agent Phone", visible: false },
+{ data: "mediating_agent_email", title: "Mediating Agent Email", visible: false },
+{ data: "mediating_agency_brn", title: "Mediating Agency Brn", visible: false },
+
+// Deal meta info (hidden)
+{ data: "created_at", title: "Deal Created At", visible: false },
+{ data: "created_by", title: "Deal Created By", visible: false },
+{ data: "updated_by", title: "Deal Updated By", visible: false },
+
+// Commission details (hidden)
+{ data: "total_commission", title: "Total Commission", visible: false },
+{ data: "less_outsude_commission", title: "Less Outside Commission", visible: false },
+{ data: "net_commission", title: "Net Commission", visible: false },
+{ data: "classic", title: "Classic", visible: false },
+{ data: "agent1", title: "Agent1", visible: false },
+{ data: "agent2", title: "Agent2", visible: false },
+{ data: "agent3", title: "Agent3", visible: false },
+{ data: "agent_name1_display", title: "Agent 1 Name", visible: false },
+{ data: "agent_name2_display", title: "Agent 2 Name", visible: false },
+{ data: "agent_name3_display", title: "Agent 3 Name", visible: false },
+
+// Finance / Status fields (hidden)
+{ data: "receipt_no", title: "Receipt No", visible: false },
+{ data: "kyc_number", title: "KYC Number", visible: false },
+{ data: "is_rental_aml", title: "AML", visible: false },
+{ data: "is_entered_in_finance_system_display", title: "Is Entered In Finance System", visible: false },
+{ data: "form_status", title: "Form Status", visible: false },
+{ data: "is_approved_rejected_display", title: "Approve/Reject", visible: false },
+{ data: "approved_rejected_by", title: "Approve/Reject By", visible: false },
+{ data: "agent_comment", title: "Comments By Agent", visible: false },
+{ data: "comments", title: "Comments By Admin", visible: false },
+{ data: "comments_finance", title: "Comments By Finance", visible: false },
+      
+
+
       
     ],
   });
@@ -533,7 +606,6 @@ $(document).ready(function () {
     
   }
 });
-
       loadAgentDropdown(data);
       loadReceiptDropdown(data);
 // ✅ Manually uncheck specific radio groups (overrides)
@@ -544,7 +616,6 @@ $(document).ready(function () {
       alert("Failed to load data.");
     },
   });
-
   // 🔹 Submit form via POST
 
  
@@ -736,6 +807,16 @@ function loadReceiptDropdown(requestdata) {
   console.log("loaded teh reciepts");
   // Add more dropdowns if needed, e.g.:
   // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+
+  populateReceiptDropdown("#receipt_no2", receipts, requestdata.receipt_no2);
+  console.log(requestdata.receipt_no2);
+  console.log("loaded teh reciepts no 2");
+
+  
+  populateReceiptDropdown("#receipt_no3", receipts, requestdata.receipt_no3);
+  console.log(requestdata.receipt_no3);
+  console.log("loaded teh reciepts no 3");
+
 }
 
 // Helper function to populate the receipt dropdown
@@ -983,8 +1064,8 @@ function datepickershow_edit() {
     dateFormat: "dd-mm-yy",
     changeMonth: true,
     changeYear: true,
-    yearRange: "-100:+0",
-    maxDate: 0, 
+    yearRange: "-100:+10",
+   
     onSelect: function (date) {
       var date2 = $("#deal_start_date").datepicker("getDate");
       $("#deal_end_date").datepicker("option", "minDate", date2);
@@ -1073,6 +1154,33 @@ $.validator.addMethod(
   },
   "Please enter a valid email address."
 );
+
+        $.validator.addMethod("receiptDuplicate", function (value, element) {
+
+            var r1 = $("#receipt_no").val()?.trim();
+            var r2 = $("#receipt_no2").val()?.trim();
+            var r3 = $("#receipt_no3").val()?.trim();
+
+            // Determine which field is being validated
+            var id = $(element).attr("id");
+
+            if (id === "receipt_no") {
+                if (value && r2 && value === r2) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no2") {
+                if (value && r1 && value === r1) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no3") {
+                if (value && r1 && value === r1) return false;
+                if (value && r2 && value === r2) return false;
+            }
+
+            return true;
+        }, "Duplicate receipt number is not allowed.");
 $("#deal_form").validate({
   ignore: "",
   rules: {
@@ -1285,16 +1393,28 @@ $("#deal_form").validate({
       maxlength: 255,
     },
     agent_comment: {
-      maxlength: 255,
+       
     },
 
     comments: {
-      maxlength: 255,
+
     },
     receipt_no: {
       alphanum_special: true,
       required: true,
       maxlength: 100,
+      receiptDuplicate: true,
+    },
+
+    receipt_no2: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
+    },
+      receipt_no3: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
     },
     is_rental_aml: {
       required: false,
@@ -1395,8 +1515,8 @@ $(document).on("click", "#create_deal", function (event) {
 
 
 $(document).on('click', '#update_draft', function(event) {    
-            $('[name="seller_agency"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="agent_name1"],[name="receipt_no"],[name="is_sale_aml"]').each(function () {
-                  $(this).rules('remove','required');
+            $('[name="owner_agency"],[name="agent_first_name"],[name="tenant_agent_phone"],[name="brn"],[name="agent_name1"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_brn"],[name="tenant_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="tenancy_contract[]"],[name="owner_passport_copy[]"],[name="title_deed[]"],[name="owner_passport_copy[]"],[name="tenant_passport_visa_copy[]"],[name="rental_deposit_cheque_copy[]"],[name="is_rental_aml"]').each(function () {
+              $(this).rules('remove','required');
               });      
               if($('#deal_form').valid() & countMultipleFiles('screening')){  
                 var url="draft/";   

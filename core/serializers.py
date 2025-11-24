@@ -70,13 +70,13 @@ class ReceiptSerilizer(serializers.ModelSerializer):
         if obj.deal_refer_no:
             print(obj.deal_refer_no ,"thisiss the deal refer no entered if condition") 
             if obj.deal_type == "Rental":
-                deal  = RentalDeals.objects.filter(reference_number=obj.deal_refer_no).first()
+                deal  = RentalDeals.objects.filter(reference_number=obj.deal_refer_no,is_deleted='N').first()
                 if deal:
                     html += f'<a href="/rental-deals/view/{deal.id}/" target="_blank" style="text-decoration: none; color:black">{obj.deal_refer_no}</a>'
                 else:
                     html +=""
             elif obj.deal_type == "Sales":
-                deal  = SalesDeals.objects.filter(reference_number=obj.deal_refer_no).first()
+                deal  = SalesDeals.objects.filter(reference_number=obj.deal_refer_no,is_deleted="N").first()
                 if deal:
                     html += f'<a href="/sales-deals/view/{deal.id}/" target="_blank" style="text-decoration: none;color:black ">{obj.deal_refer_no}</a>'
                 else:

@@ -320,6 +320,8 @@ $(document).ready(function () {
       //   }
       // },
     },
+    "aLengthMenu": [[10,25, 50, 75,100, -1], 
+        [10,25, 50, 75,100, "All"]],
         dom:  "<'row mt-1'l<'col-md-6 d-flex align-items-start pl-0'B><'col-md-6 text-end'f>>" +
   "<'row mt-1'<'col-sm-12'tr>>" +
   "<'row mt-1'<'col-md-6'i><'col-md-6 text-end'p>>",
@@ -342,6 +344,7 @@ $(document).ready(function () {
             
              
         ],
+
     success: function (data) {
       console.log("✅ Success:", data);
     }, 
@@ -375,6 +378,89 @@ $(document).ready(function () {
           }
         },
       },
+      {
+        data: "re_submitted_date",
+        title: "RE Submitted Date",
+        render: function (data) {
+          if (data){
+          return new Date(data).toLocaleDateString(); // Format date
+          }
+          else{
+            return "";
+          }
+        },
+      },
+       // ===================== 🧾 DEAL INFO =====================
+  { data: "form_status", title: "Form Status", visible: false },
+  // { data: "is_deleted", title: "Is Deleted", visible: false },
+  { data: "is_approved_rejected_display", title: "Approval Status", visible: false },
+  // { data: "manager_approved_rejected", title: "Manager Approve/Reject", visible: false },
+  { data: "approved_rejected_by", title: "Approved/Rejected By", visible: false },
+  { data: "created_at", title: "Deal Created At", visible: false },
+  { data: "created_by", title: "Deal Created By", visible: false },
+  { data: "updated_by", title: "Deal Updated By", visible: false },
+
+  // ===================== 🧍 SELLER DETAILS =====================
+  { data: "seller_name", title: "Seller Name", visible: false },
+  { data: "seller_source", title: "Seller Source", visible: false },
+  { data: "selller_mobile", title: "Seller Mobile", visible: false },
+  { data: "seller_email", title: "Seller Email", visible: false },
+  { data: "seller_nationality", title: "Seller Nationality", visible: false },
+
+  // Seller Agency
+  { data: "seller_agency", title: "Seller Agency", visible: false },
+  { data: "seller_agent_name", title: "Seller Agent Name", visible: false },
+  { data: "seller_agent_phone", title: "Seller Agent Phone", visible: false },
+  { data: "seller_agent_email", title: "Seller Agent Email", visible: false },
+  { data: "seller_agency_brn", title: "Seller Agency BRN", visible: false },
+
+  // ===================== 👥 BUYER DETAILS =====================
+  { data: "buyer_name", title: "Buyer Name", visible: false },
+  { data: "buyer_source", title: "Buyer Source", visible: false },
+  { data: "buyer_mobile", title: "Buyer Mobile", visible: false },
+  { data: "buyer_email", title: "Buyer Email", visible: false },
+  { data: "buyer_nationality", title: "Buyer Nationality", visible: false },
+
+  // Buyer Agency
+  { data: "buyer_agency", title: "Buyer Agency", visible: false },
+  { data: "buyer_agent_name", title: "Buyer Agent Name", visible: false },
+  { data: "buyer_agent_phone", title: "Buyer Agent Phone", visible: false },
+  { data: "buyer_agent_email", title: "Buyer Agent Email", visible: false },
+  { data: "buyer_agency_brn", title: "Buyer Agency BRN", visible: false },
+
+  // ===================== 🏢 MEDIATING AGENCY =====================
+  { data: "mediating_agency", title: "Mediating Agency", visible: false },
+  { data: "mediating_agent_name", title: "Mediating Agent Name", visible: false },
+  { data: "mediating_agent_phone", title: "Mediating Agent Phone", visible: false },
+  { data: "mediating_agent_email", title: "Mediating Agent Email", visible: false },
+  { data: "mediating_agency_brn", title: "Mediating Agency BRN", visible: false },
+
+  // ===================== 💰 COMMISSION DETAILS =====================
+  { data: "total_commission", title: "Total Commission", visible: false },
+  { data: "less_outsude_commission", title: "Less Outside Commission", visible: false },
+  { data: "net_commission", title: "Net Commission", visible: false },
+  { data: "classic", title: "Classic", visible: false },
+  { data: "agent1", title: "Agent1", visible: false },
+  { data: "agent2", title: "Agent2", visible: false },
+  { data: "agent3", title: "Agent3", visible: false },
+  { data: "agent_name1_display", title: "Agent 1 Name", visible: false },
+  { data: "agent_name2_display", title: "Agent 2 Name", visible: false },
+  { data: "agent_name3_display", title: "Agent 3 Name", visible: false },
+
+  // ===================== 🧾 FINANCE & STATUS =====================
+  { data: "receipt_no", title: "Receipt No", visible: false },
+  { data: "kyc_number", title: "KYC Number", visible: false },
+  { data: "is_sale_aml", title: "AML", visible: false },
+  { data: "is_entered_in_finance_system_display", title: "Entered in Finance System", visible: false },
+  { data: "agent_comment", title: "Comments by Agent", visible: false },
+  { data: "comments", title: "Comments by Admin", visible: false },
+  { data: "comments_finance", title: "Comments by Finance", visible: false },
+
+
+
+
+
+
     ],
   });
   $('#filterForm').on('submit', function (e) {
@@ -605,7 +691,7 @@ function comment_finance(id) {
   const comment = $("#comments_finance").val();
 
   $.ajax({
-    url: "/update-single-field/", // Your backend URL
+    url: "/sales-deals/update-single-field/", // Your backend URL
     method: "PUT",
     headers: {
       "X-CSRFToken": getCookie("csrftoken"), // if CSRF is enabled
@@ -661,7 +747,7 @@ $(document).ready(function () {
       const referenceNumber = data.reference_number;
 
       datepickershow_edit();
-      loadReceiptDropdown(data);
+      
       
 
       $.each(data, function (key, value) {
@@ -719,6 +805,7 @@ $(document).ready(function () {
       // ✅ Manually uncheck specific radio groups (overrides)
 
       loadAgentDropdown(data);
+      loadReceiptDropdown(data);
       
     },
     error: function () {
@@ -893,6 +980,9 @@ function loadReceiptDropdown(requestdata) {
   console.log("loaded teh reciepts");
   // Add more dropdowns if needed, e.g.:
   // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
+
+  populateReceiptDropdown("#receipt_no2", receipts, requestdata.receipt_no2);
+  populateReceiptDropdown("#receipt_no3", receipts, requestdata.receipt_no3);
 }
 
 // Helper function to populate the receipt dropdown
@@ -1265,7 +1355,7 @@ $.validator.addMethod(
   function (value, element) {
     return (
       this.optional(element) ||
-      value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'\$%\^&\*\(\)\s/]+$/)
+      value == value.match(/[A-Za-z0-9,.:;_~\-!|@#'’\$%\^&\*\(\)\s/']+$/)
     );
   },
   "Enter only letters, numbers and special characters."
@@ -1280,6 +1370,33 @@ $.validator.addMethod(
   },
   "Letters only please"
 );
+
+        $.validator.addMethod("receiptDuplicate", function (value, element) {
+
+            var r1 = $("#receipt_no").val()?.trim();
+            var r2 = $("#receipt_no2").val()?.trim();
+            var r3 = $("#receipt_no3").val()?.trim();
+
+            // Determine which field is being validated
+            var id = $(element).attr("id");
+
+            if (id === "receipt_no") {
+                if (value && r2 && value === r2) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no2") {
+                if (value && r1 && value === r1) return false;
+                if (value && r3 && value === r3) return false;
+            }
+
+            if (id === "receipt_no3") {
+                if (value && r1 && value === r1) return false;
+                if (value && r2 && value === r2) return false;
+            }
+
+            return true;
+        }, "Duplicate receipt number is not allowed.");
 
 $("#sales_form").validate({
   rules: {
@@ -1462,16 +1579,28 @@ $("#sales_form").validate({
     },
     agent_comment: {
       alphanum_special: true,
-      maxlength: 255,
+      
     },
     comments: {
       alphanum_special: true,
-      maxlength: 255,
+      
     },
     receipt_no: {
       required: true,
       alphanum_special: true,
       maxlength: 100,
+      receiptDuplicate: true,
+    },
+    
+    receipt_no2: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
+    },
+      receipt_no3: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
     },
 
     is_sale_aml: {
@@ -1655,7 +1784,7 @@ function updatefunctionality(urls) {
           window.location.href =   document.referrer;
         }
       }, 3000);
-    } else if (data.status == "validation_error") {
+    } else if (data.status == "validation_error"  || data.status== 400 ) {
       $.each(data.data, function (key, val) {
         $("#" + key + "_error").text(val[0]);
         $("#" + key + "_error").show();
@@ -1722,9 +1851,12 @@ function updatefunctionality(urls) {
               }
             }
 
+
             // Display the error message to the user
             // Make sure you have an element with id="alert-danger" in your HTML
             //$("#alert-danger").text(errorMessage).show();
+
+            swal("Please Fill field", errorMessage);
             $("#alert-primary").text(errorMessage);
             $("#successmsg").show();
             setTimeout(function () {
