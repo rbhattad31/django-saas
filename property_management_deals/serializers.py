@@ -8,7 +8,7 @@ from datetime import date, datetime
 import re
 from django.db.models import Q
 from core.models import RentalProperties, Account as Accounts
-
+from datetime import date as _date
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
@@ -30,15 +30,12 @@ class DealSerializer(serializers.ModelSerializer):
     class Meta:
         model = RentalProperties
         fields = '__all__'
-        extra_fields = {
-            'can_edit', 'can_delete', 'can_view', 'can_edit_approved', 'agent_name1_display', 'agent_name2_display', 'agent_name3_display' ,'is_approved_rejected_display','manager_approved_rejected_display','is_entered_in_finance_system_display'
-        }
-        
 
     can_edit = serializers.SerializerMethodField()
     can_delete = serializers.SerializerMethodField()
     can_view = serializers.SerializerMethodField()
     can_edit_approved = serializers.SerializerMethodField()
+
     agent_name1_display = serializers.SerializerMethodField()
     agent_name2_display = serializers.SerializerMethodField()
     agent_name3_display = serializers.SerializerMethodField()
@@ -47,7 +44,6 @@ class DealSerializer(serializers.ModelSerializer):
     is_approved_rejected_display = serializers.SerializerMethodField()
     manager_approved_rejected_display =serializers.SerializerMethodField()  
     is_entered_in_finance_system_display =serializers.SerializerMethodField()
-
 
  
     def get_can_view(self, obj):
@@ -138,7 +134,7 @@ class DealSerializer(serializers.ModelSerializer):
             return "Yes"
         else:
             return None
- 
+
    
  
  
@@ -306,6 +302,19 @@ class PropertySerializer(serializers.ModelSerializer):
     tenancy_start_date = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
     tenancy_end_date = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True)
     cheque_date = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    # --- add this field definition ---
+    # submitted_date = serializers.CharField(
+    #     required=False,
+    #     allow_blank=True,
+    #     allow_null=True
+    # )
+
+    submitted_date = serializers.DateField(
+        required=False,
+        allow_null=True,
+        input_formats=['%Y-%m-%d', '%d-%m-%Y', '%d-%m-%y'],
+        format='%d-%m-%Y'
+    )
     no_of_cheque = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     # cheque_date = serializers.CharField(
     #     child=serializers.DateField(format='%d-%m-%Y', input_formats=['%d-%m-%Y', '%Y-%m-%d', '%d-%m-%y']),
@@ -320,6 +329,7 @@ class PropertySerializer(serializers.ModelSerializer):
     pms_cheque_copy = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     title_deed = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     kyc_form = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
     # screening = serializers.CharField(required=False, allow_blank=True, allow_null=True)
  
    
@@ -375,6 +385,35 @@ class PropertySerializer(serializers.ModelSerializer):
  
  
        
+
+    def validate_submitted_date(self, value):
+        """
+        Accept empty string / null for drafts.
+        When provided, parse accepted formats into a date object.
+        Accepted input formats: YYYY-MM-DD, DD-MM-YYYY, DD-MM-YY
+        """
+        if value is None:
+            return None
+        if isinstance(value, _date):
+            return value  # already a date object
+
+        # empty string -> treat as None (acceptable for draft)
+        if isinstance(value, str) and value.strip() == '':
+            return None
+
+        accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
+        for fmt in accepted_formats:
+            try:
+                parsed = datetime.strptime(value.strip(), fmt).date()
+                return parsed
+            except (ValueError, TypeError):
+                continue
+
+        raise serializers.ValidationError(
+            "submitted_date must be empty or in one of these formats: YYYY-MM-DD, DD-MM-YYYY, DD-MM-YY"
+        )
+    
+
     def validate_cheque_date(self, value):
         cleaned_dates = []
  

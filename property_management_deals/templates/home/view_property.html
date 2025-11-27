@@ -386,7 +386,7 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-3">
-                                            <label for=""><h6 class="value">{{ property.agent_name1_display }}</h6></label>
+                                            <label for=""><h6 class="value">{{ property.agent_name1 }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
@@ -403,7 +403,7 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-3">
-                                            <label for=""><h6 class="value">{{ property.agent_name2_display }}</h6></label>
+                                            <label for=""><h6 class="value">{{ property.agent_name2 }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
@@ -420,12 +420,12 @@
                                         </div>
                                         <div class="col-1">:</div>
                                         <div class="col-3">
-                                            <label for=""><h6 class="value">{{ property.agent_name3_display }}</h6></label>
+                                            <label for=""><h6 class="value">{{ property.agent_name3 }}</h6></label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row mt-2">
+                            {% comment %} <div class="form-group row mt-2">
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">
@@ -437,7 +437,142 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>  {% endcomment %}
+
+
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+
+                                        <div class="col-6 format-value d-flex align-items-center">
+                                            <label for=""><h6 class="value">{{ property.receipt_no }}</h6></label>
+
+                                            {% if perms.core.download_management_receipts_rentalproperties and receipts %}
+                                                <a class="btn btn-primary btn-rounded ml-3"
+                                                href="/management-receipts/{{ receipts.id }}/downloadReceiptPDF/"
+                                                target="_blank" rel="noopener noreferrer">
+                                                    Download Receipt
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
+
+
+                           
+
+                            {% comment %} <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No2</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.receipt_no2 }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+
+                            {% comment %} <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No2</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+
+                                        <div class="col-6 format-value d-flex align-items-center">
+                                            <label for=""><h6 class="value">{{ property.receipt_no2 }}</h6></label>
+
+                                            {% if perms.core.download_management_receipts_rentalproperties and receipts2 %}
+                                                <a class="btn btn-sm btn-outline-primary ml-3"
+                                                href="/management-receipts/{{ receipts2.id }}/downloadReceiptPDF/"
+                                                target="_blank" rel="noopener noreferrer">
+                                                    Download
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label><h6 class="labelname">Receipt No2</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+
+                                        <div class="col-6 format-value d-flex align-items-center">
+
+                                            <label><h6 class="value">{{ property.receipt_no2 }}</h6></label>
+
+                                            {% if perms.core.download_management_receipts_rentalproperties and receipts2 %}
+                                                <a class="btn btn-primary btn-rounded ml-3"
+                                                href="/management-receipts/{{ receipts2.id }}/downloadReceiptPDF/"
+                                                target="_blank" rel="noopener noreferrer">
+                                                    Download Receipt
+                                                </a>
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {% comment %} <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No3</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{ property.receipt_no3 }}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+
+
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Receipt No3</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+
+                                        <div class="col-6 format-value d-flex align-items-center">
+                                            <label for=""><h6 class="value">{{ property.receipt_no3 }}</h6></label>
+
+                                            {% if perms.core.download_management_receipts_rentalproperties and receipts3 %}
+                                                <a class="btn btn-primary btn-rounded ml-3"
+                                                href="/management-receipts/{{ receipts3.id }}/downloadReceiptPDF/"
+                                                target="_blank" rel="noopener noreferrer">
+                                                    Download Receipt
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <div class="form-group row mt-2">
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">

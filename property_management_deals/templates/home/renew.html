@@ -410,6 +410,59 @@
               </select>
               <span class="text-danger" id="receipt_no_error"></span>
             </div>
+
+            {% comment %} Adding receiptno2 field {% endcomment %}
+            <div class="col-md-6 form-group">
+              <label for="receipt_no2">
+                Receipt No-2 <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select> {% endcomment %}
+
+              <select name="receipt_no2" class="form-control" id="receipt_no2">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos2 %}
+                  <option value="{{ rcpt.receipt_number }}" 
+                          {% if property.receipt_no2 == rcpt.receipt_number %}selected{% endif %}>
+                    {{ rcpt.receipt_number }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="receipt_no_error"></span>
+            </div>
+            {% comment %} Adding receipt_no 3 field column {% endcomment %}
+
+
+            <div class="col-md-6 form-group">
+              <label for="receipt_no3">
+                Receipt No-3 <span class="mandetory_field" style="color:red">*</span>
+              </label>
+              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
+                <option value="">-- Select Receipt No --</option>
+                {% for rcpt in receipt_nos %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select> {% endcomment %}
+
+              <select name="receipt_no3" class="form-control" id="receipt_no3">
+                <option value="">-- Select Receipt No-3 --</option>
+                {% for rcpt in receipt_nos3 %}
+                  <option value="{{ rcpt.receipt_number }}" 
+                          {% if property.receipt_no3 == rcpt.receipt_number %}selected{% endif %}>
+                    {{ rcpt.receipt_number }}
+                  </option>
+                {% endfor %}
+              </select>
+              <span class="text-danger" id="receipt_no_error"></span>
+            </div>
           </div>
 
           <div class="row">
@@ -974,6 +1027,8 @@ $j(document).ready(function() {
             agent1: { required: true, numeric: true },
             agent_name1: { required: true },
             receipt_no: { required: true },
+            receipt_no2: { alphanum_special: true },
+            receipt_no3: { alphanum_special: true },
             'pms_contract[]': {
                 required: function(element) {
                     const existingCount = parseInt($j('#pms_contract_existing_count').val()) || 0;
@@ -1036,6 +1091,7 @@ $j(document).ready(function() {
             agent1: "Please enter a valid agent commission",
             agent_name1: "Please select an agent",
             receipt_no: "Please select a receipt number",
+            
             'pms_contract[]': "Please upload PMS contract",
             'owner_passport_copy[]': "Please upload owner passport copy",
             'pms_cheque_copy[]': "Please upload PMS cheque copy",

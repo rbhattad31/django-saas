@@ -1,4 +1,5 @@
 
+from decimal import Decimal, InvalidOperation
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -84,8 +85,12 @@ import re
 import time
 from datetime import datetime
 import json
-from decimal import Decimal, InvalidOperation
 
+from urllib.parse import quote
+
+# import the helpers you already have in rental/utils.py
+from .utils import _normalize_to_s3_key, get_boto3_client, s3_file_exists
+from django.conf import settings
 
 
 
@@ -325,30 +330,33 @@ class PropertyAPIView(APIView):
  
     #     print(f"❌ Serializer errors: {serializer.errors}")
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
-   
+
     def put(self, request, pk):
         print("DEBUG: PUT method triggered")
         property_obj = get_object_or_404(RentalProperties, pk=pk)
- 
+        form_status = property_obj.form_status
+        print("Form status:",form_status)
+
         # === Prepare mutable data ===
         mutable_data = {
             key: request.data.getlist(key) if len(request.data.getlist(key)) > 1 else request.data.get(key)
             for key in request.data
         }
         mutable_data.update(request.FILES)
- 
+
         updated_files = {}
         reference_number = mutable_data.get('reference_number') or property_obj.reference_number
         path = f"rental/referencenumber_CP/{reference_number}"
- 
+
         print(f"Mutable Data: {mutable_data}")
         print(f"Reference Path: {path}")
         print(f"File keys: {list(request.FILES.keys())}")
          # === Handle AML flag safely ===
         valid_aml_values = ['Y', 'N']
-        aml_value = mutable_data.get('is_property_aml', property_obj.is_property_aml)
- 
+        # aml_value = mutable_data.get('is_property_aml', property_obj.is_property_aml)
+        aml_value = mutable_data.get('is_property_aml') or property_obj.is_property_aml
+        print("Aml value :",aml_value)
+
         # if isinstance(aml_value, bool):
         #     aml_value = 'Y' if aml_value else 'N'
         # elif isinstance(aml_value, str):
@@ -357,12 +365,53 @@ class PropertyAPIView(APIView):
         #         aml_value = property_obj.is_property_aml  # fallback to existing
         # else:
         #     aml_value = property_obj.is_property_aml  # fallback for None or invalid type
- 
+        
+        
+
         property_obj.is_property_aml = aml_value
         property_obj.save()
         mutable_data['is_property_aml'] = property_obj.is_property_aml
- 
- 
+        print(f"✅ Final is_property_aml value saved as: {aml_value}")
+
+
+        # 
+        try:
+            existing_sub_date = getattr(property_obj, 'submitted_date', None)
+        except Exception:
+            existing_sub_date = None
+
+        # user = request.user()
+        # role = user.first_group_name
+        # print()
+
+        user = request.user          # no ()
+        role = None
+        if user.is_authenticated:
+            grp = user.groups.first()   # returns a Group instance or None
+            role = grp.name if grp else None
+            role_name = grp.name.split('-', 1)[-1]   # gives "Agent"
+
+        print("Role:",role)
+        print("Role Name:",role_name)
+
+
+        # if existing_sub_date and role_name == 'Agent':
+        #     # Only set Resubmitted_date when there is an existing submitted_date
+        #     mutable_data['Resubmitted_date'] = timezone.now().date()
+        #     print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['Resubmitted_date']}")
+        # else:
+        #     print("ℹ️ submitted_date is empty — not touching submitted_date or Resubmitted_date.")
+        # # ----------------------------------------------------------------
+        
+
+
+
+            
+       
+
+
+
+
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
             'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
@@ -372,19 +421,73 @@ class PropertyAPIView(APIView):
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
             'title_deed', 'kyc_form', 'screening'
         ]
- 
+
         # === Handle AML flag ===
         property_obj.is_property_aml = mutable_data.get('is_property_aml', property_obj.is_property_aml)
         property_obj.save()
         mutable_data['is_property_aml'] = property_obj.is_property_aml
- 
+
+
+        # public_urls_map = {}
+        # # === Upload new files ===
+        # for key in request.FILES.keys():
+        #     base_field_name = key.rstrip("[]")
+        #     if base_field_name not in file_fields:
+        #         print(f"⚠️ Skipping invalid file field: {base_field_name}")
+        #         continue
+
+        #     files = request.FILES.getlist(key)
+        #     removed_files = [f.strip() for f in mutable_data.get(f"{base_field_name}_removed", "").split(",") if f.strip()]
+        #     seen = set()
+        #     valid_files = []
+        #     for f in files:
+        #         key_tuple = (f.name, f.size)
+        #         if key_tuple not in seen and f.name not in removed_files:
+        #             seen.add(key_tuple)
+        #             valid_files.append(f)
+
+        #     file_paths = []
+        #     for file in valid_files:
+        #         timestamp = int(time.time() * 1000)
+        #         cleaned_name = re.sub(r"[,]+", " ", file.name)
+        #         filename = f"{base_field_name}{timestamp}_{cleaned_name}"
+        #         filepath = f"{path}/{filename}"
+        #         # if upload_file_to_full_s3_url(file, filepath):
+        #         #     file_paths.append(filepath)
+        #         #     print(f"✅ Uploaded: {filename}")
+        #         # else:
+        #         #     print(f"❌ Upload failed: {filename}")
+        #         #     return Response({"error": f"Failed to upload file: {filename}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        #         db_path, public_url = upload_file_to_full_s3_url(file, filepath)
+        #         if db_path:
+        #             file_paths.append(db_path)
+        #             # store public_url if available (may be None for private buckets)
+        #             if public_url:  
+        #                 public_urls_map[field].append(public_url)
+        #             print(f"✅ Uploaded full submission file: {filename} -> {public_url or db_path}")
+        #         else:
+        #             print(f"❌ Full submission file upload failed: {filename}")
+        #             return Response(
+        #                 {"error": f"Failed to upload file: {filename}"},
+        #                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        #             )
+        #     updated_files[base_field_name] = file_paths
+
+
+
+        public_urls_map = {}
+
         # === Upload new files ===
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")
             if base_field_name not in file_fields:
                 print(f"⚠️ Skipping invalid file field: {base_field_name}")
                 continue
- 
+
+            # ensure list exists for this field
+            public_urls_map.setdefault(base_field_name, [])
+
             files = request.FILES.getlist(key)
             removed_files = [f.strip() for f in mutable_data.get(f"{base_field_name}_removed", "").split(",") if f.strip()]
             seen = set()
@@ -394,22 +497,31 @@ class PropertyAPIView(APIView):
                 if key_tuple not in seen and f.name not in removed_files:
                     seen.add(key_tuple)
                     valid_files.append(f)
- 
+
             file_paths = []
             for file in valid_files:
                 timestamp = int(time.time() * 1000)
                 cleaned_name = re.sub(r"[,]+", " ", file.name)
                 filename = f"{base_field_name}{timestamp}_{cleaned_name}"
                 filepath = f"{path}/{filename}"
-                if upload_file_to_full_s3_url(file, filepath):
-                    file_paths.append(filepath)
-                    print(f"✅ Uploaded: {filename}")
+
+                db_path, public_url = upload_file_to_full_s3_url(file, filepath)
+                if db_path:
+                    file_paths.append(db_path)
+                    # store public_url if available (may be None for private buckets)
+                    if public_url:
+                        public_urls_map[base_field_name].append(public_url)
+                    print(f"✅ Uploaded full submission file: {filename} -> {public_url or db_path}")
                 else:
-                    print(f"❌ Upload failed: {filename}")
-                    return Response({"error": f"Failed to upload file: {filename}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
- 
+                    print(f"❌ Full submission file upload failed: {filename}")
+                    return Response(
+                        {"error": f"Failed to upload file: {filename}"},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+
             updated_files[base_field_name] = file_paths
- 
+
+
         # === Merge old + new files, remove explicitly removed ones ===
         for field in file_fields:
             removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
@@ -418,19 +530,35 @@ class PropertyAPIView(APIView):
             new_files = updated_files.get(field, [])
             combined_files = existing_files + new_files
             mutable_data[field] = ",".join(combined_files)
- 
+
         # === Determine draft vs full submission ===
         save_as = mutable_data.get('save_as', 'submit')
         is_draft = save_as != 'submit'
         mutable_data['form_status'] = 'Incomplete' if is_draft else 'Complete'
- 
+        # form_status = property_obj.form_status
+        # print("Form status:",form_status)
+        print("Form status for draft:",mutable_data['form_status'])
+
+        print("Existing submitted date:",existing_sub_date)
+
+        if existing_sub_date and role_name == 'Agent' and mutable_data['form_status'] == 'Complete':
+            # Only set Resubmitted_date when there is an existing submitted_date
+            mutable_data['Resubmitted_date'] = timezone.now().date()
+            print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['Resubmitted_date']}")
+        else:
+            print("ℹ️ submitted_date is empty — not touching submitted_date or Resubmitted_date.")
+            mutable_data['submitted_date'] = timezone.now().date()
+            print("submitted date will be updated.")
+        # ----------------------------------------------------------------
+        print("Submit date for draft for first time:", mutable_data.get('submitted_date'))
+
         # === Validate required files for full submission ===
         if not is_draft:
             for field in required_file_fields:
                 combined_files = mutable_data.get(field, "")
                 if not combined_files:
                     return Response({"error": f"{field} is required for full submission."}, status=status.HTTP_400_BAD_REQUEST)
- 
+
         # === Format date fields ===
         date_fields = ['deal_date', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date']
         accepted_formats = ["%Y-%m-%d", "%d-%m-%Y", "%d-%m-%y"]
@@ -448,7 +576,7 @@ class PropertyAPIView(APIView):
                         continue
                 else:
                     return Response({field: f"Invalid date format: {value}"}, status=status.HTTP_400_BAD_REQUEST)
- 
+
         # === Handle cheque_date separately ===
         cheque_date_value = mutable_data.get('cheque_date')
         formatted_cheques = []
@@ -462,7 +590,7 @@ class PropertyAPIView(APIView):
                 parsed_cheques = cheque_date_value
             else:
                 parsed_cheques = []
- 
+
             for date_str in parsed_cheques:
                 if date_str and date_str.strip() and date_str != '0':
                     for fmt in accepted_formats:
@@ -473,74 +601,89 @@ class PropertyAPIView(APIView):
                         except ValueError:
                             continue
         mutable_data['cheque_date'] = " ".join(formatted_cheques)
- 
+
         # === Clean other list fields ===
         for key in list(mutable_data.keys()):
             if key != 'cheque_date' and isinstance(mutable_data[key], list):
                 mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
- 
+
         # === Handle receipt update ===
-        if request.data.get('receipt_no'):
+        if request.data.get('receipt_no') and request.data.get('receipt_no').isdigit():
             ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no'))\
                 .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
- 
+            
+
+        # Handling receipt updates for receipt no 2 and receipt no 3
+        # === Handle receipt2 update ===
+
+        if request.data.get('receipt_no2') and request.data.get('receipt_no2').isdigit():
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no2'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
+
+        # === Handle receipt3 update ===
+
+        if request.data.get('receipt_no3') and request.data.get('receipt_no3').isdigit():
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no3'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
+
+
         if mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
             mutable_data['approved_rejected_by'] = request.user.email
         # ✅ Ensure default value 'P' for is_approved_rejected if missing or invalid
         if not mutable_data.get("is_approved_rejected") or mutable_data.get("is_approved_rejected") not in ["A", "R", "W"]:
             print("ℹ️ Setting default 'P' for is_approved_rejected")
             mutable_data["is_approved_rejected"] = "P"
- 
+
         # === Normalize optional fields ===
         # for field in ['agency_name', 'agent_name', 'agent_phone', 'total_commission',
         #             'less_outside_commission', 'net_commission', 'classic', 'agent1']:
         #     if field not in mutable_data or mutable_data[field] in [None, '', []]:
         #         mutable_data[field] = ''
- 
+
         for field in ['agency_name', 'agent_name', 'agent_phone', 'classic', 'agent1']:
             # These are CharFields → allow blank string
             if field not in mutable_data or mutable_data[field] in [None, '', []]:
                 mutable_data[field] = ''
- 
-       
+
+        
         # for field in ['total_commission', 'less_outside_commission', 'net_commission']:
         #     value = mutable_data.get(field)
- 
+
         #     # ✅ Allow blank or missing values gracefully
         #     if value in [None, '', [], 'null', 'None']:
         #         mutable_data[field] = ''
         #         continue
- 
+
         #     # ✅ Clean numeric values (still as string to avoid serializer conflict)
         #     try:
         #         Decimal(str(value))  # just to validate it's numeric if given
         #         mutable_data[field] = str(value).strip()
         #     except (ValueError, InvalidOperation):
         #         return Response({field: f"Invalid decimal value: {value}"}, status=status.HTTP_400_BAD_REQUEST)
-           
-        mutable_data['updated_by'] = request.user.email
+            
+
         for field in ['total_commission', 'less_outside_commission', 'net_commission']:
             raw_value = mutable_data.get(field)
- 
+
             # ✅ Allow blank, None, or missing values
             if raw_value in [None, '', [], 'null', 'None']:
                 mutable_data[field] = ''
                 continue
- 
+
             # ✅ Validate numeric pattern (accept commas)
             cleaned = str(raw_value).replace(',', '').replace(' ', '').strip()
- 
+
             # Try validating as number — but keep original commas
             try:
                 Decimal(cleaned)
                 mutable_data[field] = str(raw_value).strip()  # keep original format with commas
             except (ValueError, InvalidOperation):
                 return Response(
-                    {field: f"Invalid number format: {raw_value}"},
+                    {field: f"Invalid number format: {raw_value}"}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
- 
- 
+
+
         # === Save via serializer ===
         #serializer = PropertySerializer(property_obj, data=mutable_data, partial=True)
         serializer = PropertySerializer(
@@ -553,16 +696,53 @@ class PropertyAPIView(APIView):
             serializer.save()
             return Response(PropertySerializer(property_obj).data)
         print(f"❌ Serializer errors: {serializer.errors}")
-       
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+    
+   
+
+
+# def edit_property_page(request, pk):
+#     print("🔍 Called edit_property_page")
+#     property_obj = get_object_or_404(RentalProperties, pk=pk)
+
+#     agents_raw = Users.objects.all()
+ 
+#     # Filter out users with blank/null/whitespace-only names
+#     agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
+
+#     print("---- Cleaned Agent Names ----")
+#     for agent in agents:
+#         print(agent.name.strip())
+#     print("-----------------------------")
+    
+
+#     if request.method == "POST":
+#         form = PropertyForm(request.POST, request.FILES, instance=property_obj)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('rental-property-list')
+
+#     form = PropertyForm(instance=property_obj)
+
+#     # ✅ Fetch unique, cleaned receipt numbers
+#     receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
+#     receipt_nos = [rcpt.strip() for rcpt in receipt_nos_raw if rcpt and rcpt.strip()]
+
+#     return render(request, 'home/edit_property.html', {
+#         'form': form,
+#         'property': property_obj,
+#         'receipt_nos': receipt_nos,
+#         'agents': agents,   # ✅ Pass to template
+#     })
 
 def edit_property_page(request, pk):
     print("🔍 Called edit_property_page")
     property_obj = get_object_or_404(RentalProperties, pk=pk)
 
     agents_raw = Users.objects.all()
- 
     # Filter out users with blank/null/whitespace-only names
     agents = [agent for agent in agents_raw if agent.name and agent.name.strip()]
 
@@ -570,8 +750,122 @@ def edit_property_page(request, pk):
     for agent in agents:
         print(agent.name.strip())
     print("-----------------------------")
-    
 
+    # ---------- File fields we care about (same as in put/view) ----------
+    file_fields = [
+        'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
+        'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
+    ]
+
+    # -------------------------
+    # Helpers (prefer existing utils if present)
+    # # -------------------------
+    # from urllib.parse import quote
+    # import boto3
+    # import os
+    # from django.conf import settings
+    # from botocore.exceptions import ClientError
+
+    def _normalize_wrapper(raw_path):
+        # prefer your project's _normalize_to_s3_key if available
+        try:
+            return _normalize_to_s3_key(raw_path)
+        except Exception:
+            # basic fallback: remove leading slash
+            return str(raw_path).lstrip('/')
+
+    def _get_boto3_client_wrapper():
+        try:
+            return get_boto3_client()
+        except Exception:
+            aws_key = getattr(settings, 'AWS_ACCESS_KEY_ID', None)
+            aws_secret = getattr(settings, 'AWS_SECRET_ACCESS_KEY', None)
+            region = getattr(settings, 'AWS_S3_REGION_NAME', None)
+            endpoint = getattr(settings, 'AWS_S3_ENDPOINT_URL', None)
+            kwargs = {}
+            if aws_key and aws_secret:
+                kwargs['aws_access_key_id'] = aws_key
+                kwargs['aws_secret_access_key'] = aws_secret
+            if region:
+                kwargs['region_name'] = region
+            if endpoint:
+                kwargs['endpoint_url'] = endpoint
+            return boto3.client('s3', **kwargs)
+
+    def _build_public_url_from_s3_key(s3_key):
+        domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None) or getattr(settings, 'AWS_URL', None)
+        if not domain:
+            return None
+        domain = domain.rstrip('/')
+        if not domain.startswith('http://') and not domain.startswith('https://'):
+            domain = 'https://' + domain.lstrip('/')
+        encoded = quote(s3_key, safe="/:@")
+        return f"{domain}/{encoded}"
+
+    def _generate_presigned_for_s3_key(s3_key, expiry=3600):
+        bucket = os.environ.get('AWS_BUCKET') or getattr(settings, 'AWS_STORAGE_BUCKET_NAME', None)
+        if not bucket:
+            return None
+        try:
+            client = _get_boto3_client_wrapper()
+            return client.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': bucket, 'Key': s3_key},
+                ExpiresIn=expiry
+            )
+        except Exception as e:
+            print("presign error:", e)
+            return None
+
+    # -------------------------
+    # Build absolute URLs for each file field
+    # -------------------------
+    file_urls = {}  # field -> [absolute urls]
+    for field in file_fields:
+        raw_val = getattr(property_obj, field, "") or ""
+        resolved_urls = []
+
+        if raw_val:
+            parts = [p.strip() for p in str(raw_val).split(',') if p.strip()]
+            for part in parts:
+                # if already absolute, keep as-is
+                if part.startswith('http://') or part.startswith('https://'):
+                    resolved_urls.append(part)
+                    continue
+
+                # normalize to s3 key
+                s3_key = _normalize_wrapper(part)
+
+                # try public domain
+                pub = _build_public_url_from_s3_key(s3_key)
+                if pub:
+                    resolved_urls.append(pub)
+                    continue
+
+                # try presigned
+                presigned = _generate_presigned_for_s3_key(s3_key)
+                if presigned:
+                    resolved_urls.append(presigned)
+                    continue
+
+                # fallback: raw DB path
+                resolved_urls.append(part)
+
+        if resolved_urls:
+            file_urls[field] = resolved_urls
+
+    # Print the URLs server-side so you can verify what the template will get
+    print("--------------- FILE URLS FOR edit_property_page ---------------")
+    if file_urls:
+        for fld, urls in file_urls.items():
+            print(f"{fld}:")
+            for u in urls:
+                print("   👉", u)
+    else:
+        print(" (no file urls found)")
+    print("----------------------------------------------------------------")
+
+    # ---------- Normal form handling ----------
     if request.method == "POST":
         form = PropertyForm(request.POST, request.FILES, instance=property_obj)
         if form.is_valid():
@@ -582,13 +876,24 @@ def edit_property_page(request, pk):
 
     # ✅ Fetch unique, cleaned receipt numbers
     receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
-    receipt_nos = [rcpt.strip() for rcpt in receipt_nos_raw if rcpt and rcpt.strip()]
+    receipt_nos = [rcpt1.strip() for rcpt1 in receipt_nos_raw if rcpt1 and rcpt1.strip()]
 
+    # Fetch unique, cleaned receipt numbers for receipt_no2 and receipt_no3
+    receipt_nos2_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
+    receipt_nos2 = [rcpt2.strip() for rcpt2 in receipt_nos2_raw if rcpt2 and rcpt2.strip()]
+
+    receipt_nos3_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
+    receipt_nos3 = [rcpt3.strip() for rcpt3 in receipt_nos3_raw if rcpt3 and rcpt3.strip()]
+
+    # Pass file_urls into template as convenience (template can use file_urls.pms_contract etc)
     return render(request, 'home/edit_property.html', {
         'form': form,
         'property': property_obj,
         'receipt_nos': receipt_nos,
-        'agents': agents,   # ✅ Pass to template
+        'receipt_nos2': receipt_nos2,
+        'receipt_nos3': receipt_nos3,
+        'agents': agents,
+        'file_urls': file_urls,
     })
 
 
@@ -704,6 +1009,9 @@ def rental_property_create(request):
                     agent_comment=request.POST.get('agent_comments'),
                     comments=request.POST.get('admin_comments'),
                     receipt_no=request.POST.get('receipt_no'),
+                    #  creating receipt no 2 and 3
+                    receipt_no2 = request.POST.get('receipt_no2'),
+                    receipt_no3 = request.POST.get('receipt_no3'),
                     less_outside_commission=request.POST.get('less_outside_commission'),
                     classic=request.POST.get('classic'),
                     screening_comments=request.POST.get('screening_comments'),
@@ -813,6 +1121,10 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
         # Fetch unique, non-empty receipt numbers
         receipt_no = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
+        # adding 2 more receipt numbers fetch unique, non -empty receipt numbers
+        receipt_no2 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
+        receipt_no3 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
+
        
 
         print("----- Valid Receipt Numbers -----")
@@ -820,9 +1132,19 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             print(rcpt)
         print("----------------------------------")
 
+        print("----- Valid Receipt2 Numbers -----")
+        for rcpt2 in receipt_no2:
+            print("2nd receipt numbers:",rcpt2)
+        print("----------------------------------")
+
+        print("----- Valid Receipt3 Numbers -----")
+        for rcpt3 in receipt_no3:
+            print("3rd receipt numbers:",rcpt3)
+        print("-----------------------------------")
 
 
-        return render(request, 'home/create_property.html', {'form': form, 'agents': agents, 'receipt_nos': receipt_no})
+
+        return render(request, 'home/create_property.html', {'form': form, 'agents': agents, 'receipt_nos': receipt_no, 'receipt_nos2': receipt_no2,'receipt_nos3': receipt_no3})
 
 
     
@@ -924,9 +1246,10 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     'submitted_by_user_id': request.data.get('submitted_by_agent') or (
                         request.user.id if request.user.is_authenticated else 0
                     ),
-                    'submitted_date': timezone.now().date(),
+                    # 'submitted_date': timezone.now().date(),
+                    # 'submitted_date': 'NULL',
                     'created_at': timezone.now(),
-                    "created_by": request.user.email ,
+                    'created_by':request.user.email,
                     'updated_at': timezone.now(),
                     'is_property_aml': request.data.get('is_property_aml', 'No'),
                     'screening_comments': request.data.get('screening_comments', ''),
@@ -934,6 +1257,9 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     'buyer_nationality': request.data.get('buyer_nationality', ''),
                     'no_of_cheque': request.data.get('no_of_cheque', ''),
                     'receipt_no': request.data.get('receipt_no'),
+                    # adding 2 more fields newly i.e receipt_no2,receipt_no3
+                    'receipt_no2': request.data.get('receipt_no2'),
+                    'receipt_no3': request.data.get('receipt_no3'),
                     #Remaining fields
                     'agency_name': request.data.get('agency_name', ''),
                     'agent_name': request.data.get('agent_name', ''),
@@ -1057,8 +1383,14 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 if request.data.get("is_approved_rejected") in ["A", "R", "W"]:
                     draft_data['approved_rejected_by'] = request.user.email
  
-                if request.data.get('receipt_no'):
+                if request.data.get('receipt_no') and request.data.get('receipt_no').isdigit() :
                     ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
+
+                if request.data.get('receipt_no2') and request.data.get('receipt_no2').isdigit():
+                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no2')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
+
+                if request.data.get('receipt_no3') and request.data.get('receipt_no3').isdigit():
+                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no3')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
  
                 if serializer.is_valid():
                     try:
@@ -1097,12 +1429,46 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
  
             # Process file uploads
             required_file_fields = ['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening']
+            # for field in file_fields:
+            #     file_key = f"{field}[]"
+            #     if file_key in request.FILES:
+            #         files = request.FILES.getlist(file_key)
+            #         removed_files = request.data.get(f"{field}_removed", '').split(',') if request.data.get(f"{field}_removed") else []
+            #         # valid_files = [f for f in files if f.name not in removed_files]
+            #         valid_files = list(files)
+            #         file_paths = []
+            #         for file in valid_files:
+            #             timestamp = int(time.time())
+            #             cleaned_name = re.sub(r"[,]+", " ", file.name)
+            #             filename = f"{field}{timestamp}_{cleaned_name}"
+            #             filepath = f"{path}/{filename}"
+            #             if upload_file_to_full_s3_url(file, filepath):
+            #                 file_paths.append(filepath)
+            #                 print(f"✅ Uploaded full submission file: {filename}")
+            #             else:
+            #                 print(f"❌ Full submission file upload failed: {filename}")
+            #                 return Response(
+            #                     {"error": f"Failed to upload file: {filename}"},
+            #                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            #                 )
+            #         updated_files[field] = file_paths
+            #     else:
+            #         updated_files[field] = []
+            #     data[field] = ','.join(updated_files[field]) if updated_files[field] else ''
+            #     print(f"DEBUG: Full submission {field} paths:", data[field])
+
+
+
+            # this is for getting full path for file fields.
+            # ---- Full submission file upload (collect DB paths + public URLs) ----
+            public_urls_map = {}  # field -> list of public urls
+
             for field in file_fields:
                 file_key = f"{field}[]"
+                public_urls_map[field] = []
                 if file_key in request.FILES:
                     files = request.FILES.getlist(file_key)
                     removed_files = request.data.get(f"{field}_removed", '').split(',') if request.data.get(f"{field}_removed") else []
-                    # valid_files = [f for f in files if f.name not in removed_files]
                     valid_files = list(files)
                     file_paths = []
                     for file in valid_files:
@@ -1110,9 +1476,17 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                         cleaned_name = re.sub(r"[,]+", " ", file.name)
                         filename = f"{field}{timestamp}_{cleaned_name}"
                         filepath = f"{path}/{filename}"
-                        if upload_file_to_full_s3_url(file, filepath):
-                            file_paths.append(filepath)
-                            print(f"✅ Uploaded full submission file: {filename}")
+
+                        db_path, public_url = upload_file_to_full_s3_url(file, filepath)
+                        if db_path:
+                            file_paths.append(db_path)
+                            if public_url:
+                                public_urls_map[field].append(public_url)
+                            else:
+                                presigned = get_presigned_url(db_path)
+                                if presigned:
+                                    public_urls_map[field].append(presigned)
+                            print(f"✅ Uploaded full submission file: {filename} -> {public_url or db_path}")
                         else:
                             print(f"❌ Full submission file upload failed: {filename}")
                             return Response(
@@ -1122,9 +1496,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     updated_files[field] = file_paths
                 else:
                     updated_files[field] = []
+
                 data[field] = ','.join(updated_files[field]) if updated_files[field] else ''
+                data[f"{field}_public_urls"] = ','.join(public_urls_map[field]) if public_urls_map[field] else ''
                 print(f"DEBUG: Full submission {field} paths:", data[field])
- 
+                print(f"DEBUG: Full submission {field} public_urls:", data[f"{field}_public_urls"])
+
+            # filling of file fields with complete path code ended.
+
+
             # Validate required file fields
             for field in required_file_fields:
                 if not data.get(field):
@@ -1216,8 +1596,8 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 'is_entered_in_finance_system': '0',
                 'is_deleted': request.data.get('is_deleted', 'N'),
                 'status': 'Active',
+                'created_by': request.user.email,
                 'created_at': timezone.now(),
-                "created_by": request.user.email if request.user.is_authenticated else 'system',
                 'updated_at': timezone.now(),
                 'is_property_aml': request.data.get('is_property_aml', 'No'),
                 'screening_comments': request.data.get('screening_comments', ''),
@@ -1228,7 +1608,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             print("DEBUG: Full data dict preview:", {k: v for k, v in data.items()})
  
             # Update ManagementReceipts
-            if 'receipt_no' in data and data['receipt_no'] and data['receipt_no'] != 'Null':
+            if 'receipt_no' in data and data['receipt_no'] and data['receipt_no'] != 'Null' and data['receipt_no'].isdigit():
                 reference_number = data.get('reference_number') or None
                 try:
                     ManagementReceipts.objects.filter(receipt_number=data['receipt_no']).update(deal_refer_no=reference_number,status='Used')
@@ -1239,6 +1619,36 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                         {'success': False, 'message': f'Error updating receipt: {str(e)}'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
+
+            # adding 2 more if block one for receiptno2 and other for receiptno3
+
+            # this block is for to update receipt_no 2.
+
+            if 'receipt_no2' in data and data['receipt_no2'] and data['receipt_no2'] != 'Null' and data['receipt_no'].isdigit():
+                reference_number = data.get('reference_number') or None
+                try:
+                    ManagementReceipts.objects.filter(receipt_number=data['receipt_no2']).update(deal_refer_no=reference_number,status='Used')
+                    print("DEBUG: Updated ManagementReceipts with deal_refer_no:", reference_number)
+                except Exception as e:
+                    print(f"DEBUG: Error updating ManagementReceipts: {str(e)}")
+                    return Response(
+                        {'success': False, 'message': f'Error updating receipt: {str(e)}'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+            # This if block is for receipt no 3 
+            if 'receipt_no3' in data and data['receipt_no3'] and data['receipt_no3'] != 'Null' and data['receipt_no'].isdigit():
+                reference_number = data.get('reference_number') or None
+                try:
+                    ManagementReceipts.objects.filter(receipt_number=data['receipt_no3']).update(deal_refer_no=reference_number,status='Used')
+                    print("DEBUG: Updated ManagementReceipts with deal_refer_no:", reference_number)
+                except Exception as e:
+                    print(f"DEBUG: Error updating ManagementReceipts: {str(e)}")
+                    return Response(
+                        {'success': False, 'message': f'Error updating receipt: {str(e)}'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
  
             # Validate and save
             print("DEBUG: Creating serializer with data...")
@@ -1307,9 +1717,30 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
+    # @action(detail=True, methods=['get'], url_path='view')
+    # def view_property(self, request, pk=None):
+    #     print("HI this is view page.")
+
+    #     property = get_object_or_404(RentalProperties, pk=pk)
+    #     receipt_no = property.receipt_no
+    #     related_receipts = None
+    #     if receipt_no not in [None, '']:
+    #         try:
+    #             receipt_no = int(receipt_no)
+    #             related_receipts = ManagementReceipts.objects.filter(receipt_number=receipt_no).first()
+    #         except ValueError:
+    #             pass  # or handle invalid format gracefully
+
+
+    #     serializer = DealSerializer(property )
+    #     return render(request, 'home/view_property.html', {'property': serializer.data ,'receipts': related_receipts})
     @action(detail=True, methods=['get'], url_path='view')
     def view_property(self, request, pk=None):
-
+        """
+        Drop-in view: converts DB relative file paths stored on the property
+        into absolute public or presigned S3 URLs and writes them back into
+        serializer.data so the frontend/template need not change.
+        """
         property = get_object_or_404(RentalProperties, pk=pk)
         receipt_no = property.receipt_no
         related_receipts = None
@@ -1318,11 +1749,157 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 receipt_no = int(receipt_no)
                 related_receipts = ManagementReceipts.objects.filter(receipt_number=receipt_no).first()
             except ValueError:
-                pass  # or handle invalid format gracefully
+                pass
 
+        # We need to add 2 more blocks for receipt_no2 and receipt_no 3
+        # This block is for receipt_no2.
+        receipt_no2 = property.receipt_no2
+        related_receipts2 = None
+        if receipt_no2 not in [None, '']:
+            try:
+                receipt_no2 = int(receipt_no2)
+                related_receipts2 = ManagementReceipts.objects.filter(receipt_number=receipt_no2).first()
+            except ValueError:
+                pass
 
-        serializer = DealSerializer(property )
-        return render(request, 'home/view_property.html', {'property': serializer.data ,'receipts': related_receipts})
+        # This if block is for receipt_no3.
+        receipt_no3 = property.receipt_no3
+        related_receipts3 = None
+        if receipt_no3 not in [None, '']:
+            try:
+                receipt_no3 = int(receipt_no3)
+                related_receipts3 = ManagementReceipts.objects.filter(receipt_number = receipt_no3).first()
+            except ValueError:
+                pass
+
+        serializer = DealSerializer(property)
+        data = serializer.data  # dict that the template uses
+
+        # file fields which in DB hold relative paths (comma-separated possible)
+        file_fields = [
+            'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
+            'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
+        ]
+
+        # helper to build a public URL from a normalized S3 key (uses your settings)
+        def _build_public_url_from_s3_key(s3_key):
+            """
+            s3_key example: 'live/rental/.../file.pdf'
+            Returns absolute URL like 'https://<AWS_S3_CUSTOM_DOMAIN>/live/.../file.pdf'
+            or None if no domain configured.
+            """
+            domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None) or getattr(settings, 'AWS_URL', None)
+            if not domain:
+                return None
+            domain = domain.rstrip('/')
+            encoded = quote(s3_key, safe="/:@")  # preserve slashes
+            if not domain.startswith('http'):
+                domain = 'https://' + domain.lstrip('/')
+            return f"{domain}/{encoded}"
+
+        # helper to produce presigned URL via boto3 client (uses your get_boto3_client)
+        def _generate_presigned_for_s3_key(s3_key, expiry=3600):
+            bucket = os.environ.get('AWS_BUCKET') or getattr(settings, 'AWS_STORAGE_BUCKET_NAME', None)
+            if not bucket:
+                return None
+            try:
+                client = get_boto3_client()
+                return client.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': bucket, 'Key': s3_key},
+                    ExpiresIn=expiry
+                )
+            except Exception as e:
+                # Do not crash the view; return None to allow fallback
+                print("presign error:", e)
+                return None
+
+        # convert each file field value in-place on `data`
+        for f in file_fields:
+            try:
+                raw_val = data.get(f) or ''              # stored DB value (e.g. '/rental/.../file.pdf' or CSV)
+                saved_publics = data.get(f + "_public_urls") or ''
+                resolved_urls = []
+
+                # 1) If upload saved public URLs in "<field>_public_urls" prefer those
+                if saved_publics:
+                    # already comma separated URLs
+                    resolved_urls = [u.strip() for u in saved_publics.split(',') if u.strip()]
+
+                # 2) otherwise, convert raw DB paths to absolute/presigned URLs
+                elif raw_val:
+                    # split CSV of stored DB paths
+                    parts = [p.strip() for p in str(raw_val).split(',') if p.strip()]
+                    for part in parts:
+                        # Normalize to S3 key form (your util returns e.g. 'live/rental/...')
+                        s3_key = _normalize_to_s3_key(part)
+                        if not s3_key:
+                            # keep fallback as raw part for debugging if normalization fails
+                            resolved_urls.append(part)
+                            continue
+
+                        # If the object doesn't exist (or we can't check), still try building URLs;
+                        # s3_file_exists is best-effort and prints status
+                        exists = s3_file_exists(part)
+                        # Try public URL first (requires AWS_S3_CUSTOM_DOMAIN or AWS_URL)
+                        pub = _build_public_url_from_s3_key(s3_key)
+                        if pub:
+                            # resolved_urls.append(pub)
+                            resolved_urls.append(pub.replace("https//", ""))
+                            continue
+
+                        # If no public domain configured, try presigned URL
+                        presigned = _generate_presigned_for_s3_key(s3_key)
+                        if presigned:
+                            # resolved_urls.append(presigned)
+                            resolved_urls.append(presigned.replace("https//", ""))
+                            continue
+
+                        # Final fallback: use raw DB path so template still shows something
+                        resolved_urls.append(part)
+
+                # Replace original field in serializer.data with comma-separated URLs (frontend unchanged)
+                data[f] = ','.join(resolved_urls) if resolved_urls else ''
+            except Exception as e:
+                print(f"Error resolving file urls for field {f}: {e}")
+                # preserve original to avoid breaking template
+                data[f] = data.get(f) or ''
+
+        # --- Final cleanup for old broken URLs ---
+        for key, val in list(data.items()):
+            try:
+                if isinstance(val, str) and "https//" in val:
+                    data[key] = val.replace("https//", "")
+                elif isinstance(val, (list, tuple)):
+                    cleaned_list = []
+                    for item in val:
+                        if isinstance(item, str) and "https//" in item:
+                            cleaned_list.append(item.replace("https//", ""))
+                        else:
+                            cleaned_list.append(item)
+                    data[key] = cleaned_list
+            except Exception as e:
+                print(f"Cleanup error for field {key}: {e}")
+        # ------------------------------------------------
+
+        # --- DEBUG: Print all file URLs you are sending to the template ---
+        print("--------------- FILE URLS SENT TO FRONTEND ---------------")
+        for f in file_fields:
+            url_value = data.get(f, "")
+            if url_value:
+                print(f"{f}: {url_value}")
+        print("-----------------------------------------------------------")
+
+        # render unchanged template — links in the template that use property.field will now receive absolute/presigned URLs
+        return render(request, 'home/view_property.html', {
+            'property': data,
+            'receipts': related_receipts,
+            # adding 2 more receipts
+            'receipts2':related_receipts2,
+            'receipts3':related_receipts3
+
+        })
+
     
     @action(detail=True, methods=['post', 'put'], url_path='update-finance')
     #@permission_required('property_management_deals.update_finance_status_properties_rentalproperties', raise_exception=True)
@@ -1335,6 +1912,19 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             data['no_of_cheque'] = property.no_of_cheque
         if 'receipt_no' not in data and property.receipt_no:
             data['receipt_no'] = property.receipt_no
+
+        # Adding 2 more if blocks for receipt_no 2 and receipt_no 3.
+
+        # Adding one if block for receipt_no2.
+
+        if 'receipt_no2' not in data and property.receipt_no2:
+            data['receipt_no2'] = property.receipt_no2
+
+
+        # Adding one more if blocks for receipt_no 3.
+
+        if 'receipt_no3' not in data and property.receipt_no3:
+            data['receipt_no3'] = property.receipt_no3
     
         # Print specific fields you care about
         
@@ -1531,6 +2121,9 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         agents = Users.objects.filter(is_active=True)
         # receipt_nos = ManagementReceipts.objects.filter( acc)
         receipt_nos = ManagementReceipts.objects.filter(account_id = request.user.account_id)
+        # Adding 2 more receipt nos i.e for receipt nos2 and receipt nos 3
+        receipt_nos2 = ManagementReceipts.objects.filter(account_id = request.user.account_id)
+        receipt_nos3 = ManagementReceipts.objects.filter(account_id = request.user.account_id)
         print("---- Rendering renew_property_page for Property ID:", pk)
         print("---- Cleaned Agent Names ----")
         for agent in agents:
@@ -1544,7 +2137,9 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             'form': form,
             'property': property_obj,
             'agents': agents,
-            'receipt_nos': receipt_nos
+            'receipt_nos': receipt_nos,
+            'receipt_nos2': receipt_nos2,
+            'receipt_nos3': receipt_nos3
         })
 
     #Writing function for renew
@@ -1662,6 +2257,37 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 print(f"❌ Error updating receipt_no: {str(e)}")
 
+        # Here we need to add update receipt numbers for receipt_nos2 and receipt_nos3
+
+        # this if block is added to receipt_no2
+        if "receipt_no2" in mutable_data and mutable_data["receipt_no2"]:
+            try:
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no2"]).update(
+                    deal_refer_no=mutable_data["reference_number"]
+                )
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no2"]).update(
+                    status= "Used"
+                )
+                
+                print(f"✅ Linked receipt_no to reference_number")
+            except Exception as e:
+                print(f"❌ Error updating receipt_no2: {str(e)}")
+
+        #This if block is added to receipt_no 3
+        if "receipt_no3" in mutable_data and mutable_data["receipt_no3"]:
+            try:
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no3"]).update(
+                    deal_refer_no=mutable_data["reference_number"]
+                )
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no3"]).update(
+                    status= "Used"
+                )
+                
+                print(f"✅ Linked receipt_no to reference_number")
+            except Exception as e:
+                print(f"❌ Error updating receipt_no3: {str(e)}")
+
+
         # Renewal-specific flags
         if is_renewal:
             mutable_data["submitted_by_user_id"] = str(request.user.id)
@@ -1733,6 +2359,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         data.is_valid(raise_exception=True)
         data = data.validated_data
 
+        submitted_by_agent = data.get('submitted_by_agent')
         
         print(account_id)
         is_manager = roleofuser == f'{account_id}-Manager'
@@ -1967,18 +2594,19 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(is_entered_in_finance_system='0' ,form_status = "Complete", is_approved_rejected__in=["A","F"])
  
             elif deal_type == 'draft':
-                queryset = queryset.filter(form_status='Incomplete',submitted_by_user_id=user.id)
+                queryset = queryset.filter(form_status='Incomplete')
        
             elif deal_type == "All" :
                 queryset = queryset.filter(form_status = "Complete")  
- 
-            if is_admin and deal_type == 'draft':
-                queryset = queryset.filter(created_by=user.email)
 
             if is_agent :
                 queryset = queryset.filter(submitted_by_user_id=user.id)
             elif is_admin and deal_type == "draft":
                 queryset = queryset.filter(created_by=user.email)
+            # elif is_admin and deal_type == "draft":
+            #     # Use submitted_by_agent if provided and not empty; else use user.id
+            #     filter_user_id = submitted_by_agent or user.id
+            #     queryset = queryset.filter(submitted_by_user_id=filter_user_id)
             else:
                 role = "superadmin"
  
@@ -2218,13 +2846,6 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
             print(f"🔎 Performing Global Search with term: '{search_term}'")
             queryset = queryset.filter(
                 Q(receipt_number__icontains=search_term) |
-                Q(deal_refer_no__icontains=search_term) |
-                Q(date__icontains=search_term) |
-                Q(cheque_no__icontains=search_term) |
-                Q(dhs__icontains=search_term) |
-                Q(fils__icontains=search_term) |
-                Q(payment_type__icontains=search_term) |
-
                 Q(agent_name__icontains=search_term) |
                 Q(building_name__icontains=search_term) |
                 Q(unit_number__icontains=search_term) |

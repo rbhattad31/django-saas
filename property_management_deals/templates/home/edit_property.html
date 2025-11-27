@@ -636,7 +636,7 @@
               <div class="upload_prev">
                 {% if property.pms_contract %}
                   {% for file in property.pms_contract|split:"," %}
-                    <a href="{{ file.url }}" target="_new">pms_contract {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">pms_contract {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="pms_contract" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -660,7 +660,7 @@
               <div class="upload_prev">
                 {% if property.owner_passport_copy %}
                   {% for file in property.owner_passport_copy|split:"," %}
-                    <a href="{{ file.url }}" target="_new">owner_passport_copy {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">owner_passport_copy {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="owner_passport_copy" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -683,7 +683,7 @@
               <div class="upload_prev">
                 {% if property.owner_eid_copy %}
                   {% for file in property.owner_eid_copy|split:"," %}
-                    <a href="{{ file.url }}" target="_new">owner_eid_copy {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">owner_eid_copy {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="owner_eid_copy" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -706,7 +706,7 @@
               <div class="upload_prev">
                 {% if property.pms_cheque_copy %}
                   {% for file in property.pms_cheque_copy|split:","%}
-                    <a href="{{ file.url }}" target="_new">pms_cheque_copy {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">pms_cheque_copy {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="pms_cheque_copy" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -780,7 +780,7 @@
               <div class="upload_prev">
                 {% if property.title_deed %}
                   {% for file in property.title_deed|split:"," %}
-                    <a href="{{ file.url }}" target="_new">title_deed {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">title_deed {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="title_deed" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -805,7 +805,7 @@
               <div class="upload_prev">
                 {% if property.poa_pp %}
                   {% for file in property.poa_pp|split:"," %}
-                    <a href="{{ file.url }}" target="_new">poa_pp {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">poa_pp {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="poa_pp" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -829,7 +829,7 @@
               <div class="upload_prev">
                 {% if property.poa_copy %}
                   {% for file in property.poa_copy|split:","%}
-                    <a href="{{ file.url }}" target="_new">poa_copy {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">poa_copy {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="poa_copy" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}
@@ -850,7 +850,7 @@
               <div class="upload_prev">
                 {% if property.key_hand_over_form %}
                   {% for file in property.key_hand_over_form|split:","%}
-                    <a href="{{ file.url }}" target="_new">key_hand_over_form {{ forloop.counter }}</a>
+                    <a href="{{ file.url|clean_s3 }}" target="_new">key_hand_over_form {{ forloop.counter }}</a>
                     <p class="remove_file" id="{{ file.url }}" data-name="key_hand_over_form" data-existing="old">X</p>
                   {% endfor %}
                 {% else %}

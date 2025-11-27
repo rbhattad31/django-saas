@@ -452,6 +452,41 @@
                                         </select>
                                         <span class="text-danger" id="receipt_no_error"></span>
                                     </div>
+
+
+                                    {% comment %} receipt no - 2 {% endcomment %}
+
+
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no2">Receipt No - 2</label>
+                                        <select name="receipt_no2" class="form-control" id="receipt_no2" required>
+                                            <option value="">Select Receipt No2</option>
+                                            <option value="Null">Null</option>
+                                            <option value="No Commision">No Commission</option>
+                                            {% for receipt in receipt_nos2 %}
+                                            <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="receipt_no_error"></span>
+                                    </div>
+
+
+
+                                    {% comment %} Receipt No 3 {% endcomment %}
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no3">Receipt No3</label>
+                                        <select name="receipt_no3" class="form-control" id="receipt_no3" required>
+                                            <option value="">Select Receipt No3</option>
+                                            <option value="Null">Null</option>
+                                            <option value="No Commision">No Commission</option>
+                                            {% for receipt in receipt_nos3 %}
+                                            <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="receipt_no_error"></span>
+                                    </div>
+
+
                                     <div class="col-md-6 form-group">
                                         <label for="kyc_number">KYC Number</label>
                                         <input type="text" id="kyc_number" name="kyc_number" class="form-control" placeholder="KYC Number">
@@ -1390,6 +1425,9 @@ $j(document).ready(function () {
             agent3: { numeric: true, maxlength: 10 },
             agent_name3: { alphanum_special: true, maxlength: 255 },
             receipt_no: { required: true, alphanum_special: true, maxlength: 100 },
+            // Adding receipt_no2 and receipt_no3 newly 
+            receipt_no2: {alphanum_special: true, maxlength: 100 },
+            receipt_no3: {alphanum_special: true, maxlength: 100 },
             kyc_number: { alphanum_special: true, maxlength: 255 },
             agent_comment: { alphanum_special: true, maxlength: 255 },
             comments: { alphanum_special: true, maxlength: 255 },

@@ -1027,6 +1027,32 @@
                                     </div>  
                                 </div> 
 
+                                <div class="row">  
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="seller_poa_eid">Form I</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.form_i_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label for="buyer_poa_eid">Referral Agreement</label><br>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.referral_agreement_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div> 
+
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3"> 
                                         <div class="row">                                
@@ -1038,6 +1064,20 @@
                                             <div class="col-1">:</div>
                                             <div class="col-6">
                                                 {% render_file_links salesdeal.screening aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>                              
+                                    </div>
+                                     <div class="col-md-6 form-group mb-3"> 
+                                        <div class="row">                                
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Management Approval Form</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.management_approval_form_copy aws_base_url salesdeal.reference_number %}
                                             </div>
                                             <span class="text-danger" id="screening_error"></span>
                                         </div>                              

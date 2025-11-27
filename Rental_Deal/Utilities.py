@@ -68,6 +68,7 @@ def s3_file_exists(filepath):
         logger.info("Checking existence for %s", filepath)
         url = f"/live/classic_properties/{filepath}"
         is_present =  storage.exists(url)
+        logger.info("Checked Full path existence for%s: %s", url, is_present)
         logger.info("Checked existence for %s: %s", filepath, is_present)
         return is_present
     except Exception as e:

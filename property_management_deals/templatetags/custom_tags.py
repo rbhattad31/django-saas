@@ -29,26 +29,38 @@ def render_file_links(file_string):
     """
     Renders HTML <a> links for each file in a comma-separated full URL list.
     Extracts the label as the prefix before digits in the filename.
+    Cleans S3 path by removing /live/classic_properties/.
     """
     if not file_string:
         return ""
 
-    AWS_url_base = settings.AWS_URL.rstrip('/').rsplit('/', 1)[0]
-     
-    print(AWS_url_base ,"from render links")
     files = [f.strip() for f in file_string.split(",") if f.strip()]
     output = []
 
     for index, file_url in enumerate(files, start=1):
-        filename = file_url.split("/")[-1]
+
+        # 🔥 REMOVE unwanted path segment
+        file_url = re.sub(r'/live/classic_properties/', '/', file_url)
+
+        # extract filename after "rental/"
+        filename = file_url.split("rental")[-1]
+
+        # extract label before digits
         match = re.search(r'([a-zA-Z_]+)\d+', filename)
         label = match.group(1) if match else filename
 
-        html = f'<div class="upload_prev"><a href="{AWS_url_base}{file_url}" target="_blank">{label} {index}</a></div>'
+        html = f'<div class="upload_prev"><a href="{file_url}" target="_blank">{label} {index}</a></div>'
         output.append(html)
 
     return mark_safe("\n".join(output))
 
+
+@register.filter
+def clean_s3(url):
+    """Removes /live/<tenant>/ from S3 URLs."""
+    if not url:
+        return url
+    return re.sub(r'/live/[^/]+/', '/live/', url)
 
 
 
@@ -70,6 +82,26 @@ def your_view(request):
         'today': date.today()
     }
     ...
+
+
+# in your_app/templatetags/custom_tags.py
+
+
+# register = template.Library()
+
+@register.filter
+def split_commas(value):
+    """
+    Split a comma-separated string into a list of trimmed items.
+    Returns empty list if value is falsy.
+    """
+    if not value:
+        return []
+    # value may already be a list; handle that
+    if isinstance(value, (list, tuple)):
+        return [str(v).strip() for v in value if v]
+    return [s.strip() for s in str(value).split(',') if s.strip()]
+
 
 
  
