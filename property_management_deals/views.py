@@ -1624,7 +1624,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
             # this block is for to update receipt_no 2.
 
-            if 'receipt_no2' in data and data['receipt_no2'] and data['receipt_no2'] != 'Null' and data['receipt_no'].isdigit():
+            if 'receipt_no2' in data and data['receipt_no2'] and data['receipt_no2'] != 'Null' and data['receipt_no2'].isdigit():
                 reference_number = data.get('reference_number') or None
                 try:
                     ManagementReceipts.objects.filter(receipt_number=data['receipt_no2']).update(deal_refer_no=reference_number,status='Used')
@@ -1637,7 +1637,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     )
                 
             # This if block is for receipt no 3 
-            if 'receipt_no3' in data and data['receipt_no3'] and data['receipt_no3'] != 'Null' and data['receipt_no'].isdigit():
+            if 'receipt_no3' in data and data['receipt_no3'] and data['receipt_no3'] != 'Null' and data['receipt_no3'].isdigit():
                 reference_number = data.get('reference_number') or None
                 try:
                     ManagementReceipts.objects.filter(receipt_number=data['receipt_no3']).update(deal_refer_no=reference_number,status='Used')
