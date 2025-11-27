@@ -1357,6 +1357,9 @@ class SalesDeals(models.Model):
     seller_poa_eid = models.TextField(blank=True, null=True)
     form_status = models.CharField(max_length=10, choices=[('Complete', 'Complete'), ('Incomplete', 'Incomplete')], blank=True, null=True)
     sale_kyc_number = models.TextField(blank=True, null=True)
+    form_i_copy = models.TextField(blank=True, null=True)
+    referral_agreement_copy = models.TextField(blank=True, null=True)
+    management_approval_form_copy = models.TextField(blank=True, null=True)
     is_sale_aml = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], blank=True, null=True)
     kyc_number = models.TextField(blank=True, null=True)
     comments_finance = models.TextField(blank=True, null=True)
@@ -1497,6 +1500,8 @@ class RentalProperties(models.Model):
     agent_name2 = models.TextField(blank=True, null=True)
     agent_name3 = models.TextField(blank=True, null=True)
     receipt_no = models.TextField()
+    receipt_no2 = models.TextField(blank=True, null=True)
+    receipt_no3 = models.TextField(blank=True, null=True)
     form_status = models.CharField(
         max_length=50,
         choices=[
@@ -1541,6 +1546,7 @@ class RentalProperties(models.Model):
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191 ,blank=True ,null=True)
     submitted_date = models.DateField()
+    re_submitted_date = models.DateField(blank=True, null=True)
     
     # manager_approved_rejected = models.CharField(
     #     max_length=1,
