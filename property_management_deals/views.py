@@ -543,8 +543,8 @@ class PropertyAPIView(APIView):
 
         if existing_sub_date and role_name == 'Agent' and mutable_data['form_status'] == 'Complete':
             # Only set Resubmitted_date when there is an existing submitted_date
-            mutable_data['Resubmitted_date'] = timezone.now().date()
-            print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['Resubmitted_date']}")
+            mutable_data['re_submitted_date'] = timezone.now().date()
+            print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['re_submitted_date']}")
         else:
             print("ℹ️ submitted_date is empty — not touching submitted_date or Resubmitted_date.")
             mutable_data['submitted_date'] = timezone.now().date()
