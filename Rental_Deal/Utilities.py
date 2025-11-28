@@ -19,6 +19,7 @@ def upload_file_to_full_s3_url(file_obj, url):
     storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
     storage = storage_class()
     logger.info("Uploading file to S3 at URL: %s", url)
+    file_obj.seek(0)
     saved_path = storage.save(f"live/classic_properties/{url}", ContentFile(file_obj.read()))
 
     logger.info("Uploaded to: %s", saved_path)
