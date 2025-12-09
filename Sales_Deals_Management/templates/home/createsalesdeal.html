@@ -1543,6 +1543,8 @@ $('#deal_form').validate({
 
             $(document).on('click', '#submitDeal', function(event) {  
 
+            event.preventDefault();
+
                 
               $("#reference_number").val(
               $("#reference_number_prefix").val() +
