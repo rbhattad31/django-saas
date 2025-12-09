@@ -1709,6 +1709,17 @@ $j(document).ready(function () {
     // Form submission via AJAX
     $j('#rental_property_form').on('submit', function (e) {
         e.preventDefault();
+
+        $j("#reference_number").val(
+              $j("#reference_number_prefix").val() +
+                "-" +
+                $j("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $j("#reference_number").val()
+            );
         console.log("Form submission triggered"); // Debug log
 
         const form = $j(this);
@@ -1782,9 +1793,7 @@ $j(document).ready(function () {
 
         // Append all regular form fields
         $j('#rental_property_form').serializeArray().forEach(field => {
-            if (field.name === 'reference_number') {
-                console.log($j("#reference_number").val());
-            } // Skip, already added
+            // Skip, already added
             formData.append(field.name, field.value);
         });
 
