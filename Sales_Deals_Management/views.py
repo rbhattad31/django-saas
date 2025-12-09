@@ -357,7 +357,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"Final updated value - {key}: {value}")
 
        
-        time.sleep(30)
+       
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
@@ -670,7 +670,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             for key, value in final_updated_values.items():
                 print(f"Final updated value - {key}: {value}")
 
-            time.sleep(30)
+            
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):

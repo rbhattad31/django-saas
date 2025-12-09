@@ -555,7 +555,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(request.user.id)
         print(mutable_data)
         # rental_deal = get_object_or_404(RentalDeals, pk=pk)
-        path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip().upper()}"
+        path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")  # Remove [] suffix if present
             print("base_field_name", base_field_name)
@@ -604,7 +604,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ✅ Add new files
             new_file_names = []
             for file in request.FILES.getlist(base_field_name + "[]"):
-                timestamp = int(time.time()*1000000000)
+                timestamp = int(time.time())
                 cleaned_name = re.sub(r"[,]+", " ", file.name)
                 filename = f"{base_field_name}{timestamp} {cleaned_name}"
                 relative_path = f"{path_folder}/{filename}"
@@ -734,7 +734,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             print(f"Final updated value - {key}: {value}")
 
         
-        time.sleep(30)
+       
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
@@ -883,7 +883,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
                 
                 for file in files:
-                    timestamp = int(time.time()*1000000000)
+                    timestamp = int(time.time())
                     cleaned_name = re.sub(r"[,]+", " ", file.name)
                     filename = f"{base_field_name}{timestamp} {cleaned_name}"
                     filepath = f"{path}/{filename}"
@@ -949,7 +949,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 # ✅ Add new files
                 new_file_names = []
                 for file in request.FILES.getlist(base_field_name + "[]"):
-                    timestamp = int(time.time()*1000000000)
+                    timestamp = int(time.time())
                     cleaned_name = re.sub(r"[,]+", " ", file.name)
                     filename = f"{base_field_name}{timestamp} {cleaned_name}"
                     relative_path = f"{path_folder}/{filename}"
@@ -1078,7 +1078,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
             
-            time.sleep(30)
+            
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
