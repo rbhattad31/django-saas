@@ -183,20 +183,42 @@
                           ></label
                         >
 
-                        <input
-                          type="text"
+                      <div class="row">
+                          <div class="col-5 pr-1">
+
+                              <!-- Prefix dropdown -->
+                              <select class="form-control"
+                                      name="reference_number_prefix"
+                                      id="reference_number_prefix">
+                                  <option value="CPM">CPM</option>
+                                  <option value="CPS">CPS</option>
+                                  <option value="CPMR">CPMR</option>
+                                  <option value="CP">CP</option>
+                                  <option value="CPR">CPR</option>
+                              </select>
+
+                            </div>
+                              <!-- Suffix number box -->
+                            <div class="col-7 pl-1">
+                              <input type="text"
+                                    name="reference_number_suffix"
+                                    class="form-control"
+                                    id="reference_number_suffix"
+                                    placeholder="Reference No" />
+                            </div>
+                    </div>
+
+                  <!-- Hidden combined field -->
+                  
+
+                      <input
+                          type="hidden"
                           name="reference_number"
                           class="form-control"
                           id="reference_number"
-                          placeholder="Reference No"
+                          placeholder="Reference No" 
                         />
-
-                        <span
-                          class="text-danger"
-                          id="reference_number_error"
-                        ></span>
-                      </div>
-
+                    </div>
                       <div class="col-md-6 form-group">
                         <label for="is_new_deal"
                           >Deal<span class="mandetory_field" style="color: red"
@@ -2084,7 +2106,7 @@
 
         $.validator.addMethod("alpha_numeric", function (value, element, param) {
               return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
-            }, "Enter valid Profile Id");
+            }, "Enter valid Number or char Id");
 
         $.validator.addMethod("numeric", function (value, element, param) {
               return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
@@ -2170,6 +2192,18 @@
               alphanum_special: true,
               maxlength: 20,
             },
+
+            reference_number_prefix: {
+              required: true,
+             
+            },
+             reference_number_suffix: {
+              required: true,
+              alpha_numeric: true,
+
+             
+            },
+
             screening: {
               required: true,
               alphanum_special: true,
@@ -2483,6 +2517,17 @@
           "click",
           "#changeTabToSource,#saveAsDraftProperty",
           function (event) {
+
+              $("#reference_number").val(
+              $("#reference_number_prefix").val() +
+                "-" +
+                $("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $("#reference_number").val()
+            );
             var buttonName = $(this).attr("id");
 
             $(
@@ -2527,6 +2572,11 @@
               var validator = $("#deal_form").validate();
               showErrors(validator);
             }
+
+          
+
+
+
           }
         );
 
@@ -2955,6 +3005,19 @@
       });
 
       $(document).on("click", "#submitDeal", function (event) {
+
+        
+              $("#reference_number").val(
+              $("#reference_number_prefix").val() +
+                "-" +
+                $("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $("#reference_number").val()
+            );
+        
         $(
           '[name="submitted_by_agent"],[name="owner_agency"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="agent_first_name"],[name="agent_phone"],[name="tenant_agency"],[name="tenant_agent_first_name"],[name="tenant_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="is_rental_aml"],[name="screening"]'
         ).each(function () {
@@ -2991,6 +3054,19 @@
 
       //
       $(document).on("click", "#saveDeal", function (event) {
+
+        
+              $("#reference_number").val(
+              $("#reference_number_prefix").val() +
+                "-" +
+                $("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $("#reference_number").val()
+            );
+
         $(
           '[name="submitted_by_agent"],[name="reference_number"],[name="date"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="building_name"],[name="deal_start_date"],[name="deal_end_date"],[name="owner_first_name"],[name="owner_source"],[name="owner_mobile"],[name="owner_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="tenant_first_name"],[name="tenant_source"],[name="tenant_mobile"],[name="tenant_email"],[name="screening"]'
         ).each(function () {

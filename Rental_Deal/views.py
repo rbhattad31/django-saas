@@ -555,7 +555,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         print(request.user.id)
         print(mutable_data)
         # rental_deal = get_object_or_404(RentalDeals, pk=pk)
-        path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
+        path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip().upper()}"
         for key in request.FILES.keys():
             base_field_name = key.rstrip("[]")  # Remove [] suffix if present
             print("base_field_name", base_field_name)
@@ -604,7 +604,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # ✅ Add new files
             new_file_names = []
             for file in request.FILES.getlist(base_field_name + "[]"):
-                timestamp = int(time.time())
+                timestamp = int(time.time()*1000000000)
                 cleaned_name = re.sub(r"[,]+", " ", file.name)
                 filename = f"{base_field_name}{timestamp} {cleaned_name}"
                 relative_path = f"{path_folder}/{filename}"
@@ -734,7 +734,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             print(f"Final updated value - {key}: {value}")
 
         
-
+        time.sleep(30)
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
@@ -883,7 +883,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
                 
                 for file in files:
-                    timestamp = int(time.time())
+                    timestamp = int(time.time()*1000000000)
                     cleaned_name = re.sub(r"[,]+", " ", file.name)
                     filename = f"{base_field_name}{timestamp} {cleaned_name}"
                     filepath = f"{path}/{filename}"
@@ -939,8 +939,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     file_name = file_name.strip()
                     if file_name in files_to_remove:
                         relative_path = f"{path_folder}/{file_name}"
-                        is_deleted = delete_from_s3(relative_path)
-                        logger.info("delete_from_s3 called for %s result=%s", relative_path, is_deleted)
+                        # is_deleted = delete_from_s3(relative_path)
+                        # logger.info("delete_from_s3 called for %s result=%s", relative_path, is_deleted)
                         # if is_deleted:
                         #     updated_existing_files.append(file_name)  # keep if deletion failed
                     else:
@@ -949,7 +949,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 # ✅ Add new files
                 new_file_names = []
                 for file in request.FILES.getlist(base_field_name + "[]"):
-                    timestamp = int(time.time())
+                    timestamp = int(time.time()*1000000000)
                     cleaned_name = re.sub(r"[,]+", " ", file.name)
                     filename = f"{base_field_name}{timestamp} {cleaned_name}"
                     relative_path = f"{path_folder}/{filename}"
@@ -1000,9 +1000,8 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 elif is_submitted_date and role in ["Agent"]:
                     mutable_data['re_submitted_date']= date.today()
                     print("this is resubmitted date block", mutable_data['re_submitted_date'])
-                
-                
-
+                    mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
+                    mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission      
  
             else:
                 mutable_data['form_status'] = "Incomplete"
@@ -1079,7 +1078,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
 
             
-
+            time.sleep(30)
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):

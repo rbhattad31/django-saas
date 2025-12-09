@@ -357,7 +357,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             print(f"Final updated value - {key}: {value}")
 
        
-
+        time.sleep(30)
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
@@ -550,7 +550,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     file_name = file_name.strip()
                     if file_name in files_to_remove:
                         relative_path = f"{path_folder}/{file_name}"
-                        is_deleted = delete_from_s3(relative_path)
+                        # is_deleted = delete_from_s3(relative_path)
                         # if not is_deleted:
                         #     updated_existing_files.append(file_name)  # keep if deletion failed
                     else:
@@ -602,6 +602,8 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 elif is_submitted_date and role in ["Agent"]:
                     mutable_data['re_submitted_date']= datetime.date.today()
                     print("this is resubmitted date block", mutable_data['re_submitted_date'])
+                    mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
+                    mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission
                 
             else:
                 mutable_data['form_status'] = "Incomplete"
@@ -668,7 +670,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             for key, value in final_updated_values.items():
                 print(f"Final updated value - {key}: {value}")
 
-              
+            time.sleep(30)
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):

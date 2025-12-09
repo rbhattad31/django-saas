@@ -170,7 +170,35 @@
                                     
                                     <div class="col-md-6 form-group">
                                         <label for="reference_number">Reference Number<span class="mandetory_field" style="color: red">*</span></label>
-                                        <input type="text" name="reference_number" class="form-control" id="reference_number" placeholder="Reference No" required>
+
+                                        
+                                    <div class="row">
+                                        <div class="col-5 pr-1">
+
+                                            <!-- Prefix dropdown -->
+                                            <select class="form-control"
+                                                    name="reference_number_prefix"
+                                                    id="reference_number_prefix">
+                                                <option value="CPM">CPM</option>
+                                                <option value="CPS">CPS</option>
+                                                <option value="CPMR">CPMR</option>
+                                                <option value="CP">CP</option>
+                                                <option value="CPR">CPR</option>
+                                            </select>
+
+                                            </div>
+                                            <!-- Suffix number box -->
+                                            <div class="col-7 pl-1">
+                                            <input type="text"
+                                                    name="reference_number_suffix"
+                                                    class="form-control"
+                                                    id="reference_number_suffix"
+                                                    placeholder="Reference No" />
+                                            </div>
+                                    </div>
+
+
+                                        <input type="hidden" name="reference_number" class="form-control" id="reference_number" placeholder="Reference No" >
                                         <span class="text-danger" id="reference_number_error"></span>
                                     </div>
                                     <div class="col-md-6 form-group">
@@ -989,7 +1017,7 @@ function switchTab(tabId) {
     ];
 
     const tabFields = {
-        'nav-property': ['submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
+        'nav-property': ['submitted_by_agent', 'deal_date', "reference_number_suffix", 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
         'nav-source': ['owner_first_name', 'owner_source', 'owner_mobile', 'owner_email', 'seller_nationality'],
         'nav-agency': ['agency_name', 'agent_name', 'agent_phone'],
         'nav-cheque': ['no_of_cheque', 'cheque_date[]'],
@@ -1053,7 +1081,7 @@ function saveAsDraft() {
 
     // Fields that must be required for saving as draft
     const draftFields = [
-        'submitted_by_agent', 'deal_date','reference_number', 'project_name', 'building_name',
+        'submitted_by_agent', 'deal_date','reference_number_suffix', 'project_name', 'building_name',
         'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date',
         'tenancy_end_date', 'owner_first_name', 'owner_source', 'owner_mobile', 'owner_email',
         'seller_nationality','screening[]'
@@ -1092,6 +1120,20 @@ function saveAsDraft() {
         const formData = new FormData();
         formData.append('csrfmiddlewaretoken', $j('input[name="csrfmiddlewaretoken"]').val());
         formData.append('save_as', 'draft');
+
+         $j("#reference_number").val(
+              $j("#reference_number_prefix").val() +
+                "-" +
+                $j("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $j("#reference_number").val()
+            );
+        formData.append("#reference_number", $j("#reference_number").val());
+
+        
 
         // Append all regular form fields (includes cheque_date[] as multi-value)
         $j('#rental_property_form').serializeArray().forEach(field => {
@@ -1190,7 +1232,7 @@ function switchTabSaveDraft(tabId) {
     ];
 
     const tabFields = {
-        'nav-property': ['submitted_by_agent', 'deal_date', 'reference_number', 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
+        'nav-property': ['submitted_by_agent', 'deal_date', 'reference_number_suffix', 'project_name', 'building_name', 'unit_details', 'pms_price', 'pm_start_date', 'pm_end_date', 'tenancy_start_date', 'tenancy_end_date'],
         'nav-source': ['owner_first_name', 'owner_source', 'owner_mobile', 'owner_email', 'seller_nationality'],
         'nav-agency': [],
         'nav-cheque': [],
@@ -1393,7 +1435,10 @@ $j(document).ready(function () {
         rules: {
             submitted_by_agent: { required: true, alphanum_special: true, maxlength: 255 },
             deal_date: { required: true, date: true },
-            reference_number: { required: true, alphanum_special: true, maxlength: 20 },
+            reference_number: {  maxlength: 20 },
+
+            reference_number_prefix: { required: true, alphanum_special: true, maxlength: 10 },
+            reference_number_suffix: { required: true, alphanum_special: true, maxlength: 10 },
             project_name: { required: true, alphanum_special: true, maxlength: 255 },
             building_name: { required: true, alphanum_special: true, maxlength: 255 },
             unit_details: { required: true, alphanum_special: true, maxlength: 15 },
@@ -1719,8 +1764,23 @@ $j(document).ready(function () {
         formData.append('csrfmiddlewaretoken', $j('input[name="csrfmiddlewaretoken"]').val());
         formData.append('save_as', 'create');  // Or however you're handling save mode
 
+             $j("#reference_number").val(
+              $j("#reference_number_prefix").val() +
+                "-" +
+                $j("#reference_number_suffix").val()
+            );
+
+            console.log(
+              "Reference Number: ",
+              $j("#reference_number").val()
+            );
+        formData.append("#reference_number", $j("#reference_number").val());
+
         // Append all regular form fields
         $j('#rental_property_form').serializeArray().forEach(field => {
+            if (field.name === 'reference_number') {
+                console.log($j("#reference_number").val());
+            } // Skip, already added
             formData.append(field.name, field.value);
         });
 

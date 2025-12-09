@@ -544,6 +544,8 @@ class PropertyAPIView(APIView):
         if existing_sub_date and role_name == 'Agent' and mutable_data['form_status'] == 'Complete':
             # Only set Resubmitted_date when there is an existing submitted_date
             mutable_data['re_submitted_date'] = timezone.now().date()
+            mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
+            mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission
             print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['re_submitted_date']}")
         else:
             print("ℹ️ submitted_date is empty — not touching submitted_date or Resubmitted_date.")
@@ -1372,6 +1374,8 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                             {'success': False, 'message': f'At least one file is required for {field}.'},
                             status=status.HTTP_400_BAD_REQUEST
                         )
+                    
+                    
  
                 # Save draft
                 print("DEBUG: Draft data before serializer:", draft_data)
