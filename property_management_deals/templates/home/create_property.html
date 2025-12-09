@@ -1401,6 +1401,10 @@ $j(document).ready(function () {
         return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
     }, "Please enter a valid email address.");
 
+    $.validator.addMethod("alpha_numeric", function (value, element, param) {
+              return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
+            }, "Enter valid Number or char Id");
+
     $j.validator.addMethod("dateAfterStart", function (value, element, params) {
         const startDate = $j(params).val();
         if (!value || !startDate) return true;
@@ -1437,8 +1441,8 @@ $j(document).ready(function () {
             deal_date: { required: true, date: true },
             reference_number: {  maxlength: 20 },
 
-            reference_number_prefix: { required: true, alphanum_special: true, maxlength: 10 },
-            reference_number_suffix: { required: true, alphanum_special: true, maxlength: 10 },
+            reference_number_prefix: { required: true, alpha_numeric: true, maxlength: 10 },
+            reference_number_suffix: { required: true, alpha_numeric: true, maxlength: 10 },
             project_name: { required: true, alphanum_special: true, maxlength: 255 },
             building_name: { required: true, alphanum_special: true, maxlength: 255 },
             unit_details: { required: true, alphanum_special: true, maxlength: 15 },
