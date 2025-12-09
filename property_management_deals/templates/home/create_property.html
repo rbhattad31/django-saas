@@ -1401,7 +1401,7 @@ $j(document).ready(function () {
         return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
     }, "Please enter a valid email address.");
 
-    $.validator.addMethod("alpha_numeric", function (value, element, param) {
+    $j.validator.addMethod("alpha_numeric", function (value, element, param) {
               return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
             }, "Enter valid Number or char Id");
 
