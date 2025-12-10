@@ -1247,8 +1247,8 @@ $.validator.addMethod("custom_email", function (value, element) {
     		}, "Enter a valid email address.");
 
 $.validator.addMethod("alpha_numeric", function (value, element, param) {
-       return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
-    }, "Enter valid Profile Id");
+       return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+    }, "Enter only letters and numbers no special characters.");
 
 $.validator.addMethod("numeric", function (value, element, param) {
     	 return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);

@@ -321,7 +321,7 @@ class PropertySerializer(serializers.ModelSerializer):
     #     allow_empty=True
     # )
     manager_approved_rejected = serializers.ChoiceField(
-        choices=[('A', 'Approved'), ('R', 'Rejected')],
+        choices=[('A', 'Approved'), ('R', 'Rejected'), ('P', 'Pending')],
         required=False
     )
     pms_contract = serializers.CharField(required=False, allow_blank=True, allow_null=True)

@@ -2105,8 +2105,8 @@
     		}, "Enter a valid email address.");
 
         $.validator.addMethod("alpha_numeric", function (value, element, param) {
-              return this.optional(element) || /^[-]?[a-zA-Z0-9]+$/.test(value);
-            }, "Enter valid Number or char Id");
+              return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+            }, "Enter only letters and numbers without spaces.");
 
         $.validator.addMethod("numeric", function (value, element, param) {
               return this.optional(element) || /^[-]?[0-9-., ]+$/.test(value);
@@ -3034,6 +3034,7 @@
           countMultipleFiles("key_hand_over_form") &
           countMultipleFiles("key_hand_over_form") &
           countMultipleFiles("screening") &
+          countMultipleFiles("tenancy_application_form") &
           checkKyc()
         ) {
           $("#save_as").val("create-deal");

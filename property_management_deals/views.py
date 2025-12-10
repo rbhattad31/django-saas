@@ -86,11 +86,14 @@ import time
 from datetime import datetime
 import json
 
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 # import the helpers you already have in rental/utils.py
 from .utils import _normalize_to_s3_key, get_boto3_client, s3_file_exists
 from django.conf import settings
+import boto3, os, time, re
+from urllib.parse import urlparse, quote
+ 
 
 
 
@@ -523,13 +526,115 @@ class PropertyAPIView(APIView):
 
 
         # === Merge old + new files, remove explicitly removed ones ===
+        # for field in file_fields:
+        #     removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
+        #     existing_files = [f.strip() for f in (getattr(property_obj, field, "") or "").split(",") if f.strip()]
+        #     existing_files = [f for f in existing_files if f not in removed_files]
+        #     new_files = updated_files.get(field, [])
+        #     combined_files = existing_files + new_files
+        #     mutable_data[field] = ",".join(combined_files)
+
+
+        def _get_boto3_client_wrapper():
+            try:
+                return get_boto3_client()
+            except Exception:
+                aws_key = getattr(settings, 'AWS_ACCESS_KEY_ID', None)
+                aws_secret = getattr(settings, 'AWS_SECRET_ACCESS_KEY', None)
+                region = getattr(settings, 'AWS_S3_REGION_NAME', None)
+                endpoint = getattr(settings, 'AWS_S3_ENDPOINT_URL', None)
+                kwargs = {}
+                if aws_key and aws_secret:
+                    kwargs['aws_access_key_id'] = aws_key
+                    kwargs['aws_secret_access_key'] = aws_secret
+                if region:
+                    kwargs['region_name'] = region
+                if endpoint:
+                    kwargs['endpoint_url'] = endpoint
+                return boto3.client('s3', **kwargs)
+ 
+        def _guess_s3_key(value):
+            if not value:
+                return None
+            v = str(value).strip()
+            if v.lower().startswith('http://') or v.lower().startswith('https://'):
+                try:
+                    parsed = urlparse(v)
+                    return parsed.path.lstrip('/')
+                except Exception:
+                    return v.lstrip('/')
+            return v.lstrip('/')
+ 
+        s3_client = _get_boto3_client_wrapper()
+        bucket_name = os.environ.get('AWS_BUCKET') or getattr(settings, 'AWS_STORAGE_BUCKET_NAME', None)
+ 
         for field in file_fields:
-            removed_files = [f.strip() for f in mutable_data.get(f"{field}_removed", "").split(",") if f.strip()]
-            existing_files = [f.strip() for f in (getattr(property_obj, field, "") or "").split(",") if f.strip()]
-            existing_files = [f for f in existing_files if f not in removed_files]
+            # Fetch existing DB entries
+            existing_raw = getattr(property_obj, field, "") or ""
+            existing_files = [e.strip() for e in existing_raw.split(',') if e and e.strip()]
+ 
+            # Robustly detect removed inputs (accept typo _mou_removed and variants)
+            possible_removed_keys = [
+                f"{field}_removed",
+                f"{field}_mou_removed",
+                f"{field}_removed_ids",
+                f"{field}_new_removed_ids"
+            ]
+            removed_raw = ""
+            for k in possible_removed_keys:
+                if k in mutable_data and mutable_data.get(k):
+                    removed_raw = mutable_data.get(k)
+                    break
+                if k in request.data and request.data.get(k):
+                    removed_raw = request.data.get(k)
+                    break
+            # fuzzy fallback
+            if not removed_raw:
+                for k in request.data.keys():
+                    if field in k and 'removed' in k.lower():
+                        cand = request.data.get(k)
+                        if cand:
+                            removed_raw = cand
+                            break
+ 
+            # normalize removed_list
+            removed_list = []
+            if isinstance(removed_raw, (list, tuple)):
+                for item in removed_raw:
+                    if item:
+                        removed_list.extend([s.strip() for s in str(item).split(',') if s.strip()])
+            else:
+                removed_list = [s.strip() for s in str(removed_raw).split(',') if s.strip()]
+ 
+            # compute s3 keys to delete
+            s3_keys_to_delete = [_guess_s3_key(r) for r in removed_list if r]
+ 
+            
+ 
+            # === OPTION: Preserve objects in S3 — only remove DB references ===
+            # We still compute normalized S3 keys (for correct matching), but we DO NOT call delete_object.
+            s3_keys_to_delete = [_guess_s3_key(r) for r in removed_list if r]
+            print(f"🗂️ (S3 PRESERVE) Candidate keys for {field}: {s3_keys_to_delete}")
+ 
+            # Remove from DB list by matching normalized keys
+            rem_keys = set(k for k in s3_keys_to_delete if k)
+            new_existing = []
+            for ex in existing_files:
+                ex_key = _guess_s3_key(ex)
+                if ex_key in rem_keys:
+                    # exclude from saved DB list (this removes the reference)
+                    print(f"❌ Removing from DB value for {field}: {ex} (matched key {ex_key}) — S3 object preserved")
+                    continue
+                new_existing.append(ex)
+ 
+            # add newly uploaded files (if any)
             new_files = updated_files.get(field, [])
-            combined_files = existing_files + new_files
-            mutable_data[field] = ",".join(combined_files)
+            combined_files = new_existing + new_files
+ 
+            # set final csv
+            mutable_data[field] = ",".join(combined_files) if combined_files else ""
+            # optional: log
+            print(f"Field {field} merged -> {mutable_data[field]} (removed:{removed_list} uploaded:{new_files})")
 
         # === Determine draft vs full submission ===
         save_as = mutable_data.get('save_as', 'submit')
@@ -544,8 +649,8 @@ class PropertyAPIView(APIView):
         if existing_sub_date and role_name == 'Agent' and mutable_data['form_status'] == 'Complete':
             # Only set Resubmitted_date when there is an existing submitted_date
             mutable_data['re_submitted_date'] = timezone.now().date()
-            # mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
-            # mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission
+            mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
+            mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission
             print(f"ℹ️ submitted_date exists ({existing_sub_date}); setting Resubmitted_date = {mutable_data['re_submitted_date']}")
         else:
             print("ℹ️ submitted_date is empty — not touching submitted_date or Resubmitted_date.")
@@ -1207,7 +1312,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             print(f"📁 Reference Path: {path}")
  
             # --- DUPLICATE CHECK ---
-            if RentalProperties.objects.filter(reference_number=reference_number).exists():
+            if RentalProperties.objects.filter(reference_number=reference_number,is_deleted='N').exists():
                 print("DEBUG: Duplicate reference_number — EXITING EARLY:", reference_number)
                 return Response(
                     {'success': False, 'message': f'Reference Number "{reference_number}" already exists.'},
@@ -1331,6 +1436,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
  
                 # Handle file uploads for draft
                 required_file_fields_draft = ['screening']
+                final_files_map_draft = {}
                 for field in file_fields:
                     file_key = f"{field}[]"
                     if file_key in request.FILES:
@@ -1353,7 +1459,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                             filename = f"{field}{timestamp}_{cleaned_name}"
                             filepath = f"{path}/{filename}"
                             if upload_file_to_full_s3_url(file, filepath):  # Ensure this function is defined
-                                file_paths.append(filepath)
+                                file_paths.append(filepath.replace(" ","_"))
                                 print(f"✅ Uploaded draft file: {filename}")
                             else:
                                 print(f"❌ Draft file upload failed: {filename}")
@@ -1362,10 +1468,14 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                                 )
                         draft_data[field] = ','.join(file_paths) if file_paths else ''
+
+                        final_files_map_draft[field] = file_paths
                         print(f"DEBUG: Draft {field} paths:", draft_data[field])
                     else:
                         draft_data[field] = ''
- 
+                for field in final_files_map_draft:
+                    print(f"DEBUG: Draft final_files_map_draft[{field}]:", final_files_map_draft[field])
+
                 # Validate required file fields for draft
                 for field in required_file_fields_draft:
                     if not draft_data.get(field):
@@ -1466,7 +1576,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             # this is for getting full path for file fields.
             # ---- Full submission file upload (collect DB paths + public URLs) ----
             public_urls_map = {}  # field -> list of public urls
-
+            final_files_map = {}
             for field in file_fields:
                 file_key = f"{field}[]"
                 public_urls_map[field] = []
@@ -1502,13 +1612,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     updated_files[field] = []
 
                 data[field] = ','.join(updated_files[field]) if updated_files[field] else ''
+                final_files_map[field] = data[field]
                 data[f"{field}_public_urls"] = ','.join(public_urls_map[field]) if public_urls_map[field] else ''
                 print(f"DEBUG: Full submission {field} paths:", data[field])
                 print(f"DEBUG: Full submission {field} public_urls:", data[f"{field}_public_urls"])
 
             # filling of file fields with complete path code ended.
 
-
+            for fields in final_files_map:
+                print(f"DEBUG: Final file field {fields} value:", final_files_map[fields])
             # Validate required file fields
             for field in required_file_fields:
                 if not data.get(field):
@@ -2110,6 +2222,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
  
         property = get_object_or_404(RentalProperties, pk=pk)
         RentalProperties.objects.filter(pk=property.pk).update(is_deleted='Y')
+        RentalProperties.objects.filter(pk=property.pk).update(reference_number=property.reference_number + "D")
         # property.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
          
@@ -2381,9 +2494,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         # Global search
         search_term = data.get("search", {}).get("value") or ''
         if search_term:
+
+            normalized_search_replace_slash = search_term.replace("/", "-")
+            normalized_search_replace_minus = search_term.replace("-", "/")
             queryset = queryset.filter(
                     Q(id__icontains=search_term) |
+                    
                     Q(reference_number__icontains=search_term) |
+                    Q(reference_number__icontains=normalized_search_replace_slash) |
+                    Q(reference_number__icontains=normalized_search_replace_minus) |
                     Q(deal_date__icontains=search_term) |
                     Q(unit_details__icontains=search_term) |
                     Q(building_name__icontains=search_term) |

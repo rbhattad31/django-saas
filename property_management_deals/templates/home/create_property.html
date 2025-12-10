@@ -194,6 +194,8 @@
                                                     class="form-control"
                                                     id="reference_number_suffix"
                                                     placeholder="Reference No" />
+
+                                                    <span class="text-danger" id="reference_number_suffix_error"></span>
                                             </div>
                                     </div>
 
@@ -900,6 +902,25 @@ const selectedFiles = {
     });
 } {% endcomment %}
 
+// Live validation while typing
+$j("#reference_number_suffix").on("input", function () {
+    let value = $j(this).val();
+    let cleaned = value.replace(/[^a-zA-Z0-9]/g, "");
+
+    if (value !== cleaned) {
+        $j(this).val(cleaned);
+        $j("#reference_number_error").text("Only letters and numbers are allowed.");
+    } else {
+        $j("#reference_number_error").text("");
+    }
+});
+
+// Clear error when user leaves the field
+$j("#reference_number_suffix").on("blur", function () {
+    $j("#reference_number_error").text("");
+});
+
+
 
 function showErrors(validator) {
     let messages = '';
@@ -1124,7 +1145,7 @@ function saveAsDraft() {
          $j("#reference_number").val(
               $j("#reference_number_prefix").val() +
                 "-" +
-                $j("#reference_number_suffix").val()
+                $j("#reference_number_suffix").val().trim()
             );
 
             console.log(
@@ -1506,7 +1527,15 @@ $j(document).ready(function () {
         
         messages: {
             pm_end_date: { dateAfterStart: "PM End Date must be after PM Start Date" },
-            tenancy_end_date: { dateAfterStart: "Tenancy End Date must be after Tenancy Start Date" }
+            tenancy_end_date: { dateAfterStart: "Tenancy End Date must be after Tenancy Start Date" },
+               reference_number_suffix: {
+        required: "Please enter suffix",
+        alpha_numeric: "Only letters and numbers allowed"
+    },
+    reference_number_prefix: {
+        required: "Please select prefix",
+        alpha_numeric: "Only letters and numbers allowed"
+    }
         }
     });
 
@@ -1713,7 +1742,7 @@ $j(document).ready(function () {
         $j("#reference_number").val(
               $j("#reference_number_prefix").val() +
                 "-" +
-                $j("#reference_number_suffix").val()
+                $j("#reference_number_suffix").val().trim()
             );
 
             console.log(

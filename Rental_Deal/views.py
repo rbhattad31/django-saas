@@ -266,10 +266,15 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         search_term = data.get("search", {}).get("value") or ''
         print(search_term , "point x1")
         if search_term:
+            normalized_search_replace_slash = search_term.replace("/", "-")
+            normalized_search_replace_minus = search_term.replace("-", "/")
             combined_q_object = Q()
-        
+
+            # combined_q_object |= Q(reference_number__icontains=normalized_search)
             combined_q_object |= Q(submitted_by_user__name__icontains=search_term)
-            combined_q_object |= Q(reference_number__icontains=search_term)
+            combined_q_object |= (Q(reference_number__icontains=search_term)|Q(reference_number__icontains=normalized_search_replace_slash) |
+    Q(reference_number__icontains=normalized_search_replace_minus) )
+            
             combined_q_object |= Q(unit_details__icontains=search_term)
             combined_q_object |= Q(building_name__icontains=search_term)
             combined_q_object |= Q(project_name__icontains=search_term)
@@ -1143,6 +1148,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         print("instance", instance)
         RentalDeals.objects.filter(pk=instance.pk).update(is_deleted='Y')
+        RentalDeals.objects.filter(pk=instance.pk).update(reference_number= instance.reference_number+"D")
         print("instance", instance)
         return Response({'detail': 'Rental deal deleted'}, status=status.HTTP_200_OK)
     

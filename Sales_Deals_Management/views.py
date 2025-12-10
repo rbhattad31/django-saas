@@ -66,6 +66,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     def delete_sales(self, request, pk=None):
         sales = get_object_or_404(SalesDeals, pk=pk)
         SalesDeals.objects.filter(pk=pk).update(is_deleted='Y')
+        SalesDeals.objects.filter(pk=pk).update(reference_number= sales.reference_number+"D")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -812,9 +813,13 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         # Global search
         search_term = validated.get("search", {}).get("value") or ''
         if search_term:
+            normalized_search_replace_slash = search_term.replace("/", "-")
+            normalized_search_replace_minus = search_term.replace("-", "/")
             queryset = queryset.filter(
                 Q(submitted_by_user__email__icontains=search_term) |
                 Q(reference_number__icontains=search_term) |
+                Q(reference_number__icontains=normalized_search_replace_slash) |
+                Q(reference_number__icontains=normalized_search_replace_minus) |
                 Q(date__icontains=search_term) |
                 Q(unit_details__icontains=search_term) |
                 Q(builduing_name__icontains=search_term) |

@@ -245,6 +245,9 @@ import re
 from urllib.parse import quote 
 from urllib.parse import urlparse
 
+import logging
+logger = logging.getLogger('property_management_deals')
+
 
 def _normalize_public_url(raw_url):
     """
@@ -573,4 +576,19 @@ def delete_from_s3(db_path):
         print("delete_from_s3 unexpected error:", e)
         return False
 
+
+def s3_file_exists(filepath):
+    storage_class = import_string(settings.DEFAULT_FILE_STORAGE)
+    storage = storage_class()
+    try:
+        # base_url = settings.AWS_URL.replace('/classic_properties', '').rstrip('/')
+        logger.info("Checking existence for %s", filepath)
+        url = f"live{filepath}".replace(" ","_")
+        is_present =  storage.exists(url)
+        logger.info("Checked Full path existence for%s: %s", url, is_present)
+        logger.info("Checked existence for %s: %s", filepath, is_present)
+        return is_present
+    except Exception as e:
+        logger.exception("S3 existence check failed for %s: %s", filepath, e)
+        return False
 
