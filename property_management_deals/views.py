@@ -2699,7 +2699,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             elif deal_type == 'rejected':
 
                 #if role in [f'{account_id}-Manager', f'{account_id}-Agent',] or user.is_superuser:
-                if is_manager or is_agent or user.is_superuser:
+                if is_manager or user.is_superuser:
                     queryset = queryset.filter( manager_approved_rejected='R', form_status='Complete')
                 else:
                      queryset = queryset.filter(is_approved_rejected='R' , form_status='Complete')
@@ -2724,6 +2724,9 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
             if is_agent :
                 queryset = queryset.filter(submitted_by_user_id=user.id)
+                if deal_type == "rejected": 
+                    queryset = queryset.filter(Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"), form_status="Complete")
+
             elif is_admin and deal_type == "draft":
                 queryset = queryset.filter(created_by=user.email)
             # elif is_admin and deal_type == "draft":
