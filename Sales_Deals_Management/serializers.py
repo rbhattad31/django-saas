@@ -150,19 +150,19 @@ class AgentDropdownSerializer(serializers.ModelSerializer):
 
 class SalesDealSerializerForDraft(serializers.ModelSerializer):
     # Override only the required fields to make them optional
-    agent1 = serializers.CharField(required=False, allow_null=True, max_length =20)
+    agent1 = serializers.CharField(required=False, allow_null=True, max_length =20,allow_blank=True,)
     buyer_agency = serializers.CharField(required=False, allow_blank=True)
     buyer_agent_name = serializers.CharField(required=False, allow_blank=True)
     buyer_agent_phone = serializers.CharField(required=False, allow_blank=True)
-    classic = serializers.CharField(required=False, allow_null=True, max_length = 20,  )
-    less_outside_commission = serializers.CharField(required=False, allow_blank=True)
+    classic = serializers.CharField(required=False, allow_null=True, max_length = 20,allow_blank=True,  )
+    less_outside_commission = serializers.CharField(required=False, allow_blank=True,)
      
-    net_commission = serializers.CharField(required=False, allow_null=True,  max_length = 20)
+    net_commission = serializers.CharField(required=False, allow_null=True,  max_length = 20,allow_blank=True,)
     receipt_no = serializers.CharField(required=False, allow_blank=True)
     seller_agency = serializers.CharField(required=False, allow_blank=True)
     seller_agent_name = serializers.CharField(required=False, allow_blank=True)
     seller_agent_phone = serializers.CharField(required=False, allow_blank=True)
-    total_commission = serializers.CharField(required=False, allow_null=True, max_length = 20)
+    total_commission = serializers.CharField(required=False, allow_null=True, max_length = 20,allow_blank=True,)
     less_outsude_commission = serializers.CharField(required=False, allow_blank=True)
     screening_comments = serializers.CharField(required=False, allow_blank=True)
     
