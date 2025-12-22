@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .meta {
+            margin-bottom: 15px;
+        }
+
+        .meta strong {
+            display: inline-block;
+            width: 160px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #cccccc;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .error {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🚨 Missing Files Alert</h2>
+
+<div class="meta">
+    <p><strong>Deal ID:</strong> {{ Deal_ID }}</p>
+    <p><strong>Reference Number:</strong> {{ reference_number }}</p>
+    <p><strong>Total Missing Files:</strong> {{ missing_count }}</p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th> Deal ID</th>
+            <th>Reference Number</th>
+            <th>Field</th>
+            <th>File Name</th>
+            <th>Original S3  Versions</th>
+            <th>Backup</th>
+            <th>Backup Versions</th>
+            <th>Severity</th>
+        </tr>
+    </thead>
+    <tbody>
+          {% for item in missing_files %}
+        <tr>
+            <td>{{ item.Deal_ID }}</td>
+            <td>{{ item.Reference_Number }}</td>
+            <td>{{ item.Field }}</td>
+            <td>{{ item.File_Name }}</td>
+            <td>{{ item.S3_Original_versions }}</td>
+            <td>{{ item.S3_Backup }}</td>
+            <td>{{ item.S3_Backup_versions }}</td>
+            <td>{{ item.Severity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="footer">
+    <p>
+        This is an automated system-generated email.<br>
+        Please refer to the attached Excel file for the complete details.
+    </p>
+</div>
+
+</body>
+</html>
