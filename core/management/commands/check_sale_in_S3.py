@@ -1,18 +1,67 @@
 import logging
 import boto3
+import csv
+import os
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.utils import timezone
+from django.core.mail import EmailMessage
 
-from core.models import SalesDeals
-from Rental_Deal.Utilities import s3_file_exists  # keep your existing import
+from dateutil.relativedelta import relativedelta
+from openpyxl import Workbook
 
-logger = logging.getLogger('Sales_Deal_File_Check')
+from core.models import RentalDeals, SalesDeals
+from Rental_Deal.Utilities import s3_file_exists
+from django.template.loader import render_to_string
 
+
+logger = logging.getLogger('Rental_Deal_File_Check.log')
+
+
+
+
+
+from collections import defaultdict
+import csv
+
+# =====================================================
+#  Grouping Helpers
+# =====================================================
+
+def group_missing_by_reference(csv_path):
+    """
+    Reads CSV and groups ERROR rows by Reference Number
+    """
+    grouped = defaultdict(list)
+
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            # Only real missing files
+            # if row.get("Severity") != "ERROR":
+            #     continue
+
+            reference = row.get("Reference_Number")
+
+            if not reference:
+                continue
+
+            grouped[reference].append(row)
+
+    return grouped
+
+
+
+# =====================================================
+# S3 HELPERS (WITH LOGS)
+# =====================================================
 
 def s3_file_exists_in_versions(key):
     """
-    Check if file exists in any S3 version.
+    Check file in main bucket versions
     """
     s3 = boto3.client(
         "s3",
@@ -22,297 +71,435 @@ def s3_file_exists_in_versions(key):
     )
 
     try:
-        response = s3.list_object_versions(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Prefix=key,
-        )
-        print("checking sale module   the file  in versions  ")
+        paginator = s3.get_paginator("list_object_versions")
+        # Optimization: Use Prefix=key but verify exact match
+        for page in paginator.paginate(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Prefix="live/classic_properties/"+key):
+            
+            # Check for Delete Markers FIRST (to identify if it's "deleted")
+            for marker in page.get("DeleteMarkers", []):
+                if marker["Key"] == "live/classic_properties/"+key and marker.get("IsLatest"):
+                    logger.warning("FILE IS DELETED (Delete Marker is Latest) | key=%s", key)
+                    print("FILE IS DELETED (Delete Marker is Latest) | key=%s", "live/classic_properties/"+key)
+                    return True, marker["VersionId"], "DELETED"
 
+            # Check for Active Versions
+            for version in page.get("Versions", []):
+                if version["Key"] == "live/classic_properties/"+key and version.get("IsLatest"):
+                    logger.info("FILE IS ACTIVE | key=%s | version=%s", key, version["VersionId"])
+                    print("FILE IS ACTIVE | key=%s | version=%s", "live/classic_properties/"+key, version["VersionId"])
+                    return True, version["VersionId"], "ACTIVE"
+            
+            # If you just want to know if it EVER existed:
+            for version in page.get("Versions", []):
+                if version["Key"] == key:
+                     return True, version["VersionId"], "ARCHIVED_VERSION"
 
-        for version in response.get("Versions", []):
-            if version["Key"] == key:
-                return True, version["VersionId"]
+        return False, None, "NOT_FOUND"
 
-        for marker in response.get("DeleteMarkers", []):
-            if marker["Key"] == key:
-                print( marker["Key"] , key)
-                return True, marker["VersionId"]
-
-        return False, None
-
-    except Exception:
-        logger.exception("Error checking S3 versions for %s", key)
-        return False, None
-
-
+    except s3.exceptions.NoSuchBucket:
+        logger.error("Bucket does not exist.")
+    except Exception as e:
+        logger.exception("Error checking versions: %s", e)
+    return False, None, "ERROR"
 
 def s3_file_exists_in_backup_bucket(key):
     """
-    Check file existence in BACKUP S3 bucket.
+    Check file in backup bucket
     """
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id= settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_S3_REGION_NAME,
-    )
-    print("checking the fiel in backup bucket ")
-
-    try:
-        s3.head_object(
-            Bucket= "cproperties-deals-bkp",
-            Key=key
-        )
-        return True
-
-    except s3.exceptions.ClientError as e:
-        if e.response["Error"]["Code"] == "404":
-            return False
-
-
-
-
-def s3_file_exists_in_backup_bucket_versions(key):
     s3 = boto3.client(
         "s3",
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         region_name=settings.AWS_S3_REGION_NAME,
     )
-    print("checking the fiel in backup bucket versions ")
+    key = "live/classic_properties/" + key
+    print("Checking BACKUP bucket for key:", key)
+
     try:
-        response = s3.list_object_versions(
-            Bucket= "cproperties-deals-bkp",
-            Prefix=key,
-        )
+        s3.head_object(Bucket="cproperties-deals-bkp", Key=key)
+        logger.warning("FOUND IN BACKUP BUCKET: %s", key)
+        return True
 
-        for version in response.get("Versions", []):
-            if version["Key"] == key:
-                return True, version["VersionId"]
+    except s3.exceptions.ClientError:
+        logger.info("Not found in backup bucket: %s", key)
+        return False
 
-        for marker in response.get("DeleteMarkers", []):
-            if marker["Key"] == key:
-                
-                return True, marker["VersionId"]
 
+def s3_file_exists_in_backup_bucket_versions(key):
+    """
+    Check file in backup bucket versions
+    """
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME,
+    )
+
+    try:
+        key = "live/classic_properties/" + key
+        logger.info("Checking BACKUP bucket versions for key: %s", key)
+        paginator = s3.get_paginator("list_object_versions")
+        for page in paginator.paginate(
+            Bucket="cproperties-deals-bkp",
+            Prefix=key
+        ):
+            for version in page.get("Versions", []):
+                if version["Key"] == key:
+                    logger.warning(
+                        "FOUND IN BACKUP VERSION | key=%s | version=%s",
+                        key, version["VersionId"]
+                    )
+                    return True, version["VersionId"]
+
+            for marker in page.get("DeleteMarkers", []):
+                if marker["Key"] == key:
+                    logger.warning(
+                        "BACKUP DELETE MARKER | key=%s | version=%s",
+                        key, marker["VersionId"]
+                    )
+                    return True, marker["VersionId"]
+
+        logger.error("NOT FOUND IN BACKUP VERSIONS: %s", key)
         return False, None
 
     except Exception:
-        logger.exception("Error checking backup bucket versions for %s", key)
+        logger.exception("ERROR checking BACKUP versions for %s", key)
         return False, None
 
 
+# =====================================================
+# EMAIL (WITH LOGS)
+# =====================================================
+
+def send_missing_files_email(missing_count, preview, csv_path, excel_path):
+    logger.info("Preparing email alert for %s missing files", missing_count)
+
+    subject = f"[ALERT] Missing Rental Deal Files ({missing_count})"
+
+    body = [
+        f"Total Missing Files: {missing_count}",
+        "",
+        "Sample missing entries:",
+    ]
+
+    for item in preview:
+        body.append(
+            f"- Deal {item['deal_id']} ({item['reference']}) | "
+            f"{item['field']} | {item['file']}"
+        )
+
+    body.append("")
+    body.append("Please check attached CSV & Excel reports.")
+
+    email = EmailMessage(
+        subject=subject,
+        body="\n".join(body),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[admin[1] for admin in settings.ADMINS],
+    )
+
+    email.attach_file(csv_path)
+    email.attach_file(excel_path)
+
+    email.send(fail_silently=False)
+    logger.warning("Missing files email sent successfully")
+
+
+# get csv report path
+
+def get_report_csv_path(module_name: str, prefix="missing_files"):
+    """
+    Returns CSV path like:
+    reports/<module_name>/missing_files_YYYYMMDD_HHMMSS.csv
+    """
+    base_dir = os.path.join("reports", module_name)
+    os.makedirs(base_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{prefix}_{timestamp}.csv"
+
+    return os.path.join(base_dir, filename)
 
 
 
+
+def send_grouped_missing_files_email(reference_number, missing_files):
+    subject = f"[ALERT] Missing Rental Files | {reference_number}"
+
+    html_body = render_to_string(
+        "home/email_missing.html",
+        {
+            "reference_number": reference_number,
+            "missing_files": missing_files,
+        }
+    )
+
+    email = EmailMessage(
+        subject=subject,
+        body=html_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[admin[1] for admin in settings.ADMINS],
+    )
+
+    email.content_subtype = "html"
+    email.send(fail_silently=False)
+
+
+
+
+
+
+
+
+
+
+
+# =====================================================
+# COMMAND
+# =====================================================
 
 class Command(BaseCommand):
-    help = 'Check if all files in RentalDeals records exist in S3 bucket'
+    help = "Check RentalDeal files in S3 (streaming CSV, logs enabled)"
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--reference-number',
-            type=str,
-            help='Check files for a specific rental deal by reference number',
-        )
-        parser.add_argument(
-            '--deal-id',
-            type=int,
-            help='Check files for a specific rental deal by ID',
-        )
+        parser.add_argument('--reference-number', type=str)
+        parser.add_argument('--deal-id', type=int)
+        parser.add_argument('--days', type=int)
+        parser.add_argument('--months', type=int)
 
     def handle(self, *args, **options):
 
+        logger.info("===== S3 FILE CHECK STARTED =====")
+
         file_fields = [
-            'tenancy_contract',
-            'owner_passport_copy',
-            'tenant_passport_visa_copy',
-            'tenant_emirates_id',
-            'rental_deposit_cheque_copy',
-            'title_deed',
-            'owner_poa_pp_copy',
-            'key_hand_over_form',
-            'ejari',
+          'signed_mou',
+            'new_title_deed',
+            'old_title_deed',
+            'owners_passport_copy',
+            'buyers_passport_copy',
+            'buyers_deposit_cheque_copy',
+            'sellers_deposit_cheque_copy',
+            'seller_poa_passport_copy',
+            'buyer_poa_passport_copy',
             'owner_eid_copy',
-            'poa_copy',
-            'rental_kyc_number',
-            'tenancy_application_form',
+            'buyer_eid_copy',
+            'seller_poa_copy',
+            'buyer_poa_copy',
+            'buyer_poa_eid',
+            'seller_poa_eid',
+            'sale_kyc_number'
+            'form_i_copy',
+            'referral_agreement_copy',
+            'management_approval_form_copy',
+            'manager_cheque_copy',
             'screening',
         ]
 
-        query =  SalesDeals.objects.all().order_by("-id")
+        query = SalesDeals.objects.all().order_by("-id")
 
         if options.get('reference_number'):
             query = query.filter(reference_number=options['reference_number'])
-            self.stdout.write(f"Checking reference: {options['reference_number']}")
+            logger.info("Filtering by reference number")
 
         if options.get('deal_id'):
             query = query.filter(id=options['deal_id'])
-            self.stdout.write(f"Checking deal ID: {options['deal_id']}")
+            logger.info("Filtering by deal ID")
 
-        if not options.get('reference_number') and not options.get('deal_id'):
-            self.stdout.write("Checking ALL rental deals...")
+        now = timezone.now()
 
-        missing_files = []
-        found_files = []
+        if options.get('days'):
+            query = query.filter(
+                created_at__gte=now - timezone.timedelta(days=options['days'])
+            )
+            logger.info("Filtering last %s days", options['days'])
+
+        if options.get('months'):
+            query = query.filter(
+                created_at__gte=now - relativedelta(months=options['months'])
+            )
+            logger.info("Filtering last %s months", options['months'])
+
+        # ================= CSV STREAM =================
+
+        os.makedirs("reports", exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        csv_path = get_report_csv_path("rental")
+
+        fieldnames = [
+    "Deal_ID",
+    "Reference_Number",
+    "Field",
+    "File_Name",
+    "S3_Original_versions",
+    "S3_Backup",
+    "S3_Backup_versions",
+    "S3_Path",
+    "Severity",
+]
+
+        csv_file = open(csv_path, "w", newline="", encoding="utf-8")
+        csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        csv_writer.writeheader()
+
+        missing_count = 0
+        version_count = 0
+        email_preview = []
         total_checked = 0
 
+
+        # ================= MAIN LOOP =================
+
         for rental in query:
-            self.stdout.write(
-                f"\n--- Deal: {rental.reference_number} (ID: {rental.id}) ---"
+            logger.info(
+                "Checking Deal ID=%s Reference=%s",
+                rental.id, rental.reference_number
             )
 
-            for field_name in file_fields:
-                field_value = getattr(rental, field_name, "")
-
-                if not field_value or field_value.strip() == "":
+            for field in file_fields:
+                value = getattr(rental, field, "")
+                if not value:
                     continue
 
-                file_names = [f.strip() for f in field_value.split(",") if f.strip()]
-
-                for filename in file_names:
+                for filename in [f.strip() for f in value.split(",") if f.strip()]:
                     total_checked += 1
                     s3_path = f"sale/referencenumber_CPS/{rental.reference_number}/{filename}"
-                    "live/classic_properties/sale/referencenumber_CPS/"
-                    self.stdout.write(f"Checking S3 path: {s3_path}")
 
-                    exists = s3_file_exists(s3_path)
+                    logger.info("Checking file: %s", s3_path)
 
-                    # ✅ NORMAL FOUND
-                    if exists:
-                        found_files.append({
-                            'deal_id': rental.id,
-                            'reference': rental.reference_number,
-                            'field': field_name,
-                            'file': filename,
-                            'path': s3_path
-                        })
-                        self.stdout.write(
-                            self.style.SUCCESS(f"✓ {field_name}: {filename}")
-                        )
+                    if s3_file_exists(s3_path):
+                        logger.info("FOUND in main S3: %s", s3_path)
                         continue
 
-                    # 🔁 VERSION CHECK
-                    version_exists, version_id = s3_file_exists_in_versions(s3_path)
+                    found, version_id, status = s3_file_exists_in_versions(s3_path)
 
-                    if version_exists:
-                        found_files.append({
-                            'deal_id': rental.id,
-                            'reference': rental.reference_number,
-                            'field': field_name,
-                            'file': filename,
-                            'path': s3_path,
-                            'version_id': version_id,
+                    if found:
+                        version_count += 1
+                        csv_writer.writerow({
+                            "Deal_ID": rental.id,
+                            "Reference_Number": rental.reference_number,
+                            "Field": field,
+                            "File_Name": filename,
+                            "S3_Original_versions": "YES" ,
+                            "S3_Backup": "" ,
+                            "S3_Backup_versions": "" ,
+
+                            "S3_Path": s3_path,
+
+                            "Severity": "WARNING" 
                         })
-
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"⚠ Found in S3 versions: {field_name}: "
-                                f"{filename} (version={version_id})"
-                            )
-                        )
-
-                        logger.warning(
-                            "File found in S3 versions: deal_id=%s reference=%s "
-                            "field=%s file=%s version=%s",
-                            rental.id, rental.reference_number,
-                            field_name, filename, version_id
-                        )
                         continue
 
+                    if s3_file_exists_in_backup_bucket(s3_path):
+                        version_count += 1
+                        csv_writer.writerow({
+                            "Deal_ID": rental.id,
+                            "Reference_Number": rental.reference_number,    
+                            "Field": field,
+                            "File_Name": filename,
+                            "S3_Original_versions": "" ,
+                            "S3_Backup": "YES" ,
+                            "S3_Backup_versions": "" ,
 
+                            "S3_Path": s3_path,
 
-
-                    backup_exists = s3_file_exists_in_backup_bucket(s3_path)
-
-                    if backup_exists:
-                        found_files.append({
-                            'deal_id': rental.id,
-                            'reference': rental.reference_number,
-                            'field': field_name,
-                            'file': filename,
-                            'path': s3_path,
-                            'bucket': 'backup'
+                            "Severity": "WARNING" 
                         })
-
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"⚠ Found in BACKUP bucket: {field_name}: {filename}"
-                            )
-                        )
-
-                        logger.warning(
-                            "File found in BACKUP bucket: deal_id=%s reference=%s field=%s file=%s path=%s",
-                            rental.id, rental.reference_number, field_name, filename, s3_path
-                        )
                         continue
 
+                    if s3_file_exists_in_backup_bucket_versions(s3_path)[0]:
+                        version_count += 1
+                        csv_writer.writerow({
+                            "Deal_ID": rental.id,
+                            "Reference_Number": rental.reference_number,    
+                            "Field": field,
+                            "File_Name": filename,
+                            "S3_Original_versions": "" ,
+                            "S3_Backup": "" ,
+                            "S3_Backup_versions": "YES" ,
 
-                    # 🔁 CHECK BACKUP BUCKET VERSIONS (OPTIONAL)
-                    backup_version_exists, backup_version_id = s3_file_exists_in_backup_bucket_versions(s3_path)
+                            "S3_Path": s3_path,
 
-                    if backup_version_exists:
-                        found_files.append({
-                            'deal_id': rental.id,
-                            'reference': rental.reference_number,
-                            'field': field_name,
-                            'file': filename,
-                            'path': s3_path,
-                            'bucket': 'backup',
-                            'version_id': backup_version_id
+                            "Severity": "WARNING" 
                         })
 
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"⚠ Found in BACKUP bucket versions: {field_name}: "
-                                f"{filename} (version={backup_version_id})"
-                            )
-                        )
 
-                        logger.warning(
-                            "File found in BACKUP bucket versions: deal_id=%s reference=%s "
-                            "field=%s file=%s version=%s",
-                            rental.id, rental.reference_number,
-                            field_name, filename, backup_version_id
-                        )
                         continue
 
-                    # ❌ REALLY MISSING
-                    missing_files.append({
-                        'deal_id': rental.id,
-                        'reference': rental.reference_number,
-                        'field': field_name,
-                        'file': filename,
-                        'path': s3_path
+                    # ❌ REAL MISSING
+                    missing_count += 1
+                    csv_writer.writerow({
+                        "Deal_ID": rental.id,
+                        "Reference_Number": rental.reference_number,
+                        "Field": field,
+                        "File_Name": filename,
+                        "S3_Original_versions": "NO" ,
+                        "S3_Backup": "NO" , 
+                        "S3_Backup_versions": "NO" ,
+
+                        "S3_Path": s3_path,
+                        "Severity": "ERROR",
                     })
 
-                    self.stdout.write(
-                        self.style.ERROR(f"✗ {field_name}: {filename}")
-                    )
-
                     logger.error(
-                        "Missing S3 file: deal_id=%s reference=%s field=%s "
-                        "file=%s path=%s",
-                        rental.id, rental.reference_number,
-                        field_name, filename, s3_path
+                        "MISSING FILE | deal_id=%s reference=%s field=%s file=%s",
+                        rental.id, rental.reference_number, field, filename
                     )
 
-        # 📊 SUMMARY
-        self.stdout.write("\n" + "=" * 60)
+                    if len(email_preview) < 10:
+                        email_preview.append({
+                            "deal_id": rental.id,
+                            "reference": rental.reference_number,
+                            "field": field,
+                            "file": filename
+                        })
+
+        csv_file.close()
+        logger.info("CSV report written: %s", csv_path)
+
+        # ================= EXCEL =================
+
+        excel_path = csv_path.replace(".csv", ".xlsx")
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Missing Files"
+
+        with open(csv_path, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            for row in reader:
+                ws.append(row)
+
+        wb.save(excel_path)
+        logger.info("Excel report created: %s", excel_path)
+
+        # ================= SUMMARY =================
+
+        logger.info(
+            "CHECK COMPLETE | total_checked=%s missing=%s",
+            total_checked, missing_count
+        )
+
+        self.stdout.write("=" * 60)
         self.stdout.write(f"Total files checked: {total_checked}")
-        self.stdout.write(self.style.SUCCESS(f"Found: {len(found_files)}"))
-        self.stdout.write(self.style.ERROR(f"Missing: {len(missing_files)}"))
+        self.stdout.write(f"Missing files: {missing_count}")
 
-        if missing_files:
-            self.stdout.write("\n" + self.style.ERROR("MISSING FILES SUMMARY:"))
-            for item in missing_files:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"  Deal {item['deal_id']} ({item['reference']}) - "
-                        f"{item['field']}: {item['file']}"
-                    )
-                )
-            logger.error("Total missing files: %d", len(missing_files))
+        if missing_count > 0 or version_count > 0:
+            print("thsisis  to check the grouped")
+            grouped_items = group_missing_by_reference(csv_path=csv_path)
+            print(grouped_items)
+            for reference_number, items in grouped_items.items():
+                print("Het Grouped Items ",reference_number , items)
+                send_grouped_missing_files_email(
+            reference_number=reference_number,
+            missing_files=items
+            )
+
+
+
+            
+            
+            self.stdout.write(self.style.ERROR("Email alert sent"))
         else:
-            self.stdout.write(self.style.SUCCESS("\nAll files present in S3!"))
-            logger.info("All files verified in S3 successfully")
+            self.stdout.write(self.style.SUCCESS("No missing files found"))
+
+        logger.info("===== S3 FILE CHECK FINISHED =====")
