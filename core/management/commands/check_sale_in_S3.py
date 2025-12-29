@@ -17,7 +17,7 @@ from Rental_Deal.Utilities import s3_file_exists
 from django.template.loader import render_to_string
 
 
-logger = logging.getLogger('Rental_Deal_File_Check.log')
+logger = logging.getLogger('Sales_Deal_File_Check.log')
 
 
 
@@ -324,7 +324,7 @@ class Command(BaseCommand):
 
         os.makedirs("reports", exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        csv_path = get_report_csv_path("rental")
+        csv_path = get_report_csv_path("sale")
 
         fieldnames = [
     "Deal_ID",
@@ -485,14 +485,13 @@ class Command(BaseCommand):
 
         if missing_count > 0 or version_count > 0:
             print("thsisis  to check the grouped")
-            grouped_items = group_missing_by_reference(csv_path=csv_path)
-            print(grouped_items)
-            for reference_number, items in grouped_items.items():
-                print("Het Grouped Items ",reference_number , items)
-                send_grouped_missing_files_email(
-            reference_number=reference_number,
-            missing_files=items
+            send_missing_files_email(
+                missing_count=missing_count,
+                preview=email_preview,
+                csv_path=csv_path,
+                excel_path=excel_path
             )
+            
 
 
 

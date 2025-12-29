@@ -478,13 +478,11 @@ class Command(BaseCommand):
 
         if missing_count > 0 or version_count > 0:
             print("thsisis  to check the grouped")
-            grouped_items = group_missing_by_reference(csv_path=csv_path)
-            print(grouped_items)
-            for reference_number, items in grouped_items.items():
-                print("Het Grouped Items ",reference_number , items)
-                send_grouped_missing_files_email(
-            reference_number=reference_number,
-            missing_files=items
+            send_missing_files_email(
+                missing_count=missing_count,
+                preview=email_preview,
+                csv_path=csv_path,
+                excel_path=excel_path
             )
 
 
