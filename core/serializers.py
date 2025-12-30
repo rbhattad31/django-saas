@@ -67,6 +67,7 @@ class ReceiptSerilizer(serializers.ModelSerializer):
     def get_reference_link(self, obj):
         html=""
         print(obj.deal_refer_no ,"thisiss the deal refer no")
+        deal=None
         if obj.deal_refer_no:
             print(obj.deal_refer_no ,"thisiss the deal refer no entered if condition") 
             if obj.deal_type == "Rental":
