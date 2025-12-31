@@ -15,6 +15,7 @@ class SalesDealAdmin(admin.ModelAdmin):
     ]
     list_filter = ['submitted_date']
     ordering = ['-submitted_date']
+    search_fields = ('reference_number', 'id')
 
      
 

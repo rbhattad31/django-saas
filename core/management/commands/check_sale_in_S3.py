@@ -171,39 +171,7 @@ def s3_file_exists_in_backup_bucket_versions(key):
 # =====================================================
 # EMAIL (WITH LOGS)
 # =====================================================
-
-def send_missing_files_email(missing_count, preview, csv_path, excel_path):
-    logger.info("Preparing email alert for %s missing files", missing_count)
-
-    subject = f"[ALERT] Missing Rental Deal Files ({missing_count})"
-
-    body = [
-        f"Total Missing Files: {missing_count}",
-        "",
-        "Sample missing entries:",
-    ]
-
-    for item in preview:
-        body.append(
-            f"- Deal {item['deal_id']} ({item['reference']}) | "
-            f"{item['field']} | {item['file']}"
-        )
-
-    body.append("")
-    body.append("Please check attached CSV & Excel reports.")
-
-    email = EmailMessage(
-        subject=subject,
-        body="\n".join(body),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[admin[1] for admin in settings.ADMINS],
-    )
-
-    email.attach_file(csv_path)
-    email.attach_file(excel_path)
-
-    email.send(fail_silently=False)
-    logger.warning("Missing files email sent successfully")
+ 
 
 
 # get csv report path
@@ -213,27 +181,96 @@ def get_report_csv_path(module_name: str, prefix="missing_files"):
     Returns CSV path like:
     reports/<module_name>/missing_files_YYYYMMDD_HHMMSS.csv
     """
-    base_dir = os.path.join("reports", module_name)
+    base_dir = os.path.join(settings.BASE_DIR,"reports", module_name)
     os.makedirs(base_dir, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{prefix}_{timestamp}.csv"
+    filename = f"Sale Deal {prefix}_{timestamp}.csv"
 
     return os.path.join(base_dir, filename)
 
 
 
+ 
 
-def send_grouped_missing_files_email(reference_number, missing_files):
-    subject = f"[ALERT] Missing Rental Files | {reference_number}"
+import pandas as pd
+from openpyxl import load_workbook
 
-    html_body = render_to_string(
-        "home/email_missing.html",
-        {
-            "reference_number": reference_number,
-            "missing_files": missing_files,
-        }
+def add_reference_summary_sheet(excel_path):
+    """
+    Adds a summary sheet:
+    Reference_Number | Count of Files Missing
+    """
+
+    # Read existing excel
+    df = pd.read_excel(excel_path)
+
+    # Drop empty references
+    df = df[df["Reference_Number"].notna()]
+
+    # Group by reference number ONLY (no status logic)
+    summary = (
+        df.groupby(["Reference_Number","approved_status"])
+          .size()
+          .reset_index(name="Count of Files Missing")
     )
+
+    # Append / replace summary sheet
+    with pd.ExcelWriter(
+        excel_path,
+        engine="openpyxl",
+        mode="a",
+        if_sheet_exists="replace"
+    ) as writer:
+        summary.to_excel(
+            writer,
+            sheet_name="Summary_By_Reference",
+            index=False
+        )
+
+    print("✅ Summary_By_Reference sheet added successfully")
+
+
+import pandas as pd
+from django.core.mail import EmailMessage
+
+def send_summary_excel_email(excel_path):
+    """
+    Reads Summary_By_Reference sheet and emails it as HTML table
+    """
+
+    # Read summary sheet
+    df = pd.read_excel(excel_path, sheet_name="Summary_By_Reference")
+
+    if df.empty:
+        print("⚠ No data in summary sheet")
+        return
+
+    # Convert to HTML table (keep headings)
+    html_table = df.to_html(
+        index=False,
+        border=1,
+        justify="center"
+    )
+
+    subject = "[ALERT] Missing Files Summary - Sales Deals"
+
+    html_body = f"""
+    <html>
+        <body>
+            <p>Hello Team,</p>
+
+            <p>Please find below the <b>missing files summary</b>:</p>
+
+            {html_table}
+
+            <p>
+                Regards,<br>
+                System
+            </p>
+        </body>
+    </html>
+    """
 
     email = EmailMessage(
         subject=subject,
@@ -243,15 +280,13 @@ def send_grouped_missing_files_email(reference_number, missing_files):
     )
 
     email.content_subtype = "html"
+
+    # Optional: attach full Excel also
+    email.attach_file(excel_path)
+
     email.send(fail_silently=False)
 
-
-
-
-
-
-
-
+    print("✅ Summary email sent successfully")
 
 
 
@@ -267,6 +302,8 @@ class Command(BaseCommand):
         parser.add_argument('--deal-id', type=int)
         parser.add_argument('--days', type=int)
         parser.add_argument('--months', type=int)
+        parser.add_argument('--till-date', type=str,
+                            help="YYYY-MM-DD format")
 
     def handle(self, *args, **options):
 
@@ -296,7 +333,7 @@ class Command(BaseCommand):
             'screening',
         ]
 
-        query = SalesDeals.objects.all().order_by("-id")
+        query = SalesDeals.objects.filter(is_deleted="N").order_by("-id")
 
         if options.get('reference_number'):
             query = query.filter(reference_number=options['reference_number'])
@@ -320,6 +357,25 @@ class Command(BaseCommand):
             )
             logger.info("Filtering last %s months", options['months'])
 
+        till_date = options.get('till-date')
+
+        if till_date:
+            start_date = timezone.make_aware(
+                datetime.strptime(till_date, "%Y-%m-%d")
+            )
+
+            end_date = timezone.now()
+
+            query = query.filter(
+                created_at__range=(start_date, end_date)
+            )
+
+            logger.info(
+                "Filtering from %s till today (%s)",
+                start_date, end_date
+            )
+
+    
         # ================= CSV STREAM =================
 
         os.makedirs("reports", exist_ok=True)
@@ -336,6 +392,8 @@ class Command(BaseCommand):
     "S3_Backup_versions",
     "S3_Path",
     "Severity",
+    "form_status",
+    "approved_status"
 ]
 
         csv_file = open(csv_path, "w", newline="", encoding="utf-8")
@@ -346,6 +404,8 @@ class Command(BaseCommand):
         version_count = 0
         email_preview = []
         total_checked = 0
+        
+
 
 
         # ================= MAIN LOOP =================
@@ -386,7 +446,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING" ,
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected
                         })
                         continue
 
@@ -403,7 +465,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING",
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected
                         })
                         continue
 
@@ -420,7 +484,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING" ,
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected
                         })
 
 
@@ -439,6 +505,8 @@ class Command(BaseCommand):
 
                         "S3_Path": s3_path,
                         "Severity": "ERROR",
+                        "form_status": rental.form_status,
+                        "approved_status": rental.is_approved_rejected
                     })
 
                     logger.error(
@@ -462,7 +530,7 @@ class Command(BaseCommand):
         excel_path = csv_path.replace(".csv", ".xlsx")
         wb = Workbook()
         ws = wb.active
-        ws.title = "Missing Files"
+        ws.title = " Sales Missing Files"
 
         with open(csv_path, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
@@ -485,17 +553,9 @@ class Command(BaseCommand):
 
         if missing_count > 0 or version_count > 0:
             print("thsisis  to check the grouped")
-            send_missing_files_email(
-                missing_count=missing_count,
-                preview=email_preview,
-                csv_path=csv_path,
-                excel_path=excel_path
-            )
-            
 
-
-
-            
+            add_reference_summary_sheet(excel_path)
+            send_summary_excel_email(excel_path)    
             
             self.stdout.write(self.style.ERROR("Email alert sent"))
         else:

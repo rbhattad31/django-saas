@@ -24,6 +24,7 @@ class RentalDealAdmin(admin.ModelAdmin):
         'project_name',
         'submitted_by_user_id',
     )
+    search_fields = ('reference_number', 'id')
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin

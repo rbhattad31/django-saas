@@ -213,11 +213,11 @@ def get_report_csv_path(module_name: str, prefix="missing_files"):
     Returns CSV path like:
     reports/<module_name>/missing_files_YYYYMMDD_HHMMSS.csv
     """
-    base_dir = os.path.join("reports", module_name)
+    base_dir = os.path.join(settings.BASE_DIR,"reports", module_name)
     os.makedirs(base_dir, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{prefix}_{timestamp}.csv"
+    filename = f"Rental Deal {prefix}_{timestamp}.csv"
 
     return os.path.join(base_dir, filename)
 
@@ -245,6 +245,102 @@ def send_grouped_missing_files_email(reference_number, missing_files):
     email.content_subtype = "html"
     email.send(fail_silently=False)
 
+
+
+import pandas as pd
+from openpyxl import load_workbook
+
+def add_reference_summary_sheet(excel_path):
+    """
+    Adds a summary sheet:
+    Reference_Number | Count of Files Missing
+    """
+
+    # Read existing excel
+    df = pd.read_excel(excel_path)
+
+    # Drop empty references
+    df = df[df["Reference_Number"].notna()]
+
+    # Group by reference number ONLY (no status logic)
+    summary = (
+        df.groupby(["Reference_Number","approved_status"])
+          .size()
+          .reset_index(name="Count of Files Missing")
+    )
+
+    # Append / replace summary sheet
+    with pd.ExcelWriter(
+        excel_path,
+        engine="openpyxl",
+        mode="a",
+        if_sheet_exists="replace"
+    ) as writer:
+        summary.to_excel(
+            writer,
+            sheet_name="Summary_By_Reference",
+            index=False
+        )
+
+    print("✅ Summary_By_Reference sheet added successfully")
+
+
+import pandas as pd
+from django.core.mail import EmailMessage
+
+def send_summary_excel_email(excel_path):
+    """
+    Reads Summary_By_Reference sheet and emails it as HTML table
+    """
+
+    # Read summary sheet
+    df = pd.read_excel(excel_path, sheet_name="Summary_By_Reference")
+
+    if df.empty:
+        print("⚠ No data in summary sheet")
+        return
+
+    # Convert to HTML table (keep headings)
+    html_table = df.to_html(
+        index=False,
+        border=1,
+        justify="center"
+    )
+
+    subject = "[ALERT] Missing Files Summary - Rental Deals"
+
+    html_body = f"""
+    <html>
+        <body>
+            <p>Hello Team,</p>
+
+            <p>Please find below the <b>missing files summary</b>:</p>
+
+            {html_table}
+
+            <p>
+                Regards,<br>
+                System
+            </p>
+        </body>
+    </html>
+    """
+
+    email = EmailMessage(
+        subject=subject,
+        body=html_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[admin[1] for admin in settings.ADMINS],
+    )
+
+    email.content_subtype = "html"
+
+    # Optional: attach full Excel also
+    email.attach_file(excel_path)
+
+    email.send(fail_silently=False)
+
+    print("✅ Summary email sent successfully")
 
 
 
@@ -289,7 +385,7 @@ class Command(BaseCommand):
             'screening',
         ]
 
-        query = RentalDeals.objects.all().order_by("-id")
+        query = RentalDeals.objects.filter(is_deleted="N").order_by("-id")
 
         if options.get('reference_number'):
             query = query.filter(reference_number=options['reference_number'])
@@ -329,6 +425,8 @@ class Command(BaseCommand):
     "S3_Backup_versions",
     "S3_Path",
     "Severity",
+    "form_status",
+    "approved_status"
 ]
 
         csv_file = open(csv_path, "w", newline="", encoding="utf-8")
@@ -379,7 +477,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING",
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected 
                         })
                         continue
 
@@ -396,7 +496,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING",
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected 
                         })
                         continue
 
@@ -413,7 +515,9 @@ class Command(BaseCommand):
 
                             "S3_Path": s3_path,
 
-                            "Severity": "WARNING" 
+                            "Severity": "WARNING",
+                            "form_status": rental.form_status,
+                            "approved_status": rental.is_approved_rejected 
                         })
 
 
@@ -432,6 +536,8 @@ class Command(BaseCommand):
 
                         "S3_Path": s3_path,
                         "Severity": "ERROR",
+                        "form_status": rental.form_status,
+                        "approved_status": rental.is_approved_rejected
                     })
 
                     logger.error(
@@ -477,13 +583,9 @@ class Command(BaseCommand):
         self.stdout.write(f"Missing files: {missing_count}")
 
         if missing_count > 0 or version_count > 0:
-            print("thsisis  to check the grouped")
-            send_missing_files_email(
-                missing_count=missing_count,
-                preview=email_preview,
-                csv_path=csv_path,
-                excel_path=excel_path
-            )
+            add_reference_summary_sheet(excel_path)
+            send_summary_excel_email(excel_path)  
+            
 
 
 
