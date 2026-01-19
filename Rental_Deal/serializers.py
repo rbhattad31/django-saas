@@ -403,7 +403,8 @@ class DealSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("This reference number is already taken.")
         else:
             # Updating existing record — exclude current instance
-            if RentalDeals.objects.exclude(pk=self.instance.pk).filter(reference_number=value).exists():
+            if RentalDeals.objects.exclude(pk=self.instance.pk).filter(reference_number=value,is_deleted="N").exists():
+                print(f"This reference number is already taken: {value}")
                 raise serializers.ValidationError("This reference number is already taken.")
         return value
 
