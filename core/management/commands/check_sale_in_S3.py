@@ -210,7 +210,7 @@ def add_reference_summary_sheet(excel_path):
 
     # Group by reference number ONLY (no status logic)
     summary = (
-        df.groupby(["Reference_Number","approved_status"])
+        df.groupby(["Reference_Number","approved_status","Created_At"])
           .size()
           .reset_index(name="Count of Files Missing")
     )
@@ -304,6 +304,10 @@ class Command(BaseCommand):
         parser.add_argument('--months', type=int)
         parser.add_argument('--till-date', type=str,
                             help="YYYY-MM-DD format")
+        parser.add_argument('--from-date', type=str,
+                            help="YYYY-MM-DD format")   
+        parser.add_argument('--to-date', type=str,
+                            help="YYYY-MM-DD format")
 
     def handle(self, *args, **options):
 
@@ -334,7 +338,10 @@ class Command(BaseCommand):
         ]
 
         query = SalesDeals.objects.filter(is_deleted="N").order_by("-id")
-
+        print("options", options)
+        from_date = None
+        to_date = None
+        print("DATE FILTER INPUT → from=%s to=%s", from_date, to_date)
         if options.get('reference_number'):
             query = query.filter(reference_number=options['reference_number'])
             logger.info("Filtering by reference number")
@@ -357,23 +364,36 @@ class Command(BaseCommand):
             )
             logger.info("Filtering last %s months", options['months'])
 
-        till_date = options.get('till-date')
+        # till_date = options.get('till-date')
 
-        if till_date:
+        print("options", options)
+        # print( "is value true for options.get('from-date')"+ str(options.get('from-date') and options.get('to-date')))
+        from_date =  options.get('from_date')
+        to_date = options.get('to_date')
+         
+        if options.get('from_date') and options.get('to_date'):
+            from_date = options.get('from_date')
+            to_date = options.get('to_date')
+            print("Applying date range filter")
+            print("from date", from_date)
+            print("to date", to_date)
+
             start_date = timezone.make_aware(
-                datetime.strptime(till_date, "%Y-%m-%d")
+                datetime.strptime(from_date, "%Y-%m-%d")
             )
 
-            end_date = timezone.now()
+            end_date = timezone.make_aware(
+                datetime.strptime(to_date, "%Y-%m-%d")
+            )
+
+            # Optional: include full end day (23:59:59)
+            end_date = end_date.replace(hour=23, minute=59, second=59)
 
             query = query.filter(
                 created_at__range=(start_date, end_date)
             )
 
-            logger.info(
-                "Filtering from %s till today (%s)",
-                start_date, end_date
-            )
+            print("FINAL QUERY RANGE → %s → %s", start_date, end_date)
 
     
         # ================= CSV STREAM =================
@@ -393,7 +413,8 @@ class Command(BaseCommand):
     "S3_Path",
     "Severity",
     "form_status",
-    "approved_status"
+    "approved_status",
+    "Created_At",
 ]
 
         csv_file = open(csv_path, "w", newline="", encoding="utf-8")
@@ -448,7 +469,8 @@ class Command(BaseCommand):
 
                             "Severity": "WARNING" ,
                             "form_status": rental.form_status,
-                            "approved_status": rental.is_approved_rejected
+                            "approved_status": rental.is_approved_rejected,
+                            "Created_At": rental.created_at.date(),
                         })
                         continue
 
@@ -467,7 +489,8 @@ class Command(BaseCommand):
 
                             "Severity": "WARNING",
                             "form_status": rental.form_status,
-                            "approved_status": rental.is_approved_rejected
+                            "approved_status": rental.is_approved_rejected,
+                            "Created_At": rental.created_at.date()
                         })
                         continue
 
@@ -486,7 +509,8 @@ class Command(BaseCommand):
 
                             "Severity": "WARNING" ,
                             "form_status": rental.form_status,
-                            "approved_status": rental.is_approved_rejected
+                            "approved_status": rental.is_approved_rejected,
+                            "Created_At": rental.created_at.date()
                         })
 
 
@@ -506,7 +530,8 @@ class Command(BaseCommand):
                         "S3_Path": s3_path,
                         "Severity": "ERROR",
                         "form_status": rental.form_status,
-                        "approved_status": rental.is_approved_rejected
+                        "approved_status": rental.is_approved_rejected,
+                        "Created_At": rental.created_at.date()
                     })
 
                     logger.error(
