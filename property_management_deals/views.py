@@ -2970,9 +2970,13 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         search_term = request.data.get("search[value]", "").strip()
         if search_term:
             print(f" Performing Global Search with term: '{search_term}'")
+            normalized_search_replace_slash = search_term.replace("/", "-")
+            normalized_search_replace_minus = search_term.replace("-", "/")
             queryset = queryset.filter(
                 Q(receipt_number__icontains=search_term) |
                 Q(deal_refer_no__icontains=search_term) |
+                Q(deal_refer_no__icontains=normalized_search_replace_slash) |
+                Q(deal_refer_no__icontains=normalized_search_replace_minus) |
                 Q(agent_name__icontains=search_term) |
                 Q(building_name__icontains=search_term) |
                 Q(unit_number__icontains=search_term) |

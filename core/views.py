@@ -121,11 +121,15 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
         # --- Apply Global Search Filter ---
         if global_search_value:
+            normalized_search_replace_slash = global_search_value.replace("/", "-")
+            normalized_search_replace_minus = global_search_value.replace("-", "/")
             global_q_object = Q() # Start with an empty Q object for global search
 
             # Add fields to global search based on your specific request
             global_q_object |= Q(receipt_number__icontains=global_search_value)
             global_q_object |= Q(deal_refer_no__icontains=global_search_value)
+            global_q_object |= Q(deal_refer_no__icontains=normalized_search_replace_slash)
+            global_q_object |= Q(deal_refer_no__icontains=normalized_search_replace_minus)
             global_q_object |= Q(cheque_no__icontains=global_search_value)
             global_q_object |= Q(dhs__icontains=global_search_value)
             global_q_object |= Q(payment_type__icontains=global_search_value)
