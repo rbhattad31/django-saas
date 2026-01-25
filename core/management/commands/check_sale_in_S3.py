@@ -370,10 +370,16 @@ class Command(BaseCommand):
         # print( "is value true for options.get('from-date')"+ str(options.get('from-date') and options.get('to-date')))
         from_date =  options.get('from_date')
         to_date = options.get('to_date')
+
+
          
-        if options.get('from_date') and options.get('to_date'):
+        if options.get('from_date') :
             from_date = options.get('from_date')
-            to_date = options.get('to_date')
+            if options.get('to_date'):
+                to_date = options.get('to_date')
+            else:
+                to_date = datetime.now().strftime("%Y-%m-%d")
+           
             print("Applying date range filter")
             print("from date", from_date)
             print("to date", to_date)
@@ -392,6 +398,9 @@ class Command(BaseCommand):
             query = query.filter(
                 created_at__range=(start_date, end_date)
             )
+            # print(len(query))
+            print("DJANGO SQL →", query.query)
+            print("DJANGO COUNT →", query.count())
 
             print("FINAL QUERY RANGE → %s → %s", start_date, end_date)
 

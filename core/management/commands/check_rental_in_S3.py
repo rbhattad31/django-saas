@@ -415,12 +415,15 @@ class Command(BaseCommand):
 
         print("options", options)
         # print( "is value true for options.get('from-date')"+ str(options.get('from-date') and options.get('to-date')))
-        from_date =  options.get('from_date')
-        to_date = options.get('to_date')
+        
          
-        if options.get('from_date') and options.get('to_date'):
+        if options.get('from_date') :
             from_date = options.get('from_date')
-            to_date = options.get('to_date')
+            
+            if options.get('to_date'):
+                to_date = options.get('to_date')
+            else:
+                to_date = datetime.now().strftime("%Y-%m-%d")
             print("Applying date range filter")
             print("from date", from_date)
             print("to date", to_date)
