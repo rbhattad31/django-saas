@@ -1087,11 +1087,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
-                    relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
-                    logger.info("checking hte path send to s3 %s", relative_path)
-                    if not s3_file_exists(relative_path):
-                        missing_files.append(fname)
-            
+                    print("Checking file name for the this field:", fname)
+                    logger.info("checking file name %s", fname)
+                    if fname.strip():
+                        relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
+                        logger.info("checking hte path send to s3 %s", relative_path)
+                        if not s3_file_exists(relative_path):
+                            missing_files.append(fname)
+                
             if missing_files:
                 logger.error("Missing files before update for rental id=%s missing=%s", rental_deal.pk, missing_files)
 

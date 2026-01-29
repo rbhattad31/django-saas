@@ -675,9 +675,10 @@ class SalesDealViewSet(viewsets.ModelViewSet):
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
-                    relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number'].strip()}/{fname}"
-                    if not s3_file_exists(relative_path):
-                        missing_files.append(fname)
+                    if fname.strip():
+                        relative_path = f"sale/referencenumber_CPS/{mutable_data['reference_number'].strip()}/{fname}"
+                        if not s3_file_exists(relative_path):
+                            missing_files.append(fname)
             
             if missing_files:
                 return Response(
