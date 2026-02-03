@@ -2221,6 +2221,14 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
     def delete_property(self, request, pk=None):
  
         property = get_object_or_404(RentalProperties, pk=pk)
+
+        receipt_nos = [property.receipt_no, property.receipt_no2, property.receipt_no3]
+        receipt_nos = [rno for rno in receipt_nos if rno.isdigit() and int(rno) > 0]  # Filter out null/zero values
+        
+        if receipt_nos:
+            ManagementReceipts.objects.filter(receipt_number__in=receipt_nos).update(status='Unused', deal_refer_no="")
+
+
         RentalProperties.objects.filter(pk=property.pk).update(is_deleted='Y')
         RentalProperties.objects.filter(pk=property.pk).update(reference_number=property.reference_number + "D")
         # property.delete()

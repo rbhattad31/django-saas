@@ -1150,6 +1150,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
         instance = self.get_object()
         print("instance", instance)
+        
+        # Mark attached receipts as Unused
+        receipt_ids = [instance.receipt_id, instance.receipt_id2, instance.receipt_id3]
+        receipt_ids = [rid for rid in receipt_ids if int(rid) and int(rid) > 0]  # Filter out null/zero values
+        
+        if receipt_ids:
+            Receipts.objects.filter(id__in=receipt_ids).update(status='Unused', deal_refer_no='')
+        
         RentalDeals.objects.filter(pk=instance.pk).update(is_deleted='Y')
         RentalDeals.objects.filter(pk=instance.pk).update(reference_number= instance.reference_number+"D")
         print("instance", instance)

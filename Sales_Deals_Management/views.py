@@ -65,6 +65,13 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_sales(self, request, pk=None):
         sales = get_object_or_404(SalesDeals, pk=pk)
+
+        receipt_ids = [sales.receipt_id, sales.receipt_id2, sales.receipt_id3]
+        receipt_ids = [rid for rid in receipt_ids if int(rid) and int(rid) > 0]  # Filter out null/zero values
+        
+        if receipt_ids:
+            Receipts.objects.filter(id__in=receipt_ids).update(status='Unused', deal_refer_no='')
+
         SalesDeals.objects.filter(pk=pk).update(is_deleted='Y')
         SalesDeals.objects.filter(pk=pk).update(reference_number= sales.reference_number+"D")
         return Response(status=status.HTTP_204_NO_CONTENT)
