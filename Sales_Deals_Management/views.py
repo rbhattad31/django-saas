@@ -67,7 +67,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         sales = get_object_or_404(SalesDeals, pk=pk)
 
         receipt_ids = [sales.receipt_id, sales.receipt_id2, sales.receipt_id3]
-        receipt_ids = [rid for rid in receipt_ids if int(rid) and int(rid) > 0]  # Filter out null/zero values
+        receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]  # Filter out null/zero values
         
         if receipt_ids:
             Receipts.objects.filter(id__in=receipt_ids).update(status='Unused', deal_refer_no='')
