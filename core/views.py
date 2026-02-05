@@ -178,8 +178,11 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
             print()
             value = validated_data.get(field)
             if value:
-                 
-                queryset = queryset.filter(**{f"{field}__icontains": value})
+                # Use exact match for status field with "Used" or "Unused"
+                if field == 'status' and value in ('Used', 'Unused'):
+                    queryset = queryset.filter(**{f"{field}": value})
+                else:
+                    queryset = queryset.filter(**{f"{field}__icontains": value})
 
 
 
