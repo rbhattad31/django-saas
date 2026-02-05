@@ -94,8 +94,8 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
 
         # Extract custom filter parameters (already cleaned by serializer)
         filter_type = validated_data.get('type')
-        from_date = validated_data.get('from_date') # This is already a Python date object or None
-        to_date = validated_data.get('to_date')     # This is already a Python date object or None
+        from_date = validated_data.get('from') # This is already a Python date object or None
+        to_date = validated_data.get('to')     # This is already a Python date object or None
         receipt_number = validated_data.get('receipt_number')
         payment_type = validated_data.get('payment_type')
         deal_type = validated_data.get('deal_type')
@@ -233,7 +233,12 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
         # --- Calculate recordsFiltered (after all filters, before pagination) ---
         records_filtered = queryset.count()
 
-    
+        # print( "thsiiis from_data" , validated_data.get("from"))
+        if validated_data.get("from"):
+            queryset = queryset.filter(date__gte=validated_data.get("from"))
+        if validated_data.get("to"):
+            # print( "thsiiis to_data" , validated_data.get("to"))
+            queryset = queryset.filter(date__lte=validated_data.get("to"))
        
         print(start , length) # Default to 10 if not provided
 
@@ -251,7 +256,7 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
         # --- Serialize Data for Response ---
         # Use the ReceiptsSerializer to convert queryset objects to JSON
         serializer = ReceiptSerilizer(paginated_queryset, many=True, context={'request': request})
-        print(serializer.data)
+        # print(serializer.data)
 
         # --- Prepare Response ---
         response_data = {

@@ -66,7 +66,7 @@ class ReceiptSerilizer(serializers.ModelSerializer):
 
     def get_reference_link(self, obj):
         html=""
-        print(obj.deal_refer_no ,"thisiss the deal refer no")
+        # print(obj.deal_refer_no ,"thisiss the deal refer no")
         deal=None
         if obj.deal_refer_no:
             print(obj.deal_refer_no ,"thisiss the deal refer no entered if condition") 
@@ -126,5 +126,34 @@ class DataTableSearchSerializer(serializers.Serializer):
 
     # --- Date Fields with Custom Validation for DD-MM-YYYY ---
     # These will be validated and converted to Python date objects
-    from_date = serializers.CharField(source='from', required=False, allow_blank=True)
-    to_date = serializers.CharField(source='to', required=False, allow_blank=True)
+    # Note: The request sends 'from' and 'to', but we can't use those as field names (Python keywords)
+    # So we declare the fields with different names and override to_internal_value
+    from_field = serializers.DateField(required=False, allow_null=True, format='%d-%m-%Y', input_formats=['%d-%m-%Y', '%Y-%m-%d'])
+    to_field = serializers.DateField(required=False, allow_null=True, format='%d-%m-%Y', input_formats=['%d-%m-%Y', '%Y-%m-%d'])
+    
+    def to_internal_value(self, data):
+        # Map 'from' -> 'from_field' and 'to' -> 'to_field' before validation
+        # Only map if the value is actually present (not empty string)
+        data_copy = data.copy() if hasattr(data, 'copy') else dict(data)
+        
+        if 'from' in data_copy:
+            from_value = data_copy.pop('from')
+            # Only add to from_field if it has a non-empty value
+            if from_value and from_value.strip():
+                data_copy['from_field'] = from_value
+                
+        if 'to' in data_copy:
+            to_value = data_copy.pop('to')
+            # Only add to to_field if it has a non-empty value
+            if to_value and to_value.strip():
+                data_copy['to_field'] = to_value
+        
+        validated = super().to_internal_value(data_copy)
+        
+        # Map back to 'from' and 'to' in validated_data
+        if 'from_field' in validated:
+            validated['from'] = validated.pop('from_field')
+        if 'to_field' in validated:
+            validated['to'] = validated.pop('to_field')
+        
+        return validated

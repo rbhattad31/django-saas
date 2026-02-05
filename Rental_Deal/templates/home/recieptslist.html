@@ -236,14 +236,14 @@ function getCookie(name) {
         formData.forEach((field) => {
           if (field.name === "from" || field.name === "to") {
             // Format manually to YYYY-MM-DD if value is present
-            if (field.value) {
-              const date = new Date(field.value);
-              const formatted = date.toISOString().split("T")[0]; // YYYY-MM-DD
-              d[field.name] = formatted;
-            }else{
-              d[field.name]=""
 
+            if (field.value) {
+              const [dd, mm, yyyy] = field.value.split('-');
+              d[field.name] = `${yyyy}-${mm}-${dd}`;
+            } else {
+              d[field.name] = "";
             }
+           
 
           } else {
             d[field.name] = field.value;
