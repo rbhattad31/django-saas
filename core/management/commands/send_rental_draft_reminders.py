@@ -19,7 +19,7 @@ class Command(BaseCommand):
         today = timezone.localdate()
         total_sent = 0
 
-        drafts = RentalDeals.objects.filter(form_status='Incomplete', is_deleted='N',account_id=2, submitted_by_user = 102)  # Adjust account_id as needed
+        drafts = RentalDeals.objects.filter(form_status='Incomplete', is_deleted='N',account_id=2)  # Adjust account_id as needed
 
         for deal in drafts:
             deal_date = self._get_deal_date(deal)
