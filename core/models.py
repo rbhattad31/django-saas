@@ -1234,6 +1234,7 @@ class RentalDeals (models.Model):
     buyer_nationality = models.CharField(max_length=191)
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
     re_submitted_date = models.DateField( blank=True, null=True)
+    last_reminder_date = models.DateField(blank=True, null=True)
 
 
     # tenant_id = 'account'  # OR 'user_account_id' if you use db_column
