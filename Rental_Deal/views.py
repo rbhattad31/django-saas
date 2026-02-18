@@ -406,13 +406,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             elif type_filter == "pending-finance":
                 if user.has_perm("core.view_pending_finance_rental_deals"):
                     queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete").filter(
-    is_approved_rejected__in=["F", "A"]
-)
+                    is_approved_rejected__in=["F", "A"]
+                        )
                 else:
                      return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-)
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
 
             # ---------------- Draft ----------------
             elif type_filter == "draft":
@@ -436,7 +436,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
                 
-
+                
             if role == "Agent" or user_role == "Agent":
                 queryset = queryset.filter(submitted_by_user=user)
                 if type_filter == "rejected": 
@@ -998,10 +998,13 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 print("is_submitted_date", is_submitted_date)
 
 
-                if (not is_submitted_date and role in ["Agent"] ): 
+                if (not is_submitted_date and role in ["Agent"] ) : 
                     print("submitted date already set so not updating", is_submitted_date)
                     mutable_data['submitted_date']= date.today()
+                           
                     # this the re submitted date block to handle rejection and  resubbmission
+                elif (form_status == "Incomplete" and role in ["Agent"] and is_submitted_date) :
+                     mutable_data['submitted_date']= date.today()
                 elif is_submitted_date and role in ["Agent"]:
                     mutable_data['re_submitted_date']= date.today()
                     print("this is resubmitted date block", mutable_data['re_submitted_date'])
@@ -1012,44 +1015,88 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 mutable_data['form_status'] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
-            if mutable_data.get('receipt_no'):
-                if mutable_data['receipt_no'].isdigit():
-                    print("this is the receipt no", mutable_data['receipt_no'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
+            if mutable_data.get('receipt_no') is not None:
+                get_receipt_no_db = getattr(rental_deal, 'receipt_no', "")
+                get_receipt_id_db = getattr(rental_deal, 'receipt_id', "")
+                print("get_receipt_no_db", get_receipt_no_db)
+                print("get_receipt_id_db", get_receipt_id_db)
 
-                    reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
-                    mutable_data['receipt_id'] = reccicpt.id
-                    mutable_data['receipt_no'] = reccicpt.receipt_number
+                receipt_value = str(mutable_data.get('receipt_no')).strip()
+
+                if receipt_value.isdigit():
+                    if str(get_receipt_id_db) != receipt_value:
+                        if str(get_receipt_id_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
+
+                        print("this is the receipt no", receipt_value)
+                        Receipts.objects.filter(id=receipt_value).update(deal_refer_no=mutable_data['reference_number'])
+                        Receipts.objects.filter(id=receipt_value).update(status="Used")
+
+                    reccicpt = Receipts.objects.filter(id=receipt_value).first()
+                    if reccicpt:
+                        mutable_data['receipt_id'] = reccicpt.id
+                        mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
-                    pass
+                    if receipt_value in ["Null", "No Commission", ""]:
+                        if str(get_receipt_id_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
+                        mutable_data['receipt_id'] = 0
+                        mutable_data['receipt_no'] = receipt_value
 
-            if mutable_data.get('receipt_no2'):
-                if mutable_data['receipt_no2'].isdigit():
-                    print("this is the receipt no2", mutable_data['receipt_no2'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
+            if mutable_data.get('receipt_no2') is not None:
+                get_receipt_no2_db = getattr(rental_deal, 'receipt_no2', "")
+                get_receipt_id2_db = getattr(rental_deal, 'receipt_id2', "")
+                print("get_receipt_no2_db", get_receipt_no2_db)
+                print("get_receipt_id2_db", get_receipt_id2_db)
 
-                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no2']).first()
-                    mutable_data['receipt_id2'] = reccicpt2.id
-                    mutable_data['receipt_no2'] = reccicpt2.receipt_number
-                    print("this is the receipt id2", mutable_data['receipt_id2'])
-                    print("this is the receipt no2", mutable_data['receipt_no2'])
+                receipt_value2 = str(mutable_data.get('receipt_no2')).strip()
+
+                if receipt_value2.isdigit():
+                    if str(get_receipt_id2_db) != receipt_value2:
+                        if str(get_receipt_id2_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
+
+                        print("this is the receipt no2", receipt_value2)
+                        Receipts.objects.filter(id=receipt_value2).update(deal_refer_no=mutable_data['reference_number'])
+                        Receipts.objects.filter(id=receipt_value2).update(status="Used")
+
+                    reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
+                    if reccicpt2:
+                        mutable_data['receipt_id2'] = reccicpt2.id
+                        mutable_data['receipt_no2'] = reccicpt2.receipt_number
                 else:
-                    pass
-            if mutable_data.get('receipt_no3'):
-                if mutable_data['receipt_no3'].isdigit():
-                    print("this is the receipt no3", mutable_data['receipt_no3'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
-                    Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
+                    if receipt_value2 in ["Null", "No Commission", ""]:
+                        if str(get_receipt_id2_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
+                        mutable_data['receipt_id2'] = 0
+                        mutable_data['receipt_no2'] = receipt_value2
+            if mutable_data.get('receipt_no3') is not None:
+                get_receipt_no3_db = getattr(rental_deal, 'receipt_no3', "")
+                get_receipt_id3_db = getattr(rental_deal, 'receipt_id3', "")
+                print("get_receipt_no3_db", get_receipt_no3_db)
+                print("get_receipt_id3_db", get_receipt_id3_db)
 
-                    reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no3']).first()
-                    mutable_data['receipt_id3'] = reccicpt2.id
-                    mutable_data['receipt_no3'] = reccicpt2.receipt_number
-                    print("this is the receipt id3", mutable_data['receipt_id3'])
-                    print("this is the receipt no3", mutable_data['receipt_no3'])
+                receipt_value3 = str(mutable_data.get('receipt_no3')).strip()
+
+                if receipt_value3.isdigit():
+                    if str(get_receipt_id3_db) != receipt_value3:
+                        if str(get_receipt_id3_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
+
+                        print("this is the receipt no3", receipt_value3)
+                        Receipts.objects.filter(id=receipt_value3).update(deal_refer_no=mutable_data['reference_number'])
+                        Receipts.objects.filter(id=receipt_value3).update(status="Used")
+
+                    reccicpt3 = Receipts.objects.filter(id=receipt_value3).first()
+                    if reccicpt3:
+                        mutable_data['receipt_id3'] = reccicpt3.id
+                        mutable_data['receipt_no3'] = reccicpt3.receipt_number
                 else:
-                    pass
+                    if receipt_value3 in ["Null", "No Commission", ""]:
+                        if str(get_receipt_id3_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
+                        mutable_data['receipt_id3'] = 0
+                        mutable_data['receipt_no3'] = receipt_value3
             
             if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
                 mutable_data['approved_rejected_by'] = request.user.email
@@ -1449,13 +1496,27 @@ def edit_rental_deal_view(request, pk):
     # role = user_role.split("-", 1)[1] if "-" in user_role else user_role
 
     print(role)
+    reciepts1_used = deal.receipt_id if deal.receipt_id else ""
+    reciepts2_used = deal.receipt_id2 if deal.receipt_id2 else ""      
+    reciepts3_used = deal.receipt_id3 if deal.receipt_id3 else ""
+
 
 
 
     if role == "Agent":
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id, agent_id = request.user.id)
+         
+        used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
+        
+        reciepts_db = (
+            Receipts.objects.filter(account_id=request.user.account_id, agent_id=request.user.id)
+            .filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
+            .distinct()
+            
+        )
+        print(reciepts_db)
+
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id)
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
 
 
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
