@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import RentalDeals, Users, Account
+from core.models import RentalDeals, Users, Account, Receipts
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django import forms
@@ -25,6 +25,27 @@ class RentalDealAdmin(admin.ModelAdmin):
         'submitted_by_user_id',
     )
     search_fields = ('reference_number', 'id')
+
+
+@admin.register(Receipts)
+class ReceiptsAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'date',
+        'receipt_number',
+        'deal_type',
+        'deal_refer_no',
+        'received_from',
+        'status',
+    )
+    search_fields = (
+        'receipt_number',
+        'deal_refer_no',
+        'received_from',
+        'cheque_no',
+        'bank',
+        'status',
+    )
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
