@@ -1157,8 +1157,7 @@ def edit_sales_deal_page(request, pk):
         print(reciepts_db)
 
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
-
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id) 
 
 
     
