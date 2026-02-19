@@ -436,7 +436,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
                 
-
+                
             if role == "Agent" or user_role == "Agent":
                 queryset = queryset.filter(submitted_by_user=user)
                 if type_filter == "rejected": 
@@ -1503,9 +1503,9 @@ def edit_rental_deal_view(request, pk):
 
 
 
+    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
     if role == "Agent":
          
-        used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
         
         reciepts_db = (
             Receipts.objects.filter(account_id=request.user.account_id, agent_id=request.user.id)
@@ -1516,7 +1516,8 @@ def edit_rental_deal_view(request, pk):
         print(reciepts_db)
 
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id) 
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
+
 
     receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
 

@@ -1144,9 +1144,9 @@ def edit_sales_deal_page(request, pk):
 
 
 
+    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
     if role == "Agent":
          
-        used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
         
         reciepts_db = (
             Receipts.objects.filter(account_id=request.user.account_id, agent_id=request.user.id)
@@ -1157,7 +1157,8 @@ def edit_sales_deal_page(request, pk):
         print(reciepts_db)
 
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id) 
+        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
+
 
 
     
