@@ -138,6 +138,17 @@
                                         <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price">
                                         <span class="error text-danger" id="deal_amount_error"></span>
                                     </div>
+                                       <div class="col-md-6 form-group mb-3">
+                                        <label for="type_of_purchase">Type of Purchase<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="type_of_purchase" id="type_of_purchase" required>
+                                            <option value="">Select Type of Purchase</option>
+                                            <option value="CASH">CASH</option>
+                                            <option value="FINANCE">FINANCE</option>
+                                            <option value="DEVELOPER_SALES_AS_CASH">Developer Sales as Cash</option>
+                                            <option value="DEVELOPER_SALES_AS_BANK_TRANSFER/CHEQUE">Developer Sales as Bank Transfer/cheque</option>
+                                        </select>
+                                        <span class="error text-danger" id="type_of_purchase_error"></span>
+                                    </div>
                                 </div>
                                 <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">
@@ -942,7 +953,7 @@
               $("#reference_number").val()
             );
             
-            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="screening"] ,[name="deal_amount"]').each(function () {
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="screening"] ,[name="deal_amount"],[name="type_of_purchase"]').each(function () {
             $(this).rules('add','required');
       });
 
@@ -983,7 +994,7 @@
             $(this).rules('add','required');
         });
 
-            $('[name="submitted_by_agent"],[name="reference_number"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="buyer_agent_phone"],[name="agent_name1"],[name="screening"]').each(function () {
+            $('[name="submitted_by_agent"],[name="reference_number"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="buyer_agent_phone"],[name="agent_name1"],[name="screening"],[name="type_of_purchase"]').each(function () {
             $(this).rules('remove','required');
       });
 
@@ -1026,7 +1037,7 @@
 
             }
 
-            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="reference_number"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="screening"]').each(function () {
+            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="seller_nationality"],[name="buyer_nationality"],[name="reference_number"],[name="is_new_deal"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="total_commission"],[name="less_outsude_commission"],[name="net_commission"],[name="classic"],[name="agent1"],[name="receipt_no"],[name="is_sale_aml"],[name="agent_name1"],[name="screening"],[name="type_of_purchase"]').each(function () {
               $(this).rules('remove','required');
             });
 
@@ -1070,7 +1081,7 @@
                   });
             }
 
-            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="reference_number"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="screening"]').each(function () {
+            $('[name="submitted_by_agent"],[name="seller_name"],[name="seller_source"],[name="selller_mobile"],[name="seller_email"],[name="buyer_name"],[name="buyer_source"],[name="buyer_mobile"],[name="buyer_email"],[name="buyer_nationality"],[name="seller_nationality"],[name="reference_number"],[name="seller_agent_name"],[name="seller_agent_phone"],[name="project_name"],[name="unit_details"],[name="builduing_name"],[name="seller_agency"],[name="agent_name"],[name="agent_phone"],[name="buyer_agency"],[name="buyer_agent_name"],[name="buyer_agent_phone"],[name="screening"] , [name="type_of_purchase"]').each(function () {
             $(this).rules('remove','required');
             });
 
@@ -1307,7 +1318,9 @@ $('#deal_form').validate({
                alphanum_special: true,
                maxlength: 20,
            },
-           
+           type_of_purchase: {
+            required: true,
+          },
             reference_number_prefix: {
               required: true,
              

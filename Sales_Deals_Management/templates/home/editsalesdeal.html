@@ -93,6 +93,17 @@
                                 <input type="text" name="deal_amount" class="form-control" id="deal_amount" placeholder="Selling Price"  >
                                   <span class="error text-danger" id="deal_amount_error"></span>
                               </div>
+                              <div class="col-md-6 form-group mb-3">
+                                        <label for="type_of_purchase">Type of Purchase<span class="mandetory_field" style="color: red">*</span></label>
+                                        <select class="selectbox2 form-control" name="type_of_purchase" id="type_of_purchase" required>
+                                          <option value="">Select Type of Purchase</option>
+                                          <option value="CASH" {% if salesdeal.type_of_purchase == "CASH" %}selected{% endif %}>CASH</option>
+                                          <option value="FINANCE" {% if salesdeal.type_of_purchase == "FINANCE" %}selected{% endif %}>FINANCE</option>
+                                          <option value="DEVELOPER_SALES_AS_CASH" {% if salesdeal.type_of_purchase == "DEVELOPER_SALES_AS_CASH" %}selected{% endif %}>Developer Sales as Cash</option>
+                                          <option value="DEVELOPER_SALES_AS_BANK_TRANSFER/CHEQUE" {% if salesdeal.type_of_purchase == "DEVELOPER_SALES_AS_BANK_TRANSFER/CHEQUE" %}selected{% endif %}>Developer Sales as Bank Transfer/cheque</option>
+                                        </select>
+                                        <span class="error text-danger" id="type_of_purchase_error"></span>
+                                    </div>
                               
                           
                           

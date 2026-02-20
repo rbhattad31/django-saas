@@ -1364,6 +1364,7 @@ class SalesDeals(models.Model):
     is_sale_aml = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], blank=True, null=True)
     kyc_number = models.TextField(blank=True, null=True)
     comments_finance = models.TextField(blank=True, null=True)
+    type_of_purchase = models.CharField(max_length=100, blank=True , null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=191)
