@@ -981,16 +981,36 @@ def edit_property_page(request, pk):
 
     form = PropertyForm(instance=property_obj)
 
-    # ✅ Fetch unique, cleaned receipt numbers
-    receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
-    receipt_nos = [rcpt1.strip() for rcpt1 in receipt_nos_raw if rcpt1 and rcpt1.strip()]
+    # ✅ Get used receipt IDs from the current deal
+    receipt1_used = property_obj.receipt_no if property_obj.receipt_no else ""
+    receipt2_used = property_obj.receipt_no2 if property_obj.receipt_no2 else ""
+    receipt3_used = property_obj.receipt_no3 if property_obj.receipt_no3 else ""
 
-    # Fetch unique, cleaned receipt numbers for receipt_no2 and receipt_no3
-    receipt_nos2_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
-    receipt_nos2 = [rcpt2.strip() for rcpt2 in receipt_nos2_raw if rcpt2 and rcpt2.strip()]
+    used_receipt_ids = [rid for rid in [receipt1_used, receipt2_used, receipt3_used] if rid]
 
-    receipt_nos3_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
-    receipt_nos3 = [rcpt3.strip() for rcpt3 in receipt_nos3_raw if rcpt3 and rcpt3.strip()]
+    # ✅ Filter receipts based on account_id only (unused or already assigned to this deal)
+    receipt_nos_query = ManagementReceipts.objects.filter(
+        account_id=request.user.account_id
+    ).filter(
+        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
+    ).distinct().values_list('receipt_number', flat=True)
+    receipt_nos = [rcpt for rcpt in receipt_nos_query if rcpt and rcpt]
+
+    # Fetch receipt numbers for receipt_no2
+    receipt_nos2_query = ManagementReceipts.objects.filter(
+        account_id=request.user.account_id
+    ).filter(
+        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
+    ).distinct().values_list('receipt_number', flat=True)
+    receipt_nos2 = [rcpt for rcpt in receipt_nos2_query if rcpt and rcpt]
+
+    # Fetch receipt numbers for receipt_no3
+    receipt_nos3_query = ManagementReceipts.objects.filter(
+        account_id=request.user.account_id
+    ).filter(
+        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
+    ).distinct().values_list('receipt_number', flat=True)
+    receipt_nos3 = [rcpt for rcpt in receipt_nos3_query if rcpt and rcpt]
 
     # Pass file_urls into template as convenience (template can use file_urls.pms_contract etc)
     return render(request, 'home/edit_property.html', {

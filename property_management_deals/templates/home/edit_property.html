@@ -490,6 +490,8 @@
               </label>
               <select name="receipt_no" class="form-control" id="receipt_no">
                 <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
                 {% for rcpt in receipt_nos %}
                   <option value="{{ rcpt }}" {% if property.receipt_no == rcpt %}selected{% endif %}>
                     {{ rcpt }}
@@ -504,6 +506,8 @@
               </label>
               <select name="receipt_no2" class="form-control" id="receipt_no2">
                 <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
                 {% for rcpt in receipt_nos2 %}
                   <option value="{{ rcpt }}" {% if property.receipt_no2 == rcpt %}selected{% endif %}>
                     {{ rcpt }}
@@ -522,6 +526,8 @@
               </label>
               <select name="receipt_no3" class="form-control" id="receipt_no3">
                 <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
                 {% for rcpt in receipt_nos3 %}
                   <option value="{{ rcpt }}" {% if property.receipt_no3 == rcpt %}selected{% endif %}>
                     {{ rcpt }}
