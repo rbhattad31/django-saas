@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import RentalDeals, Users, Account, Receipts
+from core.models import RentalDeals, Users, Account, Receipts, ManagementReceipts
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django import forms
@@ -46,6 +46,32 @@ class ReceiptsAdmin(admin.ModelAdmin):
         'bank',
         'status',
     )
+
+
+@admin.register(ManagementReceipts)
+class ManagementReceiptsAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'date',
+        'receipt_number',
+        'deal_type',
+        'agent_name',
+        'received_from',
+        'status',
+        'payment_type',
+    )
+    search_fields = (
+        'receipt_number',
+        'deal_refer_no',
+        'received_from',
+        'cheque_no',
+        'bank',
+        'agent_name',
+        'project_name',
+        'building_name',
+    )
+    list_filter = ('deal_type', 'payment_type', 'status', 'date')
+    ordering = ('-date',)
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
