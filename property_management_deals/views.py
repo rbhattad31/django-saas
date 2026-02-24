@@ -714,31 +714,78 @@ class PropertyAPIView(APIView):
             if key != 'cheque_date' and isinstance(mutable_data[key], list):
                 mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
 
-        # === Handle receipt update ===
-        if request.data.get('receipt_no') and request.data.get('receipt_no').isdigit():
-            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no'))\
-                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
-            
+        # === Handle receipt_no update with change detection ===
+        if mutable_data.get('receipt_no') is not None:
+            get_receipt_no_db = getattr(property_obj, 'receipt_no', "")
+            receipt_value = str(mutable_data.get('receipt_no')).strip()
 
-        # Handling receipt updates for receipt no 2 and receipt no 3
-        # === Handle receipt2 update ===
+            if receipt_value.isdigit():
+                if str(get_receipt_no_db) != receipt_value:
+                    if str(get_receipt_no_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f" Released old receipt_no: {get_receipt_no_db}")
+                    
+                    ManagementReceipts.objects.filter(receipt_number=receipt_value)\
+                        .update(status='Used', deal_refer_no=reference_number)
+                    print(f" Assigned new receipt_no: {receipt_value} to deal: {reference_number}")
+            else:
+                if receipt_value in ["Null", "No Commission", ""]:
+                    if str(get_receipt_no_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f" Released receipt_no due to special value: {receipt_value}")
 
-        if request.data.get('receipt_no2') and request.data.get('receipt_no2').isdigit():
-            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no2'))\
-                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
+        # === Handle receipt_no2 update with change detection ===
+        if mutable_data.get('receipt_no2') is not None:
+            get_receipt_no2_db = getattr(property_obj, 'receipt_no2', "")
+            receipt_value2 = str(mutable_data.get('receipt_no2')).strip()
 
-        # === Handle receipt3 update ===
+            if receipt_value2.isdigit():
+                if str(get_receipt_no2_db) != receipt_value2:
+                    if str(get_receipt_no2_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f"Released old receipt_no2: {get_receipt_no2_db}")
+                    
+                    ManagementReceipts.objects.filter(receipt_number=receipt_value2)\
+                        .update(status='Used', deal_refer_no=reference_number)
+                    print(f" Assigned new receipt_no2: {receipt_value2} to deal: {reference_number}")
+            else:
+                if receipt_value2 in ["Null", "No Commission", ""]:
+                    if str(get_receipt_no2_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f" Released receipt_no2 due to special value: {receipt_value2}")
 
-        if request.data.get('receipt_no3') and request.data.get('receipt_no3').isdigit():
-            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no3'))\
-                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
+        # === Handle receipt_no3 update with change detection ===
+        if mutable_data.get('receipt_no3') is not None:
+            get_receipt_no3_db = getattr(property_obj, 'receipt_no3', "")
+            receipt_value3 = str(mutable_data.get('receipt_no3')).strip()
+
+            if receipt_value3.isdigit():
+                if str(get_receipt_no3_db) != receipt_value3:
+                    if str(get_receipt_no3_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f" Released old receipt_no3: {get_receipt_no3_db}")
+                    
+                    ManagementReceipts.objects.filter(receipt_number=receipt_value3)\
+                        .update(status='Used', deal_refer_no=reference_number)
+                    print(f" Assigned new receipt_no3: {receipt_value3} to deal: {reference_number}")
+            else:
+                if receipt_value3 in ["Null", "No Commission", ""]:
+                    if str(get_receipt_no3_db).isdigit():
+                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
+                            .update(status='Unused', deal_refer_no='')
+                        print(f" Released receipt_no3 due to special value: {receipt_value3}")
 
 
         if mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
             mutable_data['approved_rejected_by'] = request.user.email
-        # ✅ Ensure default value 'P' for is_approved_rejected if missing or invalid
+        # 
         if not mutable_data.get("is_approved_rejected") or mutable_data.get("is_approved_rejected") not in ["A", "R", "W"]:
-            print("ℹ️ Setting default 'P' for is_approved_rejected")
+            print("Setting default 'P' for is_approved_rejected")
             mutable_data["is_approved_rejected"] = "P"
 
         # === Normalize optional fields ===
