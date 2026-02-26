@@ -92,13 +92,18 @@ class SalesDealSerializer(serializers.ModelSerializer):
         except User.DoesNotExist:
             return None
     def validate_reference_number(self, value):
-        qs = SalesDeals.objects.filter(reference_number=value , is_deleted='N')
+        normalized = (value or "").strip().replace(" ", "")
+        normalized_dash = normalized.replace("/", "-")
+        normalized_slash = normalized.replace("-", "/")
+        variants = {normalized, normalized_dash, normalized_slash}
+
+        qs = SalesDeals.objects.filter(is_deleted="N")
         if self.instance:
-            if self.instance.reference_number == value:
+            if (self.instance.reference_number or "").strip().replace(" ", "") in variants:
                 return value
             qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
+        if qs.filter(reference_number__in=variants).exists():
             raise serializers.ValidationError("This reference number is already used.")
         return value
 
@@ -184,13 +189,18 @@ class SalesDealSerializerForDraft(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_reference_number(self, value):
-        qs = SalesDeals.objects.filter(reference_number=value , is_deleted='N')
+        normalized = (value or "").strip().replace(" ", "")
+        normalized_dash = normalized.replace("/", "-")
+        normalized_slash = normalized.replace("-", "/")
+        variants = {normalized, normalized_dash, normalized_slash}
+
+        qs = SalesDeals.objects.filter(is_deleted="N")
         if self.instance:
-            if self.instance.reference_number == value:
+            if (self.instance.reference_number or "").strip().replace(" ", "") in variants:
                 return value
             qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
+        if qs.filter(reference_number__in=variants).exists():
             raise serializers.ValidationError("This reference number is already used.")
         return value
 

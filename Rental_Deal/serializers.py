@@ -165,13 +165,18 @@ class DealSerializer(serializers.ModelSerializer):
 
     # when edit ting the recored it thins as anew record creationto bypass that
     def validate_reference_number(self, value):
-        qs = RentalDeals.objects.filter(reference_number=value , is_deleted='N')
+        normalized = (value or "").strip().replace(" ", "")
+        normalized_dash = normalized.replace("/", "-")
+        normalized_slash = normalized.replace("-", "/")
+        variants = {normalized, normalized_dash, normalized_slash}
+
+        qs = RentalDeals.objects.filter(is_deleted="N")
         if self.instance:
-            if self.instance.reference_number == value:
+            if (self.instance.reference_number or "").strip().replace(" ", "") in variants:
                 return value
             qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
+        if qs.filter(reference_number__in=variants).exists():
             raise serializers.ValidationError("This reference number is already used.")
         return value
 
@@ -396,14 +401,21 @@ class DealSerializer(serializers.ModelSerializer):
     def validate_reference_number(self, value):
         """
         Ensure reference_number is unique, even during update.
+        Treat CPS-402 and CPS/402 as the same.
         """
-        # If creating new record
+        normalized = (value or "").strip().replace(" ", "")
+        normalized_dash = normalized.replace("/", "-")
+        normalized_slash = normalized.replace("-", "/")
+        variants = {normalized, normalized_dash, normalized_slash}
+
+        qs = RentalDeals.objects.filter(is_deleted="N")
         if self.instance is None:
-            if RentalDeals.objects.filter(reference_number=value, is_deleted="N").exists():
+            if qs.filter(reference_number__in=variants).exists():
                 raise serializers.ValidationError("This reference number is already taken.")
         else:
-            # Updating existing record — exclude current instance
-            if RentalDeals.objects.exclude(pk=self.instance.pk).filter(reference_number=value,is_deleted="N").exists():
+            if (self.instance.reference_number or "").strip().replace(" ", "") in variants:
+                return value
+            if qs.exclude(pk=self.instance.pk).filter(reference_number__in=variants).exists():
                 print(f"This reference number is already taken: {value}")
                 raise serializers.ValidationError("This reference number is already taken.")
         return value

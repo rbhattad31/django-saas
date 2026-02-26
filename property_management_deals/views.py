@@ -721,14 +721,20 @@ class PropertyAPIView(APIView):
 
             if receipt_value.isdigit():
                 if str(get_receipt_no_db) != receipt_value:
-                    if str(get_receipt_no_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
+                    if str(get_receipt_no_db).isdigit() or get_receipt_no_db == "None":
+                        if str(get_receipt_no_db).isdigit():
+                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
                             .update(status='Unused', deal_refer_no='')
                         print(f" Released old receipt_no: {get_receipt_no_db}")
                     
                     ManagementReceipts.objects.filter(receipt_number=receipt_value)\
                         .update(status='Used', deal_refer_no=reference_number)
                     print(f" Assigned new receipt_no: {receipt_value} to deal: {reference_number}")
+
+                if str(get_receipt_no_db) == receipt_value:
+                        ManagementReceipts.objects.filter(receipt_number=receipt_value).update(status='Used', deal_refer_no=reference_number)
+
+                    
             else:
                 if receipt_value in ["Null", "No Commission", ""]:
                     if str(get_receipt_no_db).isdigit():
@@ -743,14 +749,21 @@ class PropertyAPIView(APIView):
 
             if receipt_value2.isdigit():
                 if str(get_receipt_no2_db) != receipt_value2:
-                    if str(get_receipt_no2_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
+                    if str(get_receipt_no2_db).isdigit() or get_receipt_no2_db == "None":
+                        if str(get_receipt_no2_db).isdigit():    
+                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
                             .update(status='Unused', deal_refer_no='')
                         print(f"Released old receipt_no2: {get_receipt_no2_db}")
                     
                     ManagementReceipts.objects.filter(receipt_number=receipt_value2)\
                         .update(status='Used', deal_refer_no=reference_number)
                     print(f" Assigned new receipt_no2: {receipt_value2} to deal: {reference_number}")
+                
+                if str(get_receipt_no2_db) == receipt_value2:
+                        ManagementReceipts.objects.filter(receipt_number=receipt_value2).update(status='Used', deal_refer_no=reference_number)
+
+
+
             else:
                 if receipt_value2 in ["Null", "No Commission", ""]:
                     if str(get_receipt_no2_db).isdigit():
@@ -765,14 +778,18 @@ class PropertyAPIView(APIView):
 
             if receipt_value3.isdigit():
                 if str(get_receipt_no3_db) != receipt_value3:
-                    if str(get_receipt_no3_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
+                    if str(get_receipt_no3_db).isdigit() or get_receipt_no3_db == "None":
+                        if str(get_receipt_no3_db).isdigit():
+                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
                             .update(status='Unused', deal_refer_no='')
                         print(f" Released old receipt_no3: {get_receipt_no3_db}")
                     
                     ManagementReceipts.objects.filter(receipt_number=receipt_value3)\
                         .update(status='Used', deal_refer_no=reference_number)
                     print(f" Assigned new receipt_no3: {receipt_value3} to deal: {reference_number}")
+                if str(get_receipt_no3_db) == receipt_value3:
+                        ManagementReceipts.objects.filter(receipt_number=receipt_value3).update(status='Used', deal_refer_no=reference_number)
+
             else:
                 if receipt_value3 in ["Null", "No Commission", ""]:
                     if str(get_receipt_no3_db).isdigit():
@@ -1376,10 +1393,15 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             reference_number = request.data.get('reference_number', f"AUTO{account_id}_{int(time.time())}")
             data['reference_number'] = reference_number
             path = f"/rental/referencenumber_CP/{reference_number}"
-            print(f"📁 Reference Path: {path}")
+            print(f" Reference Path: {path}")
  
             # --- DUPLICATE CHECK ---
-            if RentalProperties.objects.filter(reference_number=reference_number,is_deleted='N').exists():
+            normalized_ref = (reference_number or "").strip().upper().replace(" ", "")
+            normalized_dash = normalized_ref.replace("/", "-")
+            normalized_slash = normalized_ref.replace("-", "/")
+            ref_variants = {normalized_ref, normalized_dash, normalized_slash}
+
+            if RentalProperties.objects.filter(reference_number__in=ref_variants, is_deleted='N').exists():
                 print("DEBUG: Duplicate reference_number — EXITING EARLY:", reference_number)
                 return Response(
                     {'success': False, 'message': f'Reference Number "{reference_number}" already exists.'},
@@ -3232,6 +3254,8 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
 
         serializer = ManagementReceiptsSerializer(receipt)
         return Response(serializer.data)
+   
+   
     def update(self, request, pk=None):
         receipt = get_object_or_404(ManagementReceipts, pk=pk)
         serializer = ManagementReceiptsSerializer(receipt, data=request.data)
@@ -3274,10 +3298,18 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         if request.user.account_id:
             print("DEBUG: Account ID", request.user.account_id)
             mutable_data["account_id"] = request.user.account_id
+            mutable_data["created_at"] = datetime.now()
         else:
             return Response({
                 'success': False,
                 'message': 'User has no linked account.',
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        is_recipts_present = ManagementReceipts.objects.filter(receipt_number=mutable_data.get("receipt_number")).exists()
+        if is_recipts_present:
+            return Response({
+                'success': False,
+                'message': f'Receipt {mutable_data.get("receipt_number")} with this number already exists. reload to get the New receipt number.',
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ManagementReceiptsSerializer(data=mutable_data)

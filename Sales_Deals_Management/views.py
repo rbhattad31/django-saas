@@ -634,22 +634,30 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 if receipt_value.isdigit():
                     if str(get_receipt_id_db) != receipt_value:
                         if str(get_receipt_id_db).isdigit():
+                            # Here we dont need to check the NOne case because it is having 0
                             Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
 
                         print("this is the receipt no", receipt_value)
                         Receipts.objects.filter(id=receipt_value).update(deal_refer_no=mutable_data['reference_number'])
                         Receipts.objects.filter(id=receipt_value).update(status="Used")
 
-                    reccicpt = Receipts.objects.filter(id=receipt_value).first()
-                    if reccicpt:
-                        mutable_data['receipt_id'] = reccicpt.id
-                        mutable_data['receipt_no'] = reccicpt.receipt_number
+                        reccicpt = Receipts.objects.filter(id=receipt_value).first()
+                        if reccicpt:
+                            mutable_data['receipt_id'] = reccicpt.id
+                            mutable_data['receipt_no'] = reccicpt.receipt_number
+                    if str(get_receipt_id_db) == receipt_value:
+                        reccicpt = Receipts.objects.filter(id=receipt_value).first()
+                        if reccicpt:
+                            mutable_data['receipt_id'] = reccicpt.id
+                            mutable_data['receipt_no'] = reccicpt.receipt_number
                 else:
                     if receipt_value in ["Null", "No Commission", ""]:
                         if str(get_receipt_id_db).isdigit():
                             Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
                         mutable_data['receipt_id'] = 0
                         mutable_data['receipt_no'] = receipt_value
+
+
             if mutable_data.get('receipt_no2') is not None:
                 get_receipt_no2_db = getattr(sales_deal, 'receipt_no2', "")
                 get_receipt_id2_db = getattr(sales_deal, 'receipt_id2', "")
@@ -660,23 +668,32 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
                 if receipt_value2.isdigit():
                     if str(get_receipt_id2_db) != receipt_value2:
-                        if str(get_receipt_id2_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
+                        if str(get_receipt_id2_db).isdigit() or str(get_receipt_id2_db) == "None":
+                            # here we need to check the None case because we are having Null in DB 
+                            if str(get_receipt_id2_db).isdigit():
+                                Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
 
                         print("this is the receipt no2", receipt_value2)
                         Receipts.objects.filter(id=receipt_value2).update(deal_refer_no=mutable_data['reference_number'])
                         Receipts.objects.filter(id=receipt_value2).update(status="Used")
 
-                    reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
-                    if reccicpt2:
-                        mutable_data['receipt_id2'] = reccicpt2.id
-                        mutable_data['receipt_no2'] = reccicpt2.receipt_number
+                        reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
+                        if reccicpt2:
+                            mutable_data['receipt_id2'] = reccicpt2.id
+                            mutable_data['receipt_no2'] = reccicpt2.receipt_number
+                    if str(get_receipt_id2_db) == receipt_value2:
+                        reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
+                        if reccicpt2:
+                            mutable_data['receipt_id2'] = reccicpt2.id
+                            mutable_data['receipt_no2'] = reccicpt2.receipt_number
                 else:
                     if receipt_value2 in ["Null", "No Commission", ""]:
                         if str(get_receipt_id2_db).isdigit():
                             Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
                         mutable_data['receipt_id2'] = 0
                         mutable_data['receipt_no2'] = receipt_value2
+
+
             if mutable_data.get('receipt_no3') is not None:
                 get_receipt_no3_db = getattr(sales_deal, 'receipt_no3', "")
                 get_receipt_id3_db = getattr(sales_deal, 'receipt_id3', "")
@@ -687,17 +704,25 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
                 if receipt_value3.isdigit():
                     if str(get_receipt_id3_db) != receipt_value3:
-                        if str(get_receipt_id3_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
+                        if str(get_receipt_id3_db).isdigit() or str(get_receipt_id3_db) == "None":
+                            # here we need to check the None case because we are having Null in DB 
+                            if str(get_receipt_id3_db).isdigit():
+                                Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
 
                         print("this is the receipt no3", receipt_value3)
                         Receipts.objects.filter(id=receipt_value3).update(deal_refer_no=mutable_data['reference_number'])
                         Receipts.objects.filter(id=receipt_value3).update(status="Used")
 
-                    reccicpt3 = Receipts.objects.filter(id=receipt_value3).first()
-                    if reccicpt3:
-                        mutable_data['receipt_id3'] = reccicpt3.id
-                        mutable_data['receipt_no3'] = reccicpt3.receipt_number
+                        reccicpt3 = Receipts.objects.filter(id=receipt_value3).first()
+                        if reccicpt3:
+                            mutable_data['receipt_id3'] = reccicpt3.id
+                            mutable_data['receipt_no3'] = reccicpt3.receipt_number
+
+                    if str(get_receipt_id3_db) == receipt_value3:
+                        reccicpt3 = Receipts.objects.filter(id=receipt_value3).first()
+                        if reccicpt3:
+                            mutable_data['receipt_id3'] = reccicpt3.id
+                            mutable_data['receipt_no3'] = reccicpt3.receipt_number
                 else:
                     if receipt_value3 in ["Null", "No Commission", ""]:
                         if str(get_receipt_id3_db).isdigit():

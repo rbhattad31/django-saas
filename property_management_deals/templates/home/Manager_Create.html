@@ -396,7 +396,7 @@ $main(document).ready(function () {
                             $main(`#${field}_error`).text(messages.join(', '));
                             errorMessage += `${field}: ${messages.join(', ')}\n`;
                         });
-                    } else {
+                    } else if (errors.message) {
                         errorMessage = errors.message;
                     }
                     alert(errorMessage);
