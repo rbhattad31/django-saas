@@ -1270,25 +1270,25 @@
                                 </div>
                             </div>
                             <div class="col-md-6 form-group mb-3"> 
-                                        <div class="row">                                
-                                            <div class="col-4">
-                                            <label for="">
-                                            <h6 class="labelname">Screening</h6>
-                                            </label>
-                                            </div>
-                                            <div class="col-1">:</div>
-                                            <div class="col-6">                
-                                            <div id="upload_prevss" class="kyc_number_list">
-                                                {% render_file_links rentaldeal.screening aws_base_url rentaldeal.reference_number %}
-                                            </div>
-                                                                                                                                                                                                                      
-                                                                                    
-                                                                                </div>
-                                            <span class="text-danger" id="screening_error"></span>
+                                    <div class="row">                                
+                                        <div class="col-4">
+                                        <label for="">
+                                        <h6 class="labelname">Screening</h6>
+                                        </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">                
+                                        <div id="upload_prevss" class="kyc_number_list">
+                                            {% render_file_links rentaldeal.screening aws_base_url rentaldeal.reference_number %}
+                                        </div>
+                                                                                                                                                                                                                    
+                                                                                
+                                                                            </div>
+                                        <span class="text-danger" id="screening_error"></span>
                                         </div>                              
                                     </div>
                         </div>
-                        <div class="row">
+                            <div class="row">
                                     <div class="col-md-6 form-group mb-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -1304,6 +1304,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6 form-group mb-3">  
+                                        <div class="row">                              
+                                                <div class="col-4">
+                                                <label for="">
+                                                <h6 class="labelname">Commision Shortfall Form Or Approval</h6>
+                                                </label>
+                                                </div>
+                                                <div class="col-1">:</div>
+                                                <div class="col-6">                
+                                                    <div id="upload_prevss" class="kyc_number_list">
+                                                        {% render_file_links rentaldeal.commission_shortfall_form_copy aws_base_url rentaldeal.reference_number %}
+                                                    </div>                                
+                                                </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>
+                                    </div> 
+                                                                   
+                            </div>
+                            
+                                    
                                 </div>
                             <br>
                                 <div class="form-group row mt-3">

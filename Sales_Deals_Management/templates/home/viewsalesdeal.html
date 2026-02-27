@@ -1110,9 +1110,24 @@
                                             <div class="col-6 format-value">
                                                 <label for="">
                                                 <h6 class="value">No Match Found</h6>
-                                            </label>
+                                                </label>
                                             </div>
+
                                         </div>
+                                    </div>
+                                     <div class="col-md-6 form-group mb-3"> 
+                                        <div class="row">                                
+                                            <div class="col-4">
+                                                <label for="">
+                                                    <h6 class="labelname">Commission Shortfall Form or Approval</h6>
+                                                </label>
+                                            </div>
+                                            <div class="col-1">:</div>
+                                            <div class="col-6">
+                                                {% render_file_links salesdeal.commission_shortfall_form_copy aws_base_url salesdeal.reference_number %}
+                                            </div>
+                                            <span class="text-danger" id="screening_error"></span>
+                                        </div>                              
                                     </div>
                                 </div>
                             <div class="row">
