@@ -1983,7 +1983,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         # file fields which in DB hold relative paths (comma-separated possible)
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
-            'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
+            'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
         ]
 
         # helper to build a public URL from a normalized S3 key (uses your settings)
