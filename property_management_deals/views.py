@@ -418,7 +418,7 @@ class PropertyAPIView(APIView):
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
             'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
-            'key_hand_over_form', 'kyc_form', 'screening'
+            'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
         ]
         required_file_fields = [
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
@@ -925,7 +925,7 @@ def edit_property_page(request, pk):
     # ---------- File fields we care about (same as in put/view) ----------
     file_fields = [
         'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
-        'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
+        'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
     ]
 
     # -------------------------
@@ -1386,7 +1386,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             file_fields = [
                 'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
                 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
-                'key_hand_over_form', 'kyc_form', 'screening'
+                'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
             ]
  
             # Generate reference_number
