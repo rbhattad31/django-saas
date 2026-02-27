@@ -763,6 +763,15 @@
                                         <input type="hidden" id="screening_removed" name="screening_removed">
                                         <span class="text-danger" id="screening_error"></span>
                                     </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="commission_shortfall_form_copy">Commission shortFall Form or Approval  </label>
+                                        <input multiple class="imageUploadInput form-control-file" 
+                                            id="commission_shortfall_form_copy" type="file" 
+                                            name="commission_shortfall_form_copy[]" accept=".pdf,.jpg,.jpeg,.png"  >
+                                        <div class="file-preview" id="commission_shortfall_form_copy_preview"></div>
+                                        <input type="hidden" id="commission_shortfall_form_copy_removed" name="commission_shortfall_form_copy_removed">
+                                        <span class="text-danger" id="commission_shortfall_form_copy_error"></span>
+                                    </div>
                                     <!-- Screening Comments -->
                                     <div class="col-md-6 form-group">
                                         <label for="screening_comments">Screening Comments</label>
@@ -1636,6 +1645,7 @@ $j(document).ready(function () {
 
         // Clear previous files and update with new ones
         selectedFiles[fieldName] = Array.from(files);
+        console.log("no of files selected for " + fieldName + ": ", selectedFiles[fieldName].length);
 
         if (files.length > 0) {
             let valid = true;
@@ -1648,6 +1658,11 @@ $j(document).ready(function () {
                 }
                 if (file.size > maxFileSize) {
                     errorElement.text(`File "${file.name}" exceeds 3MB.`);
+                    valid = false;
+                    return;
+                }
+                 if (selectedFiles[fieldName].length > 4) {
+                    errorElement.text(`Only 4 files are allowed for "${fieldName}".`);
                     valid = false;
                     return;
                 }
@@ -1682,7 +1697,11 @@ $j(document).ready(function () {
                     errorElement.text('');
                 }
             }
-        } else {
+        }
+      
+
+         
+        else {
             selectedFiles[fieldName] = [];
             if (['pms_contract', 'owner_passport_copy', 'pms_cheque_copy', 'title_deed', 'kyc_form', 'screening'].includes(fieldName)) {
                 errorElement.text('At least one file is required.');

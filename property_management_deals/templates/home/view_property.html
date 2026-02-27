@@ -707,6 +707,22 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for=""><h6 class="labelname">Commission Shortfall Form Copy</h6></label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6">
+                                            <div id="upload_prevss" class="commission_shortfall_form_copy"></div>
+                                            <div class="upload_prev">
+                                                {% render_file_links property.commission_shortfall_form_copy %}
+                                                {% comment %} <a href="{{ property.commission_shortfall_form_copy_link }}" target="_new">{{ property.commission_shortfall_form_copy }}</a> {% endcomment %}
+                                            </div>
+                                            <span class="text-danger" id="commission_shortfall_form_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <div class="form-group row mt-3">

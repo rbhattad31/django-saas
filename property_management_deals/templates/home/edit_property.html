@@ -963,6 +963,26 @@
             </div>                           
           </div>
           <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="commission_shortfall_form_copy">Commission Shortfall Form Copy</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="commission_shortfall_form_copy" type="file" name="commission_shortfall_form_copy[]">
+              <div class="upload_prev">
+                {% if property.commission_shortfall_form_copy %}
+                  {% for file in property.commission_shortfall_form_copy|split:","%}
+                    <a href="{{ file.url|clean_s3 }}" target="_new">Commission Shortfall Form Copy{{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="commission_shortfall_form_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
+                {% endif %}
+              </div>
+              <input type="hidden" id="commission_shortfall_form_copy_existing_count" name="commission_shortfall_form_copy_existing_count" value="{% if property.commission_shortfall_form_copy %}{{ property.commission_shortfall_form_copy|split:","|length }}{% else %}0{% endif %}">
+              <input type="hidden" id="commission_shortfall_form_copy_existing_values" name="commission_shortfall_form_copy_existing_values">
+              <input type="hidden" id="commission_shortfall_form_copy_removed" name="commission_shortfall_form_copy_mou_removed">
+              <input type="hidden" id="commission_shortfall_form_copy_new_removed_count" name="commission_shortfall_form_copy_new_removed_count">                     
+              <div id="upload_prevss" class="commission_shortfall_form_copy_list"></div>
+              <span class="text-danger" id="commission_shortfall_form_copy_error"></span>
+            </div> 
             <div class="col-md-6 form-group mb-3">
               <label for="screening_comments">Screening Comments</label>
               <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" cols="50" placeholder="Screening Comments">{{ property.screening_comments }}</textarea>
@@ -1248,7 +1268,7 @@ $j(document).ready(function() {
                 console.log("Loaded Manager Approval Value:", $j('[name="manager_approved_rejected"]:checked').val() || "Not selected");
                 console.log("Loaded Admin Approval Value:", $j('[name="is_approved_rejected"]:checked').val() || "Not selected");
 
-                const documentFields = ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'];
+                const documentFields = ['pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'];
                 documentFields.forEach(field => {
                     const fileString = data[field] || '';
                     const files = fileString.split(',').filter(f => f.trim());
