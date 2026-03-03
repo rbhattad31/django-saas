@@ -153,11 +153,16 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         # Receipt No 3
         recipt_no_3, recipt_id_3 = get_receipt_info(sales_deal.receipt_no3)
+
+        recipt_no_4, recipt_id_4 = get_receipt_info(sales_deal.receipt_no4)
+
+        recipt_no_5, recipt_id_5 = get_receipt_info(sales_deal.receipt_no5) 
         
         return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": recipt_no, "receipt_id": recipt_id,  
                                                            "receipt_no_2":recipt_no_2 , "receipt_id_2":recipt_id_2 ,
-        "receipt_no_3":recipt_no_3 , "receipt_id_3":recipt_id_3})
-
+        "receipt_no_3":recipt_no_3 , "receipt_id_3":recipt_id_3,
+        "receipt_no_4":recipt_no_4 , "receipt_id_4":recipt_id_4,
+        "receipt_no_5":recipt_no_5 , "receipt_id_5":recipt_id_5})
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
     def create_sale_deal(self, request):
@@ -233,6 +238,36 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                     print("this is the receipt no3", mutable_data['receipt_no3'])
                 else:
                     pass
+        
+        if mutable_data.get('receipt_no4'):
+                if mutable_data['receipt_no4'].isdigit():
+                    print("this is the receipt no4", mutable_data['receipt_no4'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no4']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no4']).update(status="Used")
+
+                    reccicpt4 = Receipts.objects.filter(id=mutable_data['receipt_no4']).first()
+                    mutable_data['receipt_id4'] = reccicpt4.id
+                    mutable_data['receipt_no4'] = reccicpt4.receipt_number
+                    print("this is the receipt id4", mutable_data['receipt_id4'])
+                    print("this is the receipt no4", mutable_data['receipt_no4'])
+                else:
+                    pass
+        
+        if mutable_data.get('receipt_no5'):
+                if mutable_data['receipt_no5'].isdigit():
+                    print("this is the receipt no5", mutable_data['receipt_no5'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no5']).update(deal_refer_no=mutable_data['reference_number'])
+                    Receipts.objects.filter(id=mutable_data['receipt_no5']).update(status="Used")
+
+                    reccicpt5 = Receipts.objects.filter(id=mutable_data['receipt_no5']).first()
+                    mutable_data['receipt_id5'] = reccicpt5.id
+                    mutable_data['receipt_no5'] = reccicpt5.receipt_number
+                    print("this is the receipt id5", mutable_data['receipt_id5'])
+                    print("this is the receipt no5", mutable_data['receipt_no5'])
+                else:
+                    pass
+
+
         print(mutable_data)
 
         # mutable_data['submitted_by_user'] = request.user.id
@@ -731,7 +766,71 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                         mutable_data['receipt_no3'] = receipt_value3
             
 
+            if mutable_data.get('receipt_no4') is not None:
+                get_receipt_no4_db = getattr(sales_deal, 'receipt_no4', "")
+                get_receipt_id4_db = getattr(sales_deal, 'receipt_id4', "")
+                print("get_receipt_no4_db", get_receipt_no4_db)
+                print("get_receipt_id4_db", get_receipt_id4_db)
 
+                receipt_value4 = str(mutable_data.get('receipt_no4')).strip()   
+                if receipt_value4.isdigit():
+                    if str(get_receipt_id4_db) != receipt_value4:
+                        if str(get_receipt_id4_db).isdigit() or str(get_receipt_id4_db) == "None":
+                            if str(get_receipt_id4_db).isdigit():
+                                Receipts.objects.filter(id=get_receipt_id4_db).update(status="Unused", deal_refer_no="")
+
+                        print("this is the receipt no4", receipt_value4)
+                        Receipts.objects.filter(id=receipt_value4).update(deal_refer_no=mutable_data['reference_number'])
+                        Receipts.objects.filter(id=receipt_value4).update(status="Used")
+
+                        reccicpt4 = Receipts.objects.filter(id=receipt_value4).first()      
+                        if reccicpt4:
+                            mutable_data['receipt_id4'] = reccicpt4.id
+                            mutable_data['receipt_no4'] = reccicpt4.receipt_number  
+                    if str(get_receipt_id4_db) == receipt_value4:
+                        reccicpt4 = Receipts.objects.filter(id=receipt_value4).first()      
+                        if reccicpt4:
+                            mutable_data['receipt_id4'] = reccicpt4.id
+                            mutable_data['receipt_no4'] = reccicpt4.receipt_number
+                else:
+                    if receipt_value4 in ["Null", "No Commission", ""]:
+                        if str(get_receipt_id4_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id4_db).update(status="Unused", deal_refer_no="")
+                        mutable_data['receipt_id4'] = 0
+                        mutable_data['receipt_no4'] = receipt_value4
+
+            if mutable_data.get('receipt_no5') is not None:
+                get_receipt_no5_db = getattr(sales_deal, 'receipt_no5', "")
+                get_receipt_id5_db = getattr(sales_deal, 'receipt_id5', "")
+                print("get_receipt_no5_db", get_receipt_no5_db)
+                print("get_receipt_id5_db", get_receipt_id5_db)
+
+                receipt_value5 = str(mutable_data.get('receipt_no5')).strip()   
+                if receipt_value5.isdigit():
+                    if str(get_receipt_id5_db) != receipt_value5:
+                        if str(get_receipt_id5_db).isdigit() or str(get_receipt_id5_db) == "None":
+                            if str(get_receipt_id5_db).isdigit():
+                                Receipts.objects.filter(id=get_receipt_id5_db).update(status="Unused", deal_refer_no="")
+
+                        print("this is the receipt no5", receipt_value5)
+                        Receipts.objects.filter(id=receipt_value5).update(deal_refer_no=mutable_data['reference_number'])
+                        Receipts.objects.filter(id=receipt_value5).update(status="Used")
+
+                        reccicpt5 = Receipts.objects.filter(id=receipt_value5).first()      
+                        if reccicpt5:
+                            mutable_data['receipt_id5'] = reccicpt5.id
+                            mutable_data['receipt_no5'] = reccicpt5.receipt_number  
+                    if str(get_receipt_id5_db) == receipt_value5:
+                        reccicpt5 = Receipts.objects.filter(id=receipt_value5).first()      
+                        if reccicpt5:
+                            mutable_data['receipt_id5'] = reccicpt5.id
+                            mutable_data['receipt_no5'] = reccicpt5.receipt_number
+                else:
+                    if receipt_value5 in ["Null", "No Commission", ""]:
+                        if str(get_receipt_id5_db).isdigit():
+                            Receipts.objects.filter(id=get_receipt_id5_db).update(status="Unused", deal_refer_no="")
+                        mutable_data['receipt_id5'] = 0
+                        mutable_data['receipt_no5'] = receipt_value5
  
             mutable_data['updated_by'] = request.user.email
             mutable_data['updated_at'] = now()
@@ -1165,11 +1264,15 @@ def edit_sales_deal_page(request, pk):
     reciepts1_used = sales_deal.receipt_id if sales_deal.receipt_id else ""
     reciepts2_used = sales_deal.receipt_id2 if sales_deal.receipt_id2 else ""      
     reciepts3_used = sales_deal.receipt_id3 if sales_deal.receipt_id3 else ""
+    reciepts4_used = sales_deal.receipt_id4 if sales_deal.receipt_id4 else ""
+    reciepts5_used = sales_deal.receipt_id5 if sales_deal.receipt_id5 else ""
 
 
 
 
-    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used] if rid]
+    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used, reciepts4_used, reciepts5_used] if rid]
+    print("Used Receipt IDs:", used_receipt_ids)
+
     if role == "Agent":
          
         

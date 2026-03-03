@@ -977,17 +977,19 @@ function loadReceiptDropdown(requestdata) {
 
   populateReceiptDropdown("#receipt_no", receipts, requestdata.receipt_no);
   console.log(requestdata.receipt_no);
-  console.log("loaded teh reciepts");
+  console.log("loaded the receipts");
   // Add more dropdowns if needed, e.g.:
   // populateReceiptDropdown("#other_receipt", receipts, requestdata.other_receipt);
 
   populateReceiptDropdown("#receipt_no2", receipts, requestdata.receipt_no2);
   populateReceiptDropdown("#receipt_no3", receipts, requestdata.receipt_no3);
+  populateReceiptDropdown("#receipt_no4", receipts, requestdata.receipt_no4);
+  populateReceiptDropdown("#receipt_no5", receipts, requestdata.receipt_no5);
 }
 
 // Helper function to populate the receipt dropdown
 function populateReceiptDropdown(selector, data, receiptno_from_request) {
-  console.log(selector, "recipt selector");
+  console.log(selector, "receipt selector");
   console.log(data, "receipt data");
   console.log(receiptno_from_request, "receipt number from request");
   const $dropdown = $(selector);
@@ -1372,30 +1374,35 @@ $.validator.addMethod(
 );
 
         $.validator.addMethod("receiptDuplicate", function (value, element) {
+            var receipts = [
+                { id: "receipt_no", value: $("#receipt_no").val()?.trim() },
+                { id: "receipt_no2", value: $("#receipt_no2").val()?.trim() },
+                { id: "receipt_no3", value: $("#receipt_no3").val()?.trim() },
+                { id: "receipt_no4", value: $("#receipt_no4").val()?.trim() },
+                { id: "receipt_no5", value: $("#receipt_no5").val()?.trim() }
+            ];
 
-            var r1 = $("#receipt_no").val()?.trim();
-            var r2 = $("#receipt_no2").val()?.trim();
-            var r3 = $("#receipt_no3").val()?.trim();
+            var currentId = $(element).attr("id");
+            var hasDuplicate = false;
 
-            // Determine which field is being validated
-            var id = $(element).attr("id");
+            for (let i = 0; i < receipts.length; i++) {
+                if (!receipts[i].value) continue;
 
-            if (id === "receipt_no") {
-                if (value && r2 && value === r2) return false;
-                if (value && r3 && value === r3) return false;
+                for (let j = i + 1; j < receipts.length; j++) {
+                    if (!receipts[j].value) continue;
+
+                    if (receipts[i].value === receipts[j].value) {
+                        if (receipts[i].id === currentId || receipts[j].id === currentId) {
+                            hasDuplicate = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (hasDuplicate) break;
             }
 
-            if (id === "receipt_no2") {
-                if (value && r1 && value === r1) return false;
-                if (value && r3 && value === r3) return false;
-            }
-
-            if (id === "receipt_no3") {
-                if (value && r1 && value === r1) return false;
-                if (value && r2 && value === r2) return false;
-            }
-
-            return true;
+            return !hasDuplicate;
         }, "Duplicate receipt number is not allowed.");
 
 $("#sales_form").validate({
@@ -1598,6 +1605,16 @@ $("#sales_form").validate({
       receiptDuplicate: true,
     },
       receipt_no3: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
+    },
+    receipt_no4: {
+      alphanum_special: true,
+      maxlength: 100,
+      receiptDuplicate: true,
+    },
+    receipt_no5: {
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,

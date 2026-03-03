@@ -801,6 +801,38 @@
                                         </div>
                                     </div>
                                 </div>
+                                                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No 4</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{receipt_no_4}}</h6></label>
+                                            {% if perms.core.download_receipts and receipt_id_4 %}
+                                                <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_id_4}}/download/" target="_blank" >Download</a> 
+                                                {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No 5</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{receipt_no_5}}</h6></label>
+                                            {% if perms.core.download_receipts and receipt_id_5 %}
+                                                <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_id_5}}/download/" target="_blank" >Download</a> 
+                                                {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
                             
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
