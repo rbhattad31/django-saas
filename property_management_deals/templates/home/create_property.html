@@ -498,7 +498,7 @@
                                             <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
                                             {% endfor %}
                                         </select>
-                                        <span class="text-danger" id="receipt_no_error"></span>
+                                        <span class="text-danger" id="receipt_no2_error"></span>
                                     </div>
 
 
@@ -514,7 +514,31 @@
                                             <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
                                             {% endfor %}
                                         </select>
-                                        <span class="text-danger" id="receipt_no_error"></span>
+                                        <span class="text-danger" id="receipt_no3_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no4">Receipt No4</label>
+                                        <select name="receipt_no4" class="form-control" id="receipt_no4" >
+                                            <option value="">Select Receipt No4</option>
+                                            <option value="Null">Null</option>
+                                            <option value="No Commision">No Commission</option>
+                                            {% for receipt in receipt_nos4 %}
+                                            <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="receipt_no4_error"></span>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="receipt_no5">Receipt No5</label>
+                                        <select name="receipt_no5" class="form-control" id="receipt_no5" >
+                                            <option value="">Select Receipt No5</option>
+                                            <option value="Null">Null</option>
+                                            <option value="No Commision">No Commission</option>
+                                            {% for receipt in receipt_nos5 %}
+                                            <option value="{{ receipt.receipt_number }}">{{ receipt.receipt_number }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-danger" id="receipt_no5_error"></span>
                                     </div>
 
 
@@ -1034,6 +1058,47 @@ function validateChequeDates() {
     return true;
 }
 
+function validateDuplicateReceiptsExternal(showPopup = false) {
+    const receiptFieldIds = ['receipt_no', 'receipt_no2', 'receipt_no3', 'receipt_no4', 'receipt_no5'];
+    const valueToIds = {};
+
+    receiptFieldIds.forEach(id => {
+        const value = ($j(`#${id}`).val() || '').toString().trim();
+        $j(`#${id}_error`).text('');
+
+        if (!value) {
+            return;
+        }
+
+        if (!valueToIds[value]) {
+            valueToIds[value] = [];
+        }
+        valueToIds[value].push(id);
+    });
+
+    let hasDuplicate = false;
+
+    Object.keys(valueToIds).forEach(value => {
+        if (valueToIds[value].length > 1) {
+            hasDuplicate = true;
+            valueToIds[value].forEach(id => {
+                $j(`#${id}_error`).text('Duplicate receipt number is not allowed.');
+            });
+        }
+    });
+
+    if (hasDuplicate && showPopup) {
+        swal({
+            title: "Duplicate Receipt",
+            text: "Duplicate receipt number is not allowed.",
+            icon: "error",
+            button: "OK"
+        });
+    }
+
+    return !hasDuplicate;
+}
+
 function switchTab(tabId) {
     const currentTab = document.querySelector('.tab-pane.show.active')?.id;
     const validator = $j("#rental_property_form").validate();
@@ -1052,7 +1117,7 @@ function switchTab(tabId) {
         'nav-source': ['owner_first_name', 'owner_source', 'owner_mobile', 'owner_email', 'seller_nationality'],
         'nav-agency': ['agency_name', 'agent_name', 'agent_phone'],
         'nav-cheque': ['no_of_cheque', 'cheque_date[]'],
-        'nav-revenue': ['total_commission', 'less_outside_commission', 'net_commission', 'classic', 'agent1', 'agent_name1', 'receipt_no', 'is_property_aml'],
+        'nav-revenue': ['total_commission', 'less_outside_commission', 'net_commission', 'classic', 'agent1', 'agent_name1', 'receipt_no','is_property_aml'],
         'nav-documents': ['pms_contract[]', 'owner_passport_copy[]', 'pms_cheque_copy[]', 'title_deed[]', 'kyc_form[]', 'screening[]']
     };
 
@@ -1087,6 +1152,10 @@ function switchTab(tabId) {
             if (!validateChequeDates()) {
                 return;
             }
+        }
+
+        if (currentTab === 'nav-revenue' && !validateDuplicateReceiptsExternal(true)) {
+            return;
         }
 
         // Validate required file fields
@@ -1139,12 +1208,23 @@ function saveAsDraft() {
         });
     });
 
+    // Keep duplicate validation active for all receipt fields
+    ['receipt_no', 'receipt_no2', 'receipt_no3', 'receipt_no4', 'receipt_no5'].forEach(field => {
+        $j(`[name="${field}"]`).each(function () {
+            $j(this).rules('add', { receiptDuplicate: true });
+        });
+    });
+
     // Explicitly ensure file fields have no validation rules
     fileFields.forEach(field => {
         $j(`[name="${field}"]`).each(function () {
             $j(this).rules('remove'); // Ensure no rules (e.g., atLeastOneFile, fileSize, fileExtension)
         });
     });
+
+    if (!validateDuplicateReceiptsExternal(true)) {
+        return;
+    }
 
     if (form.valid()) {
         // Build FormData explicitly (consistent with submit handler)
@@ -1464,6 +1544,29 @@ $j(document).ready(function () {
         return selectedFiles[fieldName].length > 0;
     }, "At least one file is required.");
 
+    $j.validator.addMethod("receiptDuplicate", function (value, element) {
+        if (!value) return true;
+
+        var receipts = [
+            { id: "receipt_no", value: ($j("#receipt_no").val() || '').trim() },
+            { id: "receipt_no2", value: ($j("#receipt_no2").val() || '').trim() },
+            { id: "receipt_no3", value: ($j("#receipt_no3").val() || '').trim() },
+            { id: "receipt_no4", value: ($j("#receipt_no4").val() || '').trim() },
+            { id: "receipt_no5", value: ($j("#receipt_no5").val() || '').trim() }
+        ];
+
+        var currentId = $j(element).attr("id");
+        var currentValue = value.trim();
+
+        for (let i = 0; i < receipts.length; i++) {
+            if (receipts[i].id !== currentId && receipts[i].value && receipts[i].value === currentValue) {
+                return false;
+            }
+        }
+
+        return true;
+    }, "Duplicate receipt number is not allowed.");
+
     // Initialize form validation
     $j('#rental_property_form').validate({
         ignore: "",
@@ -1504,10 +1607,12 @@ $j(document).ready(function () {
             agent_name2: { alphanum_special: true, maxlength: 255 },
             agent3: { numeric: true, maxlength: 10 },
             agent_name3: { alphanum_special: true, maxlength: 255 },
-            receipt_no: { required: true, alphanum_special: true, maxlength: 100 },
+            receipt_no: { required: true, alphanum_special: true, maxlength: 100, receiptDuplicate: true },
             // Adding receipt_no2 and receipt_no3 newly 
-            receipt_no2: {alphanum_special: true, maxlength: 100 },
-            receipt_no3: {alphanum_special: true, maxlength: 100 },
+            receipt_no2: {alphanum_special: true, maxlength: 100, receiptDuplicate: true },
+            receipt_no3: {alphanum_special: true, maxlength: 100, receiptDuplicate: true },
+            receipt_no4: {alphanum_special: true, maxlength: 100, receiptDuplicate: true },
+            receipt_no5: {alphanum_special: true, maxlength: 100, receiptDuplicate: true },
             kyc_number: { alphanum_special: true, maxlength: 255 },
             agent_comment: { alphanum_special: true, maxlength: 255 },
             comments: { alphanum_special: true, maxlength: 255 },
@@ -1529,6 +1634,8 @@ $j(document).ready(function () {
         errorPlacement: function (error, element) {
             if (element.is(":radio")) {
                 error.appendTo(element.closest('.form-group'));
+            } else if (['receipt_no', 'receipt_no2', 'receipt_no3', 'receipt_no4', 'receipt_no5'].includes(element.attr('name'))) {
+                error.appendTo($j(`#${element.attr('name')}_error`));
             } else {
                 error.insertAfter(element);
             }
@@ -1625,6 +1732,11 @@ $j(document).ready(function () {
     // Update cheque count validation on input change
     $j('#no_of_cheque').on('input', function () {
         validateChequeDates();
+    });
+
+    // External duplicate check for all receipt fields
+    $j('#receipt_no, #receipt_no2, #receipt_no3, #receipt_no4, #receipt_no5').on('change', function () {
+        validateDuplicateReceiptsExternal(false);
     });
 
     // File input preview and validation
@@ -1800,6 +1912,10 @@ $j(document).ready(function () {
         });
     });
         
+
+        if (!validateDuplicateReceiptsExternal(true)) {
+            return;
+        }
 
         console.log("Form valid:", form.valid()); // Debug log
 

@@ -537,6 +537,41 @@
               {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
               <span class="text-danger" id="receipt_no3_error"></span>   <!-- UNIQUE -->
             </div>
+            
+             <div class="col-md-6 form-group">
+              <label for="receipt_no4">
+                Receipt No - 4 
+              </label>
+              <select name="receipt_no4" class="form-control" id="receipt_no4">
+                <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no4 == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no4 == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos4 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no4 == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no4_error"></span>   <!-- UNIQUE -->
+            </div>
+             <div class="col-md-6 form-group">
+              <label for="receipt_no5">
+                Receipt No - 5 
+              </label>
+              <select name="receipt_no5" class="form-control" id="receipt_no5">
+                <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no5 == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no5 == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos5 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no5 == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no5_error"></span>   <!-- UNIQUE -->
+            </div>
                        
             <div class="col-md-6 form-group">
               <label for="kyc_number">KYC Number</label>
@@ -1525,6 +1560,46 @@ $j(document).ready(function() {
         return this.optional(element) || ['A', 'R'].indexOf(value) !== -1;
     }, "Please select either Approved or Rejected.");
 
+    function validateDuplicateReceiptsExternal(showPopup = false) {
+      const receiptFieldIds = ['receipt_no', 'receipt_no2', 'receipt_no3', 'receipt_no4', 'receipt_no5'];
+      const valueToIds = {};
+
+      receiptFieldIds.forEach(id => {
+        const value = ($j(`#${id}`).val() || '').toString().trim();
+        $j(`#${id}_error`).text('');
+
+        if (!value) {
+          return;
+        }
+
+        if (!valueToIds[value]) {
+          valueToIds[value] = [];
+        }
+        valueToIds[value].push(id);
+      });
+
+      let hasDuplicate = false;
+
+      Object.keys(valueToIds).forEach(value => {
+        if (valueToIds[value].length > 1) {
+          hasDuplicate = true;
+          valueToIds[value].forEach(id => {
+            $j(`#${id}_error`).text('Duplicate receipt number is not allowed.');
+          });
+        }
+      });
+
+      if (hasDuplicate && showPopup) {
+        alert('Duplicate receipt number is not allowed.');
+      }
+
+      return !hasDuplicate;
+    }
+
+    $j('#receipt_no, #receipt_no2, #receipt_no3, #receipt_no4, #receipt_no5').on('change', function () {
+      validateDuplicateReceiptsExternal(false);
+    });
+
     $j('#rental_property_form').validate({
         rules: {
             submitted_by_agent: { required: true },
@@ -1756,6 +1831,9 @@ $j(document).ready(function() {
     $j(document).on('click', '#update_draft', function (e) {
       e.preventDefault();
       console.log("📝 Update Property (Draft) clicked");
+      if (!validateDuplicateReceiptsExternal(true)) {
+        return;
+      }
       $j('#save_as').val('draft'); // set draft mode
       submitForm('draft');
     });
@@ -1764,6 +1842,9 @@ $j(document).ready(function() {
     $j(document).on('click', '#create_deal', function (e) {
       e.preventDefault();
       console.log("🚀 Submit Property (Full) clicked");
+      if (!validateDuplicateReceiptsExternal(true)) {
+        return;
+      }
       $j('#save_as').val('submit'); // set submit mode
       if ($j('#rental_property_form').valid()) {
         submitForm('submit');
@@ -1832,6 +1913,9 @@ $j(document).ready(function() {
 
     function submitForm(saveAs = 'update') {
       console.log(`submitForm: Starting form submission process with save_as=${saveAs}`);
+      if (!validateDuplicateReceiptsExternal(true)) {
+        return;
+      }
       $j('#is_deleted').val('N');
       const formData = new FormData($j('#rental_property_form')[0]);
       formData.set('save_as', saveAs); // Ensure save_as is set

@@ -386,84 +386,95 @@
               <span class="text-danger" id="agent_comment_error"></span>
             </div>
 
-            <div class="col-md-6 form-group">
+          <div class="col-md-6 form-group">
               <label for="receipt_no">
                 Receipt No <span class="mandetory_field" style="color:red">*</span>
               </label>
-              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
-                <option value="">-- Select Receipt No --</option>
-                {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
-                    {{ rcpt }}
-                  </option>
-                {% endfor %}
-              </select> {% endcomment %}
-
               <select name="receipt_no" class="form-control" id="receipt_no">
                 <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
                 {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt.receipt_number }}" 
-                          {% if property.receipt_no == rcpt.receipt_number %}selected{% endif %}>
-                    {{ rcpt.receipt_number }}
-                  </option>
-                {% endfor %}
-              </select>
-              <span class="text-danger" id="receipt_no_error"></span>
-            </div>
-
-            {% comment %} Adding receiptno2 field {% endcomment %}
-            <div class="col-md-6 form-group">
-              <label for="receipt_no2">
-                Receipt No-2 <span class="mandetory_field" style="color:red">*</span>
-              </label>
-              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
-                <option value="">-- Select Receipt No --</option>
-                {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
+                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt %}selected{% endif %}>
                     {{ rcpt }}
                   </option>
                 {% endfor %}
-              </select> {% endcomment %}
-
-              <select name="receipt_no2" class="form-control" id="receipt_no2">
-                <option value="">-- Select Receipt No --</option>
-                {% for rcpt in receipt_nos2 %}
-                  <option value="{{ rcpt.receipt_number }}" 
-                          {% if property.receipt_no2 == rcpt.receipt_number %}selected{% endif %}>
-                    {{ rcpt.receipt_number }}
-                  </option>
-                {% endfor %}
               </select>
               <span class="text-danger" id="receipt_no_error"></span>
             </div>
-            {% comment %} Adding receipt_no 3 field column {% endcomment %}
+             <div class="col-md-6 form-group">
+              <label for="receipt_no2">
+                Receipt No - 2 
+              </label>
+              <select name="receipt_no2" class="form-control" id="receipt_no2">
+                <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos2 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no2 == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no2_error"></span>   <!-- UNIQUE -->
+            </div>
+
 
 
             <div class="col-md-6 form-group">
               <label for="receipt_no3">
-                Receipt No-3 <span class="mandetory_field" style="color:red">*</span>
+                Receipt No - 3 
               </label>
-              {% comment %} <select name="receipt_no" class="form-control" id="receipt_no">
+              <select name="receipt_no3" class="form-control" id="receipt_no3">
                 <option value="">-- Select Receipt No --</option>
-                {% for rcpt in receipt_nos %}
-                  <option value="{{ rcpt }}" {% if property.receipt_no == rcpt.receipt_no %}selected{% endif %}>
+                <option value="Null" {% if property.receipt_no == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos3 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no3 == rcpt %}selected{% endif %}>
                     {{ rcpt }}
                   </option>
                 {% endfor %}
-              </select> {% endcomment %}
-
-              <select name="receipt_no3" class="form-control" id="receipt_no3">
-                <option value="">-- Select Receipt No-3 --</option>
-                {% for rcpt in receipt_nos3 %}
-                  <option value="{{ rcpt.receipt_number }}" 
-                          {% if property.receipt_no3 == rcpt.receipt_number %}selected{% endif %}>
-                    {{ rcpt.receipt_number }}
+              </select>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no3_error"></span>   <!-- UNIQUE -->
+            </div>
+            
+             <div class="col-md-6 form-group">
+              <label for="receipt_no4">
+                Receipt No - 4 
+              </label>
+              <select name="receipt_no4" class="form-control" id="receipt_no4">
+                <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no4 == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no4 == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos4 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no4 == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
                   </option>
                 {% endfor %}
               </select>
-              <span class="text-danger" id="receipt_no_error"></span>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no4_error"></span>   <!-- UNIQUE -->
             </div>
-          </div>
+             <div class="col-md-6 form-group">
+              <label for="receipt_no5">
+                Receipt No - 5 
+              </label>
+              <select name="receipt_no5" class="form-control" id="receipt_no5">
+                <option value="">-- Select Receipt No --</option>
+                <option value="Null" {% if property.receipt_no5 == 'Null' %}selected{% endif %}>Null</option>
+                <option value="No Commission" {% if property.receipt_no5 == 'No Commission' %}selected{% endif %}>No Commission</option>
+                {% for rcpt in receipt_nos5 %}
+                  <option value="{{ rcpt }}" {% if property.receipt_no5 == rcpt %}selected{% endif %}>
+                    {{ rcpt }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% comment %} <span class="text-danger" id="receipt_no_error"></span> {% endcomment %}
+              <span class="text-danger" id="receipt_no5_error"></span>   <!-- UNIQUE -->
+            </div>
+                
 
           <div class="row">
             <div class="col-md-6 form-group">
@@ -640,6 +651,7 @@
               <div id="upload_prevss" class="poa_copy_list"></div>
               <span class="text-danger" id="poa_copy_error"></span>
             </div>
+            
 
             <div class="col-md-6 form-group">
               <label for="key_hand_over_form">Key Hand Over Form</label><br>
@@ -685,6 +697,32 @@
               <input type="hidden" id="kyc_form_new_removed_count" name="kyc_form_new_removed_count">
               <div id="upload_prevss" class="kyc_form_list"></div>
               <span class="text-danger" id="kyc_form_error"></span>
+            </div>
+          </div>
+                    <div class="row">
+            <div class="col-md-6 form-group">
+              <label for="commission_shortfall_form_copy">Commission Shortfall Form Copy</label><br>
+              <input multiple="multiple" class="imageUploadInput" id="commission_shortfall_form_copy" type="file" name="commission_shortfall_form_copy[]">
+              <div class="upload_prev">
+                {% if property.commission_shortfall_form_copy %}
+                  {% for file in property.commission_shortfall_form_copy|split:","%}
+                    <a href="{{ file.url|clean_s3 }}" target="_new">Commission Shortfall Form Copy{{ forloop.counter }}</a>
+                    <p class="remove_file" id="{{ file.url }}" data-name="commission_shortfall_form_copy" data-existing="old">X</p>
+                  {% endfor %}
+                {% else %}
+                  No file chosen
+                {% endif %}
+              </div>
+              <input type="hidden" id="commission_shortfall_form_copy_existing_count" name="commission_shortfall_form_copy_existing_count" value="{% if property.commission_shortfall_form_copy %}{{ property.commission_shortfall_form_copy|split:","|length }}{% else %}0{% endif %}">
+              <input type="hidden" id="commission_shortfall_form_copy_existing_values" name="commission_shortfall_form_copy_existing_values">
+              <input type="hidden" id="commission_shortfall_form_copy_removed" name="commission_shortfall_form_copy_mou_removed">
+              <input type="hidden" id="commission_shortfall_form_copy_new_removed_count" name="commission_shortfall_form_copy_new_removed_count">                     
+              <div id="upload_prevss" class="commission_shortfall_form_copy_list"></div>
+              <span class="text-danger" id="commission_shortfall_form_copy_error"></span>
+            </div> 
+            <div class="col-md-6 form-group mb-3">
+              <label for="screening_comments">Screening Comments</label>
+              <textarea class="form-control" name="screening_comments" id="screening_comments" rows="5" cols="50" placeholder="Screening Comments">{{ property.screening_comments }}</textarea>
             </div>
           </div>
 
