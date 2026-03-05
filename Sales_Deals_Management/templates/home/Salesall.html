@@ -8,11 +8,28 @@
         <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h3>List of <span id="saleheading"></span></h3>
-                  {% if perms.core.add_salesdeals %}
-                  <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
-                    >Create Sale Deal</a
-                  >
-                  {% endif %}
+
+                
+
+
+                  <div class="d-flex gap-2">
+                    {% if perms.core.view_admin_sales_fields %}
+                    <button type="button" class="btn btn-primary" id="edit_reference_number">
+                      Edit Reference Number
+                    </button>
+                    {% endif %}
+
+                    {% if perms.core.add_salesdeals %}
+                    <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
+                      >Create Sale Deal</a
+                    >
+                    {% endif %}
+                  </div>
+
+
+
+
+
                 </div>
         </div>
 
@@ -224,14 +241,111 @@
   </div>
 </div>
 
+<!-- Edit Reference Number Modal -->
+ 
 
-{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<div class="modal fade" id="adminFieldsModal" tabindex="-1" role="dialog" aria-labelledby="adminFieldsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adminFieldsModalLabel">Edit Reference Number
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="adminFieldsForm" novalidate="novalidate">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="modal_reference_number_prefix">Reference Type<span class="mandetory_field">*</span></label>
+                <select class="form-control" id="modal_reference_number_prefix" name="modal_reference_number_prefix" required>
+                  <option value="">Select Option</option>
+                  <option value="CPM">CPM</option>
+                  <option value="CPS">CPS</option>
+                  <option value="CPMR">CPMR</option>
+                  <option value="CP">CP</option>
+                  <option value="CPR">CPR</option>
+                </select>
+                <span class="text-danger" id="modal_reference_number_prefix_error"></span>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="modal_reference_number_suffix">Reference Number<span class="mandetory_field">*</span></label>
+                <input type="text" class="form-control" id="modal_reference_number_suffix" name="modal_reference_number_suffix" placeholder="Enter reference number" required>
+                <span class="text-danger" id="modal_reference_number_suffix_error"></span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="modal_cancel_btn" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="submit_admin_fields">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Edit Reference Number Modal -->
+ 
+
+<div class="modal fade" id="adminFieldsModal" tabindex="-1" role="dialog" aria-labelledby="adminFieldsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adminFieldsModalLabel">Edit Reference Number
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="adminFieldsForm" novalidate="novalidate">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="modal_reference_number_prefix">Reference Type<span class="mandetory_field">*</span></label>
+                <select class="form-control" id="modal_reference_number_prefix" name="modal_reference_number_prefix" required>
+                  <option value="">Select Option</option>
+                  <option value="CPM">CPM</option>
+                  <option value="CPS">CPS</option>
+                  <option value="CPMR">CPMR</option>
+                  <option value="CP">CP</option>
+                  <option value="CPR">CPR</option>
+                </select>
+                <span class="text-danger" id="modal_reference_number_prefix_error"></span>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="modal_reference_number_suffix">Reference Number<span class="mandetory_field">*</span></label>
+                <input type="text" class="form-control" id="modal_reference_number_suffix" name="modal_reference_number_suffix" placeholder="Enter reference number" required>
+                <span class="text-danger" id="modal_reference_number_suffix_error"></span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="modal_cancel_btn" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="submit_admin_fields">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/static/assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="/static/assets/vendor/bootstrap/dist/js/.bundle.min.js"></script>
 <script src="/static/assets/vendor/js-cookie/js.cookie.js"></script>
 <script src="/static/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
 <script src="/static/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="/static/assets/js/datatables.min.js"></script>
 <link
   rel="stylesheet"
@@ -253,9 +367,193 @@
 
 
 <script>
+  $(document).on("click", ".edit-deal-btn", function () {
+
+    var dealId_edit = $(this).data("id");
+    var currentReferenceNumber = $(this).data("reference");
+
+    console.log(dealId_edit, currentReferenceNumber);
+      $('#adminFieldsForm')[0].reset();
+      $('#modal_reference_number_prefix_error').text('');
+      $('#modal_reference_number_suffix_error').text('');
 
 
+    if (currentReferenceNumber  ) {
+        if (currentReferenceNumber.includes('-')) {
+          
+          var parts = currentReferenceNumber.split('-');
+        }
+        else if(currentReferenceNumber.includes('/')) {
+          var parts = currentReferenceNumber.split('/');
+        }
+        else {
+          var parts = [currentReferenceNumber]; // If no delimiter, treat entire string as suffix
+        }
+        var referenceType = parts[0].trim().toUpperCase();
+        var referenceNumber = parts[1] ? parts[1].trim() : '';
 
+        $('#modal_reference_number_prefix').val(referenceType);
+        
+        // Set the input value
+        $('#modal_reference_number_suffix').val(referenceNumber);
+
+    }
+
+    $.validator.addMethod(
+  "alpha_numeric_reference",
+  function (value, element, param) {
+    return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+  },
+  "Please enter only numbers and letters (no special symbols)"
+);
+     
+       
+        $('#adminFieldsForm').validate({
+      rules: {
+        modal_reference_number_prefix: {
+          required: true
+        },
+        modal_reference_number_suffix: {
+          required: true,
+          alpha_numeric_reference: true,
+          maxlength: 255
+        }
+      },
+      messages: {
+        modal_reference_number_prefix: {
+          required: "Please select a reference type"
+        },
+        modal_reference_number_suffix: {
+          required: "Please enter a reference number",
+          alpha_numeric_reference: "Please enter only numbers and letters (no special symbols)",
+          maxlength: "Maximum 255 characters allowed"
+        }
+      },
+      errorPlacement: function(error, element) {
+        var fieldName = element.attr('name');
+        $('#' + fieldName + '_error').text(error.text());
+      },
+      highlight: function(element) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function(element) {
+        $(element).removeClass('is-invalid');
+        // Clear error message when field becomes valid
+        var fieldName = $(element).attr('name');
+        $('#' + fieldName + '_error').text('');
+      }
+    });
+
+    // Submit Admin Fields Form - Call API to clone deal with new reference
+    $('#submit_admin_fields').on('click', function() {
+      if ($('#adminFieldsForm').valid()) {
+        var referenceType = $('#modal_reference_number_prefix').val();
+        var referenceNumber = $('#modal_reference_number_suffix').val();
+
+        console.log(currentReferenceNumber, referenceType, referenceNumber);
+        // CheckurrentReferenceNumber
+        
+        // Combine the values
+ 
+       
+        var fullReferenceNumber = referenceType + '-' + referenceNumber;
+      
+        
+        // Get the deal ID from the page
+        var dealId = dealId_edit;
+        
+        console.log('Reference Type: ' + referenceType);
+        console.log('Reference Number: ' + referenceNumber);
+        console.log('Full Reference Number: ' + fullReferenceNumber);
+        console.log('Deal ID: ' + dealId);
+        
+        // Show loading message
+        swal({
+          title: "Processing...",
+          text: "Edited the deal with new reference number",
+          icon: "info",
+          buttons: false,
+          closeOnClickOutside: false,
+          closeOnEsc: false
+        });
+        
+        // Make API call to clone deal with new reference
+        $.ajax({
+          url: '/sales-deals/edit_reference_number/' + dealId + '/',
+          type: 'POST',
+          contentType: 'application/json',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          data: JSON.stringify({
+            new_reference: fullReferenceNumber
+          }),
+          success: function(response) {
+            console.log('API Response:', response);
+            
+            if (response.status === 'success') {
+              // Update the reference_number field in the main form
+              $('#reference_number').val(fullReferenceNumber);
+              
+              // Close the modal
+              $('#adminFieldsModal').modal('hide');
+              
+              // Show success message
+              swal("Success!", "Deal cloned successfully with new reference: " + fullReferenceNumber + ". New Deal ID: " + response.new_deal_id, "success");
+              
+              // Optionally reload the page after 2 seconds
+              setTimeout(
+                function() {
+                  window.location.reload();
+                },
+               2000);
+            } else {
+              swal("Error", response.message || "Failed to clone deal", "error");
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error('API Error:', error);
+            console.error('Response:', xhr.responseText);
+            
+            let errorMessage = "An error occurred while cloning the deal";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMessage = xhr.responseJSON.message;
+            }
+            
+            swal("Error", errorMessage, "error");
+          }
+        });
+      }
+    });
+
+    // Handle modal close - reset form when closed
+    $('#adminFieldsModal').on('hidden.bs.modal', function() {
+      $('#adminFieldsForm')[0].reset();
+      $('#modal_reference_number_prefix_error').text('');
+      $('#modal_reference_number_suffix_error').text('');
+    });
+
+    
+
+    $("#adminFieldsModal").data("deal-id", dealId_edit);
+
+
+       // Close modal on Cancel button click
+    $('#modal_cancel_btn').on('click', function() {
+      $('#adminFieldsModal').modal('hide');
+    });
+
+    // Close modal on Close (X) button click
+    $('.modal-header .close').on('click', function() {
+      $('#adminFieldsModal').modal('hide');
+    });
+
+});
 </script>
+
+<!-- Admin Fields Modal Script -->
+
+ 
+ 
 
 {% endblock %}

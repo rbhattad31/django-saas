@@ -1,9 +1,8 @@
 from django.urls import path
 from . import views
-from .views import SalesDealViewSet, SalesDealViewSet_update
+from .views import SalesDealViewSet, SalesDealViewSet_update, SalesDealViewset_edit_reference_number
 from django.urls import path
 from .views import  create_sales_deal_page , edit_sales_deal_page
-from django.contrib.auth.views import LogoutView
 from .views import Sales_DealViewSet_update_single_field, SalesDealViewSet_create
  
 
@@ -45,6 +44,7 @@ urlpatterns = [
     path('sales-deals/pending-finance/', views.all_sales_deals, name='Sales-deal-pending-finance'),
     path('sales-deals/entered-finance/', views.all_sales_deals, name='Sales-deal-entered-finance'),
     path('sales-deals/update-single-field/', Sales_DealViewSet_update_single_field, name='update_single_field'),
+    path('sales-deals/edit_reference_number/<int:pk>/', SalesDealViewset_edit_reference_number, name='sales-deals-edit-reference-number'),
 
     # Auth views
     # path('login/', login_view, name="login"),

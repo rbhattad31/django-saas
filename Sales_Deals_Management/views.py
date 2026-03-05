@@ -26,6 +26,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from Rental_Deal.Utilities import upload_file_to_full_s3_url, delete_from_s3, s3_file_exists
+import boto3
+from django.db import transaction
 
 
 # Create your views here.
@@ -55,6 +57,142 @@ from django.db.models import Q
 logger = logging.getLogger('Sales_Deals_Management')
 
 
+# ========== S3 Configuration & Utility Functions ==========
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    region_name=settings.AWS_S3_REGION_NAME
+)
+
+BUCKET_NAME = "deal-saas"
+
+
+def copy_reference_folder(old_ref, new_ref):
+    """
+    Copy S3 folder from old reference to new reference.
+    Supports CPS, CPM, CPMR, CP, CPR prefixes.
+    """
+    print(f"Starting S3 folder copy from {old_ref} to {new_ref}")
+    try:
+        # Extract prefix from old reference (before the dash)
+         
+        
+        old_prefix = f"live/classic_properties/sale/referencenumber_CPS/{old_ref}/"
+        new_prefix = f"live/classic_properties/sale/referencenumber_CPS/{new_ref}/"
+
+        print(old_prefix)
+        # Check if the new reference folder already exists in S3
+        paginator_check = s3.get_paginator("list_objects_v2")
+        new_folder_exists = False
+        print(new_prefix)
+        
+        for page in paginator_check.paginate(Bucket=BUCKET_NAME, Prefix=new_prefix, MaxKeys=1):
+            if "Contents" in page:
+                new_folder_exists = True
+                break
+        
+        if new_folder_exists:
+            logger.info(f"Folder already exists for new reference: {new_ref}. Skipping file copy.")
+            return True
+
+        paginator = s3.get_paginator("list_objects_v2")
+
+        print( "new_floder_exists", new_folder_exists)
+
+        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix=old_prefix):
+            if "Contents" not in page:
+                logger.info(f"No files found in S3 for reference: {old_ref}")
+                return
+
+            for obj in page["Contents"]:
+                old_key = obj["Key"]
+
+                # Replace only the first occurrence
+                new_key = old_key.replace(old_prefix, new_prefix, 1)
+
+                s3.copy_object(
+                    Bucket=BUCKET_NAME,
+                    CopySource={"Bucket": BUCKET_NAME, "Key": old_key},
+                    Key=new_key
+                )
+
+                logger.info(f"Copied: {old_key} → {new_key}")
+
+        logger.info("S3 Folder copy completed successfully.")
+        return True
+    except Exception as e:
+        logger.error(f"Error copying S3 folder: {str(e)}")
+        print(f"Error copying S3 folder: {str(e)}")
+        raise
+
+
+@transaction.atomic
+def clone_deal_with_new_reference(old_deal_id, new_reference):
+    """
+    Clone a deal with a new reference number.
+    Steps:
+    1. Soft delete the original deal first (to avoid conflicts)
+    2. Check if new reference already exists
+    3. Copy S3 files from old reference to new reference
+    4. Create a new deal record with updated reference
+    5. Update receipts with new deal reference
+    """
+    try:
+        # 1️⃣ Get the old deal and store its original reference
+        old_deal = SalesDeals.objects.get(id=old_deal_id)
+        old_reference = old_deal.reference_number
+        logger.info(f"Cloning deal {old_deal_id} with reference: {old_reference}")
+
+        # Store receipt IDs before modifying the old deal
+        receipt_ids = [old_deal.receipt_id, old_deal.receipt_id2, old_deal.receipt_id3]
+        receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
+
+        # 2️⃣ Soft delete the old deal immediately (rename it to avoid conflicts)
+        old_deal.is_deleted = "Y"
+        old_deal.reference_number = old_reference + "D"
+        old_deal.save()
+        logger.info(f"Soft deleted old deal. Updated reference to: {old_deal.reference_number}")
+
+        # 3️⃣ Check if new reference already exists (check both dash and slash variations)
+        # For example, if new_reference is "CPS-204", also check for "CPS/204"
+        new_reference_dash = new_reference.replace("/", "-")
+        new_reference_slash = new_reference.replace("-", "/")
+        
+        if SalesDeals.objects.filter(
+            Q(reference_number=new_reference) | 
+            Q(reference_number=new_reference_dash) | 
+            Q(reference_number=new_reference_slash)
+        ).filter(is_deleted='N').exists():
+            raise ValueError(f"Reference number {new_reference} already exists. Please choose a unique reference number.")
+
+        # 4️⃣ Copy S3 files from old reference to new reference
+        copy_reference_folder(old_reference, new_reference)
+
+        # 5️⃣ Create new deal (clone from the original values)
+        new_deal = SalesDeals.objects.get(id=old_deal_id)  # Get the original data again
+        new_deal.pk = None  # This makes it a new record
+        new_deal.reference_number = new_reference
+        new_deal.is_deleted = "N"
+        new_deal.save()
+        
+        logger.info(f"Created new deal with ID: {new_deal.id}, reference: {new_reference}")
+        
+        # 6️⃣ Update receipts with new deal reference
+        if receipt_ids:
+            Receipts.objects.filter(id__in=receipt_ids).update(
+                deal_refer_no=new_reference,
+                status='Used'
+            )
+            logger.info(f"Updated {len(receipt_ids)} receipts with new reference: {new_reference}")
+        
+        logger.info(f"Deal cloned successfully. New reference: {new_reference}, Deal ID: {new_deal.id}")
+        return new_deal
+    except Exception as e:
+        logger.error(f"Error cloning deal: {str(e)}")
+        raise
+
+
 
 class SalesDealViewSet(viewsets.ModelViewSet):
     # queryset = SalesDeals.objects.all()
@@ -76,6 +214,96 @@ class SalesDealViewSet(viewsets.ModelViewSet):
         SalesDeals.objects.filter(pk=pk).update(reference_number= sales.reference_number+"D")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+    @action(detail=True, methods=['post'], url_path='clone-with-reference')
+    def clone_deal_with_new_ref(self, request, pk=None):
+        """
+        API endpoint to clone a deal with a new reference number.
+        
+        POST /api/sales-deals/{id}/clone-with-reference/
+        
+        Request body:
+        {
+            "new_reference": "CPS-123456"
+        }
+        
+        Returns:
+        {
+            "status": "success",
+            "message": "Deal cloned successfully",
+            "new_deal_id": 123,
+            "new_reference": "CPS-123456"
+        }
+        """
+        try:
+            # Get new reference from request body
+            new_reference = request.data.get('new_reference')
+            
+            if not new_reference:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": "new_reference is required in request body"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Validate reference format (should contain dash)
+            if '-' not in new_reference:
+                return Response(
+                    {
+                        "status": "error",
+                        "message": "Invalid reference format. Please use format like 'CPM-12345'"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Clone the deal
+            new_deal = clone_deal_with_new_reference(pk, new_reference)
+            
+            # Get receipt count for the new deal
+            receipt_count = 0
+            receipt_ids = [new_deal.receipt_id, new_deal.receipt_id2, new_deal.receipt_id3]
+            receipt_count = len([rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0])
+            
+            return Response(
+                {
+                    "status": "success",
+                    "message": "Deal cloned successfully",
+                    "new_deal_id": new_deal.id,
+                    "new_reference": new_deal.reference_number,
+                    "receipts_updated": receipt_count
+                },
+                status=status.HTTP_201_CREATED
+            )
+            
+        except ValueError as e:
+            logger.warning(f"Validation error when cloning deal {pk}: {str(e)}")
+            return Response(
+                {
+                    "status": "error",
+                    "message": str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except SalesDeals.DoesNotExist:
+            logger.error(f"Deal not found with id: {pk}")
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"Deal with ID {pk} not found"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            logger.error(f"Error cloning deal {pk}: {str(e)}")
+            return Response(
+                {
+                    "status": "error",
+                    "message": f"An error occurred while cloning the deal: {str(e)}"
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=True, methods=['get'], url_path='view')
     def view_sales_deal(self, request, pk=None):
@@ -1189,6 +1417,7 @@ SalesDealViewSet_filter = SalesDealViewSet.as_view({'post': 'datatable_filter'})
 SalesDealViewSet_update = SalesDealViewSet.as_view({'put': 'update_sales_deal', 'get': 'update_sales_deal'})
 Sales_DealViewSet_update_single_field = SalesDealViewSet.as_view({'put': 'update_single_field'})
 SalesDealViewSet_create = SalesDealViewSet.as_view({'post': 'create_sale_deal'})
+SalesDealViewset_edit_reference_number = SalesDealViewSet.as_view({'post': 'clone_deal_with_new_ref'})
 
 
 
@@ -1300,6 +1529,11 @@ def edit_sales_deal_page(request, pk):
     return render(request, 'home/editsalesdeal.html', {'deal_id': pk, 'aws_url': aws_url, 'reference_number': sales_deal.reference_number ,'sales_data': json.dumps(sales_data)})
 
 
+
+
+
+
+ 
 
 
 

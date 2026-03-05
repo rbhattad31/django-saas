@@ -60,8 +60,11 @@ class SalesDealSerializer(serializers.ModelSerializer):
 
         # Delete
         if user.has_perm('core.delete_salesdeals'):
+            
             html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
-
+        
+        # if user.has_perm('core.view_admin_sales_fields'):
+        #     html += f'<a href="#" class="text-warning mx-2 edit-deal-btn" data-id="{obj.id}" data-reference="{obj.reference_number}" data-bs-toggle="modal" data-bs-target="#editReferenceModal"> <i class="fas fa-edit"></i></a> '
         return format_html(html)
     
 
@@ -360,8 +363,10 @@ class SalesDealSerializerFordatafilter(serializers.ModelSerializer):
 
         # Delete
         if user.has_perm('core.delete_salesdeals'):
-            html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
+            html += f'<br> <a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
 
+        if user.has_perm('core.view_admin_sales_fields'):
+            html += f'<a href="#" class=" mx-2 edit-deal-btn" data-id="{obj.id}" data-reference="{obj.reference_number}" data-bs-toggle="modal"  id = "edit_reference_number" data-bs-target="#adminFieldsModal" style="text-decoration: none; padding-left: 7px;"> <i class="fas fa-clone" style="color: violet;"></i></a> '
         return format_html(html)
     
     # display agent names for the three agents
