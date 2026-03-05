@@ -65,7 +65,7 @@ s3 = boto3.client(
     region_name=settings.AWS_S3_REGION_NAME
 )
 
-BUCKET_NAME = "deal-saas"
+BUCKET_NAME = settings.AWS_S3_BUCKET_NAME
 
 
 def copy_reference_folder(old_ref, new_ref):
@@ -304,6 +304,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
     @action(detail=True, methods=['get'], url_path='view')
     def view_sales_deal(self, request, pk=None):
