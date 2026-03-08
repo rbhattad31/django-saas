@@ -57,15 +57,8 @@ from django.db.models import Q
 logger = logging.getLogger('Sales_Deals_Management')
 
 
-# ========== S3 Configuration & Utility Functions ==========
-s3 = boto3.client(
-    "s3",
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name=settings.AWS_S3_REGION_NAME
-)
+ 
 
-BUCKET_NAME = settings.AWS_S3_BUCKET_NAME
 
 
 def copy_reference_folder(old_ref, new_ref):
@@ -74,6 +67,15 @@ def copy_reference_folder(old_ref, new_ref):
     Supports CPS, CPM, CPMR, CP, CPR prefixes.
     """
     print(f"Starting S3 folder copy from {old_ref} to {new_ref}")
+
+    s3 = boto3.client(
+    "s3",
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    region_name=settings.AWS_S3_REGION_NAME
+)
+
+    BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
     try:
         # Extract prefix from old reference (before the dash)
          
@@ -148,6 +150,15 @@ def clone_deal_with_new_reference(old_deal_id, new_reference):
         receipt_ids = [old_deal.receipt_id, old_deal.receipt_id2, old_deal.receipt_id3]
         receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
 
+        new_reference_dash = new_reference.replace("/", "-")
+        new_reference_slash = new_reference.replace("-", "/")
+        if SalesDeals.objects.filter(
+            Q(reference_number=new_reference) | 
+            Q(reference_number=new_reference_dash) | 
+            Q(reference_number=new_reference_slash)
+        ).filter(is_deleted='N').exists():
+            raise ValueError(f"Reference number {new_reference} already exists or Number is not changed. Please choose a unique reference number.")
+
         # 2️⃣ Soft delete the old deal immediately (rename it to avoid conflicts)
         old_deal.is_deleted = "Y"
         old_deal.reference_number = old_reference + "D"
@@ -156,16 +167,7 @@ def clone_deal_with_new_reference(old_deal_id, new_reference):
 
         # 3️⃣ Check if new reference already exists (check both dash and slash variations)
         # For example, if new_reference is "CPS-204", also check for "CPS/204"
-        new_reference_dash = new_reference.replace("/", "-")
-        new_reference_slash = new_reference.replace("-", "/")
-        
-        if SalesDeals.objects.filter(
-            Q(reference_number=new_reference) | 
-            Q(reference_number=new_reference_dash) | 
-            Q(reference_number=new_reference_slash)
-        ).filter(is_deleted='N').exists():
-            raise ValueError(f"Reference number {new_reference} already exists. Please choose a unique reference number.")
-
+ 
         # 4️⃣ Copy S3 files from old reference to new reference
         copy_reference_folder(old_reference, new_reference)
 

@@ -13,11 +13,7 @@
 
 
                   <div class="d-flex gap-2">
-                    {% if perms.core.view_admin_sales_fields %}
-                    <button type="button" class="btn btn-primary" id="edit_reference_number">
-                      Edit Reference Number
-                    </button>
-                    {% endif %}
+                     
 
                     {% if perms.core.add_salesdeals %}
                     <a href="{% url 'sales-deals-create-page' %}" class="btn btn-primary"
