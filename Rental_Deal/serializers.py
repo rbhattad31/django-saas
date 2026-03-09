@@ -632,7 +632,10 @@ class DealSerializerfordatatable(serializers.ModelSerializer):
         # Delete
         if user.has_perm('core.delete_rentaldeals'):
             html += f'<a href="#" class="text-danger delete-btn" data-id="{obj.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash"></i></a>'
-
+        
+        if user.has_perm('core.view_admin_rental_fields'):
+            html += f'<a href="#" class=" mx-2 edit-deal-btn" data-id="{obj.id}" data-reference="{obj.reference_number}" data-bs-toggle="modal"  id = "edit_reference_number" data-bs-target="#adminFieldsModal" style="text-decoration: none; padding-left: 7px;"> <i class="fas fa-clone" style="color: violet;"></i></a> '
+       
         return format_html(html)
     
 
