@@ -236,8 +236,7 @@ $(document).ready(function () {
           let actionsHtml =""
           if(row.can_view){
             console.log("in hte can _view")
-          actionsHtml += `
-                                <a href="/rental-properties/${row.id}/view/" class="text-primary"><i class="fas fa-eye"></i></a>
+          actionsHtml += `<a href="/rental-properties/${row.id}/view/" class="text-primary"><i class="fas fa-eye"></i></a>
                             `;
           }
           // Conditionally add the Edit button
@@ -248,7 +247,7 @@ $(document).ready(function () {
             }
             else{
               actionsHtml += `
-                                     <a href="/rental-properties/${row.id}/edit/" class="text-warning mx-2"><i class="fas fa-edit"></i></a>
+                                     <a href="/rental-properties/${row.id}/edit/" class="text-warning ml-2"><i class="fas fa-edit"></i></a>
                                 `;
             }
             
@@ -263,6 +262,15 @@ $(document).ready(function () {
                                 `;
           } 
 
+          if (row.can_delete) {
+            actionsHtml += `
+              <a href="#" class="ml-1 edit-deal-btn" data-id="${row.id}" data-reference="${row.reference_number || ''}" data-bs-toggle="modal" data-bs-target="#adminFieldsModal" style="text-decoration: none; padding-left: 7px;">
+                <i class="fas fa-clone" style="color: violet;"></i>
+              </a>
+            `;
+          }
+ 
+
           if(row.status=='Expired'||row.status=='About To Expire'){
                 actionsHtml += `
                   <a href="/rental-properties/${row.id}/renew/" class="text-primary mr-2" title="Renew Property">
@@ -271,6 +279,7 @@ $(document).ready(function () {
                 `;
           }
 
+           
            
           return actionsHtml;
         }
@@ -290,9 +299,16 @@ $(document).ready(function () {
       {
         data: "submitted_date",
         title: "Submitted Date",
-        render: data => new Date(data).toLocaleDateString()
+        render: data => data ? new Date(data).toLocaleDateString() : ''
       },
+      {
+        data: "re_submitted_date",
+        title: "Re Submitted Date",
+        render: data => data ? new Date(data).toLocaleDateString():""
+      },
+
       { data: "status", title: "Status" },
+
 
       // addtional fields which adre invisible for the  Excel data export
       { data: "owner_first_name", title: "Owner First Name", visible: false },
