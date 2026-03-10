@@ -2,7 +2,7 @@
 
 from django.urls import path
 from . import views
-from .views import   Rental_PropertyViewSet
+from .views import   Rental_PropertyViewSet, RentalProperties_ViewSset_Edit_Reference_number
 from .views import PropertyAPIView, edit_property_page
 from django.contrib.auth.views import LogoutView
 from .views import rental_property_create, draft_property_list,ManagementReceiptsViewSet,edit_management_receipt
@@ -17,7 +17,7 @@ urlpatterns = [
     path('rental-properties/<int:pk>/view/', Rental_PropertyViewSet.as_view({'get': 'view_property'}), name='rental-property-view'),
     path('rental-properties/<int:pk>/', Rental_PropertyViewSet.as_view({'put': 'update'}), name='rental-property-update'),
     path('rental-properties/<int:pk>/edit/', views.edit_property_page, name='rental-property-edit'),
-    path('api/rental-properties/<int:pk>/', PropertyAPIView.as_view(), name='property-api'),
+    path('api/rental-properties/<int:pk>/', PropertyAPIView.as_view({'get': 'retrieve'}), name='property-api'),
     # path('management_receipts/downloadReceiptPDF/<int:pk>/', views.download_receipt, name='download-receipt'),
     path('rental-properties/<int:pk>/delete/', Rental_PropertyViewSet.as_view({'delete': 'delete_property'}), name='rental-property-delete'),
     path('rental-properties/create-form/', Rental_PropertyViewSet.as_view({'get': 'create_form'}), name='rental-property-create-form'),
@@ -65,4 +65,5 @@ urlpatterns = [
     path('rental-properties/<int:pk>/', Rental_PropertyViewSet.as_view({'put': 'renew'}), name='rental-property-update'),
     path('api/rental-properties/<int:pk>/update-finance/', Rental_PropertyViewSet.as_view({'post': 'update_finance', 'put': 'update_finance'}), name='rental-property-update-finance'),
 
+    path('api/rental-properties/edit_reference_number/<int:pk>/', RentalProperties_ViewSset_Edit_Reference_number, name='clone-with-reference'),
 ]

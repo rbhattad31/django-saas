@@ -314,6 +314,48 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="adminFieldsModal" tabindex="-1" role="dialog" aria-labelledby="adminFieldsModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="adminFieldsModalLabel">Edit Reference Number</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="adminFieldsForm" novalidate="novalidate">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="modal_reference_number_prefix">Reference Type<span class="mandetory_field">*</span></label>
+                    <select class="form-control" id="modal_reference_number_prefix" name="modal_reference_number_prefix" required>
+                      <option value="">Select Option</option>
+                      <option value="CPM">CPM</option>
+                      <option value="CPS">CPS</option>
+                      <option value="CPMR">CPMR</option>
+                      <option value="CP">CP</option>
+                      <option value="CPR">CPR</option>
+                    </select>
+                    <span class="text-danger" id="modal_reference_number_prefix_error"></span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="modal_reference_number_suffix">Reference Number<span class="mandetory_field">*</span></label>
+                    <input type="text" class="form-control" id="modal_reference_number_suffix" name="modal_reference_number_suffix" placeholder="Enter reference number" required>
+                    <span class="text-danger" id="modal_reference_number_suffix_error"></span>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="modal_cancel_btn" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="submit_admin_fields">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
 <style>
@@ -433,9 +475,148 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
 <!-- Your custom script -->
 <script src="/static/assets/js/Propertiescustom.js"></script>
+
+<script>
+  let cloneDealId = null;
+  let currentReferenceNumber = "";
+
+  $(document).on("click", ".edit-deal-btn", function () {
+    cloneDealId = $(this).data("id");
+    currentReferenceNumber = $(this).data("reference") || "";
+
+    if (document.getElementById('adminFieldsForm')) {
+      document.getElementById('adminFieldsForm').reset();
+    }
+    $('#modal_reference_number_prefix_error').text('');
+    $('#modal_reference_number_suffix_error').text('');
+
+    if (currentReferenceNumber) {
+      let parts;
+      if (currentReferenceNumber.includes('-')) {
+        parts = currentReferenceNumber.split('-');
+      } else if (currentReferenceNumber.includes('/')) {
+        parts = currentReferenceNumber.split('/');
+      } else {
+        parts = [currentReferenceNumber];
+      }
+
+      const referenceType = (parts[0] || '').trim().toUpperCase();
+      const referenceNumber = parts[1] ? parts[1].trim() : '';
+      $('#modal_reference_number_prefix').val(referenceType);
+      $('#modal_reference_number_suffix').val(referenceNumber);
+    }
+  });
+
+  $.validator.addMethod(
+    "alpha_numeric_reference",
+    function (value, element) {
+      return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+    },
+    "Please enter only numbers and letters (no special symbols)"
+  );
+
+  $('#adminFieldsForm').validate({
+    rules: {
+      modal_reference_number_prefix: {
+        required: true
+      },
+      modal_reference_number_suffix: {
+        required: true,
+        alpha_numeric_reference: true,
+        maxlength: 255
+      }
+    },
+    messages: {
+      modal_reference_number_prefix: {
+        required: "Please select a reference type"
+      },
+      modal_reference_number_suffix: {
+        required: "Please enter a reference number",
+        alpha_numeric_reference: "Please enter only numbers and letters (no special symbols)",
+        maxlength: "Maximum 255 characters allowed"
+      }
+    },
+    errorPlacement: function(error, element) {
+      var fieldName = element.attr('name');
+      $('#' + fieldName + '_error').text(error.text());
+    },
+    highlight: function(element) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function(element) {
+      $(element).removeClass('is-invalid');
+      var fieldName = $(element).attr('name');
+      $('#' + fieldName + '_error').text('');
+    }
+  });
+
+  $('#submit_admin_fields').on('click', function() {
+    if (!cloneDealId) {
+      swal("Error", "Deal ID not found", "error");
+      return;
+    }
+
+    if ($('#adminFieldsForm').valid()) {
+      const referenceType = $('#modal_reference_number_prefix').val();
+      const referenceNumber = $('#modal_reference_number_suffix').val();
+      const fullReferenceNumber = referenceType + '-' + referenceNumber;
+
+      swal({
+        title: "Processing...",
+        text: "Edited the deal with new reference number",
+        icon: "info",
+        buttons: false,
+        closeOnClickOutside: false,
+        closeOnEsc: false
+      });
+
+      $.ajax({
+        url: '/api/rental-properties/edit_reference_number/' + cloneDealId + '/',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        data: JSON.stringify({
+          new_reference: fullReferenceNumber
+        }),
+        success: function(response) {
+          if (response.status === 'success') {
+            $('#adminFieldsModal').modal('hide');
+            swal("Success!", "Deal cloned successfully with new reference: " + fullReferenceNumber + ". New Deal ID: " + response.new_deal_id, "success");
+            setTimeout(function() {
+              window.location.reload();
+            }, 2000);
+          } else {
+            swal("Error", response.message || "Failed to clone deal", "error");
+          }
+        },
+        error: function(xhr) {
+          let errorMessage = "An error occurred while cloning the deal";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMessage = xhr.responseJSON.message;
+          }
+          swal("Error", errorMessage, "error");
+        }
+      });
+    }
+  });
+
+  $('#adminFieldsModal').on('hidden.bs.modal', function() {
+    if (document.getElementById('adminFieldsForm')) {
+      document.getElementById('adminFieldsForm').reset();
+    }
+    $('#modal_reference_number_prefix_error').text('');
+    $('#modal_reference_number_suffix_error').text('');
+    cloneDealId = null;
+    currentReferenceNumber = "";
+  });
+</script>
 
 
 

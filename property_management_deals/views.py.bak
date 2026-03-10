@@ -93,167 +93,6 @@ from .utils import _normalize_to_s3_key, get_boto3_client, s3_file_exists
 from django.conf import settings
 import boto3, os, time, re
 from urllib.parse import urlparse, quote
-
-
-
-
-def copy_reference_folder(old_ref, new_ref):
-    """
-    Copy S3 folder from old reference to new reference.
-    Supports CPS, CPM, CPMR, CP, CPR prefixes.
-    """
-    print(f"Starting S3 folder copy from {old_ref} to {new_ref}")
-    s3 = boto3.client(
-    "s3",
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name=settings.AWS_S3_REGION_NAME
-    )
-
-    BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
-    try:
-        # Extract prefix from old reference (before the dash)
-         
-        
-        old_prefix = f"live/rental/referencenumber_CP/{old_ref}/"
-        new_prefix = f"live/rental/referencenumber_CP/{new_ref}/"
-
-        print(old_prefix)
-        # Check if the new reference folder already exists in S3
-        paginator_check = s3.get_paginator("list_objects_v2")
-        new_folder_exists_previously = False
-        print(new_prefix)
-        
-        for page in paginator_check.paginate(Bucket=BUCKET_NAME, Prefix=new_prefix, MaxKeys=1):
-            if "Contents" in page:
-                new_folder_exists_previously = True
-                break
-        
-        if new_folder_exists_previously:
-            logger.info(f"Folder already exists for new reference: {new_ref}. Skipping file copy.")
-            return True
-
-        paginator = s3.get_paginator("list_objects_v2")
-
-        print( "new_floder_exists", new_folder_exists_previously)
-
-        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix=old_prefix):
-            if "Contents" not in page:
-                logger.info(f"No files found in S3 for reference: {old_ref}")
-                return
-
-            for obj in page["Contents"]:
-                old_key = obj["Key"]
-
-                # Replace only the first occurrence
-                new_key = old_key.replace(old_prefix, new_prefix, 1)
-
-                s3.copy_object(
-                    Bucket=BUCKET_NAME,
-                    CopySource={"Bucket": BUCKET_NAME, "Key": old_key},
-                    Key=new_key
-                )
-
-                logger.info(f"Copied: {old_key} → {new_key}")
-
-        logger.info("S3 Folder copy completed successfully.")
-        return True
-    except Exception as e:
-        logger.error(f"Error copying S3 folder: {str(e)}")
-        print(f"Error copying S3 folder: {str(e)}")
-        raise
-
-
-@transaction.atomic
-def clone_deal_with_new_reference(old_deal_id, new_reference):
-    """
-    Clone a deal with a new reference number.
-    Steps:
-    1. Soft delete the original deal first (to avoid conflicts)
-    2. Check if new reference already exists
-    3. Copy S3 files from old reference to new reference
-    4. Create a new deal record with updated reference
-    5. Update receipts with new deal reference
-    """
-    try:
-        # 1️⃣ Get the old deal and store its original reference
-        old_deal = RentalProperties.objects.get(id=old_deal_id)
-        old_reference = old_deal.reference_number
-        logger.info(f"Cloning deal {old_deal_id} with reference: {old_reference}")
-
-        # Store receipt IDs before modifying the old deal
-        receipt_ids = [old_deal.receipt_no, old_deal.receipt_no2, old_deal.receipt_no3, old_deal.receipt_no4, old_deal.receipt_no5]
-        receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
-
-        new_reference_dash = new_reference.replace("/", "-")
-        new_reference_slash = new_reference.replace("-", "/")
-        
-        if RentalProperties.objects.filter(
-            Q(reference_number=new_reference) | 
-            Q(reference_number=new_reference_dash) | 
-            Q(reference_number=new_reference_slash)
-        ).filter(is_deleted='N').exists():
-            raise ValueError(f"Reference number {new_reference} already exists or Number is not changed. Please choose a unique reference number.")
-
-
-        # 2️⃣ Soft delete the old deal immediately (rename it to avoid conflicts)
-        old_deal.is_deleted = "Y"
-        old_deal.reference_number = old_reference + "D"
-        old_deal.save()
-        logger.info(f"Soft deleted old deal. Updated reference to: {old_deal.reference_number}")
-
-        # 3️⃣ Check if new reference already exists (check both dash and slash variations)
-        # For example, if new_reference is "CPS-204", also check for "CPS/204"
-        
-        # 4️⃣ Copy S3 files from old reference to new reference
-        copy_reference_folder(old_reference, new_reference)
-
-        # 5️⃣ Create new deal (clone from the original values)
-        new_deal = RentalProperties.objects.get(id=old_deal_id)  # Get the original data again
-        new_deal.pk = None  # This makes it a new record
-        new_deal.reference_number = new_reference
-        new_deal.is_deleted = "N"
-
-
-        file_fields = [
-                'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
-            'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
-            'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
-            ]
-
-        for field in file_fields:
-            value = getattr(old_deal, field)
-            print(f"Processing field {field} with value: {value}")
-
-            if value:
-                updated = ",".join(
-                    f.strip().replace(old_reference, new_reference)
-                    for f in value.split(",") if f.strip()
-                )
-                print(f"Updated field {field}: {updated}")
-                setattr(new_deal, field, updated)
-        new_deal.save()
-        
-        logger.info(f"Created new deal with ID: {new_deal.id}, reference: {new_reference}")
-        
-        # 6️⃣ Update receipts with new deal reference
-        if receipt_ids:
-            # here i aded the recipt id but they are actually recipt numbers so we need to use the same variable
-
-            ManagementReceipts.objects.filter(receipt_number__in=receipt_ids).update(
-                deal_refer_no=new_reference,
-                status='Used'
-            )
-            logger.info(f"Updated {len(receipt_ids)} receipts with new reference: {new_reference}")
-        
-        logger.info(f"Deal cloned successfully. New reference: {new_reference}, Deal ID: {new_deal.id}")
-        return new_deal
-    except Exception as e:
-        logger.error(f"Error cloning deal: {str(e)}")
-        raise
-
-
-
  
 
 
@@ -277,8 +116,8 @@ def clone_deal_with_new_reference(old_deal_id, new_reference):
 #         return super().update(request, *args, **kwargs)
     
 
-class PropertyAPIView(viewsets.ViewSet):
-    def retrieve(self, request, pk=None):
+class PropertyAPIView(APIView):
+    def get(self, request, pk):
         print("Hi")
         property_obj = get_object_or_404(RentalProperties, pk=pk)
         serializer = PropertySerializer(property_obj)
@@ -286,97 +125,7 @@ class PropertyAPIView(viewsets.ViewSet):
         return Response(serializer.data)
 
  
-    @action(detail=True, methods=['post'], url_path='clone-with-reference')
-    def clone_deal_with_new_ref(self, request, pk=None):
-        """
-        API endpoint to clone a deal with a new reference number.
-        
-        POST /api/sales-deals/{id}/clone-with-reference/
-        
-        Request body:
-        {
-            "new_reference": "CPS-123456"
-        }
-        
-        Returns:
-        {
-            "status": "success",
-            "message": "Deal cloned successfully",
-            "new_deal_id": 123,
-            "new_reference": "CPS-123456"
-        }
-        """
-        try:
-            # Get new reference from request body
-            new_reference = request.data.get('new_reference')
-            
-            if not new_reference:
-                return Response(
-                    {
-                        "status": "error",
-                        "message": "new_reference is required in request body"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            # Validate reference format (should contain dash)
-            if '-' not in new_reference:
-                return Response(
-                    {
-                        "status": "error",
-                        "message": "Invalid reference format. Please use format like 'CPM-12345'"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            # Clone the deal
-            new_deal = clone_deal_with_new_reference(pk, new_reference)
-            
-            # Get receipt count for the new deal
-            receipt_count = 0
-            receipt_ids = [new_deal.receipt_no, new_deal.receipt_no2, new_deal.receipt_no3, new_deal.receipt_no4, new_deal.receipt_no5]
-            receipt_count = len([rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0])
-            
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Deal cloned successfully",
-                    "new_deal_id": new_deal.id,
-                    "new_reference": new_deal.reference_number,
-                    "receipts_updated": receipt_count
-                },
-                status=status.HTTP_201_CREATED
-            )
-            
-        except ValueError as e:
-            logger.warning(f"Validation error when cloning deal {pk}: {str(e)}")
-            return Response(
-                {
-                    "status": "error",
-                    "message": str(e)
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except RentalProperties.DoesNotExist:
-            logger.error(f"Deal not found with id: {pk}")
-            return Response(
-                {
-                    "status": "error",
-                    "message": f"Deal with ID {pk} not found"
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            logger.error(f"Error cloning deal {pk}: {str(e)}")
-            return Response(
-                {
-                    "status": "error",
-                    "message": f"An error occurred while cloning the deal: {str(e)}"
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-
+    
     
 
     # def put(self, request, pk):
@@ -669,7 +418,7 @@ class PropertyAPIView(viewsets.ViewSet):
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
             'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
-            'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
+            'key_hand_over_form', 'kyc_form', 'screening'
         ]
         required_file_fields = [
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
@@ -965,144 +714,29 @@ class PropertyAPIView(viewsets.ViewSet):
             if key != 'cheque_date' and isinstance(mutable_data[key], list):
                 mutable_data[key] = mutable_data[key][0] if mutable_data[key] else ''
 
-        # === Handle receipt_no update with change detection ===
-        if mutable_data.get('receipt_no') is not None:
-            get_receipt_no_db = getattr(property_obj, 'receipt_no', "")
-            receipt_value = str(mutable_data.get('receipt_no')).strip()
+        # === Handle receipt update ===
+        if request.data.get('receipt_no') and request.data.get('receipt_no').isdigit():
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
+            
 
-            if receipt_value.isdigit():
-                if str(get_receipt_no_db) != receipt_value:
-                    if str(get_receipt_no_db).isdigit() or get_receipt_no_db == "None":
-                        if str(get_receipt_no_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no: {get_receipt_no_db}")
-                    
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no: {receipt_value} to deal: {reference_number}")
+        # Handling receipt updates for receipt no 2 and receipt no 3
+        # === Handle receipt2 update ===
 
-                if str(get_receipt_no_db) == receipt_value:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value).update(status='Used', deal_refer_no=reference_number)
+        if request.data.get('receipt_no2') and request.data.get('receipt_no2').isdigit():
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no2'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
 
-                    
-            else:
-                if receipt_value in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no due to special value: {receipt_value}")
+        # === Handle receipt3 update ===
 
-        # === Handle receipt_no2 update with change detection ===
-        if mutable_data.get('receipt_no2') is not None:
-            get_receipt_no2_db = getattr(property_obj, 'receipt_no2', "")
-            receipt_value2 = str(mutable_data.get('receipt_no2')).strip()
+        if request.data.get('receipt_no3') and request.data.get('receipt_no3').isdigit():
+            ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no3'))\
+                .update(status='Used', deal_refer_no=mutable_data.get('reference_number'))
 
-            if receipt_value2.isdigit():
-                if str(get_receipt_no2_db) != receipt_value2:
-                    if str(get_receipt_no2_db).isdigit() or get_receipt_no2_db == "None":
-                        if str(get_receipt_no2_db).isdigit():    
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f"Released old receipt_no2: {get_receipt_no2_db}")
-                    
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value2)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no2: {receipt_value2} to deal: {reference_number}")
-                
-                if str(get_receipt_no2_db) == receipt_value2:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value2).update(status='Used', deal_refer_no=reference_number)
-
-
-
-            else:
-                if receipt_value2 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no2_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no2 due to special value: {receipt_value2}")
-
-        # === Handle receipt_no3 update with change detection ===
-        if mutable_data.get('receipt_no3') is not None:
-            get_receipt_no3_db = getattr(property_obj, 'receipt_no3', "")
-            receipt_value3 = str(mutable_data.get('receipt_no3')).strip()
-
-            if receipt_value3.isdigit():
-                if str(get_receipt_no3_db) != receipt_value3:
-                    if str(get_receipt_no3_db).isdigit() or get_receipt_no3_db == "None":
-                        if str(get_receipt_no3_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no3: {get_receipt_no3_db}")
-                    
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value3)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no3: {receipt_value3} to deal: {reference_number}")
-                if str(get_receipt_no3_db) == receipt_value3:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value3).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value3 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no3_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no3 due to special value: {receipt_value3}")
-        
-        if mutable_data.get('receipt_no4') is not None:
-            get_receipt_no4_db = getattr(property_obj, 'receipt_no4', "")
-            receipt_value4 = str(mutable_data.get('receipt_no4')).strip()
-
-            if receipt_value4.isdigit():
-                if str(get_receipt_no4_db) != receipt_value4:
-                    if str(get_receipt_no4_db).isdigit() or get_receipt_no4_db == "None":
-                        if str(get_receipt_no4_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no4_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no4: {get_receipt_no4_db}")
-                    
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value4)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no4: {receipt_value4} to deal: {reference_number}")
-                if str(get_receipt_no4_db) == receipt_value4:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value4).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value4 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no4_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no4_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no4 due to special value: {receipt_value4}")
-        
-
-        if mutable_data.get('receipt_no5') is not None:
-            get_receipt_no5_db = getattr(property_obj, 'receipt_no5', "")
-            receipt_value5 = str(mutable_data.get('receipt_no5')).strip()
-
-            if receipt_value5.isdigit():
-                if str(get_receipt_no5_db) != receipt_value5:
-                    if str(get_receipt_no5_db).isdigit() or get_receipt_no5_db == "None":
-                        if str(get_receipt_no5_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no5_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no5: {get_receipt_no5_db}")
-                    
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value5)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no5: {receipt_value5} to deal: {reference_number}")
-                if str(get_receipt_no5_db) == receipt_value5:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value5).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value5 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no5_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no5_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no5 due to special value: {receipt_value5}")
-    
 
         if mutable_data.get("is_approved_rejected") in ["A", "R", "W"]:
             mutable_data['approved_rejected_by'] = request.user.email
-        # 
+        # ✅ Ensure default value 'P' for is_approved_rejected if missing or invalid
         if not mutable_data.get("is_approved_rejected") or mutable_data.get("is_approved_rejected") not in ["A", "R", "W"]:
             print("Setting default 'P' for is_approved_rejected")
             mutable_data["is_approved_rejected"] = "P"
@@ -1227,7 +861,7 @@ def edit_property_page(request, pk):
     # ---------- File fields we care about (same as in put/view) ----------
     file_fields = [
         'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
-        'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
+        'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
     ]
 
     # -------------------------
@@ -1347,53 +981,16 @@ def edit_property_page(request, pk):
 
     form = PropertyForm(instance=property_obj)
 
-    # ✅ Get used receipt IDs from the current deal
-    receipt1_used = property_obj.receipt_no if property_obj.receipt_no else ""
-    receipt2_used = property_obj.receipt_no2 if property_obj.receipt_no2 else ""
-    receipt3_used = property_obj.receipt_no3 if property_obj.receipt_no3 else ""
-    receipt4_used = property_obj.receipt_no4 if property_obj.receipt_no4 else ""
-    receipt5_used = property_obj.receipt_no5 if property_obj.receipt_no5 else ""
+    # ✅ Fetch unique, cleaned receipt numbers
+    receipt_nos_raw = RentalProperties.objects.values_list('receipt_no', flat=True).distinct()
+    receipt_nos = [rcpt1.strip() for rcpt1 in receipt_nos_raw if rcpt1 and rcpt1.strip()]
 
-    used_receipt_ids = [rid for rid in [receipt1_used, receipt2_used, receipt3_used, receipt4_used, receipt5_used] if rid or rid == ""]
-    print(used_receipt_ids)
-    # ✅ Filter receipts based on account_id only (unused or already assigned to this deal)
-    receipt_nos_query = ManagementReceipts.objects.filter(
-        account_id=request.user.account_id
-    ).filter(
-        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-    ).distinct().values_list('receipt_number', flat=True)
-    receipt_nos = [rcpt for rcpt in receipt_nos_query if rcpt and rcpt]
+    # Fetch unique, cleaned receipt numbers for receipt_no2 and receipt_no3
+    receipt_nos2_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
+    receipt_nos2 = [rcpt2.strip() for rcpt2 in receipt_nos2_raw if rcpt2 and rcpt2.strip()]
 
-    # Fetch receipt numbers for receipt_no2
-    receipt_nos2_query = ManagementReceipts.objects.filter(
-        account_id=request.user.account_id
-    ).filter(
-        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-    ).distinct().values_list('receipt_number', flat=True)
-    receipt_nos2 = [rcpt for rcpt in receipt_nos2_query if rcpt and rcpt]
-
-    # Fetch receipt numbers for receipt_no3
-    receipt_nos3_query = ManagementReceipts.objects.filter(
-        account_id=request.user.account_id
-    ).filter(
-        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-    ).distinct().values_list('receipt_number', flat=True)
-    receipt_nos3 = [rcpt for rcpt in receipt_nos3_query if rcpt and rcpt]
-
-    receipt_nos4_query = ManagementReceipts.objects.filter(
-        account_id=request.user.account_id
-    ).filter(
-        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-    ).distinct().values_list('receipt_number', flat=True)
-    receipt_nos4 = [rcpt for rcpt in receipt_nos4_query if rcpt and rcpt]
-
-
-    receipt_nos5_query = ManagementReceipts.objects.filter(
-        account_id=request.user.account_id
-    ).filter(
-        Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-    ).distinct().values_list('receipt_number', flat=True)
-    receipt_nos5 = [rcpt for rcpt in receipt_nos5_query if rcpt and rcpt]
+    receipt_nos3_raw = RentalProperties.objects.values_list('receipt_no',flat=True).distinct()
+    receipt_nos3 = [rcpt3.strip() for rcpt3 in receipt_nos3_raw if rcpt3 and rcpt3.strip()]
 
     # Pass file_urls into template as convenience (template can use file_urls.pms_contract etc)
     return render(request, 'home/edit_property.html', {
@@ -1402,8 +999,6 @@ def edit_property_page(request, pk):
         'receipt_nos': receipt_nos,
         'receipt_nos2': receipt_nos2,
         'receipt_nos3': receipt_nos3,
-        'receipt_nos4': receipt_nos4,
-        'receipt_nos5': receipt_nos5,
         'agents': agents,
         'file_urls': file_urls,
     })
@@ -1636,8 +1231,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         # adding 2 more receipt numbers fetch unique, non -empty receipt numbers
         receipt_no2 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
         receipt_no3 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
-        receipt_no4 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
-        receipt_no5 = ManagementReceipts.objects.filter(account_id = request.user.account_id,status = "Unused")
 
        
 
@@ -1658,7 +1251,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
 
 
-        return render(request, 'home/create_property.html', {'form': form, 'agents': agents, 'receipt_nos': receipt_no, 'receipt_nos2': receipt_no2,'receipt_nos3': receipt_no3, 'receipt_nos4': receipt_no4,'receipt_nos5': receipt_no5})
+        return render(request, 'home/create_property.html', {'form': form, 'agents': agents, 'receipt_nos': receipt_no, 'receipt_nos2': receipt_no2,'receipt_nos3': receipt_no3})
 
 
     
@@ -1709,7 +1302,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             file_fields = [
                 'pms_contract', 'owner_passport_copy', 'owner_eid_copy',
                 'pms_cheque_copy', 'title_deed', 'poa_pp', 'poa_copy',
-                'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
+                'key_hand_over_form', 'kyc_form', 'screening'
             ]
  
             # Generate reference_number
@@ -1719,12 +1312,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             print(f" Reference Path: {path}")
  
             # --- DUPLICATE CHECK ---
-            normalized_ref = (reference_number or "").strip().upper().replace(" ", "")
-            normalized_dash = normalized_ref.replace("/", "-")
-            normalized_slash = normalized_ref.replace("-", "/")
-            ref_variants = {normalized_ref, normalized_dash, normalized_slash}
-
-            if RentalProperties.objects.filter(reference_number__in=ref_variants, is_deleted='N').exists():
+            if RentalProperties.objects.filter(reference_number=reference_number,is_deleted='N').exists():
                 print("DEBUG: Duplicate reference_number — EXITING EARLY:", reference_number)
                 return Response(
                     {'success': False, 'message': f'Reference Number "{reference_number}" already exists.'},
@@ -1779,8 +1367,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                     # adding 2 more fields newly i.e receipt_no2,receipt_no3
                     'receipt_no2': request.data.get('receipt_no2'),
                     'receipt_no3': request.data.get('receipt_no3'),
-                    'receipt_no4': request.data.get('receipt_no4'),
-                    'receipt_no5': request.data.get('receipt_no5'),
                     #Remaining fields
                     'agency_name': request.data.get('agency_name', ''),
                     'agent_name': request.data.get('agent_name', ''),
@@ -1919,11 +1505,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 
                 if request.data.get('receipt_no3') and request.data.get('receipt_no3').isdigit():
                     ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no3')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
-
-                if request.data.get('receipt_no4') and request.data.get('receipt_no4').isdigit():
-                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no4')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
-                if request.data.get('receipt_no5') and request.data.get('receipt_no5').isdigit():
-                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no5')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
  
                 if serializer.is_valid():
                     try:
@@ -2183,12 +1764,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                         {'success': False, 'message': f'Error updating receipt: {str(e)}'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-            if request.data.get('receipt_no4') and request.data.get('receipt_no4').isdigit():
-                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no4')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
-                    
-            if request.data.get('receipt_no5') and request.data.get('receipt_no5').isdigit():
-                    ManagementReceipts.objects.filter(receipt_number=request.data.get('receipt_no5')).update(status='Used',deal_refer_no=request.data.get('reference_number'))
- 
 
  
             # Validate and save
@@ -2312,24 +1887,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
                 related_receipts3 = ManagementReceipts.objects.filter(receipt_number = receipt_no3).first()
             except ValueError:
                 pass
-        
-        receipt_no4 = property.receipt_no4
-        related_receipts4 = None
-        if receipt_no4 not in [None, '']:
-            try:
-                receipt_no4 = int(receipt_no4)
-                related_receipts4 = ManagementReceipts.objects.filter(receipt_number = receipt_no4).first()
-            except ValueError:
-                pass
-        
-        receipt_no5 = property.receipt_no5
-        related_receipts5 = None
-        if receipt_no5 not in [None, '']:
-            try:
-                receipt_no5 = int(receipt_no5)
-                related_receipts5 = ManagementReceipts.objects.filter(receipt_number = receipt_no5).first()
-            except ValueError:
-                pass
 
         serializer = DealSerializer(property)
         data = serializer.data  # dict that the template uses
@@ -2337,7 +1894,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         # file fields which in DB hold relative paths (comma-separated possible)
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'owner_eid_copy', 'pms_cheque_copy',
-            'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening','commission_shortfall_form_copy'
+            'title_deed', 'poa_pp', 'poa_copy', 'key_hand_over_form', 'kyc_form', 'screening'
         ]
 
         # helper to build a public URL from a normalized S3 key (uses your settings)
@@ -2455,9 +2012,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             'receipts': related_receipts,
             # adding 2 more receipts
             'receipts2':related_receipts2,
-            'receipts3':related_receipts3,
-            'receipts4':related_receipts4,
-            'receipts5':related_receipts5
+            'receipts3':related_receipts3
 
         })
 
@@ -2666,14 +2221,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
     def delete_property(self, request, pk=None):
  
         property = get_object_or_404(RentalProperties, pk=pk)
-
-        receipt_nos = [property.receipt_no, property.receipt_no2, property.receipt_no3]
-        receipt_nos = [rno for rno in receipt_nos if rno.isdigit() and int(rno) > 0]  # Filter out null/zero values
-        
-        if receipt_nos:
-            ManagementReceipts.objects.filter(receipt_number__in=receipt_nos).update(status='Unused', deal_refer_no="")
-
-
         RentalProperties.objects.filter(pk=property.pk).update(is_deleted='Y')
         RentalProperties.objects.filter(pk=property.pk).update(reference_number=property.reference_number + "D")
         # property.delete()
@@ -2689,53 +2236,11 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         property_obj = get_object_or_404(RentalProperties, pk=pk)
         form = PropertyForm(instance=property_obj)
         agents = Users.objects.filter(is_active=True)
-
-        # ✅ Get used receipt IDs from the current deal
-        receipt1_used = property_obj.receipt_no if property_obj.receipt_no else ""
-        receipt2_used = property_obj.receipt_no2 if property_obj.receipt_no2 else ""
-        receipt3_used = property_obj.receipt_no3 if property_obj.receipt_no3 else ""
-        receipt4_used = property_obj.receipt_no4 if property_obj.receipt_no4 else ""
-        receipt5_used = property_obj.receipt_no5 if property_obj.receipt_no5 else ""
-
-        used_receipt_ids = [rid for rid in [receipt1_used, receipt2_used, receipt3_used, receipt4_used, receipt5_used] if rid or rid == ""]
-
-        # ✅ Filter receipts based on account_id only (unused or already assigned to this deal)
-        receipt_nos_query = ManagementReceipts.objects.filter(
-            account_id=request.user.account_id
-        ).filter(
-            Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-        ).distinct().values_list('receipt_number', flat=True)
-        receipt_nos = [rcpt for rcpt in receipt_nos_query if rcpt and rcpt]
-
-        # Fetch receipt numbers for receipt_no2
-        receipt_nos2_query = ManagementReceipts.objects.filter(
-            account_id=request.user.account_id
-        ).filter(
-            Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-        ).distinct().values_list('receipt_number', flat=True)
-        receipt_nos2 = [rcpt for rcpt in receipt_nos2_query if rcpt and rcpt]
-
-        # Fetch receipt numbers for receipt_no3
-        receipt_nos3_query = ManagementReceipts.objects.filter(
-            account_id=request.user.account_id
-        ).filter(
-            Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-        ).distinct().values_list('receipt_number', flat=True)
-        receipt_nos3 = [rcpt for rcpt in receipt_nos3_query if rcpt and rcpt]
-
-        receipt_nos4_query = ManagementReceipts.objects.filter(
-            account_id=request.user.account_id
-        ).filter(
-            Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-        ).distinct().values_list('receipt_number', flat=True)
-        receipt_nos4 = [rcpt for rcpt in receipt_nos4_query if rcpt and rcpt]
-
-        receipt_nos5_query = ManagementReceipts.objects.filter(
-            account_id=request.user.account_id
-        ).filter(
-            Q(status="Unused") | Q(receipt_number__in=used_receipt_ids)
-        ).distinct().values_list('receipt_number', flat=True)
-        receipt_nos5 = [rcpt for rcpt in receipt_nos5_query if rcpt and rcpt]
+        # receipt_nos = ManagementReceipts.objects.filter( acc)
+        receipt_nos = ManagementReceipts.objects.filter(account_id = request.user.account_id)
+        # Adding 2 more receipt nos i.e for receipt nos2 and receipt nos 3
+        receipt_nos2 = ManagementReceipts.objects.filter(account_id = request.user.account_id)
+        receipt_nos3 = ManagementReceipts.objects.filter(account_id = request.user.account_id)
         print("---- Rendering renew_property_page for Property ID:", pk)
         print("---- Cleaned Agent Names ----")
         for agent in agents:
@@ -2751,9 +2256,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
             'agents': agents,
             'receipt_nos': receipt_nos,
             'receipt_nos2': receipt_nos2,
-            'receipt_nos3': receipt_nos3,
-            'receipt_nos4': receipt_nos4,
-            'receipt_nos5': receipt_nos5
+            'receipt_nos3': receipt_nos3
         })
 
     #Writing function for renew
@@ -2787,7 +2290,7 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         file_fields = [
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
             'title_deed', 'kyc_form', 'screening', 'owner_eid_copy',
-            'poa_pp', 'poa_copy', 'key_hand_over_form', 'commission_shortfall_form_copy'
+            'poa_pp', 'poa_copy', 'key_hand_over_form'
         ]
         required_file_fields = [
             'pms_contract', 'owner_passport_copy', 'pms_cheque_copy',
@@ -2857,135 +2360,49 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
         mutable_data["cheque_date"] = " ".join(cheque_dates) if cheque_dates else ""
         print(f" Cheque Dates: {mutable_data['cheque_date']}")
 
-        # === Handle receipt_no update with change detection ===
-        if mutable_data.get('receipt_no') is not None:
-            get_receipt_no_db = getattr(property_obj, 'receipt_no', "")
-            receipt_value = str(mutable_data.get('receipt_no')).strip()
+        # Update receipt number if present
+        if "receipt_no" in mutable_data and mutable_data["receipt_no"]:
+            try:
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no"]).update(
+                    deal_refer_no=mutable_data["reference_number"]
+                )
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no"]).update(
+                    status= "Used"
+                )
+                
+                print(f" Linked receipt_no to reference_number")
+            except Exception as e:
+                print(f"❌ Error updating receipt_no: {str(e)}")
 
-            if receipt_value.isdigit():
-                if str(get_receipt_no_db) != receipt_value:
-                    if str(get_receipt_no_db).isdigit() or get_receipt_no_db == "None":
-                        if str(get_receipt_no_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no: {get_receipt_no_db}")
+        # Here we need to add update receipt numbers for receipt_nos2 and receipt_nos3
 
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no: {receipt_value} to deal: {reference_number}")
+        # this if block is added to receipt_no2
+        if "receipt_no2" in mutable_data and mutable_data["receipt_no2"]:
+            try:
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no2"]).update(
+                    deal_refer_no=mutable_data["reference_number"]
+                )
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no2"]).update(
+                    status= "Used"
+                )
+                
+                print(f" Linked receipt_no to reference_number")
+            except Exception as e:
+                print(f"❌ Error updating receipt_no2: {str(e)}")
 
-                if str(get_receipt_no_db) == receipt_value:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no due to special value: {receipt_value}")
-
-        # === Handle receipt_no2 update with change detection ===
-        if mutable_data.get('receipt_no2') is not None:
-            get_receipt_no2_db = getattr(property_obj, 'receipt_no2', "")
-            receipt_value2 = str(mutable_data.get('receipt_no2')).strip()
-
-            if receipt_value2.isdigit():
-                if str(get_receipt_no2_db) != receipt_value2:
-                    if str(get_receipt_no2_db).isdigit() or get_receipt_no2_db == "None":
-                        if str(get_receipt_no2_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f"Released old receipt_no2: {get_receipt_no2_db}")
-
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value2)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no2: {receipt_value2} to deal: {reference_number}")
-
-                if str(get_receipt_no2_db) == receipt_value2:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value2).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value2 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no2_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no2_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no2 due to special value: {receipt_value2}")
-
-        # === Handle receipt_no3 update with change detection ===
-        if mutable_data.get('receipt_no3') is not None:
-            get_receipt_no3_db = getattr(property_obj, 'receipt_no3', "")
-            receipt_value3 = str(mutable_data.get('receipt_no3')).strip()
-
-            if receipt_value3.isdigit():
-                if str(get_receipt_no3_db) != receipt_value3:
-                    if str(get_receipt_no3_db).isdigit() or get_receipt_no3_db == "None":
-                        if str(get_receipt_no3_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no3: {get_receipt_no3_db}")
-
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value3)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no3: {receipt_value3} to deal: {reference_number}")
-                if str(get_receipt_no3_db) == receipt_value3:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value3).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value3 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no3_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no3_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no3 due to special value: {receipt_value3}")
-
-        if mutable_data.get('receipt_no4') is not None:
-            get_receipt_no4_db = getattr(property_obj, 'receipt_no4', "")
-            receipt_value4 = str(mutable_data.get('receipt_no4')).strip()
-
-            if receipt_value4.isdigit():
-                if str(get_receipt_no4_db) != receipt_value4:
-                    if str(get_receipt_no4_db).isdigit() or get_receipt_no4_db == "None":
-                        if str(get_receipt_no4_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no4_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no4: {get_receipt_no4_db}")
-
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value4)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no4: {receipt_value4} to deal: {reference_number}")
-                if str(get_receipt_no4_db) == receipt_value4:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value4).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value4 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no4_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no4_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no4 due to special value: {receipt_value4}")
-
-        if mutable_data.get('receipt_no5') is not None:
-            get_receipt_no5_db = getattr(property_obj, 'receipt_no5', "")
-            receipt_value5 = str(mutable_data.get('receipt_no5')).strip()
-
-            if receipt_value5.isdigit():
-                if str(get_receipt_no5_db) != receipt_value5:
-                    if str(get_receipt_no5_db).isdigit() or get_receipt_no5_db == "None":
-                        if str(get_receipt_no5_db).isdigit():
-                            ManagementReceipts.objects.filter(receipt_number=get_receipt_no5_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released old receipt_no5: {get_receipt_no5_db}")
-
-                    ManagementReceipts.objects.filter(receipt_number=receipt_value5)\
-                        .update(status='Used', deal_refer_no=reference_number)
-                    print(f" Assigned new receipt_no5: {receipt_value5} to deal: {reference_number}")
-                if str(get_receipt_no5_db) == receipt_value5:
-                        ManagementReceipts.objects.filter(receipt_number=receipt_value5).update(status='Used', deal_refer_no=reference_number)
-
-            else:
-                if receipt_value5 in ["Null", "No Commission", ""]:
-                    if str(get_receipt_no5_db).isdigit():
-                        ManagementReceipts.objects.filter(receipt_number=get_receipt_no5_db)\
-                            .update(status='Unused', deal_refer_no='')
-                        print(f" Released receipt_no5 due to special value: {receipt_value5}")
+        #This if block is added to receipt_no 3
+        if "receipt_no3" in mutable_data and mutable_data["receipt_no3"]:
+            try:
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no3"]).update(
+                    deal_refer_no=mutable_data["reference_number"]
+                )
+                ManagementReceipts.objects.filter(id=mutable_data["receipt_no3"]).update(
+                    status= "Used"
+                )
+                
+                print(f"Linked receipt_no to reference_number")
+            except Exception as e:
+                print(f"Error updating receipt_no3: {str(e)}")
 
 
         # Renewal-specific flags
@@ -3407,7 +2824,6 @@ class Rental_PropertyViewSet(viewsets.ModelViewSet):
 Rental_PropertyViewSet_filter = Rental_PropertyViewSet.as_view({
     'post': 'datatable_filter'
 })
-RentalProperties_ViewSset_Edit_Reference_number = PropertyAPIView.as_view({'post': 'clone_deal_with_new_ref'})
  
 
 
@@ -3554,13 +2970,8 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         search_term = request.data.get("search[value]", "").strip()
         if search_term:
             print(f" Performing Global Search with term: '{search_term}'")
-            normalized_search_replace_slash = search_term.replace("/", "-")
-            normalized_search_replace_minus = search_term.replace("-", "/")
             queryset = queryset.filter(
                 Q(receipt_number__icontains=search_term) |
-                Q(deal_refer_no__icontains=search_term) |
-                Q(deal_refer_no__icontains=normalized_search_replace_slash) |
-                Q(deal_refer_no__icontains=normalized_search_replace_minus) |
                 Q(agent_name__icontains=search_term) |
                 Q(building_name__icontains=search_term) |
                 Q(unit_number__icontains=search_term) |
@@ -3741,8 +3152,6 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
 
         serializer = ManagementReceiptsSerializer(receipt)
         return Response(serializer.data)
-   
-   
     def update(self, request, pk=None):
         receipt = get_object_or_404(ManagementReceipts, pk=pk)
         serializer = ManagementReceiptsSerializer(receipt, data=request.data)
@@ -3785,18 +3194,10 @@ class ManagementReceiptsViewSet(viewsets.ModelViewSet):
         if request.user.account_id:
             print("DEBUG: Account ID", request.user.account_id)
             mutable_data["account_id"] = request.user.account_id
-            mutable_data["created_at"] = datetime.now()
         else:
             return Response({
                 'success': False,
                 'message': 'User has no linked account.',
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        is_recipts_present = ManagementReceipts.objects.filter(receipt_number=mutable_data.get("receipt_number")).exists()
-        if is_recipts_present:
-            return Response({
-                'success': False,
-                'message': f'Receipt {mutable_data.get("receipt_number")} with this number already exists. reload to get the New receipt number.',
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ManagementReceiptsSerializer(data=mutable_data)
