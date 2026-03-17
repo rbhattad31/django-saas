@@ -316,17 +316,19 @@ class DealSerializer(serializers.ModelSerializer):
         # Remove commas and spaces
         number = number.replace(",", "").strip()
 
-        # Remove decimal part if any
+        # Split integer and decimal parts (keep decimal to support values like 34568.40)
+        integer_part = number
+        decimal_part = ""
         if "." in number:
-            number = number.split(".")[0]
+            parts = number.split(".", 1)
+            integer_part = parts[0].strip() or "0"
+            decimal_part = ''.join(ch for ch in parts[1] if ch.isdigit())
 
-        # Validate
-        if not number.isdigit():
+        # Validate integer part
+        if not integer_part.isdigit():
             return "Invalid amount"
 
-        number = int(number)
-        if number == 0:
-            return "Zero"
+        number = int(integer_part)
 
         ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
         teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
@@ -350,20 +352,38 @@ class DealSerializer(serializers.ModelSerializer):
             else:
                 return ones[n // 100] + " Hundred" + (" " + two_digits(n % 100) if n % 100 != 0 else "")
 
-        words = []
-        group_index = 0
+        def integer_to_words(value):
+            if value == 0:
+                return "Zero"
 
-        while number > 0:
-            group = number % 1000
-            if group != 0:
-                group_words = three_digits(group)
-                if thousands[group_index]:
-                    group_words += " " + thousands[group_index]
-                words.insert(0, group_words.strip())
-            number //= 1000
-            group_index += 1
+            words = []
+            group_index = 0
 
-        return " ".join(words).strip()
+            while value > 0:
+                group = value % 1000
+                if group != 0:
+                    group_words = three_digits(group)
+                    if thousands[group_index]:
+                        group_words += " " + thousands[group_index]
+                    words.insert(0, group_words.strip())
+                value //= 1000
+                group_index += 1
+
+            return " ".join(words).strip()
+
+        integer_words = integer_to_words(number)
+
+        # Handle decimal part as 2-digit fils (e.g., .4 -> 40, .40 -> 40)
+        decimal_words = ""
+        if decimal_part:
+            decimal_two_digits = int((decimal_part + "00")[:2])
+            if decimal_two_digits > 0:
+                decimal_words = two_digits(decimal_two_digits)
+
+        if decimal_words:
+            return f"{integer_words} and {decimal_words} Fils"
+
+        return integer_words
     
 
     def get_agent_name1_display(self, obj):
