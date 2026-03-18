@@ -131,6 +131,7 @@ def copy_reference_folder(old_ref, new_ref):
 
 @transaction.atomic
 def clone_deal_with_new_reference(old_deal_id, new_reference):
+    logger.info(f"Cloning deal with ID: {old_deal_id} to new reference: {new_reference}")
     """
     Clone a deal with a new reference number.
     Steps:
@@ -147,7 +148,7 @@ def clone_deal_with_new_reference(old_deal_id, new_reference):
         logger.info(f"Cloning deal {old_deal_id} with reference: {old_reference}")
 
         # Store receipt IDs before modifying the old deal
-        receipt_ids = [old_deal.receipt_id, old_deal.receipt_id2, old_deal.receipt_id3]
+        receipt_ids = [old_deal.receipt_id, old_deal.receipt_id2, old_deal.receipt_id3, old_deal.receipt_id4, old_deal.receipt_id5]
         receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
 
         new_reference_dash = new_reference.replace("/", "-")
@@ -206,7 +207,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
     def delete_sales(self, request, pk=None):
         sales = get_object_or_404(SalesDeals, pk=pk)
 
-        receipt_ids = [sales.receipt_id, sales.receipt_id2, sales.receipt_id3]
+        receipt_ids = [sales.receipt_id, sales.receipt_id2, sales.receipt_id3, sales.receipt_id4, sales.receipt_id5]
         receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]  # Filter out null/zero values
         
         if receipt_ids:
@@ -219,6 +220,7 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='clone-with-reference')
     def clone_deal_with_new_ref(self, request, pk=None):
+        logger.info(f"Received request to clone deal with ID: {pk} by referencenumber: {request.data.get('new_reference')}")
         """
         API endpoint to clone a deal with a new reference number.
         

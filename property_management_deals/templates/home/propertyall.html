@@ -562,6 +562,8 @@
     }
 
     if ($('#adminFieldsForm').valid()) {
+      var $btn = $('#submit_admin_fields');
+      $btn.prop('disabled', true);
       const referenceType = $('#modal_reference_number_prefix').val();
       const referenceNumber = $('#modal_reference_number_suffix').val();
       const fullReferenceNumber = referenceType + '-' + referenceNumber;
@@ -594,9 +596,11 @@
             }, 2000);
           } else {
             swal("Error", response.message || "Failed to clone deal", "error");
+            $btn.prop('disabled', false);
           }
         },
         error: function(xhr) {
+          $btn.prop('disabled', false);
           let errorMessage = "An error occurred while cloning the deal";
           if (xhr.responseJSON && xhr.responseJSON.message) {
             errorMessage = xhr.responseJSON.message;

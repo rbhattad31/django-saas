@@ -443,6 +443,8 @@
     // Submit Admin Fields Form - Call API to clone deal with new reference
     $('#submit_admin_fields').on('click', function() {
       if ($('#adminFieldsForm').valid()) {
+        var $btn = $('#submit_admin_fields');
+        $btn.prop('disabled', true); // Disable button to prevent double click
         var referenceType = $('#modal_reference_number_prefix').val();
         var referenceNumber = $('#modal_reference_number_suffix').val();
 
@@ -508,6 +510,7 @@
             }
           },
           error: function(xhr, status, error) {
+            $btn.prop('disabled', false); // Re-enable button
             console.error('API Error:', error);
             console.error('Response:', xhr.responseText);
             
@@ -519,6 +522,7 @@
             swal("Error", errorMessage, "error");
           }
         });
+          
       }
     });
 
