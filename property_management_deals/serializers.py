@@ -654,12 +654,13 @@ class ManagementReceiptsFilterSerializer(serializers.Serializer):
     search = SearchSerializer(required=False, default=dict)
     
     type = serializers.CharField(required=False, allow_blank=True)
-    receipt_number = serializers.IntegerField(required=False)
+    receipt_number = serializers.CharField(required=False, allow_blank=True)
     payment_type = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    status = serializers.CharField(required=False)
-    agent_name = serializers.CharField(required=False)
-    building_name = serializers.CharField(required=False)
-    unit_number = serializers.CharField(required=False)
+    status = serializers.CharField(required=False, allow_blank=True)
+    agent_name = serializers.CharField(required=False, allow_blank=True)
+    building_name = serializers.CharField(required=False, allow_blank=True)
+    unit_number = serializers.CharField(required=False, allow_blank=True)
+    deal_type = serializers.CharField(required=False, allow_blank=True)
         
     date = serializers.DateField(
         required=False,
