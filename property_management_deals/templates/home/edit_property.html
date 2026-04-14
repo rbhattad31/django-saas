@@ -1605,8 +1605,8 @@ $j(document).ready(function() {
             submitted_by_agent: { required: true },
             deal_date: { required: true },
             reference_number: { required: true, alphanum_special: true },
-            project_name: { required: true, only_text: true },
-            building_name: { required: true, only_text: true },
+            project_name: { required: true, alphanum_special: true },
+            building_name: { required: true, alphanum_special: true },
             unit_details: { required: true, numeric: true },
             pms_price: { required: true, numeric: true },
             pm_start_date: { required: true },
@@ -1662,11 +1662,11 @@ $j(document).ready(function() {
             },
             less_outside_commission: {
                 required: function() { return $j('#save_as').val() !== 'draft'; },
-                numeric: true
+                alphanum_special: true
             },
             net_commission: {
                 required: function() { return $j('#save_as').val() !== 'draft'; },
-                numeric: true
+                alphanum_special: true
             },
             classic: {
                 required: function() { return $j('#save_as').val() !== 'draft'; },
