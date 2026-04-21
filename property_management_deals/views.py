@@ -1148,7 +1148,7 @@ class PropertyAPIView(viewsets.ViewSet):
 
             # Try validating as number — but keep original commas
             try:
-                Decimal(cleaned)
+                # Decimal(cleaned)
                 mutable_data[field] = str(raw_value).strip()  # keep original format with commas
             except (ValueError, InvalidOperation):
                 return Response(
