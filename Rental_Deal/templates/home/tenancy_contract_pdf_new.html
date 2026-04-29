@@ -1,0 +1,1737 @@
+<html >
+  {% load static %}
+  {% load custom_tags_rental %}
+ 
+    <head>
+        <meta http-equiv=Content-Type content="text/html; charset=utf-8" />
+        
+      
+        <title> </title>
+     
+        <title>Unified Tenancy Contract</title>
+       <link rel="stylesheet" href="{% static 'assets/css/bootstrap/bootstrap.min.css' %}">
+        <link href="https://fonts.googleapis.com/css2?family=Finlandica:wght@400;600;700&display=swap" rel="stylesheet">
+       <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+            * {
+  box-sizing: border-box;
+}
+    @page {
+    size: A4;
+    margin: 0mm 0mm;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    {% comment %} box-sizing: border-box; {% endcomment %}
+  }
+  
+ 
+
+    .containerone {
+    max-width:800px ; !important
+    margin: 0px auto;
+    {% comment %} padding: 20px; {% endcomment %}
+  }
+  .radio_buttons{
+                width: 15px;
+             }
+
+    .middle_part {
+        border-bottom: 0.5px dashed #574595;
+        text-align: left;
+        font-size:11px
+    }
+    .left_part {
+        border-bottom: 0.5px dashed #574595;
+        text-align: left;
+        padding-left: 10px;
+    }
+    .cstm_signle_tr_td{
+        width: 83%;
+    }
+    .label_td_2{
+        float:right;
+        text-align: right;
+        vertical-align: top;
+    }
+    .cstm_label{
+        color:#574595;
+        font-size: 8px;
+        
+       
+    }
+    .cstm_label_arb
+    {
+        font-family:"Cairo",sans-serif;
+        color:#574595;
+        font-size: 10px; 
+    }
+    .custom_label{
+        color:#574595;
+        font-size: 14px;
+    }
+
+    .point_numbers{
+                width: 20px;
+             }
+    .multiple_label_td_s{
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .inner_data table{
+        padding: 1px 0;
+    }
+    .terms_table, .additional_terms, .attachments_for_ajari_table,.know_your_rights_table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .inner_points{
+        padding: 7px 0;
+        size:10px;
+    }
+    .know_your_rights_div, .attachments_for_ajari_div, .additional_terms_div, .terms_div {
+                padding: 5px 0;
+             }
+    .image_labels{
+        width: auto;
+    }
+    .heading_text{
+        color:#574595;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .cstm_label_arabic{
+        font-family:"Cairo",sans-serif;
+        color:navy;
+        font-size: 9px;
+         {% comment %} line-height:px; {% endcomment %}
+        
+    }
+     
+    .label_td_arabic_2{
+        float:right;
+        text-align: right;
+    }
+    .text_center{
+            text-align: center;
+    }
+    .heading_image{
+        width: 200px;
+        }
+        .footer{
+            {% comment %} position: absolute;  {% endcomment %}
+            bottom: 0; 
+            margin: 0; 
+            width:100%;
+        }
+        .logos{
+        padding-bottom: 5px;
+        }
+        #main_heading{
+           
+            {% comment %} border: 1px solid #574595; {% endcomment %}
+            background-color: #f2f2f2;
+            {% comment %} border-radius: 10px; {% endcomment %}
+        }
+        .radio_buttons{
+        width: 15px;
+        }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  
+    border-collapse: collapse;
+  }
+   .points tr {
+line-height:10px ; 
+  
+  }
+  .additional_terms_table td {
+    font-size: 12px;
+
+  }
+
+    .terms-font-large .cstm_label {
+        font-size: 10px;
+        line-height: 1.45;
+        color: #403270;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+    }
+
+    .terms-font-large .cstm_label_arabic {
+        font-size: 10px;
+        line-height: 1.5;
+        color: #403270;
+        font-family: "Cairo", sans-serif;
+    }
+
+    .terms-font-large .terms-card {
+        border: 2px solid #080808;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .terms-font-large .terms-card .terms_div {
+        padding: 0;
+    }
+
+    .terms-font-large .terms-card .terms_table {
+        margin-bottom: 0;
+    }
+
+    .terms-font-large .terms-card .terms_table td {
+        padding: 0;
+    }
+
+    .terms-font-large .terms-card .terms_table img {
+        display: block;
+    }
+
+    .terms-font-large .terms-card .points {
+        margin-bottom: 0;
+    }
+
+    .terms-font-large .special-terms-heading {
+        background-color: #2f3b52;
+        color: #fff;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .terms-font-large .special-terms-heading .heading-ar {
+        direction: rtl;
+        text-align: right;
+        font-family: "Cairo", sans-serif;
+        font-size: 11px;
+    }
+
+    .terms-font-large .special-terms-points td {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .terms-font-large .additional-terms-3col td {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .terms-font-large .additional-terms-value {
+        border-bottom: 1px dashed #999;
+        height: 18px;
+    }
+
+              
+             .kyc-label{
+               font-size:10px;
+               line-height:2px;
+             }
+             .kyc-financial-label{
+                font-size:13px;
+             }
+             .checkbox
+             {
+                 font-size:36px;
+                 width: 100px;
+                 height: 190px;
+             }
+             #payment_method{
+                font-size:20px;
+
+             }
+             .tenancy-contract
+             {
+                 font-size:40px;
+                 font-family: "Finlandica", sans-serif;
+             }
+           
+            .background{
+                background: #fff url('images/pdf_watermark_new.png');
+                background-size: 100%;
+            }
+
+            .property_type_text{
+                font-size: 12px;
+            }
+           
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                margin-left: 20px;
+                margin-top: 20px;
+            }
+
+    -- new styles for unified tenancy contract --
+    
+    .section-header {
+        background-color: #2f3b52;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    .section-header td {
+        color: #fff;
+    }
+
+    .label {
+        font-weight: bold;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .label-ar {
+        font-weight: bold;
+        font-size: 12px;
+        direction: rtl;
+        text-align: right;
+        white-space: nowrap;
+        font-family: "Cairo", sans-serif;
+    }
+
+    .value {
+        border-bottom: 1px dashed #999;
+        font-size: 12px;
+        padding: 4px 6px;
+        height: 20px;
+    }
+
+    .sub-text {
+        font-size: 10px;
+        color: #555;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    .property-rows > table {
+        margin-bottom: 2px;
+    }
+
+    .property-rows > table:last-child {
+        margin-bottom: 0;
+    }
+
+    .property-rows table table {
+        margin-bottom: 0;
+    }
+
+    -- owner-lessor-section styles --
+    .owner-lessor-section {
+        margin-top: 20px;
+        border: 5px solid #080808;
+        border-radius: 8px;
+    }
+
+ 
+    </style>
+
+              
+        
+    </head>
+    <body >
+    <div class="containerone" style="max-width:790px; width:800px ;     box-sizing: border-box;  margin-top:30px;" >
+
+        
+        <!-- PAGE 1: TOP LOGOS -->
+        <div class="d-flex justify-content-between align-items-start " style="max-width:730px ;  margin-left: 30px;" >
+            <div class="d-flex align-items-center gap-2">
+                <!-- Placeholder for Government of Dubai Logo -->
+                <img src="/static/assets/img/tenancy_contract_images/govofdubailogo.png" alt="Gov Logo" class=" rounded-3" style = "width: 185px;height:70px;">
+            </div>
+            <div class="text-end">
+                <!-- Placeholder for Land Department Logo -->
+                <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 200px; margin-top:10px;">
+            </div>
+        </div>
+
+        <div class=""    >
+        
+        
+            
+
+
+    
+        <!-- PAGE 1: CONTRACT HEADING -->
+        <div id="main_heading" style="height: 2%; ">
+                
+                <table class="heading_table" style="height: 2%; margin-left: 50px;">
+                    <tr>
+                        <td width="30%" style="width:20%">
+                            <table>
+                                <tr >
+                                    <td  style="width:25%" ><span class="custom_label label_1" style="font-size: 10px;"><b>Date</b></span></td>
+                                    <td style="width:80%" >
+                                        <table width="100%">
+                                            <tr>
+                                                {% comment %} <td width="20%" style = "width:20%" class="middle_part" style="text-align:center;padding: 0px 0px 0px 0px;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'day'}}</span></td> {% endcomment %}
+                                                <td width="100%" style = "width:20%" class="middle_part" style="text-align:center;padding: 0px 0px 0px 0px;"><span style="font-size: 12px;padding-bottom:0px;text-align:center;">{{deal.date }}</span></td>
+                                                {% comment %} <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="30%" style = "width:20%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'month'}}</span></td>
+                                                <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="50%" style = "width:40%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{ deal.date|split_dmy:'year'}}</span></td> {% endcomment %}
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td><span class="cstm_label_arabic" style="font-size: 10px;">التاريخ</span></td>
+                                </tr>
+                                {% comment %} <tr>
+                                    <td width="10%"><span class="custom_label label_1" style="font-size: 12px;"><b>No.</b></span></td>
+                                    <td width="80%" class="middle_part cstm_signle_tr_td" style="text-align:center;"><span class="contarct_details"><span style="font-size: 12px;">{{deal.reference_number}}</span></td>
+                                    <td width="10%"><span class="cstm_label_arabic" style="font-size: 16px;">الرقم</span></td>
+                                </tr> {% endcomment %}
+                            </table>
+                        </td>
+                        <td width="10%"></td>
+                        <td style="width:70%">
+                            <table>
+                                <tr style ="">
+                                    <td style="width:100%; "><img alt="Tenancy Contract" class="heading_image" src="/static/assets/img/tenancy_contract_images/heading_tenancy (1).png" style="width:35%;height:16px; margin-left:40px;"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:20px;width:100%;"  ><span class="heading_text tenancy-contract" style="font-size:20px; margin-left:50px; font-weight:300;"><b>TENANCY CONTRACT</b></span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>  
+           
+        </div>
+       
+    
+       
+        
+ 
+
+
+                
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff;
+        }
+
+        /* MAIN CONTAINER */
+        .page-container {
+            width: 90%;
+            margin: 0px auto;
+    
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+
+        /* SECTION HEADER */
+        .section-header {
+            background-color: #2f3b52;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .section-header td {
+            padding: 6px 10px;
+        }
+
+        .left-title {
+            text-align: left;
+        }
+
+        .right-title {
+            text-align: right;
+            direction: rtl;
+            font-family: "Cairo", sans-serif;
+        }
+
+        /* LABELS */
+        .label {
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .label-ar {
+            font-size: 10px;
+            font-weight: bold;
+            direction: rtl;
+            text-align: right;
+            white-space: nowrap;
+            font-family: "Cairo", sans-serif;
+        }
+
+        /* VALUE LINE */
+        .value {
+            border-bottom: 1px dashed #999;
+            height: 22px;
+            font-size: 12px;
+            padding: 2px 5px;
+        }
+
+        .sub-text {
+            font-size: 8px;
+            color: #555;
+            height: 5px;
+        }
+        .sub-text_ar {
+            font-size: 8px;
+            color: #555;
+            text-align: left;
+            font-family: "Cairo", sans-serif;
+        }
+
+        /* RADIO STYLE */
+        .radio-group {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .radio-circle {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border: 1px solid #000;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        /* SIGNATURE BOX */
+        .signature-box {
+            height: 80px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+    </style>
+
+            <!-- PAGE 1: MAIN CONTRACT DETAILS -->
+            <div class="page-container">
+
+                <!-- OWNER / LESSOR -->
+                <div class="owner-lessor-section" style=" border: 1px solid #080808; border-radius: 7px;  "  >
+                    <table class="section-header" >
+                        <tr>
+                            <td class="left-title">Owner / Lessor Information</td>
+                            <td class="right-title">معلومات المالك / المؤجر</td>
+                        </tr>
+                    </table>
+                    <div style="padding: 0px 10px;">
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 10%;">Owner’s Name</td>
+                                <td class="value"  >{{deal.owner_first_name}}</td>
+                                <td class="label-ar" style="width: 6%;">اسم المالك</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 10%;">Lessor’s Name</td>
+                                <td class="value">{{deal.owner_first_name}}</td>
+                                <td class="label-ar" style="width: 6%;">اسم المؤجر</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 15%;">Lessor’s Emirates ID</td>
+                                <td class="value"></td>
+                                <td class="label-ar" style="width: 14%;">الهوية الإماراتية للمؤجر</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label"  style="width: 6%;">License No.</td>
+                                <td class="value"  style="width: 25%;"> </td>
+                                <td class="label-ar" style="width: 5%;" >رقم الترخيص</td>
+                                <td style="width: 1%;"></td>
+
+                                <td class="label" style="width: 11%;">Licensing Authority</td>
+                                <td class="value" style="width: 20%;"> </td>
+                                <td class="label-ar" style="width:10%;">الجهة المانحة للرخصة</td>
+                            </tr>
+                            <tr style="height: 0.5px;">
+                                <td style="width: 10%;"></td>
+                                
+                                <td class="sub-text" style="width: 30%;">&nbsp; (Incase of a Company)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="sub-text_ar">في حال كانت شركة</span></td>
+                    
+                                <td class="sub-text" style="width: 8%;"> </td>
+                                <td></td>
+                    
+
+                                <td ></td>
+                                
+                                <td class="sub-text" style = "width:30 %;">&nbsp;(Incase of a Company) <span class="sub-text_ar">في حال كانت شركة</span></td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <table style="margin-top: -5px;">
+                            <tr>
+                                <td class="label" style="width: 11%;">Lessor’s Email</td>
+                                <td class="value">{{deal.owner_email}}</td>
+                                <td class="label-ar"style="width: 16%;">البريد الإلكتروني للمؤجر</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 11%;">Lessor’s Phone</td>
+                                <td class="value">{{deal.owner_mobile}}</td>
+                                <td class="label-ar" style="width: 13%;">رقم هاتف المؤجر</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TENANT -->
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Tenant Information</td>
+                            <td class="right-title">معلومات المستأجر</td>
+                        </tr>
+                    </table>
+
+                    <div style="padding: 0px 10px;">
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 12%;">Tenant's Name</td>
+                                <td class="value">{{deal.tenant_first_name}}</td>
+                                <td class="label-ar" style="width: 8%;">اسم المستأجر</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 15%;">Tenant's Emirates ID</td>
+                                <td class="value"></td>
+                                <td class="label-ar" style="width: 17%;">الهوية الإماراتية للمستأجر</td>
+                            </tr>
+                        </table>
+
+                         
+
+                        <table>
+                            <tr>
+                                <td class="label"  style="width: 8%;">License No.</td>
+                                <td class="value"  style="width: 25%;"> </td>
+                                <td class="label-ar" style="width: 5%;" >رقم الترخيص</td>
+                                <td style="width: 0.2%;"></td>
+
+                                <td class="label" style="width: 10%;">Licensing Authority</td>
+                                <td class="value" style="width: 20%;"> </td>
+                                <td class="label-ar" style="width:10%;">الجهة المانحة للرخصة</td>
+                            </tr>
+                            <tr style="height: 0.5px;">
+                                <td style="width: 10%;"></td>
+                                
+                                <td class="sub-text" style="width: 30%;"> (Incase of a Company)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="sub-text_ar">في حال كانت شركة</span></td>
+                    
+                                <td class="sub-text" style="width: 8%;"> </td>
+                                <td></td>
+                    
+
+                                <td ></td>
+                                
+                                <td class="sub-text" style = "width:30 %;">&nbsp;(Incase of a Company) <span class="sub-text_ar">في حال كانت شركة</span></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <table style="margin-top: -5px;">
+                            <tr>
+                                <td class="label" style="width: 12%;">Tenant's Email</td>
+                                <td class="value">{{deal.tenant_email}}</td>
+                                <td class="label-ar"style="width: 16%;">البريد الإلكتروني للمستأجر</td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td class="label" style="width: 12%;">Tenant's Phone</td>
+                                <td class="value">{{deal.tenant_mobile}}</td>
+                                <td class="label-ar" style="width: 15%;">رقم هاتف المستأجر</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PROPERTY -->
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;"> 
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Property Information</td>
+                            <td class="right-title">معلومات العقار</td>
+                        </tr>
+                    </table>
+
+                    <div class="property-rows" style="padding: 0px 10px; padding-bottom: 10px;">
+
+                        <table >
+                            <tr >
+                                <td class="label" style = "width:15%">Property Usage</td>
+                                
+                                <td>
+                                                        {% if deal.property_usage and deal.property_usage == "industrial" %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                                        {% else %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                                        {% endif %}
+                                                    <span class="radio-group label">  Industrial صناعي</span>
+
+                                </td>
+                                <td>                            
+                                        {% if deal.property_usage and deal.property_usage == "commercial" %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                                        {% else %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                                        {% endif %}
+                                                <span class="radio-group label ">  Commercial تجاري</span>
+                                </td>
+                                <td>                            
+                                        {% if deal.property_usage and deal.property_usage == "residential" %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/checked_radio_button.png" />
+                                                        {% else %}
+                                                    <img alt="radio_buttons" class="radio_buttons" src="/static/assets/img/tenancy_contract_images/radio_button.png" />
+                                                        {% endif %}
+                                            <span class="radio-group label">  Residential سكني</span>
+                                </td>
+                                <td class="label-ar" style="width:10%">استخدام العقار</td>
+                            </tr>
+                        </table>
+
+                        
+
+                        <table style="margin-top:10px;">
+                            <tr>
+                                <td style="width: 50%; padding-right: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 6%;">Plot</td>
+                                            <td class="value" >{{deal.plot_no}}</td>
+                                            <td class="label-ar" style="width: 12%;">قطعة الأرض</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 15%;">MaKai NO</td>
+                                            <td class="value"  >{{deal.project_name}}</td>
+                                            <td class="label-ar" style="width: 14%;">ارقم مكاني</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td style="width: 50%; padding-right: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 21%;">Building Name</td>
+                                            <td class="value"  >{{deal.building_name}}</td>
+                                            <td class="label-ar" style="width: 14%;">اسم المبنى</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 25%;">Property Type</td>
+                                            <td class="value"  >{{deal.property_type}}</td>
+                                            <td class="label-ar" style="width: 15%;">نوع الوحدة</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td style="width: 50%; padding-right: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 20%;">Property No.</td>
+                                            <td class="value"  >{{deal.unit_details}}</td>
+                                            <td class="label-ar" style="width: 15%;">رقم العقار</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 28%;">Property Area (m.s)</td>
+                                            <td class="value"  >{{deal.property_size}}</td>
+                                            <td class="label-ar" style="width: 25%;">مساحة العقار (متر.مربع)</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td style="width: 50%; padding-right: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 13%;">Location</td>
+                                            <td class="value"  >{{deal.project_name}}</td>
+                                            <td class="label-ar" style="width: 15%;">المنطقة</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 30%;">Premises No. (DEWA)</td>
+                                            <td class="value"  >{{deal.premises_no}}</td>
+                                            <td class="label-ar" style="width: 25%;">رقم العقار (ديوا)</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CONTRACT -->
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;">
+                    <table class="section-header" >
+                        <tr>
+                            <td class="left-title">Contract Information</td>
+                            <td class="right-title">معلومات العقد</td>
+                        </tr>
+                    </table>
+
+                    <div style="padding: 0px 10px;">
+
+                        <table>
+                            <tr style="width: 50%;">
+                                <td class="label"  style="width: 12%;">Contract Period.</td>
+                                <td class="value"  style="width: 31%;">{{deal.license}}</td>
+                                <td class="label-ar" style="width: 7%;" >رفترة العقد</td>
+                                <td style="width: 0.2%;"></td>
+
+                                <td class="label" style="width: 10%;">Contract Value</td>
+                                <td class="value"  >{{deal.authority}}</td>
+                                <td class="label-ar" style="width:10%;">قيمة العقد</td>
+                            </tr>
+                            <tr style="height: 0.5px;width: 50%;">
+                                <td style="width: 10%;"></td>
+                                
+                                <td class="sub-text" style="width: 30%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( From ) <span class="sub-text_ar">من</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(To)<span class="sub-text_ar">إلى</span></td>
+                    
+                                {% comment %} <td class="sub-text" style="width: 8%;"> </td> {% endcomment %}
+                                <td></td>
+                    
+
+                                 
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td style="width: 50%; padding-right: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 15%;">Annual Rent</td>
+                                            <td class="value"  >{{deal.annual_rent}}</td>
+                                            <td class="label-ar" style="width: 15%;">الإيجار السنوي</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 37%;">Security Deposit Amount</td>
+                                            <td class="value"  >{{deal.security_deposit}}</td>
+                                            <td class="label-ar" style="width: 15%;">مبلغ التأمين</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td style="width: 100%;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 12%;">Mode of Payment</td>
+                                            <td class="value"  >{{deal.payment_mode}}</td>
+                                            <td class="label-ar" style="width: 4%;">الدفع</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+                <!-- SIGNATURE -->
+                <div class="owner-lessor-section" style="margin-top: 20px; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Signatures</td>
+                            <td class="right-title">التوقيعات</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <div class="signature-box"  >
+
+                                    <table style="width: 100%; height: 100%; ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+
+                            <td width="50%">
+                                <div class="signature-box" style="">
+
+                                    <table style="width: 100%; height: 100%; margin-bottom:-20px ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+             <!-- PAGE 2: TOP LOGOS -->
+            <div class="d-flex justify-content-between align-items-start " style="max-width:730px ;  margin-left: 30px; margin-top:50px;" >
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Placeholder for Government of Dubai Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/govofdubailogo.png" alt="Gov Logo" class=" rounded-3" style = "width: 185px;height:70px;">
+                </div>
+                <div class="text-end">
+                    <!-- Placeholder for Land Department Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 200px; margin-top:10px;">
+                </div>
+            </div>
+    
+            <div id="main_heading" style="height: 2%; ">
+                
+                <table class="heading_table" style="height: 2%; margin-left: 50px;">
+                    <tr>
+                        <td width="30%" style="width:20%">
+                            <table>
+                                <tr >
+                                    <td  style="width:25%" ><span class="custom_label label_1" style="font-size: 10px;"><b>Date</b></span></td>
+                                    <td style="width:80%" >
+                                        <table width="100%">
+                                            <tr>
+                                                {% comment %} <td width="20%" style = "width:20%" class="middle_part" style="text-align:center;padding: 0px 0px 0px 0px;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'day'}}</span></td> {% endcomment %}
+                                                <td width="100%" style = "width:20%" class="middle_part" style="text-align:center;padding: 0px 0px 0px 0px;"><span style="font-size: 12px;padding-bottom:0px;text-align:center;">{{deal.date }}</span></td>
+                                                {% comment %} <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="30%" style = "width:20%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{deal.date|split_dmy:'month'}}</span></td>
+                                                <td width="4%" style="font-size: 10px;color: #574595;">/</td>
+                                                <td width="50%" style = "width:40%" class="middle_part" style="text-align:center;"><span style="font-size: 15px;padding-bottom:0px;text-align:center;">{{ deal.date|split_dmy:'year'}}</span></td> {% endcomment %}
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td><span class="cstm_label_arabic" style="font-size: 10px;">التاريخ</span></td>
+                                </tr>
+                                {% comment %} <tr>
+                                    <td width="10%"><span class="custom_label label_1" style="font-size: 12px;"><b>No.</b></span></td>
+                                    <td width="80%" class="middle_part cstm_signle_tr_td" style="text-align:center;"><span class="contarct_details"><span style="font-size: 12px;">{{deal.reference_number}}</span></td>
+                                    <td width="10%"><span class="cstm_label_arabic" style="font-size: 16px;">الرقم</span></td>
+                                </tr> {% endcomment %}
+                            </table>
+                        </td>
+                        <td width="10%"></td>
+                        <td style="width:70%">
+                            <table>
+                                <tr style ="">
+                                    <td style="width:100%; "><img alt="Tenancy Contract" class="heading_image" src="/static/assets/img/tenancy_contract_images/heading_tenancy (1).png" style="width:35%;height:16px; margin-left:40px;"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:20px;width:100%;"  ><span class="heading_text tenancy-contract" style="font-size:20px; margin-left:50px; font-weight:300;"><b>TENANCY CONTRACT</b></span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>  
+           
+            
+            <div class="page-container" style="width:90%;">
+
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Co-occupant's Information</td>
+                            <td class="right-title">معلومات القاطن</td>
+                        </tr>
+                    </table>
+                    <div style="padding: 0px 10px;">
+                        <table><tr><td class="label" style="width:5%;">Name</td><td class="value" >{{ deal.co_occupant_1_name }}</td><td class="label-ar" style="width:8%;">اسم القاطن</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Emirates ID</td><td class="value"  >{{ deal.co_occupant_1_emirates_id }}</td><td class="label-ar" style="width:14%;">رقم الهوية الإماراتية</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Nationality</td><td class="value"  >{{ deal.co_occupant_1_nationality }}</td><td class="label-ar" style="width:6%;">الجنسية</td></tr></table>
+                        <table><tr><td class="label" style="width:9%;">Date of Birth</td><td class="value"  >{{ deal.co_occupant_1_dob }}</td><td class="label-ar" style="width:8%;">تاريخ الميلاد</td></tr></table>
+                    </div>
+                </div>
+
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Co-occupant's Information</td>
+                            <td class="right-title">معلومات القاطن</td>
+                        </tr>
+                    </table>
+                    <div style="padding: 0px 10px;">
+                        <table><tr><td class="label" style="width:5%;">Name</td><td class="value" >{{ deal.co_occupant_2_name }}</td><td class="label-ar" style="width:8%;">اسم القاطن</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Emirates ID</td><td class="value"  >{{ deal.co_occupant_2_emirates_id }}</td><td class="label-ar" style="width:14%;">رقم الهوية الإماراتية</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Nationality</td><td class="value"  >{{ deal.co_occupant_2_nationality }}</td><td class="label-ar" style="width:6%;">الجنسية</td></tr></table>
+                        <table><tr><td class="label" style="width:9%;">Date of Birth</td><td class="value"  >{{ deal.co_occupant_2_dob }}</td><td class="label-ar" style="width:8%;">تاريخ الميلاد</td></tr></table>
+                    </div>
+                </div>
+
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Co-occupant's Information</td>
+                            <td class="right-title">معلومات القاطن</td>
+                        </tr>
+                    </table>
+                    <div style="padding: 0px 10px;">
+                        <table><tr><td class="label" style="width:5%;">Name</td><td class="value" >{{ deal.co_occupant_3_name }}</td><td class="label-ar" style="width:8%;">اسم القاطن</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Emirates ID</td><td class="value"  >{{ deal.co_occupant_3_emirates_id }}</td><td class="label-ar" style="width:14%;">رقم الهوية الإماراتية</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Nationality</td><td class="value"  >{{ deal.co_occupant_3_nationality }}</td><td class="label-ar" style="width:6%;">الجنسية</td></tr></table>
+                        <table><tr><td class="label" style="width:9%;">Date of Birth</td><td class="value"  >{{ deal.co_occupant_3_dob }}</td><td class="label-ar" style="width:8%;">تاريخ الميلاد</td></tr></table>
+                    </div>
+                </div>
+
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Co-occupant's Information</td>
+                            <td class="right-title">معلومات القاطن</td>
+                        </tr>
+                    </table>
+                    <div style="padding: 0px 10px;">
+                        <table><tr><td class="label" style="width:5%;">Name</td><td class="value" >{{ deal.co_occupant_4_name }}</td><td class="label-ar" style="width:8%;">اسم القاطن</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Emirates ID</td><td class="value"  >{{ deal.co_occupant_4_emirates_id }}</td><td class="label-ar" style="width:14%;">رقم الهوية الإماراتية</td></tr></table>
+                        <table><tr><td class="label" style="width:8%;">Nationality</td><td class="value"  >{{ deal.co_occupant_4_nationality }}</td><td class="label-ar" style="width:6%;">الجنسية</td></tr></table>
+                        <table><tr><td class="label" style="width:9%;">Date of Birth</td><td class="value"  >{{ deal.co_occupant_4_dob }}</td><td class="label-ar" style="width:8%;">تاريخ الميلاد</td></tr></table>
+                    </div>
+                </div>
+
+                <div class="owner-lessor-section" style="margin-top: 100px; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Signatures</td>
+                            <td class="right-title">التوقيعات</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <div class="signature-box"  >
+
+                                    <table style="width: 100%; height: 100%; ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+
+                            <td width="50%">
+                                <div class="signature-box" style="">
+
+                                    <table style="width: 100%; height: 100%; margin-bottom:-20px ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+           
+
+            
+             <!-- PAGE 2: TERMS AND CONDITIONS headings -->
+            <div class="d-flex justify-content-between align-items-start " style="max-width:730px ;  margin-left: 30px; margin-top:30px;" >
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Placeholder for Government of Dubai Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/govofdubailogo.png" alt="Gov Logo" class=" rounded-3" style = "width: 185px;height:70px;">
+                </div>
+                <div class="text-end">
+                    <!-- Placeholder for Land Department Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 200px; margin-top:10px;">
+                </div>
+            </div>
+
+            <!-- PAGE 3: TERMS AND CONDITIONS -->
+            <div class="terms-font-large" style="padding: 12px 10px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                <div class="terms-card" style="border: 1px solid #080808; border-radius: 10px; overflow: hidden;">
+                    <div class="special-terms-heading">
+                        <span>Terms and Conditions</span>
+                        <span class="heading-ar">الشروط والأحكام</span>
+                    </div>
+                    <table class="points special-terms-points" style="width:100%; padding-top:20px; margin-top:20px; margin-right:20px; padding:50px; ">
+
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">1. The tenant has inspected the premises and agreed to lease the unit on its current condition.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١ عاين المستأجر الوحدة موضوع الايجار ووافق على إستئجار العقار على حالته الحالية</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">2. Tenant undertakes to use the premises for designated purpose, tenant has no rights to transfer or relinquish the tenancy contract either with or without counterpart to any party without landlord written approval. Also, tenant is not allowed to sublease the premises or any part thereof to third party in whole or in part unless it is legally permitted.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٢ يتعهد المستأجر باستعمال المأجور للغرض المخصص له، و لا يجوز للمستأجر تحويل أو التنازل عن عقد الايجار للغير بمقابل أو دون مقابل دون موافقة المالك خطيا، كما لا يجوز للمستأجر تأجير المأجور أو أي جزء منه من الباطن مالم يسمح بذلك قانونا</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">3. The tenant undertakes not to make any amendments, modifications or addendums to the premises subject of the contract without obtaining the landlord written approval. Tenant shall be liable for any damages or failure due to that.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٣ يتعهد المستأجر بعدم إجراء أي تعديلات أو إضافات على العقار موضوع العقد دون موافقة المالك الخطية، و يكون المستأجر مسؤولا عن أي أضرار أو نقص أو تلف يلحق بالعقار</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">4. The tenant shall be responsible for payment of all electricity, water, cooling and gas charges resulting of occupying leased unit unless other condition agreed in written.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٤ يكون المستأجر مسؤولا عن سداد كافة فواتير الكهرباء و المياه و التبريد و الغاز المترتبة عن اشغاله المأجور مالم يتم الاتفاق على غير ذلك كتابيا</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">5. The tenant must pay the rent amount in the manner and dates agreed with the landlord.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٥ يتعهد المستأجر بسداد مبلغ الايجار المتفق عليه في هذا العقد في التواريخ و الطريقة المتفق عليها</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">6. The tenant fully undertakes to comply with all the regulations and instructions related to the management of the property and the use of the premises and of common areas such (parking, swimming pools, gymnasium, etc.).</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٦ يلتزم المستأجر التقيد التام بالانظمة و التعليمات المتعلقة باستخدام المأجور و المنافع المشتركة (كمواقف السيارات، أحواض السباحة، النادي الصحي، الخ)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">7. Tenancy contract parties declare all mentioned emails addresses and phone numbers are correct, all formal and legal notifications will be sent to those addresses in case of dispute between parties.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٧ يقر أطراف التعاقد بصحة العناوين و أرقام الهواتف المذكورة أعلاه، و تكون تلك العناوين هي المعتمدة رسميا للإخطارات و الأعلانات القضائية في حال نشوء أي نزاع بين أطراف العقد</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">8. The landlord undertakes to enable the tenant of the full use of the premises including its facilities (swimming pool, gym, parking lot, etc) and do the regular maintenance as intended unless other condition agreed in written, and not to do any act that would detract from the premises benefit.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٨ يتعهد المؤجر بتمكين المستأجر من الانتفاع التام بالعقار للغرض المؤجر لأجله و المرافق الخاصة به (حوض سباحة، نادي صحي، مواقف سيارات.... إلخ) كما يكون مسؤولا عن أعمال الصيانة مالم يتم الاتفاق على غير ذلك، و عدم التعرض له في منفعة العقار</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">9. By signing this agreement from the first party, the “Landlord” hereby confirms and undertakes that he is the current owner of the property or his legal representative under legal power of attorney duly entitled by the competent authorities.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٩ يعتبر توقيع المؤجر على هذا العقد إقرار منه بأنه المالك الحالي للعقار أو الوكيل القانوني للمالك بموجب وكالة قانونية موثقة وفق الأصول لدى الجهات المختصة</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">10. Any disagreement or dispute may arise from execution or interpretation of this contract shall be settled by the Rental Dispute Center.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١٠ أي خلاف أو نزاع قد ينشأ عن تنفيذ أو تفسير هذا العقد يعود البت فيه لمركز فض المنازعات الإيجارية</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">11. This contract is subject to all provisions of Law No (26) of 2007 regulating the relation between landlords and tenants in the emirate of Dubai as amended, and as it will be changed or amended from time to time, as long with any related legislations and regulations applied in the emirate of Dubai.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١١ يخضع هذا العقد لكافة أحكام القانون رقم (26) لسنة 2007 بشأن تنظيم العلاقة بين مؤجري و مستأجري العقارات في إمارة دبي، و تعديلاته و أي تغيير أو تعديل يطرأ عليه من وقت لآخر، كما يخضع للتشريعات و اللوائح الأخرى ذات العلاقة النافذة في دبي</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">12. Any additional condition will not be considered in case it conflicts with law.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١٢ لا يعتد بأي شرط تم إضافته إلى هذا العقد في حال تعارضه مع القانون</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">13. In case of discrepancy occurs between Arabic and non Arabic texts with regards to the interpretation of this agreement or the scope of its application, the Arabic text shall prevail.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١٣ في حال حدوث أي تعارض أو اختلاف في التفسير بين النص العربي و النص الأجنبي يعتمد النص العربي</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">14. The landlord undertakes to register this tenancy contract on EJARI affiliated to Dubai Land Department and provide with all required documents.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١٤ يتعهد المؤجر بتسجيل عقد الايجار في نظام إيجاري التابع لدائرة الأراضي و الأملاك و توفير كافة المستندات اللازمة لذلك</span></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="owner-lessor-section" style="margin-top: 60px; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Signatures</td>
+                            <td class="right-title">التوقيعات</td>
+                        </tr>
+                    </table>
+                    
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <div class="signature-box"  >
+                                    
+                                    <table style="width: 100%; height: 100%; ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            
+                            <td width="50%">
+                                <div class="signature-box" style="">
+                                    
+                                    <table style="width: 100%; height: 100%; margin-bottom:-20px ">
+                                        
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+            <!-- PAGE 4: TOP LOGOS -->
+            <div class="d-flex justify-content-between align-items-start " style="max-width:730px ;  margin-left: 30px; margin-top:50px;" >
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Placeholder for Government of Dubai Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/govofdubailogo.png" alt="Gov Logo" class=" rounded-3" style = "width: 185px;height:70px;">
+                </div>
+                <div class="text-end">
+                    <!-- Placeholder for Land Department Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 200px; margin-top:10px;">
+                </div>
+            </div>
+
+            <!-- PAGE 4: SPECIAL TERMS AND CONDITIONS -->
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                <div class="terms-card" style=" border:0px;  border-radius: 10px; overflow: hidden;">
+                    <div class="special-terms-heading">
+                        <span>Special Terms and Conditions</span>
+                        <span class="heading-ar">الشروط والأحكام الخاصة</span>
+                    </div>
+                     
+                    <table class="points special-terms-points" style="width:100%; padding-top:20px; margin-top:20px;   margin-right:0px; padding:0px;border-collapse:separate; border-spacing:0 1px;">
+                        <tr style=";">
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">The parties to the contract (the landlord and the tenant), or the party registering the contract on their behalf, hereby acknowledge and agree to the following. This acknowledgment constitutes a mandatory condition for completing the creation or renewal of a tenancy contract in the Ejari system:</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">يقرّ أطراف العقد (المؤجر والمستأجر) أو من قام بتسجيل العقد نيابةً عنهما، بما يلي، ويُعد هذا الإقرار شرطًا أساسيًا لإتمام إنشاء أو تجديد عقد الإيجار في نظام إيجاري.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Second: Prohibition of Subleasing</strong><br>Subleasing or assigning the right of use of the property, in whole or in part, to any third party is strictly prohibited unless prior official approval is obtained from the competent authorities.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>ثانيًا: حظر التأجير من الباطن</strong><br>يُمنع منعًا باتًا التأجير من الباطن أو التنازل عن الانتفاع بالعقار، كليًا أو جزئيًا، لأي طرف ثالث، إلا بعد الحصول على موافقة رسمية ومعتمدة من الجهات المختصة.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Third: Registration of Occupants</strong><br>The tenant shall register all actual occupants of the property through the approved channels and shall bear full responsibility for the accuracy and validity of the submitted information.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>ثالثًا: تسجيل القاطنين</strong><br>يلتزم المستأجر بتسجيل جميع القاطنين الفعليين في العقار عبر القنوات المعتمدة، ويتحمل كامل المسؤولية عن صحة ودقة البيانات المدخلة.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Fourth: Residential Use Only</strong><br>The property shall be used for residential purposes only. Any commercial or unlicensed use is strictly prohibited.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>رابعًا: الاستخدام السكني فقط</strong><br>يقتصر استخدام العقار على السكن فقط، ويُحظر استخدامه لأي أنشطة تجارية أو غير مرخصة.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Fifth: Compliance with Community Regulations</strong><br>The tenant shall comply with all applicable community regulations and rules, in a manner that preserves security, safety, and public morals within the property and its surroundings.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>خامسًا: الالتزام بالأنظمة المجتمعية</strong><br>يلتزم المستأجر بكافة الأنظمة واللوائح المجتمعية المعمول بها، وبما يحفظ الأمن والسلامة والآداب العامة داخل العقار ومحيطه.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Sixth: Inspection and Monitoring</strong><br>The parties agree to allow the competent authorities to conduct periodic inspection visits, when necessary, to verify compliance with the applicable terms and regulations.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>سادسًا: التفتيش والرقابة</strong><br>يوافق أطراف العقد على السماح للجهات المختصة بإجراء الزيارات التفتيشية الدورية عند الحاجة، للتحقق من الالتزام بالشروط والأنظمة المعتمدة.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                          
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label"><strong>Acknowledgment</strong><br>The parties acknowledge that all submitted information is accurate, that they are fully aware of and agree to all the above terms and conditions, and that they bear full legal responsibility in the event of any violation.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic"><strong>إقرار</strong><br>يقرّ أطراف العقد بأن جميع البيانات المقدمة صحيحة، وأنهم على علم تام بجميع الشروط والأحكام الواردة أعلاه، ويوافقون على الالتزام بها، ويتحملون كامل المسؤولية القانونية في حال مخالفتها.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="height:10px; padding:10px;"></td>
+                        </tr>
+                    </table>
+
+                </div>
+
+                
+                <div class="owner-lessor-section" style="margin-top: 100px; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Signatures</td>
+                            <td class="right-title">التوقيعات</td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <div class="signature-box">
+                                    <table style="width: 100%; height: 100%;">
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td width="50%">
+                                <div class="signature-box">
+                                    <table style="width: 100%; height: 100%; margin-bottom:-20px;">
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+             <!-- PAGE 4: SPECIAL TERMS AND CONDITIONS Footer -->
+            <div style="max-width: 740px; margin: 16px auto 0 auto; padding: 0 24px;">
+                <div style="border: 1px solid #080808; border-radius: 8px; overflow: hidden;">
+                    <img src="/static/assets/img/tenancy_contract_images/Footer_2.png" alt="Footer" style="width: 100%; height: auto; display: block;" />
+                </div>
+            </div>
+            
+
+            <!-- PAGE 5: TOP LOGOS -->
+            <div class="d-flex justify-content-between align-items-start " style="max-width:730px ;  margin-left: 30px; margin-top:30px;" >
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Placeholder for Government of Dubai Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/govofdubailogo.png" alt="Gov Logo" class=" rounded-3" style = "width: 185px;height:70px;">
+                </div>
+                <div class="text-end">
+                    <!-- Placeholder for Land Department Logo -->
+                    <img src="/static/assets/img/tenancy_contract_images/logo2.png" alt="Land Dept Logo" class=" rounded-3 ms-auto mt-2" style = "width: 200px; margin-top:10px;">
+                </div>
+            </div>
+
+            
+
+            <!-- PAGE 5: KNOW YOUR RIGHTS -->
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                <div class="terms-card">
+                    <div class="special-terms-heading">
+                        <span>Know Your Rights</span>
+                        <span class="heading-ar">اعرف حقوقك</span>
+                    </div>
+                    <table class="points special-terms-points" style="width:100%; padding-top:20px; margin-top:10px; margin-right:20px; padding:50px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">• You may visit Rental Dispute Center website through <a href="https://www.rdc.gov.ae" style="color:#403270; text-decoration: underline;">www.rdc.gov.ae</a> in case of any rental dispute between parties.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">• يمكنكم زيارة موقع مركز فض المنازعات الإيجارية من خلال <a href="https://www.rdc.gov.ae" style="color:#403270; text-decoration: underline;">www.rdc.gov.ae</a> في حال نشوء أي نزاع إيجاري بين الأطراف.</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">• Law No 26 of 2007 regulating relationship between landlords and tenants.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">• الإطلاع على قانون رقم 26 لسنة 2007 بشأن تنظيم العلاقة بين المؤجرين والمستأجرين.</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">• Law No 33 of 2008 amending Law No 26 of year 2007.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">• الإطلاع على قانون رقم 33 لسنة 2008 الخاص بتعديل بعض أحكام قانون 26 لعام 2007.</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">• Law No 43 of 2013 determining rent increases for properties.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">• الإطلاع على قانون رقم 43 لسنة 2013 بشأن تحديد زيادة بدل الإيجار.</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div> 
+
+            <!-- PAGE 5: ATTACHMENTS FOR EJARI REGISTRATION -->
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                <div class="terms-card" style="border: 1px solid #080808; border-radius: 10px; overflow: hidden;">
+                    <div class="special-terms-heading">
+                        <span>Attachments for Ejari Registration</span>
+                        <span class="heading-ar">مرفقات التسجيل في إيجاري</span>
+                    </div>
+                    <table class="points special-terms-points" style="width:100%;   margin-top:10px; margin-right:20px; padding:0px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">1. Original unified tenancy contract.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١ نسخة أصلية عن عقد الايجار الموحد</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">2. Original emirates ID of applicant.</span></td>
+                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٢ الهوية الإماراتية الأصلية لمقدم الطلب</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PAGE 5: ADDITIONAL TERMS -->
+            <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; max-width: 710px;   margin-left: 40px;">
+                <table class="section-header">
+                    <tr>
+                        <td class="left-title">Additional Terms</td>
+                        <td class="right-title">شروط إضافية</td>
+                    </tr>
+                </table>
+
+                <div style="padding: 0px 10px;">
+                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:5px;">
+                        <tr style="line-height:1;">
+                            <td class="label" style="width:2%;">1.</td>
+                            <td class="value" style="width:96%; padding:10px; height:10px;"> </td>
+                            <td class="label-ar" style="width:2%;">١.</td>
+                        </tr>
+                    </table>
+
+                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                        <tr style="line-height: 1;">
+                            <td class="label" style="width:2%;">2.</td>
+                            <td class="value" style="width:96%; padding: 10px;"> </td>
+                            <td class="label-ar" style="width:2%;">٢.</td>
+                        </tr>
+                    </table>
+
+                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                        <tr style="line-height: 1;">
+                            <td class="label" style="width:2%;">3.</td>
+                            <td class="value" style="width:96%; padding:10px;"> </td>
+                            <td class="label-ar" style="width:2%;">٣.</td>
+                        </tr>
+                    </table>
+
+                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                        <tr style="line-height: 1;">
+                            <td class="label" style="width:2%;">4.</td>
+                            <td class="value" style="width:96%; padding:10px;"> </td>
+                            <td class="label-ar" style="width:2%;">٤.</td>
+                        </tr>
+                    </table>
+
+                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                        <tr style="line-height:1;">
+                            <td class="label" style="width:2%;">5.</td>
+                            <td class="value" style="width:96%; padding:10px;"><div class="additional-terms-value"></div></td>
+                            <td class="label-ar" style="width:2%;">٥.</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PAGE 5: ADDITIONAL TERMS NOTE -->
+            <div style="max-width: 700px; margin-left: 40px; margin-top: 8px;">
+                <table style="width:100%; margin-bottom: 0;">
+                    <tr>
+                        <td style="width:50%; vertical-align:top; font-size: 10px; color:#2f3b52; ">
+                            Note: You may add addendum to this tenancy contract in case you have additional terms while it needs to be signed by all parties.
+                        </td>
+                        <td style="width:50%; vertical-align:top; text-align:right; direction:rtl;">
+                            <span class="cstm_label_arabic" style="color:#2f3b52; line-height:.1;">ملاحظة: يمكن إضافة ملحق إلى هذا العقد في حال وجود أي شروط إضافية، على أن يوقع من أطراف التعاقد.</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="owner-lessor-section" style="margin-top: 280px; border-radius: 7px;">
+                    <table class="section-header">
+                        <tr>
+                            <td class="left-title">Signatures</td>
+                            <td class="right-title">التوقيعات</td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <div class="signature-box">
+                                    <table style="width: 100%; height: 100%;">
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%; padding:0px;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td width="50%">
+                                <div class="signature-box">
+                                    <table style="width: 100%; height: 100%; margin-bottom:-20px;">
+                                        <tr>
+                                            <td colspan="2" style="height: 40px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td class="label" style="width: 10%;">Date</td>
+                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- PAGE 5: ADDITIONAL TERMS NOTE Footer -->
+            <div style="max-width: 740px; margin: 16px auto 0 auto; padding: 0 24px;">
+                <div style="border: 1px solid #080808; border-radius: 8px; overflow: hidden;">
+                    <img src="/static/assets/img/tenancy_contract_images/Footer_2.png" alt="Footer" style="width: 100%; height: auto; display: block;" />
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            
+            </div>
+
+
+             
+           
+            
+         
+           
+          
+
+            
+
+        
+
+       
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+    </body>
+</html>
+ 

@@ -1711,7 +1711,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         rental_deal = RentalDeals.objects.get(pk=pk) 
         deal = DealSerializer(rental_deal,context={'request': request})
         print(deal.data, "this is pdf")
-        html_string = render_to_string('home/tenancy_contract_pdf.html', {'deal': deal.data})
+        html_string = render_to_string('home/tenancy_contract_pdf_new.html', {'deal': deal.data})
         html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         pdf_file = html.write_pdf()
 
