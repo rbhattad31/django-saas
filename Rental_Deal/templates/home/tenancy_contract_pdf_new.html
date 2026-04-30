@@ -1505,7 +1505,28 @@ line-height:10px ;
                 </div>
             </div>
 
-            
+                <!-- PAGE 5: ACKNOWLEDGEMENT OF RECEIVING -->
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="font-size: 16px; text-transform: uppercase; margin: 0;">Acknowledgement of Receiving</h1>
+                </div>
+
+                <p style="font-size: 12px; line-height: 1.5; margin-bottom: 20px;">
+                    I, the landlord/representative Mr./Ms. 
+                    <u><strong>{{ deal.owner_first_name }}</strong></u> 
+                    of tower/villa 
+                    <u><strong>{{ deal.building_name }}</strong></u> 
+                    Unit No. 
+                    <u><strong>{{ deal.unit_details }}</strong></u> 
+                    Location: 
+                    <u><strong>{{ deal.project_name }}</strong></u>, 
+                    acknowledge that I received the cash/original cheques for total rental payment of 
+                    <u><strong>AED {{ deal.rental_price }}</strong></u> 
+                    and security deposit of 
+                    <u><strong>AED {{ deal.security_deposit }}</strong></u> 
+                    as mentioned below.
+                </p>
+            </div>
 
             <!-- PAGE 5: KNOW YOUR RIGHTS -->
             <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
@@ -1620,7 +1641,7 @@ line-height:10px ;
                     </tr>
                 </table>
 
-                <div class="owner-lessor-section" style="margin-top: 280px; border-radius: 7px;">
+                <div class="owner-lessor-section" style="margin-top: 140px; border-radius: 7px;">
                     <table class="section-header">
                         <tr>
                             <td class="left-title">Signatures</td>
