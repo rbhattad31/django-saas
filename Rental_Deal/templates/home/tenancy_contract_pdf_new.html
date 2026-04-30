@@ -1719,6 +1719,41 @@ line-height:10px ;
                     <u><strong>AED {{ deal.security_deposit }}</strong></u> 
                     as mentioned below.
                 </p>
+            
+                <div style="margin-bottom: 30px;background-color: #efebebff; padding:10px ">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; ">
+                        <thead style="background-color: #e0e0e0;">
+                            <tr>
+                                <th style="border: 1px solid black; padding: 8px;">Payment Mode</th>
+                                <th style="border: 1px solid black; padding: 8px;">Payment For</th>
+                                <th style="border: 1px solid black; padding: 8px;">Cheque No. / Bank Transfer Ref No.</th>
+                                <th style="border: 1px solid black; padding: 8px;">Amount (AED)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in "123456"|make_list %}
+                            <tr>
+                                <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                                <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                                <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                                <td style="border: 1px solid black; padding: 8px;">&nbsp;</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 30px; font-size: 12px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong>Landlord / Representative Signature:</strong>
+                        <span style="display: inline-block; border-bottom: 1px solid black; width: 200px; height: 20px; vertical-align: bottom;"></span>
+                    </div>
+                    <div>
+                        <strong>Date:</strong>
+                        <span style="display: inline-block; border-bottom: 1px solid black; width: 150px; height: 20px; vertical-align: bottom;"></span>
+                    </div>
+                </div>
+
             </div>
 
 
