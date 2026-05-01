@@ -534,7 +534,15 @@ line-height:10px ;
     </style>
 
             <!-- PAGE 1: MAIN CONTRACT DETAILS -->
-            <div class="page-container">
+            <div class="page-container" style="position: relative;">
+                <!-- watermark overlay with opacity -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 19%, center 75.2%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.08;">
+                </div>
 
                 <!-- OWNER / LESSOR -->
                 <div class="owner-lessor-section" style=" border: 1px solid #080808; border-radius: 7px;  "  >
@@ -737,7 +745,7 @@ line-height:10px ;
                                 <td style="width: 50%; padding-right: 4px;">
                                     <table style="width: 100%;">
                                         <tr>
-                                            <td class="label" style="width: 6%;">Plot</td>
+                                            <td class="label" style="width: 10%;">Plot No</td>
                                             <td class="value" >{{deal.plot_no}}</td>
                                             <td class="label-ar" style="width: 12%;">قطعة الأرض</td>
                                         </tr>
@@ -746,7 +754,7 @@ line-height:10px ;
                                 <td style="width: 50%; padding-left: 4px;">
                                     <table style="width: 100%;">
                                         <tr>
-                                            <td class="label" style="width: 15%;">MaKai NO</td>
+                                            <td class="label" style="width: 15%;">Makani No</td>
                                             <td class="value"  >{{deal.project_name}}</td>
                                             <td class="label-ar" style="width: 14%;">ارقم مكاني</td>
                                         </tr>
@@ -766,20 +774,6 @@ line-height:10px ;
                                         </tr>
                                     </table>
                                 </td>
-                                <td style="width: 50%; padding-left: 4px;">
-                                    <table style="width: 100%;">
-                                        <tr>
-                                            <td class="label" style="width: 25%;">Property Type</td>
-                                            <td class="value"  >{{deal.property_type}}</td>
-                                            <td class="label-ar" style="width: 15%;">نوع الوحدة</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <table>
-                            <tr>
                                 <td style="width: 50%; padding-right: 4px;">
                                     <table style="width: 100%;">
                                         <tr>
@@ -789,10 +783,26 @@ line-height:10px ;
                                         </tr>
                                     </table>
                                 </td>
+                                
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                
                                 <td style="width: 50%; padding-left: 4px;">
                                     <table style="width: 100%;">
                                         <tr>
-                                            <td class="label" style="width: 28%;">Property Area (m.s)</td>
+                                            <td class="label" style="width: 25%;">Property Type</td>
+                                            <td class="value"  >{{deal.property_type}}</td>
+                                            <td class="label-ar" style="width: 15%;">نوع الوحدة</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width: 50%; padding-left: 4px;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td class="label" style="width: 28%;">Property Area (s.m)</td>
                                             <td class="value"  >{{deal.property_size}}</td>
                                             <td class="label-ar" style="width: 25%;">مساحة العقار (متر.مربع)</td>
                                         </tr>
@@ -1041,9 +1051,16 @@ line-height:10px ;
             </div>  
            
             
-            <div class="page-container" style="width:90%;">
+            <div class="page-container" style="width:90%; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 21.4%, center 79%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.08;">
+                </div>
 
-                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; ">
                     <table class="section-header">
                         <tr>
                             <td class="left-title">Co-occupant's Information</td>
@@ -1058,7 +1075,7 @@ line-height:10px ;
                     </div>
                 </div>
 
-                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;  ">
                     <table class="section-header">
                         <tr>
                             <td class="left-title">Co-occupant's Information</td>
@@ -1073,7 +1090,7 @@ line-height:10px ;
                     </div>
                 </div>
 
-                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;  ">
                     <table class="section-header">
                         <tr>
                             <td class="left-title">Co-occupant's Information</td>
@@ -1088,7 +1105,7 @@ line-height:10px ;
                     </div>
                 </div>
 
-                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; background-color:#fff;">
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px;  ">
                     <table class="section-header">
                         <tr>
                             <td class="left-title">Co-occupant's Information</td>
@@ -1196,7 +1213,14 @@ line-height:10px ;
             </div>
 
             <!-- PAGE 3: TERMS AND CONDITIONS -->
-            <div class="terms-font-large" style="padding: 12px 10px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+            <div class="terms-font-large" style="padding: 12px 10px 0 13px; max-width: 740px; margin: 12px auto 0 auto; position: relative;">
+                {% comment %} <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 19%, center 75.2%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.18;">
+                </div> {% endcomment %}
                 <div class="terms-card" style="border: 1px solid #080808; border-radius: 10px; overflow: hidden;">
                     <div class="special-terms-heading">
                         <span>Terms and Conditions</span>
@@ -1353,7 +1377,14 @@ line-height:10px ;
             </div>
 
             <!-- PAGE 4: SPECIAL TERMS AND CONDITIONS -->
-            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 19%, center 75.2%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.08;">
+                </div>
                 <div class="terms-card" style=" border:0px;  border-radius: 10px; overflow: hidden;">
                     <div class="special-terms-heading">
                         <span>Special Terms and Conditions</span>
@@ -1508,7 +1539,14 @@ line-height:10px ;
               
 
             <!-- PAGE 5: KNOW YOUR RIGHTS -->
-            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 19%, center 75.2%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.08;">
+                </div>
                 <div class="terms-card">
                     <div class="special-terms-heading">
                         <span>Know Your Rights</span>
@@ -1533,173 +1571,190 @@ line-height:10px ;
                         </tr>
                     </table>
                 </div>
-            </div> 
+            
 
             <!-- PAGE 5: ATTACHMENTS FOR EJARI REGISTRATION -->
-            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
-                <div class="terms-card" style="border: 1px solid #080808; border-radius: 10px; overflow: hidden;">
-                    <div class="special-terms-heading">
-                        <span>Attachments for Ejari Registration</span>
-                        <span class="heading-ar">مرفقات التسجيل في إيجاري</span>
+                <div class="terms-font-large" style="  max-width: 780px;  margin-top:20px;  position: relative;">
+                    {% comment %} <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                                background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                                background-repeat: no-repeat, no-repeat;
+                                background-position: center 19%, center 75.2%;
+                                background-size: 40% 19%, 40% 19%;
+                                opacity: 0.18;">
+                    </div> {% endcomment %}
+                    <div class="terms-card" style="border: 1px solid #080808; border-radius: 10px; overflow: hidden;">
+                        <div class="special-terms-heading">
+                            <span>Attachments for Ejari Registration</span>
+                            <span class="heading-ar">مرفقات التسجيل في إيجاري</span>
+                        </div>
+                        <table class="points special-terms-points" style="width:100%;   margin-top:10px; margin-right:20px; padding:0px;">
+                            <tr>
+                                <td style="width:50%; vertical-align:top;"><span class="cstm_label">1. Original unified tenancy contract.</span></td>
+                                <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١ نسخة أصلية عن عقد الايجار الموحد</span></td>
+                            </tr>
+                            <tr>
+                                <td style="width:50%; vertical-align:top;"><span class="cstm_label">2. Original emirates ID of applicant.</span></td>
+                                <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٢ الهوية الإماراتية الأصلية لمقدم الطلب</span></td>
+                            </tr>
+                        </table>
                     </div>
-                    <table class="points special-terms-points" style="width:100%;   margin-top:10px; margin-right:20px; padding:0px;">
-                        <tr>
-                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">1. Original unified tenancy contract.</span></td>
-                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.١ نسخة أصلية عن عقد الايجار الموحد</span></td>
-                        </tr>
-                        <tr>
-                            <td style="width:50%; vertical-align:top;"><span class="cstm_label">2. Original emirates ID of applicant.</span></td>
-                            <td style="width:100%; vertical-align:top;" class="label_td_arabic_2"><span class="cstm_label_arabic">.٢ الهوية الإماراتية الأصلية لمقدم الطلب</span></td>
-                        </tr>
-                    </table>
                 </div>
-            </div>
 
-            <!-- PAGE 5: ADDITIONAL TERMS -->
-            <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; max-width: 710px;   margin-left: 40px;">
-                <table class="section-header">
-                    <tr>
-                        <td class="left-title">Additional Terms</td>
-                        <td class="right-title">شروط إضافية</td>
-                    </tr>
-                </table>
-
-                <div style="padding: 0px 10px;">
-                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:5px;">
-                        <tr style="line-height:1;">
-                            <td class="label" style="width:2%;">1.</td>
-                            <td class="value" style="width:96%; padding:10px; height:10px;"> </td>
-                            <td class="label-ar" style="width:2%;">١.</td>
-                        </tr>
-                    </table>
-
-                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
-                        <tr style="line-height: 1;">
-                            <td class="label" style="width:2%;">2.</td>
-                            <td class="value" style="width:96%; padding: 10px;"> </td>
-                            <td class="label-ar" style="width:2%;">٢.</td>
-                        </tr>
-                    </table>
-
-                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
-                        <tr style="line-height: 1;">
-                            <td class="label" style="width:2%;">3.</td>
-                            <td class="value" style="width:96%; padding:10px;"> </td>
-                            <td class="label-ar" style="width:2%;">٣.</td>
-                        </tr>
-                    </table>
-
-                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
-                        <tr style="line-height: 1;">
-                            <td class="label" style="width:2%;">4.</td>
-                            <td class="value" style="width:96%; padding:10px;"> </td>
-                            <td class="label-ar" style="width:2%;">٤.</td>
-                        </tr>
-                    </table>
-
-                    <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
-                        <tr style="line-height:1;">
-                            <td class="label" style="width:2%;">5.</td>
-                            <td class="value" style="width:96%; padding:10px;"><div class="additional-terms-value"></div></td>
-                            <td class="label-ar" style="width:2%;">٥.</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- PAGE 5: ADDITIONAL TERMS NOTE -->
-            <div style="max-width: 700px; margin-left: 40px; margin-top: 8px;">
-                <table style="width:100%; margin-bottom: 0;">
-                    <tr>
-                        <td style="width:50%; vertical-align:top; font-size: 10px; color:#2f3b52; ">
-                            Note: You may add addendum to this tenancy contract in case you have additional terms while it needs to be signed by all parties.
-                        </td>
-                        <td style="width:50%; vertical-align:top; text-align:right; direction:rtl;">
-                            <span class="cstm_label_arabic" style="color:#2f3b52; line-height:.1;">ملاحظة: يمكن إضافة ملحق إلى هذا العقد في حال وجود أي شروط إضافية، على أن يوقع من أطراف التعاقد.</span>
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="owner-lessor-section" style="margin-top: 250px; border-radius: 7px;">
+                <!-- PAGE 5: ADDITIONAL TERMS -->
+                <div class="owner-lessor-section" style="margin-top: 20px; border: 1px solid #080808; border-radius: 7px; max-width: 710px; ">
                     <table class="section-header">
                         <tr>
-                            <td class="left-title">Signatures</td>
-                            <td class="right-title">التوقيعات</td>
+                            <td class="left-title">Additional Terms</td>
+                            <td class="right-title">شروط إضافية</td>
                         </tr>
                     </table>
-                    <table>
-                        <tr>
-                            <td width="50%">
-                                <div class="signature-box">
-                                    <table style="width: 100%; height: 100%;">
-                                        <tr>
-                                            <td colspan="2" style="height: 40px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
-                                                <table style="width: 100%; padding:0px;">
-                                                    <tr>
-                                                        <td class="label" style="width: 50%;">Tenant Signature</td>
-                                                        <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
-                                                <table style="width: 100%; padding:0px;">
-                                                    <tr>
-                                                        <td class="label" style="width: 10%;">Date</td>
-                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
-                                                        <td class="label-ar" style="width: 5%;">التاريخ</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </td>
-                            <td width="50%">
-                                <div class="signature-box">
-                                    <table style="width: 100%; height: 100%; margin-bottom:-20px;">
-                                        <tr>
-                                            <td colspan="2" style="height: 40px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td class="label" style="width: 50%;">Lessor's Signature</td>
-                                                        <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                            <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td class="label" style="width: 10%;">Date</td>
-                                                        <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
-                                                        <td class="label-ar" style="width: 10%;">التاريخ</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+
+                    <div style="padding: 0px 10px; padding-right:30px;">
+                        <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:5px; padding-left:0px;">
+                            <tr style="line-height:1;">
+                                <td class="label" style="width:2%;">1.</td>
+                                <td class="value" style="width:96%; padding:10px; height:10px;"> </td>
+                                <td class="label-ar" style="width:2%;">١.</td>
+                            </tr>
+                        </table>
+
+                        <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                            <tr style="line-height: 1;">
+                                <td class="label" style="width:2%;">2.</td>
+                                <td class="value" style="width:96%; padding: 10px;"> </td>
+                                <td class="label-ar" style="width:2%;">٢.</td>
+                            </tr>
+                        </table>
+
+                        <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                            <tr style="line-height: 1;">
+                                <td class="label" style="width:2%;">3.</td>
+                                <td class="value" style="width:96%; padding:10px;"> </td>
+                                <td class="label-ar" style="width:2%;">٣.</td>
+                            </tr>
+                        </table>
+
+                        <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                            <tr style="line-height: 1;">
+                                <td class="label" style="width:2%;">4.</td>
+                                <td class="value" style="width:96%; padding:10px;"> </td>
+                                <td class="label-ar" style="width:2%;">٤.</td>
+                            </tr>
+                        </table>
+
+                        <table class="points additional-terms-3col" style="width:100%; margin-top:0px; padding:0px;">
+                            <tr style="line-height:1;">
+                                <td class="label" style="width:2%;">5.</td>
+                                <td class="value" style="width:96%; padding:10px;"></td>
+                                <td class="label-ar" style="width:2%;">٥.</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- PAGE 5: ADDITIONAL TERMS NOTE Footer -->
-            <div style="max-width: 740px; margin: 16px auto 0 auto; padding: 0 24px;">
-                <div style="border: 1px solid #080808; border-radius: 8px; overflow: hidden;">
-                    <img src="/static/assets/img/tenancy_contract_images/Footer_2.png" alt="Footer" style="width: 100%; height: auto; display: block;" />
-                </div>
-            </div>
+
+                <!-- PAGE 5: ADDITIONAL TERMS NOTE -->
+                <div style="max-width: 710px; margin-left: 0px; margin-top: 8px;">
+                    <div style="  padding: 10px;padding-top:0px;">
+                        <table style="width:100%; margin-bottom: 0; margin:0px">
+                            <tr>
+                                <td style="width:50%; vertical-align:top; font-size: 10px; color:#2f3b52; ">
+                                    Note: You may add addendum to this tenancy contract in case you have additional terms while it needs to be signed by all parties.
+                                </td>
+                                <td style="width:50%; vertical-align:top; text-align:right; direction:rtl;">
+                                    <span class="cstm_label_arabic" style="color:#2f3b52; line-height:.1;">ملاحظة: يمكن إضافة ملحق إلى هذا العقد في حال وجود أي شروط إضافية، على أن يوقع من أطراف التعاقد.</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
 
 
-              <!-- PAGE 5: ACKNOWLEDGEMENT OF RECEIVING -->
-            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto;">
+                    <div class="owner-lessor-section" style="margin-top: 250px; border-radius: 7px;">
+                        <table class="section-header">
+                            <tr>
+                                <td class="left-title">Signatures</td>
+                                <td class="right-title">التوقيعات</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <td width="50%">
+                                    <div class="signature-box">
+                                        <table style="width: 100%; height: 100%;">
+                                            <tr>
+                                                <td colspan="2" style="height: 40px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                    <table style="width: 100%; padding:0px;">
+                                                        <tr>
+                                                            <td class="label" style="width: 50%;">Tenant Signature</td>
+                                                            <td class="label-ar" style="width: 50%;">توقيع المستأجر</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                    <table style="width: 100%; padding:0px;">
+                                                        <tr>
+                                                            <td class="label" style="width: 10%;">Date</td>
+                                                            <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                            <td class="label-ar" style="width: 5%;">التاريخ</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div class="signature-box">
+                                        <table style="width: 100%; height: 100%; margin-bottom:-20px;">
+                                            <tr>
+                                                <td colspan="2" style="height: 40px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 50%; padding-right: 4px; vertical-align: bottom;">
+                                                    <table style="width: 100%;">
+                                                        <tr>
+                                                            <td class="label" style="width: 50%;">Lessor's Signature</td>
+                                                            <td class="label-ar" style="width: 50%;">توقيع المؤجر</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td style="width: 50%; padding-left: 4px; vertical-align: bottom;">
+                                                    <table style="width: 100%;">
+                                                        <tr>
+                                                            <td class="label" style="width: 10%;">Date</td>
+                                                            <td class="value" style="width: 50%;">{{deal.contract_start_date}}</td>
+                                                            <td class="label-ar" style="width: 10%;">التاريخ</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- PAGE 5: ADDITIONAL TERMS NOTE Footer -->
+                <div style="max-width: 770px; ">
+                    <div style="border: 1px solid #080808; border-radius: 8px; overflow: hidden;">
+                        <img src="/static/assets/img/tenancy_contract_images/Footer_2.png" alt="Footer" style="width: 100%; height: auto; display: block;" />
+                    </div>
+                </div>
+            </div> 
+
+              <!-- PAGE 6: ACKNOWLEDGEMENT OF RECEIVING -->
+            <div class="terms-font-large" style="padding: 12px 12px 0 13px; max-width: 740px; margin: 12px auto 0 auto; position: relative;">
+                {% comment %} <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+                            background-image: url('/static/assets/img/tenancy_contract_images/applywatermark.png'), url('/static/assets/img/tenancy_contract_images/applywatermark.png');
+                            background-repeat: no-repeat, no-repeat;
+                            background-position: center 19%, center 75.2%;
+                            background-size: 40% 19%, 40% 19%;
+                            opacity: 0.18;">
+                </div> {% endcomment %}
                 <div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
                     <h1 style="font-size: 16px; text-transform: uppercase; margin: 0;">Acknowledgement of Receiving</h1>
                 </div>
