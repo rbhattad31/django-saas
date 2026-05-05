@@ -1,0 +1,180 @@
+import json
+import logging
+from threading import Thread
+
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.utils import timezone
+
+from core.models import Receipts
+
+logger = logging.getLogger("Rental_Deal")
+
+
+def _parse_mail_status(raw_status):
+    if not raw_status:
+        return {}
+
+    if isinstance(raw_status, dict):
+        return raw_status
+
+    try:
+        parsed = json.loads(raw_status)
+        if isinstance(parsed, dict):
+            return parsed
+    except (TypeError, ValueError):
+        pass
+
+    # Legacy value fallback, for values like "sent".
+    return {"legacy": str(raw_status)}
+
+
+def _safe_dump_status(data):
+    payload = json.dumps(data, separators=(",", ":"))
+    # DB column size is 255. Truncate safely if needed.
+    if len(payload) > 255:
+        data = {
+            "created": data.get("created"),
+            "last": data.get("last"),
+            "count": data.get("count", 0),
+        }
+        payload = json.dumps(data, separators=(",", ":"))
+    return payload
+
+
+def _save_status(receipt, status_dict):
+    receipt.mail_status = _safe_dump_status(status_dict)
+    receipt.save(update_fields=["mail_status"])
+
+
+def _get_created_date(receipt):
+    created = receipt.created_at or receipt.updated_at
+    if created is not None:
+        if hasattr(created, "date"):
+            return created.date()
+        return created
+    return receipt.date
+
+
+def _build_receipt_subject(receipt, prefix="Receipt Reminder"):
+    return f"{prefix} - Receipt {receipt.receipt_number}"
+
+
+def _build_receipt_body(receipt, message_line):
+    return (
+        f"Hello,\n\n"
+        f"{message_line}\n\n"
+        f"Receipt Number: {receipt.receipt_number}\n"
+        f"Deal Reference: {receipt.deal_refer_no or '-'}\n"
+        f"Amount (DHS): {receipt.dhs}\n"
+        f"Unit: {receipt.unit_number}\n"
+        f"Project: {receipt.project_name}\n"
+        f"Status: {receipt.status}\n\n"
+        f"Please complete the related closure process.\n\n"
+        f"Thank you."
+    )
+
+
+def _send_email(receipt, subject, body):
+    recipient = (receipt.agent_email or "").strip()
+    if not recipient:
+        logger.warning("Receipt %s skipped: missing agent_email", receipt.id)
+        return False
+
+    email = EmailMessage(
+        subject=subject,
+        body=body,
+        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+        to=[recipient],
+    )
+    email.send(fail_silently=False)
+    return True
+
+
+def send_receipt_created_email(receipt_id):
+    receipt = Receipts.objects.filter(id=receipt_id).first()
+    if not receipt:
+        return
+
+    status_data = _parse_mail_status(receipt.mail_status)
+    if status_data.get("created") == "sent":
+        return
+
+    subject = _build_receipt_subject(receipt, prefix="Receipt Created")
+    body = _build_receipt_body(receipt, "A new receipt has been created.")
+
+    try:
+        sent = _send_email(receipt, subject, body)
+    except Exception:
+        logger.exception("Receipt created email failed for receipt %s", receipt.id)
+        return
+
+    if sent:
+        status_data["created"] = "sent"
+        status_data["created_at"] = timezone.localdate().isoformat()
+        status_data.setdefault("count", 0)
+        _save_status(receipt, status_data)
+
+
+def send_receipt_created_email_async(receipt_id):
+    # Thread-based background dispatch so API call returns immediately.
+    worker = Thread(target=send_receipt_created_email, args=(receipt_id,), daemon=True)
+    worker.start()
+
+
+def should_send_scheduled_reminder(receipt, today):
+    if (receipt.status or "").strip().lower() != "unused":
+        return False
+
+    status_data = _parse_mail_status(receipt.mail_status)
+    if not (
+        receipt.mail_status == "sent"
+        or status_data.get("legacy") == "sent"
+        or status_data.get("created") == "sent"
+    ):
+        print(f"Receipt {receipt.id} skipped: created email not sent yet.")
+        return False
+
+    created_date = _get_created_date(receipt)
+    print(f"Receipt {receipt.id} created date: {created_date}, today: {today}")
+    if not created_date:
+        return False
+
+    days_since = (today - created_date).days
+    print(days_since)
+    if days_since < 5:
+        print("entered 5 days check")
+        return False
+
+    # First scheduled reminder on day 5, then every 7 days after that.
+    if (days_since - 5) % 7 != 0:
+
+        print("entered the 5 days check with mod7 ")
+        return False
+
+    last_sent = status_data.get("last")
+    print("the last sent day", last_sent)
+    if last_sent == today.isoformat() :
+        print( " the last sent chekc condtion "  )
+        return False
+
+    return True
+
+
+def send_receipt_scheduled_reminder(receipt, today):
+    subject = _build_receipt_subject(receipt)
+    body = _build_receipt_body(
+        receipt,
+        "This is a scheduled reminder: day 5 and every 7 days until closure is completed.",
+    )
+
+    sent = _send_email(receipt, subject, body)
+    print(f"Receipt {receipt.id} scheduled reminder sent: {sent}")
+    if not sent:
+        return False
+
+    status_data = _parse_mail_status(receipt.mail_status)
+    status_data["last"] = today.isoformat()
+    status_data["count"] = int(status_data.get("count", 0)) + 1
+    _save_status(receipt, status_data)
+    return True

@@ -55,6 +55,7 @@ from rest_framework import status
 from core.serializers import DataTableSearchSerializer, ReceiptSerilizer
 
 from django.template.loader import render_to_string
+from core.receipt_email_service import send_receipt_created_email_async
 
 from .models import Receipts
 
@@ -286,13 +287,14 @@ class Receipts_ViewSet(viewsets.ModelViewSet):
             )
 
         mutable_data['account_id'] = request.user.account_id
-        mutable_data['mail_status'] = "sent"
-        mutable_data['created_at'] = datetime.now()
+        mutable_data['mail_status'] = '{"created":"queued"}'
+        mutable_data['created_at'] = now()
 
 
         serializer = ReceiptSerilizer(data=mutable_data)
         if serializer.is_valid():
-            serializer.save()
+            receipt = serializer.save()
+            send_receipt_created_email_async(receipt.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
