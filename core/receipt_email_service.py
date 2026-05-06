@@ -142,14 +142,12 @@ def should_send_scheduled_reminder(receipt, today):
 
     days_since = (today - created_date).days
     print(days_since)
-    if days_since < 5:
-        print("entered 5 days check")
-        return False
 
-    # First scheduled reminder on day 5, then every 7 days after that.
-    if (days_since - 5) % 7 != 0:
-
-        print("entered the 5 days check with mod7 ")
+    # Schedule: day 1, day 5, then every 7 days (day 12, 19, 26 ...).
+    is_day_1 = days_since == 1
+    is_day_5_or_recurring = days_since >= 5 and (days_since - 5) % 7 == 0
+    if not (is_day_1 or is_day_5_or_recurring):
+        print("entered the schedule check - not a reminder day")
         return False
 
     last_sent = status_data.get("last")
@@ -165,7 +163,7 @@ def send_receipt_scheduled_reminder(receipt, today):
     subject = _build_receipt_subject(receipt)
     body = _build_receipt_body(
         receipt,
-        "This is a scheduled reminder: day 5 and every 7 days until closure is completed.",
+        "This is a scheduled reminder. Reminders are sent on day 1, day 5, and every 7 days thereafter until closure is completed.",
     )
 
     sent = _send_email(receipt, subject, body)
