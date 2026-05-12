@@ -909,6 +909,33 @@ class Receipts(models.Model):
         db_table = 'receipts'
 
 
+class ReceiptReminderLog(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    receipt = models.ForeignKey(
+        Receipts,
+        on_delete=models.CASCADE,
+        db_column='receipt_id',
+        related_name='reminder_logs',
+    )
+    receipt_number = models.BigIntegerField()
+    sent_to = models.CharField(max_length=255)
+    agent_name = models.CharField(max_length=191, blank=True, null=True)
+    reminder_type = models.CharField(max_length=20)   # 'created', 'day_1', 'day_5', 'recurring'
+    day_number = models.IntegerField(blank=True, null=True)  # days since receipt creation
+    sent_at = models.DateTimeField()
+    status = models.CharField(max_length=10)          # 'success' or 'failed'
+    error_message = models.TextField(blank=True, null=True)
+    triggered_by = models.CharField(max_length=20, default='cron')  # 'cron' or 'manual'
+    account_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'receipt_reminder_log'
+
+    def __str__(self):
+        return f"Receipt {self.receipt_number} | {self.reminder_type} | {self.status} | {self.sent_at}"
+
+
 
 
 

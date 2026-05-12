@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import timezone
 
-from core.models import Receipts
+from core.models import Receipts, ReceiptReminderLog
 
 logger = logging.getLogger("Rental_Deal")
 
@@ -115,6 +115,19 @@ def send_receipt_created_email(receipt_id):
         status_data.setdefault("count", 0)
         _save_status(receipt, status_data)
 
+    ReceiptReminderLog.objects.create(
+        receipt=receipt,
+        receipt_number=receipt.receipt_number,
+        sent_to=(receipt.agent_email or "").strip(),
+        agent_name=receipt.agent_name,
+        reminder_type="created",
+        day_number=0,
+        sent_at=timezone.now(),
+        status="success" if sent else "failed",
+        triggered_by="cron",
+        account_id=receipt.account_id,
+    )
+
 
 def send_receipt_created_email_async(receipt_id):
     # Thread-based background dispatch so API call returns immediately.
@@ -163,11 +176,35 @@ def send_receipt_scheduled_reminder(receipt, today):
     subject = _build_receipt_subject(receipt)
     body = _build_receipt_body(
         receipt,
-        "This is a scheduled reminder. Reminders are sent on day 1, day 5, and every 7 days thereafter until closure is completed.",
+        "This is a scheduled reminder. Reminders are sent on day 1, day 2, day 5, and every 7 days thereafter until closure is completed.",
     )
 
     sent = _send_email(receipt, subject, body)
     print(f"Receipt {receipt.id} scheduled reminder sent: {sent}")
+
+    created_date = _get_created_date(receipt)
+    days_since = (today - created_date).days if created_date else None
+
+    if days_since == 1:
+        reminder_type = "day_1"
+    elif days_since == 5:
+        reminder_type = "day_5"
+    else:
+        reminder_type = "recurring"
+
+    ReceiptReminderLog.objects.create(
+        receipt=receipt,
+        receipt_number=receipt.receipt_number,
+        sent_to=(receipt.agent_email or "").strip(),
+        agent_name=receipt.agent_name,
+        reminder_type=reminder_type,
+        day_number=days_since,
+        sent_at=timezone.now(),
+        status="success" if sent else "failed",
+        triggered_by="cron",
+        account_id=receipt.account_id,
+    )
+
     if not sent:
         return False
 
