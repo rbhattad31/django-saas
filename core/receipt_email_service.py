@@ -156,10 +156,10 @@ def should_send_scheduled_reminder(receipt, today):
     days_since = (today - created_date).days
     print(days_since)
 
-    # Schedule: day 1, day 5, then every 7 days (day 12, 19, 26 ...).
+    # Schedule: day 1, day 4, then every 7 days (day 11, 18, 25 ...). not include the created day as day 0, start count from the next day.
     is_day_1 = days_since == 1
-    is_day_5_or_recurring = days_since >= 5 and (days_since - 5) % 7 == 0
-    if not (is_day_1 or is_day_5_or_recurring):
+    is_day_4_or_recurring = days_since >= 4 and (days_since - 4) % 7 == 0
+    if not (is_day_1 or is_day_4_or_recurring):
         print("entered the schedule check - not a reminder day")
         return False
 
@@ -187,8 +187,8 @@ def send_receipt_scheduled_reminder(receipt, today):
 
     if days_since == 1:
         reminder_type = "day_1"
-    elif days_since == 5:
-        reminder_type = "day_5"
+    elif days_since == 4:
+        reminder_type = "day_4"
     else:
         reminder_type = "recurring"
 
