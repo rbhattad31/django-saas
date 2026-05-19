@@ -4,6 +4,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django import forms
 
+from core.models import ReceiptReminderLog
+
 # admin.site.register(RentalDeals)
 # @admin.register(Users)
 # class UsersAdmin(admin.ModelAdmin):
@@ -72,6 +74,38 @@ class ManagementReceiptsAdmin(admin.ModelAdmin):
     )
     list_filter = ('deal_type', 'payment_type', 'status', 'date')
     ordering = ('-date',)
+
+
+@admin.register(ReceiptReminderLog)
+class ReceiptReminderLogAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'receipt_number',
+        'sent_to',
+        'agent_name',
+        'reminder_type',
+        'day_number',
+        'status',
+        'triggered_by',
+        'sent_at',
+    )
+    list_filter = ('reminder_type', 'status', 'triggered_by', 'sent_at')
+    search_fields = ('receipt_number', 'sent_to', 'agent_name', 'error_message')
+    ordering = ('-sent_at',)
+    list_select_related = ('receipt',)
+    readonly_fields = (
+        'receipt',
+        'receipt_number',
+        'sent_to',
+        'agent_name',
+        'reminder_type',
+        'day_number',
+        'sent_at',
+        'status',
+        'error_message',
+        'triggered_by',
+        'account_id',
+    )
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
