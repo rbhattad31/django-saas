@@ -430,6 +430,38 @@
                                     </div>
                                 </div>
                             </div> 
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Nationality</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.buyer_nationality}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Lessors Emarites ID</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.lessor_emirates_id}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div> 
                                 <hr>
                         <div class="row">
                             <div class="col-md-6 form-group mb-1">
@@ -467,7 +499,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                             </div> 
+                             
 
                             <div class="form-group row mt-2">
                                 <div class="col-md-6 form-group mb-3">
@@ -499,7 +533,40 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div> <br>
+                            </div> 
+                            <div class="form-group row mt-2">
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Nationality</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value">{{rentaldeal.buyer_nationality}}</h6></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Tenant's Emarites ID</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for="">
+                                                <h6 class="value">{{rentaldeal.tenants_input_emirates_id}}</h6>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div> 
+                            <br>
 
                                 <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">
@@ -1007,6 +1074,24 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% for receipt_item in receipts_list_view %}
+                                <div class="col-md-6 form-group mb-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="">
+                                                <h6 class="labelname">Receipt No {{ forloop.counter|add:5 }}</h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-1">:</div>
+                                        <div class="col-6 format-value">
+                                            <label for=""><h6 class="value"> {{ receipt_item.receipt_number }} </h6></label>
+                                            {% if perms.core.download_receipts and receipt_item.id %}
+                                            <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{receipt_item.id}}/download/" target="_blank">Download</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">

@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -8,6 +8,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
 from core.models import Users, Account, Receipts, RentalDeals
+from Rental_Deal.views import _parse_receipts_list, _sync_receipt_statuses
 
 class CreateDealViewTest(TestCase):
     """
@@ -219,3 +220,114 @@ class CreateDealViewTest(TestCase):
 #         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 #         self.assertIn('reference_number', response.data)
 #         self.assertIn('already used', response.data['reference_number'][0])
+
+
+class ReceiptsListHelperTests(SimpleTestCase):
+    """Unit tests for receipts_list helper functions."""
+
+    @patch("Rental_Deal.views.Receipts.objects.filter")
+    def test_parse_receipts_list_accepts_json_and_removes_duplicates(self, mock_filter):
+        receipt_map = {
+            101: MagicMock(id=101, receipt_number=7001),
+            102: MagicMock(id=102, receipt_number=7002),
+        }
+
+        def filter_side_effect(*args, **kwargs):
+            receipt_id = kwargs.get("id")
+            query = MagicMock()
+            query.only.return_value = query
+            query.first.return_value = receipt_map.get(receipt_id)
+            return query
+
+        mock_filter.side_effect = filter_side_effect
+
+        raw_value = '[{"id": 101}, {"id": 102}, {"id": 101}, {"id": "bad"}]'
+        parsed = _parse_receipts_list(raw_value)
+
+        self.assertEqual(
+            parsed,
+            [
+                {"id": 101, "receipt_number": 7001},
+                {"id": 102, "receipt_number": 7002},
+            ],
+        )
+
+    @patch("Rental_Deal.views.Receipts.objects.filter")
+    def test_parse_receipts_list_supports_plain_id_array(self, mock_filter):
+        receipt_map = {
+            201: MagicMock(id=201, receipt_number=8001),
+            202: MagicMock(id=202, receipt_number=8002),
+        }
+
+        def filter_side_effect(*args, **kwargs):
+            receipt_id = kwargs.get("id")
+            query = MagicMock()
+            query.only.return_value = query
+            query.first.return_value = receipt_map.get(receipt_id)
+            return query
+
+        mock_filter.side_effect = filter_side_effect
+
+        parsed = _parse_receipts_list("[201, 202, 201]")
+
+        self.assertEqual(
+            parsed,
+            [
+                {"id": 201, "receipt_number": 8001},
+                {"id": 202, "receipt_number": 8002},
+            ],
+        )
+
+    def test_parse_receipts_list_returns_empty_on_invalid_json(self):
+        parsed = _parse_receipts_list("not-a-json")
+        self.assertEqual(parsed, [])
+
+    @patch("Rental_Deal.views.Receipts.objects.filter")
+    def test_sync_receipt_statuses_marks_removed_unused_and_current_used(self, mock_filter):
+        removed_qs = MagicMock()
+        added_qs = MagicMock()
+
+        def filter_side_effect(*args, **kwargs):
+            ids = set(kwargs.get("id__in", []))
+            if ids == {11}:
+                return removed_qs
+            if ids == {12, 13}:
+                return added_qs
+            return MagicMock()
+
+        mock_filter.side_effect = filter_side_effect
+
+        previous_payload = [
+            {"id": 11, "receipt_number": 5001},
+            {"id": 12, "receipt_number": 5002},
+        ]
+        current_payload = [
+            {"id": 12, "receipt_number": 5002},
+            {"id": 13, "receipt_number": 5003},
+        ]
+
+        _sync_receipt_statuses(current_payload, "REF-100", previous_payload)
+
+        removed_qs.update.assert_called_once_with(status="Unused", deal_refer_no="")
+        added_qs.update.assert_called_once_with(status="Used", deal_refer_no="REF-100")
+
+    @patch("Rental_Deal.views.Receipts.objects.filter")
+    def test_sync_receipt_statuses_marks_all_current_used_when_no_previous(self, mock_filter):
+        added_qs = MagicMock()
+
+        def filter_side_effect(*args, **kwargs):
+            ids = set(kwargs.get("id__in", []))
+            if ids == {21, 22}:
+                return added_qs
+            return MagicMock()
+
+        mock_filter.side_effect = filter_side_effect
+
+        current_payload = [
+            {"id": 21, "receipt_number": 6001},
+            {"id": 22, "receipt_number": 6002},
+        ]
+
+        _sync_receipt_statuses(current_payload, "REF-200")
+
+        added_qs.update.assert_called_once_with(status="Used", deal_refer_no="REF-200")

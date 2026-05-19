@@ -65,6 +65,119 @@ from rest_framework import status
 logger = logging.getLogger('Rental_Deal')
 
 
+def _parse_receipts_list(raw_value):
+    if not raw_value:
+        return []
+
+    if isinstance(raw_value, list):
+        raw_items = raw_value
+    else:
+        try:
+            raw_items = json.loads(raw_value)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return []
+
+    normalized_receipts = []
+    seen_ids = set()
+
+    for item in raw_items:
+        receipt_id = None
+        if isinstance(item, dict):
+            receipt_id = item.get('id')
+        else:
+            receipt_id = item
+
+        try:
+            receipt_id = int(str(receipt_id).strip())
+        except (TypeError, ValueError, AttributeError):
+            continue
+
+        if receipt_id <= 0 or receipt_id in seen_ids:
+            continue
+
+        receipt_obj = Receipts.objects.filter(id=receipt_id).only('id', 'receipt_number').first()
+        if not receipt_obj:
+            continue
+
+        normalized_receipts.append({
+            'id': receipt_obj.id,
+            'receipt_number': receipt_obj.receipt_number,
+        })
+        seen_ids.add(receipt_obj.id)
+
+    return normalized_receipts
+
+
+def _build_receipts_list_from_legacy_fields(source_data):
+    receipts_payload = []
+    seen_ids = set()
+
+    legacy_id_fields = [
+        'receipt_id',
+        'receipt_id2',
+        'receipt_id3',
+        'receipt_id4',
+        'receipt_id5',
+    ]
+
+    for field_name in legacy_id_fields:
+        receipt_id = source_data.get(field_name)
+        try:
+            receipt_id = int(str(receipt_id).strip())
+        except (TypeError, ValueError, AttributeError):
+            continue
+
+        if receipt_id <= 0 or receipt_id in seen_ids:
+            continue
+
+        receipt_obj = Receipts.objects.filter(id=receipt_id).only('id', 'receipt_number').first()
+        if not receipt_obj:
+            continue
+
+        receipts_payload.append({
+            'id': receipt_obj.id,
+            'receipt_number': receipt_obj.receipt_number,
+        })
+        seen_ids.add(receipt_obj.id)
+
+    return receipts_payload
+
+
+def _get_legacy_receipt_ids_from_source(source_data):
+    legacy_ids = set()
+    for field_name in ['receipt_id', 'receipt_id2', 'receipt_id3', 'receipt_id4', 'receipt_id5']:
+        raw_value = source_data.get(field_name)
+        try:
+            receipt_id = int(str(raw_value).strip())
+        except (TypeError, ValueError, AttributeError):
+            continue
+
+        if receipt_id > 0:
+            legacy_ids.add(receipt_id)
+
+    return legacy_ids
+
+
+def _sync_receipt_statuses(receipts_payload, reference_number, previous_payload=None):
+    previous_ids = {
+        item['id'] for item in (previous_payload or [])
+        if isinstance(item, dict) and item.get('id')
+    }
+    current_ids = {
+        item['id'] for item in receipts_payload
+        if isinstance(item, dict) and item.get('id')
+    }
+
+    removed_ids = previous_ids - current_ids
+    added_ids = current_ids
+
+    if removed_ids:
+        Receipts.objects.filter(id__in=removed_ids).update(status='Unused', deal_refer_no='')
+
+    if added_ids:
+        Receipts.objects.filter(id__in=added_ids).update(status='Used', deal_refer_no=reference_number)
+
+
 class RentalDealPermissions(BasePermission):
     def has_permission(self, request, view):
         # Map methods to permissions
@@ -965,6 +1078,15 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             else:
                 pass
 
+        legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
+        receipts_payload = [
+            item for item in _parse_receipts_list(mutable_data.get('receipts_list'))
+            if item.get('id') not in legacy_receipt_ids
+        ]
+
+        mutable_data['receipts_list'] = json.dumps(receipts_payload)
+        _sync_receipt_statuses(receipts_payload, mutable_data['reference_number'])
+
 
 
         
@@ -1314,7 +1436,6 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                         mutable_data['receipt_id'] = 0
                         mutable_data['receipt_no'] = receipt_value
 
-
             if mutable_data.get('receipt_no2') is not None:
                 get_receipt_no2_db = getattr(rental_deal, 'receipt_no2', "")
                 get_receipt_id2_db = getattr(rental_deal, 'receipt_id2', "")
@@ -1353,6 +1474,20 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                             Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
                         mutable_data['receipt_id2'] = 0
                         mutable_data['receipt_no2'] = receipt_value2
+
+            legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
+            receipts_payload = [
+                item for item in _parse_receipts_list(mutable_data.get('receipts_list'))
+                if item.get('id') not in legacy_receipt_ids
+            ]
+
+            previous_receipts_payload = [
+                item for item in _parse_receipts_list(getattr(rental_deal, 'receipts_list', ''))
+                if item.get('id') not in legacy_receipt_ids
+            ]
+
+            mutable_data['receipts_list'] = json.dumps(receipts_payload)
+            _sync_receipt_statuses(receipts_payload, mutable_data['reference_number'], previous_receipts_payload)
 
 
 
@@ -1678,13 +1813,15 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         recipt_no_3, recipt_id_3 = get_receipt_info(rental_deal.receipt_no3)
         recipt_no_4, recipt_id_4 = get_receipt_info(rental_deal.receipt_no4)
         recipt_no_5, recipt_id_5 = get_receipt_info(rental_deal.receipt_no5)
-
+        receipts_list_view = _parse_receipts_list(getattr(rental_deal, 'receipts_list', ''))
+        print(receipts_list_view, "this is the receipts list view")
 
         return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no  , "recipt_id":recipt_id ,
         "recipt_no_2":recipt_no_2 , "recipt_id_2":recipt_id_2 ,
         "recipt_no_3":recipt_no_3 , "recipt_id_3":recipt_id_3,
         "recipt_no_4":recipt_no_4 , "recipt_id_4":recipt_id_4,
-        "recipt_no_5":recipt_no_5 , "recipt_id_5":recipt_id_5
+        "recipt_no_5":recipt_no_5 , "recipt_id_5":recipt_id_5,
+        "receipts_list_view": receipts_list_view
         })
     
     # submitted by user dropdown we arenot using this
@@ -1892,9 +2029,19 @@ def edit_rental_deal_view(request, pk):
     reciepts4_used = deal.receipt_id4 if deal.receipt_id4 else ""
     reciepts5_used = deal.receipt_id5 if deal.receipt_id5 else ""
 
+    receipts_list_payload = _parse_receipts_list(getattr(deal, 'receipts_list', ''))
+    receipts_list_ids = [item['id'] for item in receipts_list_payload if item.get('id')]
 
-
-    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used, reciepts4_used, reciepts5_used] if rid]
+    used_receipt_ids = [
+        rid for rid in [
+            reciepts1_used,
+            reciepts2_used,
+            reciepts3_used,
+            reciepts4_used,
+            reciepts5_used,
+            *receipts_list_ids,
+        ] if rid
+    ]
     if role == "Agent":
          
         

@@ -54,6 +54,7 @@
               />
               <input type="hidden" name="id" id="id" />
               <input type="hidden" name="save_as" id="save_as" />
+              <input type="hidden" name="receipts_list" id="receipts_list" />
               <input type="hidden" name="account_id" id="account_id" />
               <input
                 type="hidden"
@@ -462,6 +463,20 @@
                 />
                 <span class="text-danger" id="seller_nationality_error"></span>
               </div>
+              <div class="col-md-6 form-group">
+                <label for="lessor_emirates_id"
+                  >Lessor's Emirates ID<span class="mandetory_field">*</span></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="lessor_emirates_id"
+                  name="lessor_emirates_id"
+                  placeholder="Lessor's Emirates ID"
+                />
+                <span class="text-danger" id="lessor_emirates_id_error"></span>
+              </div>
+               
             </div>
             <hr />
             <div class="row">
@@ -566,7 +581,21 @@
                 />
                 <span class="text-danger" id="buyer_nationality_error"></span>
               </div>
+               <div class="col-md-6 form-group">
+                <label for="tenants_emirates_id"
+                  >Tenant's Emirates ID<span class="mandetory_field"></span></label
+                >
+                <input
+                  class="form-control"
+                  type="text"
+                  id="tenants_input_emirates_id"
+                  name="tenants_input_emirates_id"
+                  placeholder="Tenant's Emirates ID"
+                />
+                <span class="text-danger" id="tenants_input_emirates_id_error"></span>
+              </div>
             </div>
+
             <hr />
             <div class="row">
               <div class="col-md-6 form-group mb-1">
@@ -1140,6 +1169,15 @@
                 </select>
                 <span class="text-danger" id="receipt_no5_error"></span>
               </div>
+
+              <div class="col-md-12 form-group d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="addReceiptRow" disabled>
+                  Add Receipt
+                </button>
+                <small class="text-muted">Enable this after the visible receipt fields are filled.</small>
+              </div>
+
+              <div class="col-md-12" id="dynamic_receipts_container"></div>
 
               <div class="col-md-6 form-group">
                 <label for="kyc_number">KYC Number</label>
