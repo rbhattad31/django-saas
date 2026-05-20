@@ -1267,6 +1267,7 @@ class RentalDeals (models.Model):
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
     re_submitted_date = models.DateField( blank=True, null=True)
     last_reminder_date = models.DateField(blank=True, null=True)
+    receipts_list = models.TextField(blank=True, null=True)  # Store receipt IDs as a comma-separated string
 
 
     # tenant_id = 'account'  # OR 'user_account_id' if you use db_column
