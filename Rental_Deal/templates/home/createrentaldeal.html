@@ -1385,27 +1385,29 @@
                         <span class="text-danger" id="receipt_no_error"></span>
                     </div>
 
-                    <div class="col-md-12 form-group d-flex align-items-center gap-2">
+                    <div class="col-md-6 form-group d-flex align-items-center gap-2">
                       <button type="button" class="btn btn-outline-primary btn-sm" id="addReceiptRow" disabled>
                         Add Receipt
                       </button>
                       <small class="text-muted">Enabled only after the visible receipt fields are filled.</small>
                     </div>
 
-                    <div class="col-md-12" id="dynamic_receipts_container"></div>
-
-                  <div class="col-md-6 form-group">
-                    <label for="kyc_number">KYC Number</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      id="kyc_number"
-                      name="kyc_number"
-                      placeholder="KYC Number"
-                    />
-                    <span class="text-danger" id="kyc_number_error"></span>
                   </div>
-                </div>
+                  <div class="row form-group nav-revenue" id="dynamic_receipts_container" ></div>
+                  
+                  <div class="row form-group nav-revenue">
+                    <div class="col-md-6 form-group  ">
+                      <label for="kyc_number">KYC Number</label>
+                      <input
+                        class="form-control"
+                        type="text"
+                        id="kyc_number"
+                        name="kyc_number"
+                        placeholder="KYC Number"
+                      />
+                      <span class="text-danger" id="kyc_number_error"></span>
+                    </div>
+                  </div>
 
                 <div class="row form-group nav-revenue">
                   {% if perms.core.edit_approved_rental_deals %}
