@@ -522,6 +522,25 @@
                                         </select>
                                         <span class="text-danger" id="receipt_no5_error"></span>
                                     </div>
+                                
+
+                                <!-- Dynamic Receipts Section -->
+                                    <div class=" form-group col-md-5  mt-4 pt-2 ">
+                                        <div class="col-md-5    mb-2">
+                                            <button type="button" id="addReceiptBtn" class="btn btn-outline-primary btn-sm" disabled>
+                                                + Add Receipt
+                                            </button>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                                <div id="dynamic_receipts_container" class="row form-group nav-revenue"></div>
+                                
+                                <!-- Hidden field to store receipts_list JSON -->
+                                <input type="hidden" id="receipts_list" name="receipts_list" value="[]">
+
+                                <div class="row form-group nav-revenue">
                                     <div class="col-md-6 form-group">
                                         <label for="kyc_number">KYC Number</label>
                                         <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number">
@@ -872,6 +891,7 @@
 
                 loadAgentDropdown();
                 loadReceiptDropdown();
+                initializeDynamicReceipts();
 
                 function loadAgentDropdown() {
                     agents = sales_data.agents;
@@ -921,26 +941,179 @@
 
                 populateReceiptDropdown("#receipt_no5", receipts);
 
-                      
+                refreshReceiptOptionStates();
+                syncReceiptsListField();
 
             }
 
             // Helper function to populate the receipt dropdown
-            function populateReceiptDropdown(selector, data) {
+            function populateReceiptDropdown(selector, data, selectedValue = "") {
                 console.log(selector, "recipt selector");
                 console.log(data, "receipt data");
 
                 const $dropdown = $(selector);
-                $dropdown.empty().append('<option value="">Select Receipt</option>');
-                $dropdown.append('<option value="No Commission">No Commission</option>');
-                $dropdown.append('<option value="Null">Null</option>');
+                $dropdown.empty();
+
+                const normalizedSelectedValue = selectedValue ? String(selectedValue).trim() : "";
+
+                $dropdown.append('<option value="">Select Receipt</option>');
+                $dropdown.append(`<option value="No Commission" ${normalizedSelectedValue === "No Commission" ? "selected" : ""}>No Commission</option>`);
+                $dropdown.append(`<option value="Null" ${normalizedSelectedValue === "Null" ? "selected" : ""}>Null</option>`);
 
                 data.forEach(function (receipt) {
+                const isSelected = normalizedSelectedValue === String(receipt.id);
                 $dropdown.append(
-                    `<option value="${receipt.id}">${receipt.receipt_number}</option>`
+                    `<option value="${receipt.id}" ${isSelected ? "selected" : ""}>${receipt.receipt_number}</option>`
                 );
                 });
+
+                if (normalizedSelectedValue) {
+                    $dropdown.val(normalizedSelectedValue);
+                }
             }
+
+            function getReceiptSelects() {
+                return $('select[name^="receipt_no"], select[name^="receipt_extra_"]');
+            }
+
+            function getDynamicReceiptSelects() {
+                return $('select[name^="receipt_extra_"]');
+            }
+
+            function getReceiptNumberFromId(receiptId) {
+                const receipt = (sales_data.receipts || []).find(function (item) {
+                    return String(item.id) === String(receiptId);
+                });
+                return receipt ? receipt.receipt_number : "";
+            }
+
+            function collectSelectedReceipts() {
+                const selectedReceipts = [];
+                const seenIds = new Set();
+
+                getDynamicReceiptSelects().each(function () {
+                    const value = String($(this).val() || "").trim();
+                    if (!value || !/^\d+$/.test(value) || seenIds.has(value)) {
+                        return;
+                    }
+
+                    const receiptNumber = getReceiptNumberFromId(value);
+                    if (!receiptNumber) {
+                        return;
+                    }
+
+                    selectedReceipts.push({
+                        id: parseInt(value, 10),
+                        receipt_number: receiptNumber,
+                    });
+                    seenIds.add(value);
+                });
+
+                return selectedReceipts;
+            }
+
+            function syncReceiptsListField() {
+                const selectedReceipts = collectSelectedReceipts();
+                $("#receipts_list").val(JSON.stringify(selectedReceipts));
+                return selectedReceipts;
+            }
+
+            function refreshReceiptOptionStates() {
+                const receiptSelects = getReceiptSelects();
+                const selectedIds = receiptSelects
+                    .map(function () {
+                        return String($(this).val() || "").trim();
+                    })
+                    .get()
+                    .filter(function (value) {
+                        return /^\d+$/.test(value);
+                    });
+
+                receiptSelects.each(function () {
+                    const currentValue = String($(this).val() || "").trim();
+
+                    $(this)
+                        .find("option")
+                        .each(function () {
+                            const optionValue = String($(this).val() || "").trim();
+                            if (!/^\d+$/.test(optionValue)) {
+                                $(this).prop("disabled", false);
+                                return;
+                            }
+
+                            const shouldDisable = selectedIds.includes(optionValue) && optionValue !== currentValue;
+                            $(this).prop("disabled", shouldDisable);
+                        });
+                });
+
+                refreshAddReceiptButtonState();
+                syncReceiptsListField();
+            }
+
+            function refreshAddReceiptButtonState() {
+                const receiptSelects = getReceiptSelects();
+                const allFilled =
+                    receiptSelects.length > 0 &&
+                    receiptSelects.toArray().every(function (field) {
+                        const value = String($(field).val() || "").trim();
+                        if (!value) return false;
+                        if (value === "Null") return false;
+                        if (value === "No Commission" || value === "No Commision") return false;
+                        return /^\d+$/.test(value);
+                    });
+
+                $("#addReceiptBtn").prop("disabled", !allFilled);
+            }
+
+            function addReceiptRow(selectedValue = "") {
+                const nextIndex = $(".dynamic-receipt-row").length + 1;
+                const rowId = `receipt_extra_${nextIndex}`;
+                const rowMarkup = `
+                    <div class="col-md-6 form-group  dynamic-receipt-row" data-row-index="${nextIndex}" style=" ">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="${rowId}">Receipt No ${nextIndex + 5}</label>
+                            <button type="button" class="btn btn-link text-danger p-0 remove-dynamic-receipt">Remove</button>
+                        </div>
+                        <select name="${rowId}" class="form-control receipt-dynamic-select" id="${rowId}"></select>
+                        <span class="text-danger receipt-error"></span>
+                    </div>
+                `;
+
+                $("#dynamic_receipts_container").append(rowMarkup);
+                populateReceiptDropdown(`#${rowId}`, receipts, selectedValue);
+
+                const $newSelect = $(`#${rowId}`);
+                $newSelect.rules("add", {
+                    alphanum_special: true,
+                    maxlength: 100,
+                    receiptDuplicate: true,
+                    validReceiptSelection: true,
+                });
+
+                refreshReceiptOptionStates();
+            }
+
+            function initializeDynamicReceipts() {
+                refreshReceiptOptionStates();
+                syncReceiptsListField();
+            }
+
+            $(document).on(
+                "change",
+                'select[name^="receipt_no"], select[name^="receipt_extra_"]',
+                function () {
+                    refreshReceiptOptionStates();
+                }
+            );
+
+            $(document).on("click", "#addReceiptBtn", function () {
+                addReceiptRow();
+            });
+
+            $(document).on("click", ".remove-dynamic-receipt", function () {
+                $(this).closest(".dynamic-receipt-row").remove();
+                refreshReceiptOptionStates();
+            });
 
 
  
@@ -1305,36 +1478,41 @@ $.validator.addMethod("lettersonly", function(value, element) {
 }, "Letters only please")
 
  $.validator.addMethod("receiptDuplicate", function (value, element) {
-            var receipts = [
-                { id: "receipt_no", value: $("#receipt_no").val()?.trim() },
-                { id: "receipt_no2", value: $("#receipt_no2").val()?.trim() },
-                { id: "receipt_no3", value: $("#receipt_no3").val()?.trim() },
-                { id: "receipt_no4", value: $("#receipt_no4").val()?.trim() },
-                { id: "receipt_no5", value: $("#receipt_no5").val()?.trim() }
-            ];
+            if (!value) return true;
+
+            var currentValue = value.trim();
+            if (!/^\d+$/.test(currentValue)) return true;
+
+            var receipts = $('select[name^="receipt_no"], select[name^="receipt_extra_"]')
+                .map(function () {
+                    return {
+                        id: $(this).attr("id"),
+                        value: $(this).val()?.trim(),
+                    };
+                })
+                .get();
 
             var currentId = $(element).attr("id");
-            var hasDuplicate = false;
 
             for (let i = 0; i < receipts.length; i++) {
-                if (!receipts[i].value) continue;
-
-                for (let j = i + 1; j < receipts.length; j++) {
-                    if (!receipts[j].value) continue;
-
-                    if (receipts[i].value === receipts[j].value) {
-                        if (receipts[i].id === currentId || receipts[j].id === currentId) {
-                            hasDuplicate = true;
-                            break;
-                        }
-                    }
+                if (
+                    receipts[i].id !== currentId &&
+                    /^\d+$/.test(String(receipts[i].value || "").trim()) &&
+                    receipts[i].value === currentValue
+                ) {
+                    return false;
                 }
-
-                if (hasDuplicate) break;
             }
 
-            return !hasDuplicate;
+            return true;
         }, "Duplicate receipt number is not allowed.");
+
+$.validator.addMethod("validReceiptSelection", function (value, element) {
+            const normalized = String(value || "").trim();
+            if (!normalized) return true;
+            if (normalized === "Null" || normalized === "No Commission" || normalized === "No Commision") return true;
+            return /^\d+$/.test(normalized);
+        }, "Please select a valid receipt number.");
 
 
 
@@ -1554,26 +1732,31 @@ $('#deal_form').validate({
             alphanum_special: true,
             maxlength: 100,
             receiptDuplicate: true,
+                        validReceiptSelection: true,
            },
              receipt_no2: {
             alphanum_special: true,
             maxlength: 100,
             receiptDuplicate: true,
+                        validReceiptSelection: true,
            },
              receipt_no3: {
             alphanum_special: true,
             maxlength: 100,
             receiptDuplicate: true,
+                        validReceiptSelection: true,
            },
            receipt_no4: {
             alphanum_special: true,
             maxlength: 100,
             receiptDuplicate: true,
+                        validReceiptSelection: true,
            },
            receipt_no5: {
             alphanum_special: true,
             maxlength: 100,
             receiptDuplicate: true,
+                        validReceiptSelection: true,
            },
           
            is_sale_aml: {

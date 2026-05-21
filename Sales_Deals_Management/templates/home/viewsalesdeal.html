@@ -834,6 +834,28 @@
                                     </div>
                                 </div>
                             
+                                <!-- Dynamic Receipts Display -->
+                                {% if receipts_list_view %}
+                                    {% for receipt in receipts_list_view %}
+                                        <div class="col-md-6 form-group mb-3">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label for="">
+                                                        <h6 class="labelname">Receipt No {{ forloop.counter|add:5 }}</h6>
+                                                    </label>
+                                                </div>
+                                                <div class="col-1">:</div>
+                                                <div class="col-6 format-value">
+                                                    <label for=""><h6 class="value">{{ receipt.receipt_number }}</h6></label>
+                                                    {% if perms.core.download_receipts %}
+                                                        <a class="btn btn-primary btn-rounded ml-3" href="/receipt/{{ receipt.id }}/download/" target="_blank">Download</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            
                                 <div class="col-md-6 form-group mb-3">
                                     <div class="row">
                                         <div class="col-4">

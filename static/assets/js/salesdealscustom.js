@@ -18,180 +18,193 @@ function getCookie(name) {
 
 // $(document).ready(function () {
 //   if (!formInitialized) {
-//     console.log("Form not initialized, setting up.");
-//     // Initialize form elements here
+function parseReceiptsList(receiptsListValue) {
+  if (!receiptsListValue) {
+    return [];
+  }
 
-//     console.log("Document is ready!");
+  if (Array.isArray(receiptsListValue)) {
+    return receiptsListValue;
+  }
 
-//     // Handle form submission
-//     $("#filterForm").on("submit", function (e) {
-//       e.preventDefault();
+  try {
+    const parsedValue = JSON.parse(receiptsListValue);
+    return Array.isArray(parsedValue) ? parsedValue : [];
+  } catch (error) {
+    console.warn("Unable to parse receipts_list", error);
+    return [];
+  }
+}
 
-//       const formData2 = Object.fromEntries(
-//         new URLSearchParams($(this).serialize())
-//       ); // serialize form fields
-//       console.log("Form data:", formData2); // Log the serialized form data
-//       postAndRedirect("/sales-deals/filter/", formData2);
-//     });
-//     $("#filterForm").trigger("submit");
-//     formInitialized = true; // Set the flag to true after initialization
-//   }
-// });
+function getReceiptSelects() {
+  return $("select[name^='receipt_no'], select[name^='receipt_extra_']");
+}
 
-// function postAndRedirect(postUrl, formData1) {
-//   const formData = new FormData();
+function getDynamicReceiptSelects() {
+  return $("select[name^='receipt_extra_']");
+}
 
-//   const lastPart = window.location.pathname
-//     .split("/")
-//     .filter(Boolean)
-//     .slice(-1)[0];
-//   console.log(lastPart);
+function getReceiptNumberFromId(receiptId) {
+  const receipt = (sales_data.receipts || []).find(function (item) {
+    return String(item.id) === String(receiptId);
+  });
 
-//   for (const key in formData1) {
+  return receipt ? receipt.receipt_number : "";
+}
 
-//     if (lastPart === "all" && key === "type") {
+function collectSelectedReceipts() {
+  const selectedReceipts = [];
+  const seenIds = new Set();
 
-//       formData.append(key, "All");
-//       console.log(`Appending ${key}: all`,  );;
-//     }
-//     else if (lastPart === "draft" && key === "type") {
-//       formData.append(key, "draft");
-//       console.log(`Appending ${key}: draft`,  );;
-//     }
-//     else if (lastPart === "approved" && key === "type") {
-//       formData.append(key, "approved");
-//       console.log(`Appending ${key}: approved`,  );;
-//     }
-//     else if (lastPart === "pending" && key === "type") {
-//       formData.append(key, "pending");
-//       console.log(`Appending ${key}: pending`,  );;
-//     }
-//     else if (lastPart === "waiting" && key === "type") {
-//       formData.append(key, "waiting");
-//       console.log(`Appending ${key}: waiting`,  );;
-//     }
-//     else if (lastPart === "rejected" && key === "type") {
-//       formData.append(key, "rejected");
-//       console.log(`Appending ${key}: rejected`,  );;
-//     }
-//     else if (lastPart === "entered-finance" && key === "type") {
-//       formData.append(key, "entered-finance");
-//       console.log(`Appending ${key}: entered-finance`,  );;
-//     }
+  getDynamicReceiptSelects().each(function () {
+    const value = String($(this).val() || "").trim();
 
-//     else if (lastPart === "waiting-finance" && key === "type") {
-//       formData.append(key, "waiting-finance");
-//       console.log(`Appending ${key}: waiting-finance`,  );;
-//     }
+    if (!value || !/^\d+$/.test(value) || seenIds.has(value)) {
+      return;
+    }
 
-//     else {
-//       formData.append(key, formData1[key]);
-//     }
+    const receiptNumber = getReceiptNumberFromId(value);
+    if (!receiptNumber) {
+      return;
+    }
 
-//   }
+    selectedReceipts.push({
+      id: parseInt(value, 10),
+      receipt_number: receiptNumber,
+    });
+    seenIds.add(value);
+  });
 
-//   console.log("Form data to be sent:", formData);
+  return selectedReceipts;
+}
 
-//   fetch(postUrl, {
-//     method: "POST",
-//     headers: {
-//       "X-CSRFToken": getCookie("csrftoken"),
-//     },
-//     body: formData,
-//     credentials: "include",
-//   })
-//     .then((response) => {
-//       console.log("Response status:", response.status);
-//       return response.json();
-//     })
-//     .then((data) => {
-//       console.log("Response data:", data.data);
-//       const rentalDeals = data.data || data; // use data.data if your API wraps it
+function syncReceiptsListField() {
+  const selectedReceipts = collectSelectedReceipts();
+  $("#receipts_list").val(JSON.stringify(selectedReceipts));
+  return selectedReceipts;
+}
 
-//       $("#myTable").DataTable({
-//         data: rentalDeals, // ✅ Pass the array directly
-//         destroy: true, // ❗Needed if reinitializing table
-//         columns: [
-//           {
-//             data: null,
-//             title: "Action",
-//             render: function (data, type, row) {
-//               return `
-//                 <a href="/sales-deals/view/${row.id}/" class="text-primary"><i class="fas fa-eye"></i></a>
-//                 <a href="/sales-deals/update/${row.id}/" class="text-warning mx-2"><i class="fas fa-edit"></i></a>
-//                 <a href="/sales-deals/delete/${row.id}/" class="text-danger"><i class="fas fa-trash"></i></a>
-//               `;
-//             },
-//             orderable: false,
-//             searchable: false
-//           },
-//           { data:"submitted_by_user", title: "Submitted By User"},
-//           { data: "reference_number", title: "Reference Number" },
-//           {
-//             data:"deal_date",title: "Deal Date",
-//             render: function (data) {
-//               return new Date(data).toLocaleDateString(); // Format date
-//             }
-//           },
-//           {data:"unit_details", title: "Unit No"},
+function syncReceiptsList() {
+  return syncReceiptsListField();
+}
 
-//           { data: "builduing_name", title: "Building Name" },
-//           { data: "project_name", title: "Project Name" },
-//           {data:"deal_amount", title: "Selling Price"},
-//           {
-//             data: "submitted_date",
-//             title: "Submitted Date",
-//             render: function (data) {
-//               return new Date(data).toLocaleDateString(); // Format date
-//             },
-//           },
-//         ],
-//       });
-//     })
-//     .catch((error) => {
-//       console.error("POST error:", error);
-//     });
-// }
-// document.addEventListener("DOMContentLoaded", function () {
-//   const dropdownIds = ['rentalDealsSubmenu', 'salesDealsSubmenu'];
+function refreshReceiptOptionStates() {
+  const receiptSelects = getReceiptSelects();
+  const selectedIds = receiptSelects
+    .map(function () {
+      return String($(this).val() || "").trim();
+    })
+    .get()
+    .filter(function (value) {
+      return /^\d+$/.test(value);
+    });
 
-//   dropdownIds.forEach(id => {
-//     const collapseEl = document.getElementById(id);
-//     const state = localStorage.getItem(id + '_open');
+  receiptSelects.each(function () {
+    const currentValue = String($(this).val() || "").trim();
 
-//     if (state === 'true') {
-//       new bootstrap.Collapse(collapseEl, { toggle: true });
-//     }
+    $(this)
+      .find("option")
+      .each(function () {
+        const optionValue = String($(this).val() || "").trim();
 
-//     collapseEl.addEventListener('show.bs.collapse', () => {
-//       localStorage.setItem(id + '_open', 'true');
-//     });
-//     collapseEl.addEventListener('hide.bs.collapse', () => {
-//       localStorage.setItem(id + '_open', 'false');
-//     });
-//   });
-// });
+        if (!/^\d+$/.test(optionValue)) {
+          $(this).prop("disabled", false);
+          return;
+        }
 
-// function getCookie(name) {
-//   let cookieValue = null;
-//   if (document.cookie && document.cookie !== "") {
-//     for (let cookie of document.cookie.split(";")) {
-//       cookie = cookie.trim();
-//       if (cookie.startsWith(name + "=")) {
-//         cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
-//         break;
-//       }
-//     }
-//   }
-//   return cookieValue;
-// }
+        const shouldDisable =
+          selectedIds.includes(optionValue) && optionValue !== currentValue;
+        $(this).prop("disabled", shouldDisable);
+      });
+  });
 
-// // $(document).ready(function () {
-// //  $.ajax({
-// //   url: '/api/rental-deals/filter',
-// //   method: 'POST',
-// //   headers: {
-// //     'X-CSRFToken': getCookie('csrftoken')
+  refreshAddReceiptButtonState();
+  syncReceiptsListField();
+}
+
+function refreshAddReceiptButtonState() {
+  const receiptSelects = getReceiptSelects();
+  const allFilled =
+    receiptSelects.length > 0 &&
+    receiptSelects.toArray().every(function (field) {
+      const value = String($(field).val() || "").trim();
+      if (!value) return false;
+      if (value === "Null") return false;
+      if (value === "No Commission" || value === "No Commision") return false;
+      return /^\d+$/.test(value);
+    });
+
+  $("#addReceiptBtn").prop("disabled", !allFilled);
+}
+
+function addReceiptRow(selectedValue = "", selectedReceiptNumber = "") {
+  const nextIndex = $(".dynamic-receipt-row").length + 1;
+  const rowId = `receipt_extra_${nextIndex}`;
+  const rowMarkup = `
+    <div class="col-md-6 mb-2 dynamic-receipt-row" data-row-index="${nextIndex}">
+      <div class="d-flex justify-content-between align-items-center">
+        <label for="${rowId}">Receipt No ${nextIndex + 5}</label>
+        <button type="button" class="btn btn-link text-danger p-0 remove-dynamic-receipt">Remove</button>
+      </div>
+      <select name="${rowId}" class="form-control receipt-dynamic-select" id="${rowId}"></select>
+      <span class="text-danger receipt-error"></span>
+    </div>
+  `;
+
+  $("#dynamic_receipts_container").append(rowMarkup);
+  populateReceiptDropdown(`#${rowId}`, receipts, selectedValue || selectedReceiptNumber);
+
+  const $newSelect = $(`#${rowId}`);
+  $newSelect.rules("add", {
+    alphanum_special: true,
+    maxlength: 100,
+    receiptDuplicate: true,
+    validReceiptSelection: true,
+  });
+
+  refreshReceiptOptionStates();
+}// Duplicate addReceiptRow removed — single implementation later in file is used.
+
+$(document)
+  .off("change.salesReceipts", "select[name^='receipt_no'], select[name^='receipt_extra_']")
+  .on("change.salesReceipts", "select[name^='receipt_no'], select[name^='receipt_extra_']", function () {
+    refreshReceiptOptionStates();
+  });
+
+$(document)
+  .off("click.salesReceipts", "#addReceiptBtn")
+  .on("click.salesReceipts", "#addReceiptBtn", function () {
+    addReceiptRow();
+  });
+
+$(document)
+  .off("click.salesReceipts", ".remove-dynamic-receipt")
+  .on("click.salesReceipts", ".remove-dynamic-receipt", function () {
+    $(this).closest(".dynamic-receipt-row").remove();
+    refreshReceiptOptionStates();
+  });
+
+function loadDynamicReceipts(receiptsList) {
+  console.log("Loading dynamic receipts from list:", receiptsList);
+  const parsedList = parseReceiptsList(receiptsList);
+  parsedList.forEach(function (receipt) {
+    console.log("Loading receipt into dynamic row:", receipt , "with number", receipt.receipt_number , "and id", receipt.id);
+    addReceiptRow(receipt.id, receipt.receipt_number);
+  });
+}
+
+function initializeDynamicReceipts() {
+  refreshReceiptOptionStates();
+  syncReceiptsListField();
+  try {
+    const receiptsListVal = $("#receipts_list").val();
+    if (receiptsListVal && receiptsListVal !== '[]') {
+      loadDynamicReceipts(receiptsListVal);
+    }
+  } catch (e) {
+    console.warn('initializeDynamicReceipts: failed to load dynamic receipts', e);
+  }
+}
 // //   },
 // //   contentType: 'application/json',
 // //   data: JSON.stringify({ draw: 1, start: 0, length: 10, type: "All" }),  // example data
@@ -753,6 +766,16 @@ $(document).ready(function () {
       $.each(data, function (key, value) {
         const $field = $(`[name="${key}"], #${key}`);
 
+        if (key === "receipts_list") {
+          console.log("Loading receipts_list into dynamic fields:", value);
+
+          $("#receipts_list").val(value); // Set hidden field for receipts_list)
+
+          console.log("Set #receipts_list value:", $("#receipts_list").val());
+          
+          // return; // skip further processing for this field
+        }
+
         if ($field.length) {
           const type = $field.attr("type");
 
@@ -795,7 +818,10 @@ $(document).ready(function () {
             $field.val(value).trigger("change");
 
             // ✅ Handle all other input types
-          } else {
+          }
+          
+          
+          else {
             $field.val(value);
           }
           
@@ -806,6 +832,8 @@ $(document).ready(function () {
 
       loadAgentDropdown(data);
       loadReceiptDropdown(data);
+      // loadDynamicReceipts(data.receipts_list);
+      // initializeDynamicReceipts();
       
     },
     error: function () {
@@ -974,6 +1002,7 @@ function populateAgentDropdown(selector, data, selectedId = null) {
 
 function loadReceiptDropdown(requestdata) {
   receipts = sales_data.receipts;
+  $("#dynamic_receipts_container").empty();
 
   populateReceiptDropdown("#receipt_no", receipts, requestdata.receipt_no);
   console.log(requestdata.receipt_no);
@@ -985,6 +1014,38 @@ function loadReceiptDropdown(requestdata) {
   populateReceiptDropdown("#receipt_no3", receipts, requestdata.receipt_no3);
   populateReceiptDropdown("#receipt_no4", receipts, requestdata.receipt_no4);
   populateReceiptDropdown("#receipt_no5", receipts, requestdata.receipt_no5);
+
+  const selectedReceipts = parseReceiptsList(requestdata.receipts_list);
+  const fixedReceiptTokens = [
+    requestdata.receipt_no,
+    requestdata.receipt_no2,
+    requestdata.receipt_no3,
+    requestdata.receipt_no4,
+    requestdata.receipt_no5,
+  ]
+    .map(function (value) {
+      return String(value || "").trim();
+    })
+    .filter(function (value) {
+      return value.length > 0;
+    });
+
+  selectedReceipts
+    .filter(function (item) {
+      const itemId = String(item.id || "").trim();
+      const itemNumber = String(item.receipt_number || "").trim();
+      console.log("Checking receipt", itemId, itemNumber, "against fixed tokens", fixedReceiptTokens);
+      return (
+        !fixedReceiptTokens.includes(itemId) &&
+        !fixedReceiptTokens.includes(itemNumber)
+      );
+    })
+    .forEach(function (item) {
+      addReceiptRow(item.id, item.receipt_number);
+    });
+
+  refreshReceiptOptionStates();
+  syncReceiptsListField();
 }
 
 // Helper function to populate the receipt dropdown
@@ -994,6 +1055,9 @@ function populateReceiptDropdown(selector, data, receiptno_from_request) {
   console.log(receiptno_from_request, "receipt number from request");
   const $dropdown = $(selector);
   $dropdown.empty().append('<option value="">Select Receipt</option>');
+
+  const normalizedSelectedValue = String(receiptno_from_request || "").trim();
+  let matchedReceiptId = "";
 
 
    const noCommissionSelected =
@@ -1010,7 +1074,15 @@ function populateReceiptDropdown(selector, data, receiptno_from_request) {
 
   data.forEach(function (receipt) {
     const isSelected =
-      receiptno_from_request == receipt.receipt_number ? "selected" : "";
+      normalizedSelectedValue === String(receipt.id) ||
+      normalizedSelectedValue === String(receipt.receipt_number)
+        ? "selected"
+        : "";
+
+    if (isSelected) {
+      matchedReceiptId = String(receipt.id);
+    }
+
     if (isSelected) {
       console.log(
         "receipt afterslection",
@@ -1023,7 +1095,206 @@ function populateReceiptDropdown(selector, data, receiptno_from_request) {
       `<option value="${receipt.id}" ${isSelected}>${receipt.receipt_number}</option>`
     );
   });
+
+  if (normalizedSelectedValue) {
+    if (
+      normalizedSelectedValue === "No Commission" ||
+      normalizedSelectedValue === "Null"
+    ) {
+      $dropdown.val(normalizedSelectedValue);
+    } else if (matchedReceiptId) {
+      $dropdown.val(matchedReceiptId);
+    }
+  }
 }
+
+// ===================== Dynamic Receipts Functions =====================
+
+function parseReceiptsList(receiptsListValue) {
+  if (!receiptsListValue) {
+    return [];
+  }
+
+  if (Array.isArray(receiptsListValue)) {
+    return receiptsListValue;
+  }
+
+  try {
+    const parsedValue = JSON.parse(receiptsListValue);
+    return Array.isArray(parsedValue) ? parsedValue : [];
+  } catch (error) {
+    console.warn("Unable to parse receipts_list", error);
+    return [];
+  }
+}
+
+function getReceiptSelects() {
+  return $("select[name^='receipt_no'], select[name^='receipt_extra_']");
+}
+
+function getDynamicReceiptSelects() {
+  return $("select[name^='receipt_extra_']");
+}
+
+function getReceiptNumberFromId(receiptId) {
+  const receipt = (sales_data.receipts || []).find(function (item) {
+    return String(item.id) === String(receiptId);
+  });
+
+  return receipt ? receipt.receipt_number : "";
+}
+
+function collectSelectedReceipts() {
+  const selectedReceipts = [];
+  const seenIds = new Set();
+
+  getDynamicReceiptSelects().each(function () {
+    const value = String($(this).val() || "").trim();
+
+    if (!value || !/^\d+$/.test(value) || seenIds.has(value)) {
+      return;
+    }
+
+    const receiptNumber = getReceiptNumberFromId(value);
+    if (!receiptNumber) {
+      return;
+    }
+
+    selectedReceipts.push({
+      id: parseInt(value, 10),
+      receipt_number: receiptNumber,
+    });
+    seenIds.add(value);
+  });
+
+  return selectedReceipts;
+}
+
+function syncReceiptsListField() {
+  const selectedReceipts = collectSelectedReceipts();
+  $("#receipts_list").val(JSON.stringify(selectedReceipts));
+  return selectedReceipts;
+}
+
+function syncReceiptsList() {
+  return syncReceiptsListField();
+}
+
+function refreshReceiptOptionStates() {
+  const receiptSelects = getReceiptSelects();
+  const selectedIds = receiptSelects
+    .map(function () {
+      return String($(this).val() || "").trim();
+    })
+    .get()
+    .filter(function (value) {
+      return /^\d+$/.test(value);
+    });
+
+  receiptSelects.each(function () {
+    const currentValue = String($(this).val() || "").trim();
+
+    $(this)
+      .find("option")
+      .each(function () {
+        const optionValue = String($(this).val() || "").trim();
+
+        if (!/^\d+$/.test(optionValue)) {
+          $(this).prop("disabled", false);
+          return;
+        }
+
+        const shouldDisable =
+          selectedIds.includes(optionValue) && optionValue !== currentValue;
+        $(this).prop("disabled", shouldDisable);
+      });
+  });
+
+  refreshAddReceiptButtonState();
+  syncReceiptsListField();
+}
+
+function refreshAddReceiptButtonState() {
+  const receiptSelects = getReceiptSelects();
+  const allFilled =
+    receiptSelects.length > 0 &&
+    receiptSelects.toArray().every(function (field) {
+      const value = String($(field).val() || "").trim();
+      if (!value) return false;
+      if (value === "Null") return false;
+      if (value === "No Commission" || value === "No Commision") return false;
+      return /^\d+$/.test(value);
+    });
+
+  $("#addReceiptBtn").prop("disabled", !allFilled);
+}
+
+function addReceiptRow(selectedValue = "", selectedReceiptNumber = "") {
+  const nextIndex = $(".dynamic-receipt-row").length + 1;
+  const rowId = `receipt_extra_${nextIndex}`;
+  const rowMarkup = `
+    <div class="col-md-6 mb-2 dynamic-receipt-row" data-row-index="${nextIndex}">
+      <div class="d-flex justify-content-between align-items-center">
+        <label for="${rowId}">Receipt No ${nextIndex + 5}</label>
+        <button type="button" class="btn btn-link text-danger p-0 remove-dynamic-receipt">Remove</button>
+      </div>
+      <select name="${rowId}" class="form-control receipt-dynamic-select" id="${rowId}"></select>
+      <span class="text-danger receipt-error"></span>
+    </div>
+  `;
+
+  $("#dynamic_receipts_container").append(rowMarkup);
+  console.log("Adding receipt row with ID:", rowId, "and selected value:", selectedValue,receipts);
+  populateReceiptDropdown(`#${rowId}`, receipts, selectedValue || selectedReceiptNumber);
+
+  const $newSelect = $(`#${rowId}`);
+  $newSelect.rules("add", {
+    alphanum_special: true,
+    maxlength: 100,
+    receiptDuplicate: true,
+    validReceiptSelection: true,
+  });
+
+  refreshReceiptOptionStates();
+}
+
+$(document)
+  .off("change.salesReceipts", "select[name^='receipt_no'], select[name^='receipt_extra_']")
+  .on("change.salesReceipts", "select[name^='receipt_no'], select[name^='receipt_extra_']", function () {
+    refreshReceiptOptionStates();
+  });
+
+$(document)
+  .off("click.salesReceipts", "#addReceiptBtn")
+  .on("click.salesReceipts", "#addReceiptBtn", function () {
+    addReceiptRow();
+  });
+
+$(document)
+  .off("click.salesReceipts", ".remove-dynamic-receipt")
+  .on("click.salesReceipts", ".remove-dynamic-receipt", function () {
+    $(this).closest(".dynamic-receipt-row").remove();
+    refreshReceiptOptionStates();
+  });
+
+function loadDynamicReceipts(receiptsList) {
+  console.log("Loading dynamic receipts from list:", receiptsList);
+  const parsedList = parseReceiptsList(receiptsList);
+
+  parsedList.forEach(function (receipt) {
+    console.log("Loading dynamic receipt:", receipt, "into form" ,receipt.id ,receipt.receipt_number) ;
+    addReceiptRow(receipt.id, receipt.receipt_number);
+  });
+}
+
+function initializeDynamicReceipts() {
+  refreshReceiptOptionStates();
+  syncReceiptsListField();
+  console.log("Initializing dynamic receipts with current list value:", $("#receipts_list").val());
+  loadDynamicReceipts($("#receipts_list").val());
+}
+
+// ===================== End Dynamic Receipts Functions =====================
 
 // Function to render file previews next to the input field
 // This function assumes you have a file input with the given fieldName
@@ -1373,37 +1644,42 @@ $.validator.addMethod(
   "Letters only please"
 );
 
-        $.validator.addMethod("receiptDuplicate", function (value, element) {
-            var receipts = [
-                { id: "receipt_no", value: $("#receipt_no").val()?.trim() },
-                { id: "receipt_no2", value: $("#receipt_no2").val()?.trim() },
-                { id: "receipt_no3", value: $("#receipt_no3").val()?.trim() },
-                { id: "receipt_no4", value: $("#receipt_no4").val()?.trim() },
-                { id: "receipt_no5", value: $("#receipt_no5").val()?.trim() }
-            ];
+$.validator.addMethod("receiptDuplicate", function (value, element) {
+  if (!value) return true;
 
-            var currentId = $(element).attr("id");
-            var hasDuplicate = false;
+  var currentValue = value.trim();
+  if (!/^\d+$/.test(currentValue)) return true;
 
-            for (let i = 0; i < receipts.length; i++) {
-                if (!receipts[i].value) continue;
+  var receipts = $("select[name^='receipt_no'], select[name^='receipt_extra_']")
+    .map(function () {
+      return {
+        id: $(this).attr("id"),
+        value: $(this).val()?.trim(),
+      };
+    })
+    .get();
 
-                for (let j = i + 1; j < receipts.length; j++) {
-                    if (!receipts[j].value) continue;
+  var currentId = $(element).attr("id");
 
-                    if (receipts[i].value === receipts[j].value) {
-                        if (receipts[i].id === currentId || receipts[j].id === currentId) {
-                            hasDuplicate = true;
-                            break;
-                        }
-                    }
-                }
+  for (let i = 0; i < receipts.length; i++) {
+    if (
+      receipts[i].id !== currentId &&
+      /^\d+$/.test(String(receipts[i].value || "").trim()) &&
+      receipts[i].value === currentValue
+    ) {
+      return false;
+    }
+  }
 
-                if (hasDuplicate) break;
-            }
+  return true;
+}, "Duplicate receipt number is not allowed.");
 
-            return !hasDuplicate;
-        }, "Duplicate receipt number is not allowed.");
+$.validator.addMethod("validReceiptSelection", function (value, element) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return true;
+  if (normalized === "Null" || normalized === "No Commission" || normalized === "No Commision") return true;
+  return /^\d+$/.test(normalized);
+}, "Please select a valid receipt number.");
 
 $("#sales_form").validate({
   rules: {
@@ -1597,27 +1873,32 @@ $("#sales_form").validate({
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,
+      validReceiptSelection: true,
     },
     
     receipt_no2: {
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,
+      validReceiptSelection: true,
     },
       receipt_no3: {
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,
+      validReceiptSelection: true,
     },
     receipt_no4: {
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,
+      validReceiptSelection: true,
     },
     receipt_no5: {
       alphanum_special: true,
       maxlength: 100,
       receiptDuplicate: true,
+      validReceiptSelection: true,
     },
 
     is_sale_aml: {

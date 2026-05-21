@@ -38,6 +38,7 @@
                       <input type="hidden"  name="comments_finance" id="comments_finance">
                       <input type="hidden"   name="account_id" id="account_id">
                       <input type="hidden"   name="save_as" id="save_as">
+                      <input type="hidden" id="receipts_list" name="receipts_list" >
                         <div class="row">
                                                   {% for group in request.user.groups.all %}
                                       {% if "Agent" in group.name %}
@@ -511,7 +512,25 @@
                                 </select>
                                 <span class="text-danger" id="receipt_no5_error"></span>
                             </div>   
-                                
+                      
+
+                      <!-- Dynamic Receipts Section -->
+                      <div class=" col-md-6 form-group mt-3">
+                         <label for="receipt_no5"></label>
+                          <div class="col-md-12 ">
+                              <button type="button" id="addReceiptBtn" class="btn btn-sm btn-outline-primary" style="margin-bottom: 15px;" disabled>
+                                  + Add Receipt
+                              </button>
+                          </div>
+                      </div>
+
+                      <!-- Dynamic Receipts Container -->
+                      <div id="dynamic_receipts_container" class = "row"></div>
+
+                      <!-- Hidden field to store receipts_list JSON -->
+                      </div>
+
+                      <div class="row">
                           <div class="col-md-6 form-group">
                               <label for="kyc_number">KYC Number</label>
                             <input class="form-control" type="text" id="kyc_number" name="kyc_number" placeholder="KYC Number" >

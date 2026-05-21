@@ -57,7 +57,104 @@ from django.db.models import Q
 logger = logging.getLogger('Sales_Deals_Management')
 
 
- 
+# ===================== Receipt List Helpers =====================
+
+def _parse_receipts_list(raw_value):
+    """
+    Parse receipts_list from JSON string or Python list.
+    Returns list of dicts with 'id' and 'receipt_number' keys.
+    Keeps only valid existing receipt IDs.
+    Removes duplicates.
+    """
+    if not raw_value or (isinstance(raw_value, str) and raw_value.strip() == ''):
+        return []
+    
+    try:
+        if isinstance(raw_value, str):
+            data = json.loads(raw_value)
+        else:
+            data = raw_value
+        
+        if not isinstance(data, list):
+            return []
+        
+        # Filter for valid receipt IDs and remove duplicates
+        seen_ids = set()
+        result = []
+        
+        for item in data:
+            if isinstance(item, dict):
+                receipt_id = item.get('id')
+                receipt_number = item.get('receipt_number')
+                
+                # Validate: must have id, must be numeric
+                if receipt_id and str(receipt_id).isdigit() and int(receipt_id) > 0:
+                    receipt_id_int = int(receipt_id)
+                    if receipt_id_int not in seen_ids:
+                        # Verify receipt exists in DB
+                        rec = Receipts.objects.filter(id=receipt_id_int).first()
+                        if rec:
+                            seen_ids.add(receipt_id_int)
+                            result.append({
+                                'id': receipt_id_int,
+                                'receipt_number': rec.receipt_number
+                            })
+        
+        return result
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return []
+
+
+def _get_legacy_receipt_ids_from_source(source_data):
+    """
+    Extract receipt IDs from fixed receipt fields (1 to 5).
+    Returns list of integers for valid receipt IDs.
+    """
+    legacy_ids = []
+    for field in ['receipt_id', 'receipt_id2', 'receipt_id3', 'receipt_id4', 'receipt_id5']:
+        value = source_data.get(field) if isinstance(source_data, dict) else getattr(source_data, field, None)
+        if value and str(value).isdigit() and int(value) > 0:
+            legacy_ids.append(int(value))
+    return legacy_ids
+
+
+def _sync_receipt_statuses(receipts_payload, reference_number, previous_payload=None):
+    """
+    Sync receipt statuses after create or update.
+    - Marks removed IDs as 'Unused' and clears deal_refer_no
+    - Marks current IDs as 'Used' and sets deal_refer_no
+    """
+    current_ids = set()
+    previous_ids = set()
+    
+    # Parse current receipts
+    for item in receipts_payload:
+        if isinstance(item, dict) and 'id' in item:
+            current_ids.add(int(item['id']))
+    
+    # Parse previous receipts if provided
+    if previous_payload:
+        for item in previous_payload:
+            if isinstance(item, dict) and 'id' in item:
+                previous_ids.add(int(item['id']))
+    
+    # Mark removed IDs as Unused
+    removed_ids = previous_ids - current_ids
+    if removed_ids:
+        Receipts.objects.filter(id__in=removed_ids).update(
+            status='Unused',
+            deal_refer_no=''
+        )
+    
+    # Mark current IDs as Used
+    if current_ids:
+        Receipts.objects.filter(id__in=current_ids).update(
+            status='Used',
+            deal_refer_no=reference_number
+        )
+
+
+
 
 
 
@@ -389,13 +486,33 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
         recipt_no_4, recipt_id_4 = get_receipt_info(sales_deal.receipt_no4)
 
-        recipt_no_5, recipt_id_5 = get_receipt_info(sales_deal.receipt_no5) 
+        recipt_no_5, recipt_id_5 = get_receipt_info(sales_deal.receipt_no5)
         
-        return render(request, 'home/viewsalesdeal.html', {'salesdeal': serializer.data, 'aws_base_url': aws_url, "receipt_no": recipt_no, "receipt_id": recipt_id,  
-                                                           "receipt_no_2":recipt_no_2 , "receipt_id_2":recipt_id_2 ,
-        "receipt_no_3":recipt_no_3 , "receipt_id_3":recipt_id_3,
-        "receipt_no_4":recipt_no_4 , "receipt_id_4":recipt_id_4,
-        "receipt_no_5":recipt_no_5 , "receipt_id_5":recipt_id_5})
+        # ===================== Handle Dynamic Receipts =====================
+        receipts_list_view = []
+        if sales_deal.receipts_list:
+            parsed_list = _parse_receipts_list(sales_deal.receipts_list)
+            for item in parsed_list:
+                receipts_list_view.append({
+                    'id': item.get('id'),
+                    'receipt_number': item.get('receipt_number')
+                })
+        
+        return render(request, 'home/viewsalesdeal.html', {
+            'salesdeal': serializer.data, 
+            'aws_base_url': aws_url, 
+            "receipt_no": recipt_no, 
+            "receipt_id": recipt_id,  
+            "receipt_no_2": recipt_no_2, 
+            "receipt_id_2": recipt_id_2,
+            "receipt_no_3": recipt_no_3, 
+            "receipt_id_3": recipt_id_3,
+            "receipt_no_4": recipt_no_4, 
+            "receipt_id_4": recipt_id_4,
+            "receipt_no_5": recipt_no_5, 
+            "receipt_id_5": recipt_id_5,
+            "receipts_list_view": receipts_list_view
+        })
 
     @action(detail=False, methods=['post'], url_path='create-sale-deal')
     def create_sale_deal(self, request):
@@ -502,6 +619,33 @@ class SalesDealViewSet(viewsets.ModelViewSet):
 
 
         print(mutable_data)
+
+        # ===================== Handle Dynamic Receipts (receipts_list) =====================
+        receipts_list_raw = mutable_data.get('receipts_list', '[]')
+        legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
+        
+        # Parse and validate receipts_list
+        parsed_receipts = _parse_receipts_list(receipts_list_raw)
+        
+        # Filter out any receipts already in fixed fields
+        dynamic_receipts = [
+            r for r in parsed_receipts 
+            if r['id'] not in legacy_receipt_ids
+        ]
+        
+        # Store normalized JSON in mutable_data
+        if dynamic_receipts:
+            mutable_data['receipts_list'] = json.dumps(dynamic_receipts)
+        else:
+            mutable_data['receipts_list'] = None
+        
+        # Mark dynamic receipts as Used
+        if dynamic_receipts:
+            dynamic_ids = [r['id'] for r in dynamic_receipts]
+            Receipts.objects.filter(id__in=dynamic_ids).update(
+                status='Used',
+                deal_refer_no=mutable_data['reference_number']
+            )
 
         # mutable_data['submitted_by_user'] = request.user.id
         mutable_data['account'] = request.user.account_id
@@ -1065,6 +1209,36 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                         mutable_data['receipt_id5'] = 0
                         mutable_data['receipt_no5'] = receipt_value5
  
+            # ===================== Handle Dynamic Receipts (receipts_list) =====================
+            receipts_list_raw = mutable_data.get('receipts_list', '[]')
+            previous_receipts_list = getattr(sales_deal, 'receipts_list', '')
+            
+            # Parse receipts
+            current_parsed = _parse_receipts_list(receipts_list_raw)
+            previous_parsed = _parse_receipts_list(previous_receipts_list) if previous_receipts_list else []
+            
+            # Get legacy IDs from current data
+            legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
+            
+            # Filter out receipts already in fixed fields
+            dynamic_receipts = [
+                r for r in current_parsed
+                if r['id'] not in legacy_receipt_ids
+            ]
+            
+            # Sync receipt statuses for dynamic receipts
+            _sync_receipt_statuses(
+                dynamic_receipts,
+                mutable_data['reference_number'],
+                previous_payload=previous_parsed
+            )
+            
+            # Store normalized JSON
+            if dynamic_receipts:
+                mutable_data['receipts_list'] = json.dumps(dynamic_receipts)
+            else:
+                mutable_data['receipts_list'] = None
+
             mutable_data['updated_by'] = request.user.email
             mutable_data['updated_at'] = now()
 
@@ -1501,10 +1675,22 @@ def edit_sales_deal_page(request, pk):
     reciepts4_used = sales_deal.receipt_id4 if sales_deal.receipt_id4 else ""
     reciepts5_used = sales_deal.receipt_id5 if sales_deal.receipt_id5 else ""
 
+    receipts_list_payload = _parse_receipts_list(getattr(sales_deal, 'receipts_list', ''))
+    receipts_list_ids = [item['id'] for item in receipts_list_payload if item.get('id')]
+
+    used_receipt_ids = [
+        rid for rid in [
+            reciepts1_used,
+            reciepts2_used,
+            reciepts3_used,
+            reciepts4_used,
+            reciepts5_used,
+            *receipts_list_ids,
+        ] if rid
+    ]
 
 
-
-    used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used, reciepts4_used, reciepts5_used] if rid]
+    # used_receipt_ids = [rid for rid in [reciepts1_used, reciepts2_used, reciepts3_used, reciepts4_used, reciepts5_used] if rid]
     print("Used Receipt IDs:", used_receipt_ids)
 
     if role == "Agent":

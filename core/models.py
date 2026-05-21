@@ -1264,6 +1264,8 @@ class RentalDeals (models.Model):
     screening_comments = models.TextField(blank=True)
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
+    lessor_emirates_id = models.TextField(max_length=191, blank=True, null=True)
+    tenants_input_emirates_id = models.TextField(max_length=191, blank=True, null=True)
     manager_approved_rejected = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'),('R', 'Rejected')], default='P')
     re_submitted_date = models.DateField( blank=True, null=True)
     last_reminder_date = models.DateField(blank=True, null=True)
@@ -1415,6 +1417,7 @@ class SalesDeals(models.Model):
     receipt_id3 = models.CharField(max_length=191 , default=0)
     receipt_id4 = models.CharField(max_length=191 , default=0)
     receipt_id5 = models.CharField(max_length=191 , default=0)
+    receipts_list = models.TextField(blank=True, null=True)  # Store dynamic receipts as JSON array
     submitted_by_agent = models.IntegerField()
     screening = models.TextField()
     screening_comments = models.TextField()
