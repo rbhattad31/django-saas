@@ -38,6 +38,9 @@ def render_file_links(file_string, base_url="", reference_number=""):
         # Extract prefix from filename
         match = re.match(r'^([a-zA-Z_]+)\d+', file)
         label = match.group(1) if match else file
+        print("label: ", label)
+        if label == "tenancy_application_form":
+            label = "Acknowledgement of Receiving"
 
         # Build full URL
         file_url = f"{base_url}{reference_number}/{file}"

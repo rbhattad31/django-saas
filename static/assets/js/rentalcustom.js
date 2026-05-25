@@ -1095,6 +1095,10 @@ function renderFilePreviewsNextToInput(
   console.log("Files to preview:", files);
   files.forEach((fileName, index) => {
     const fileUrl = `${awsUrl}${referenceNumber}/${fileName}`;
+    if (  fieldName === "tenancy_application_form"  ) {
+       fieldName = "acknowledgement_of_receiving";
+    }
+    console.log("Previewing file:", fileName, "at URL:", fileUrl, "with label:", fieldName);
     const label = `${fieldName} ${index + 1}`;
 
     const preview = `
