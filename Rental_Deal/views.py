@@ -1,14 +1,11 @@
- 
-from fileinput import filename
 import logging
 import boto3
-from django.db.models import Subquery, OuterRef, Q, Prefetch
+from django.db.models import Subquery, OuterRef, Q
 from django.db import transaction
-from urllib import request
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 import re
-from .Utilities import delete_from_s3, upload_file_to_full_s3_url, s3_file_exists
+from .Utilities import upload_file_to_full_s3_url, s3_file_exists
 
 
 # Create your views here.
@@ -16,28 +13,30 @@ from django.contrib.auth import authenticate, login
 
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from core.models import Users
-from .forms import RentalDealForm, FinanceCommentForm
 
-from rest_framework import viewsets, permissions
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from core.models import RentalDeals,Users,Account,Receipts
-from .serializers import DealSerializer, filterSerializer, AgentDropdownSerializer, ReceiptDropdownSerilizer,DealSerializerfordatatable
-from .pagination import CustomPagination  
-from rest_framework.pagination import PageNumberPagination  
+from core.models import RentalDeals, Receipts
+from .serializers import (
+    DealSerializer,
+    filterSerializer,
+    AgentDropdownSerializer,
+    ReceiptDropdownSerilizer,
+    DealSerializerfordatatable,
+)
+from .pagination import CustomPagination
+
 # from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
 from .forms import LoginForm, SignUpForm  # Add this import for LoginForm and SignUpForm
 from datetime import datetime
 from datetime import date
 from weasyprint import HTML
 from django.template.loader import render_to_string
 
-   
 
 # from django_filters import rest_framework as filters
 from django.template import loader
@@ -45,24 +44,17 @@ from django import template
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import Group  # Add this import
-from django.core.exceptions import PermissionDenied  # <-- Add this import
-import os
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.utils.timezone import now # Add this import
+from django.utils.timezone import now  # Add this import
 import time
 import json
 # from core.utils import has_cached_permission
 
 
-from rest_framework.decorators import action, api_view
-from rest_framework.response import Response
-from django.db.models import Q
 from rest_framework.permissions import BasePermission
 from rest_framework import status
 
 
-logger = logging.getLogger('Rental_Deal')
+logger = logging.getLogger("Rental_Deal")
 
 
 def _parse_receipts_list(raw_value):
@@ -83,7 +75,7 @@ def _parse_receipts_list(raw_value):
     for item in raw_items:
         receipt_id = None
         if isinstance(item, dict):
-            receipt_id = item.get('id')
+            receipt_id = item.get("id")
         else:
             receipt_id = item
 
@@ -95,14 +87,18 @@ def _parse_receipts_list(raw_value):
         if receipt_id <= 0 or receipt_id in seen_ids:
             continue
 
-        receipt_obj = Receipts.objects.filter(id=receipt_id).only('id', 'receipt_number').first()
+        receipt_obj = (
+            Receipts.objects.filter(id=receipt_id).only("id", "receipt_number").first()
+        )
         if not receipt_obj:
             continue
 
-        normalized_receipts.append({
-            'id': receipt_obj.id,
-            'receipt_number': receipt_obj.receipt_number,
-        })
+        normalized_receipts.append(
+            {
+                "id": receipt_obj.id,
+                "receipt_number": receipt_obj.receipt_number,
+            }
+        )
         seen_ids.add(receipt_obj.id)
 
     return normalized_receipts
@@ -113,11 +109,11 @@ def _build_receipts_list_from_legacy_fields(source_data):
     seen_ids = set()
 
     legacy_id_fields = [
-        'receipt_id',
-        'receipt_id2',
-        'receipt_id3',
-        'receipt_id4',
-        'receipt_id5',
+        "receipt_id",
+        "receipt_id2",
+        "receipt_id3",
+        "receipt_id4",
+        "receipt_id5",
     ]
 
     for field_name in legacy_id_fields:
@@ -130,14 +126,18 @@ def _build_receipts_list_from_legacy_fields(source_data):
         if receipt_id <= 0 or receipt_id in seen_ids:
             continue
 
-        receipt_obj = Receipts.objects.filter(id=receipt_id).only('id', 'receipt_number').first()
+        receipt_obj = (
+            Receipts.objects.filter(id=receipt_id).only("id", "receipt_number").first()
+        )
         if not receipt_obj:
             continue
 
-        receipts_payload.append({
-            'id': receipt_obj.id,
-            'receipt_number': receipt_obj.receipt_number,
-        })
+        receipts_payload.append(
+            {
+                "id": receipt_obj.id,
+                "receipt_number": receipt_obj.receipt_number,
+            }
+        )
         seen_ids.add(receipt_obj.id)
 
     return receipts_payload
@@ -145,7 +145,13 @@ def _build_receipts_list_from_legacy_fields(source_data):
 
 def _get_legacy_receipt_ids_from_source(source_data):
     legacy_ids = set()
-    for field_name in ['receipt_id', 'receipt_id2', 'receipt_id3', 'receipt_id4', 'receipt_id5']:
+    for field_name in [
+        "receipt_id",
+        "receipt_id2",
+        "receipt_id3",
+        "receipt_id4",
+        "receipt_id5",
+    ]:
         raw_value = source_data.get(field_name)
         try:
             receipt_id = int(str(raw_value).strip())
@@ -158,37 +164,90 @@ def _get_legacy_receipt_ids_from_source(source_data):
     return legacy_ids
 
 
-def _sync_receipt_statuses(receipts_payload, reference_number, previous_payload=None):
-    previous_ids = {
-        item['id'] for item in (previous_payload or [])
-        if isinstance(item, dict) and item.get('id')
-    }
+def _sync_receipt_statuses(
+    receipts_payload, reference_number, previous_payload=None, lock=True
+):
+    """
+    Release/lock Receipts for a deal. 'previous' is sourced live from the
+    Receipts table (deal_refer_no + status='Used') rather than trusting the
+    caller's view of what used to be selected - across several draft saves
+    the deal's own fields can drift away from what's actually locked.
+
+    A receipt is 'Used' if and only if it is currently referenced by a deal
+    that is actually submitted (form_status == "Complete", lock=True). The
+    moment a deal is saved as a draft (lock=False), every receipt this
+    reference_number currently holds is released - even if the form field
+    still shows the same receipt - because Used must never outlive the
+    deal's own Complete state. Only a real submit locks the currently
+    selected receipts; re-submitting after a draft re-locks them (and can
+    conflict if someone else claimed one meanwhile - see
+    _find_conflicting_receipts).
+    """
     current_ids = {
-        item['id'] for item in receipts_payload
-        if isinstance(item, dict) and item.get('id')
+        item["id"]
+        for item in receipts_payload
+        if isinstance(item, dict) and item.get("id")
     }
 
-    removed_ids = previous_ids - current_ids
-    added_ids = current_ids
+    live_previous_ids = set(
+        Receipts.objects.filter(
+            deal_refer_no=reference_number, status="Used"
+        ).values_list("id", flat=True)
+    )
+    caller_previous_ids = {
+        item["id"]
+        for item in (previous_payload or [])
+        if isinstance(item, dict) and item.get("id")
+    }
+    previous_ids = live_previous_ids | caller_previous_ids
+
+    if lock:
+        removed_ids = previous_ids - current_ids
+        added_ids = current_ids
+    else:
+        removed_ids = previous_ids
+        added_ids = set()
 
     if removed_ids:
-        Receipts.objects.filter(id__in=removed_ids).update(status='Unused', deal_refer_no='')
+        Receipts.objects.filter(id__in=removed_ids).update(
+            status="Unused", deal_refer_no=""
+        )
 
     if added_ids:
-        Receipts.objects.filter(id__in=added_ids).update(status='Used', deal_refer_no=reference_number)
+        Receipts.objects.filter(id__in=added_ids).update(
+            status="Used", deal_refer_no=reference_number
+        )
+
+
+def _find_conflicting_receipts(receipt_ids, reference_number):
+    """
+    Return Receipts already locked (status='Used') by a DIFFERENT deal than
+    the one submitting now. Called only at the moment a deal is actually
+    submitted (form_status == 'Complete'), so two deals can never both
+    successfully claim the same receipt - the second submit is rejected
+    instead of silently stealing the receipt from the first.
+    """
+    ids = {rid for rid in (receipt_ids or []) if rid}
+    if not ids:
+        return []
+    return list(
+        Receipts.objects.filter(id__in=ids, status="Used").exclude(
+            deal_refer_no=reference_number
+        )
+    )
 
 
 class RentalDealPermissions(BasePermission):
     def has_permission(self, request, view):
         # Map methods to permissions
         perms_map = {
-            'GET': 'core.view_rentaldeals',
-            'OPTIONS': 'core.view_rentaldeals',
-            'HEAD': 'core.view_rentaldeals',
-            'POST': 'core.add_rentaldeals',
-            'PUT': 'core.change_rentaldeals',
-            'PATCH': 'core.change_rentaldeals',
-            'DELETE': 'core.delete_rentaldeals',
+            "GET": "core.view_rentaldeals",
+            "OPTIONS": "core.view_rentaldeals",
+            "HEAD": "core.view_rentaldeals",
+            "POST": "core.add_rentaldeals",
+            "PUT": "core.change_rentaldeals",
+            "PATCH": "core.change_rentaldeals",
+            "DELETE": "core.delete_rentaldeals",
         }
 
         required_perm = perms_map.get(request.method)
@@ -198,9 +257,7 @@ class RentalDealPermissions(BasePermission):
         return False
 
 
-
 # ========== S3 Configuration & Utility Functions ==========
-
 
 
 def copy_reference_folder(old_ref, new_ref):
@@ -210,17 +267,16 @@ def copy_reference_folder(old_ref, new_ref):
     """
     print(f"Starting S3 folder copy from {old_ref} to {new_ref}")
     s3 = boto3.client(
-    "s3",
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name=settings.AWS_S3_REGION_NAME
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME,
     )
 
     BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
     try:
         # Extract prefix from old reference (before the dash)
-         
-        
+
         old_prefix = f"live/classic_properties/rental/referencenumber_CP/{old_ref}/"
         new_prefix = f"live/classic_properties/rental/referencenumber_CP/{new_ref}/"
 
@@ -229,19 +285,23 @@ def copy_reference_folder(old_ref, new_ref):
         paginator_check = s3.get_paginator("list_objects_v2")
         new_folder_exists = False
         print(new_prefix)
-        
-        for page in paginator_check.paginate(Bucket=BUCKET_NAME, Prefix=new_prefix, MaxKeys=1):
+
+        for page in paginator_check.paginate(
+            Bucket=BUCKET_NAME, Prefix=new_prefix, MaxKeys=1
+        ):
             if "Contents" in page:
                 new_folder_exists = True
                 break
-        
+
         if new_folder_exists:
-            logger.info(f"Folder already exists for new reference: {new_ref}. Skipping file copy.")
+            logger.info(
+                f"Folder already exists for new reference: {new_ref}. Skipping file copy."
+            )
             return True
 
         paginator = s3.get_paginator("list_objects_v2")
 
-        print( "new_floder_exists", new_folder_exists)
+        print("new_floder_exists", new_folder_exists)
 
         for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix=old_prefix):
             if "Contents" not in page:
@@ -257,7 +317,7 @@ def copy_reference_folder(old_ref, new_ref):
                 s3.copy_object(
                     Bucket=BUCKET_NAME,
                     CopySource={"Bucket": BUCKET_NAME, "Key": old_key},
-                    Key=new_key
+                    Key=new_key,
                 )
 
                 logger.info(f"Copied: {old_key} → {new_key}")
@@ -288,89 +348,107 @@ def clone_deal_with_new_reference(old_deal_id, new_reference):
         logger.info(f"Cloning deal {old_deal_id} with reference: {old_reference}")
 
         # Store receipt IDs before modifying the old deal
-        receipt_ids = [old_deal.receipt_id, old_deal.receipt_id2, old_deal.receipt_id3, old_deal.receipt_id4, old_deal.receipt_id5]
-        receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
+        receipt_ids = [
+            old_deal.receipt_id,
+            old_deal.receipt_id2,
+            old_deal.receipt_id3,
+            old_deal.receipt_id4,
+            old_deal.receipt_id5,
+        ]
+        receipt_ids = [
+            rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0
+        ]
 
         new_reference_dash = new_reference.replace("/", "-")
         new_reference_slash = new_reference.replace("-", "/")
-        
-        if RentalDeals.objects.filter(
-            Q(reference_number=new_reference) | 
-            Q(reference_number=new_reference_dash) | 
-            Q(reference_number=new_reference_slash)
-        ).filter(is_deleted='N').exists():
-            raise ValueError(f"Reference number {new_reference} already exists or Number is not changed. Please choose a unique reference number.")
 
+        if (
+            RentalDeals.objects.filter(
+                Q(reference_number=new_reference)
+                | Q(reference_number=new_reference_dash)
+                | Q(reference_number=new_reference_slash)
+            )
+            .filter(is_deleted="N")
+            .exists()
+        ):
+            raise ValueError(
+                f"Reference number {new_reference} already exists or Number is not changed. Please choose a unique reference number."
+            )
 
         # 2️⃣ Soft delete the old deal immediately (rename it to avoid conflicts)
         old_deal.is_deleted = "Y"
         old_deal.reference_number = old_reference + "D"
         old_deal.save()
-        logger.info(f"Soft deleted old deal. Updated reference to: {old_deal.reference_number}")
+        logger.info(
+            f"Soft deleted old deal. Updated reference to: {old_deal.reference_number}"
+        )
 
         # 3️⃣ Check if new reference already exists (check both dash and slash variations)
         # For example, if new_reference is "CPS-204", also check for "CPS/204"
-        
+
         # 4️⃣ Copy S3 files from old reference to new reference
         copy_reference_folder(old_reference, new_reference)
 
         # 5️⃣ Create new deal (clone from the original values)
-        new_deal = RentalDeals.objects.get(id=old_deal_id)  # Get the original data again
+        new_deal = RentalDeals.objects.get(
+            id=old_deal_id
+        )  # Get the original data again
         new_deal.pk = None  # This makes it a new record
         new_deal.reference_number = new_reference
         new_deal.is_deleted = "N"
         new_deal.save()
-        
-        logger.info(f"Created new deal with ID: {new_deal.id}, reference: {new_reference}")
-        
+
+        logger.info(
+            f"Created new deal with ID: {new_deal.id}, reference: {new_reference}"
+        )
+
         # 6️⃣ Update receipts with new deal reference
         if receipt_ids:
             Receipts.objects.filter(id__in=receipt_ids).update(
-                deal_refer_no=new_reference,
-                status='Used'
+                deal_refer_no=new_reference, status="Used"
             )
-            logger.info(f"Updated {len(receipt_ids)} receipts with new reference: {new_reference}")
-        
-        logger.info(f"Deal cloned successfully. New reference: {new_reference}, Deal ID: {new_deal.id}")
+            logger.info(
+                f"Updated {len(receipt_ids)} receipts with new reference: {new_reference}"
+            )
+
+        logger.info(
+            f"Deal cloned successfully. New reference: {new_reference}, Deal ID: {new_deal.id}"
+        )
         return new_deal
     except Exception as e:
         logger.error(f"Error cloning deal: {str(e)}")
         raise
 
 
-
-
-
-
 class Rental_DealViewSet(viewsets.ModelViewSet):
     queryset = RentalDeals.objects.all()
-       # for default `list`, `retrieve`
-    pagination_class = CustomPagination 
+    # for default `list`, `retrieve`
+    pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Optimized: join submitted_by_user in one query
         return RentalDeals.objects.with_user().all()
-   
-    
-    def get_serializer_class(self):
-        if self.action == 'datatable_filter':
-            return filterSerializer
-        return DealSerializer # Custom pagination class
-    # filter bsed on input 
 
-    @action(detail=True, methods=['post'], url_path='clone-with-reference')
+    def get_serializer_class(self):
+        if self.action == "datatable_filter":
+            return filterSerializer
+        return DealSerializer  # Custom pagination class
+
+    # filter bsed on input
+
+    @action(detail=True, methods=["post"], url_path="clone-with-reference")
     def clone_deal_with_new_ref(self, request, pk=None):
         """
         API endpoint to clone a deal with a new reference number.
-        
+
         POST /api/sales-deals/{id}/clone-with-reference/
-        
+
         Request body:
         {
             "new_reference": "CPS-123456"
         }
-        
+
         Returns:
         {
             "status": "success",
@@ -381,77 +459,75 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         """
         try:
             # Get new reference from request body
-            new_reference = request.data.get('new_reference')
-            
+            new_reference = request.data.get("new_reference")
+
             if not new_reference:
                 return Response(
                     {
                         "status": "error",
-                        "message": "new_reference is required in request body"
+                        "message": "new_reference is required in request body",
                     },
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             # Validate reference format (should contain dash)
-            if '-' not in new_reference:
+            if "-" not in new_reference:
                 return Response(
                     {
                         "status": "error",
-                        "message": "Invalid reference format. Please use format like 'CPM-12345'"
+                        "message": "Invalid reference format. Please use format like 'CPM-12345'",
                     },
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             # Clone the deal
             new_deal = clone_deal_with_new_reference(pk, new_reference)
-            
+
             # Get receipt count for the new deal
             receipt_count = 0
-            receipt_ids = [new_deal.receipt_id, new_deal.receipt_id2, new_deal.receipt_id3]
-            receipt_count = len([rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0])
-            
+            receipt_ids = [
+                new_deal.receipt_id,
+                new_deal.receipt_id2,
+                new_deal.receipt_id3,
+            ]
+            receipt_count = len(
+                [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]
+            )
+
             return Response(
                 {
                     "status": "success",
                     "message": "Deal cloned successfully",
                     "new_deal_id": new_deal.id,
                     "new_reference": new_deal.reference_number,
-                    "receipts_updated": receipt_count
+                    "receipts_updated": receipt_count,
                 },
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
-            
+
         except ValueError as e:
             logger.warning(f"Validation error when cloning deal {pk}: {str(e)}")
             return Response(
-                {
-                    "status": "error",
-                    "message": str(e)
-                },
-                status=status.HTTP_400_BAD_REQUEST
+                {"status": "error", "message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except RentalDeals.DoesNotExist:
             logger.error(f"Deal not found with id: {pk}")
             return Response(
-                {
-                    "status": "error",
-                    "message": f"Deal with ID {pk} not found"
-                },
-                status=status.HTTP_404_NOT_FOUND
+                {"status": "error", "message": f"Deal with ID {pk} not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
             logger.error(f"Error cloning deal {pk}: {str(e)}")
             return Response(
                 {
                     "status": "error",
-                    "message": f"An error occurred while cloning the deal: {str(e)}"
+                    "message": f"An error occurred while cloning the deal: {str(e)}",
                 },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-
-    
-    @action(detail=False, methods=['post'] ,url_path='filter')
+    @action(detail=False, methods=["post"], url_path="filter")
     def datatable_filter(self, request):
         # print(request.data)
         # print(request.data.get("order") ,"togetordering")
@@ -461,136 +537,128 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # print(request.user)
         account_id = user.account_id
         # print( "account_from_request",request.user.account_id)
-        
-       
 
         queryset = (
-    RentalDeals.objects.select_related("submitted_by_user")
-    .filter(is_deleted="N", account_id=account_id)
-    .order_by("-id")
-    .only(
-        # === Core fields ===
-        "id",
-        "submitted_date",
-        "submitted_by_user",
-        "reference_number",
-        "date",
-        "unit_details",
-        "building_name",
-        "project_name",
-        "is_new_deal",
-        "owner_title",
-        "owner_first_name",
-        "owner_last_name",
-        "owner_source",
-        "owner_mobile",
-        "owner_email",
-        "tenant_title",
-        "tenant_first_name",
-        "tenant_last_name",
-        "tenant_source",
-        "tenant_mobile",
-        "tenant_email",
-        "owner_agency",
-        "agent_first_name",
-        "agent_last_name",
-        "agent_phone",
-        "agent_email",
-        "brn",
-        "tenant_agency",
-        "tenant_agent_first_name",
-        "tenant_agent_last_name",
-        "tenant_agent_phone",
-        "tenant_agent_email",
-        "tenant_brn",
-        "tenancy_contract",
-        "owner_passport_copy",
-        "tenant_passport_visa_copy",
-        "tenant_emirates_id",
-        "rental_deposit_cheque_copy",
-        "title_deed",
-        "owner_poa_pp_copy",
-        "key_hand_over_form",
-        "total_commission",
-        "less_outsude_commission",
-        "net_commission",
-        "classic",
-        "agent1",
-        "agent2",
-        "agent3",
-        "is_approved_rejected",
-        "approved_rejected_by",
-        "is_entered_in_finance_system",
-        "comments",
-        "rental_price",
-        "ejari",
-        "agent_name1",
-        "agent_name2",
-        "agent_name3",
-        "owner_eid_copy",
-        "agent_comment",
-        "mediating_agency",
-        "mediating_agent_name",
-        "mediating_agent_phone",
-        "mediating_agent_email",
-        "mediating_agency_brn",
-        "poa_copy",
-        "deal_start_date",
-        "deal_end_date",
-        "receipt_no",
-        "form_status",
-        "rental_kyc_number",
-        "is_rental_aml",
-        "kyc_number",
-        "comments_finance",
-        "created_at",
-        "updated_at",
-        "created_by",
-        "updated_by",
-        "account",
-        "property",
-        "is_deleted",
-        "plot_no",
-        "mode_of_payment",
-        "deal_agent",
-        "receipt_id",
-        "property_usage",
-        "property_size",
-        "premises_no",
-        "security_deposit",
-        "submitted_by_agent",
-        "property_type",
-        "tenancy_application_form",
-        "screening",
-        "screening_comments",
-        "seller_nationality",
-        "buyer_nationality",
-        "manager_approved_rejected",
-        # === Related user fields ===
-        "submitted_by_user__id",
-        "submitted_by_user__name",
-        "submitted_by_user__email",
-    )
-)
- # Filter out deleted deals
+            RentalDeals.objects.select_related("submitted_by_user")
+            .filter(is_deleted="N", account_id=account_id)
+            .order_by("-id")
+            .only(
+                # === Core fields ===
+                "id",
+                "submitted_date",
+                "submitted_by_user",
+                "reference_number",
+                "date",
+                "unit_details",
+                "building_name",
+                "project_name",
+                "is_new_deal",
+                "owner_title",
+                "owner_first_name",
+                "owner_last_name",
+                "owner_source",
+                "owner_mobile",
+                "owner_email",
+                "tenant_title",
+                "tenant_first_name",
+                "tenant_last_name",
+                "tenant_source",
+                "tenant_mobile",
+                "tenant_email",
+                "owner_agency",
+                "agent_first_name",
+                "agent_last_name",
+                "agent_phone",
+                "agent_email",
+                "brn",
+                "tenant_agency",
+                "tenant_agent_first_name",
+                "tenant_agent_last_name",
+                "tenant_agent_phone",
+                "tenant_agent_email",
+                "tenant_brn",
+                "tenancy_contract",
+                "owner_passport_copy",
+                "tenant_passport_visa_copy",
+                "tenant_emirates_id",
+                "rental_deposit_cheque_copy",
+                "title_deed",
+                "owner_poa_pp_copy",
+                "key_hand_over_form",
+                "total_commission",
+                "less_outsude_commission",
+                "net_commission",
+                "classic",
+                "agent1",
+                "agent2",
+                "agent3",
+                "is_approved_rejected",
+                "approved_rejected_by",
+                "is_entered_in_finance_system",
+                "comments",
+                "rental_price",
+                "ejari",
+                "agent_name1",
+                "agent_name2",
+                "agent_name3",
+                "owner_eid_copy",
+                "agent_comment",
+                "mediating_agency",
+                "mediating_agent_name",
+                "mediating_agent_phone",
+                "mediating_agent_email",
+                "mediating_agency_brn",
+                "poa_copy",
+                "deal_start_date",
+                "deal_end_date",
+                "receipt_no",
+                "form_status",
+                "rental_kyc_number",
+                "is_rental_aml",
+                "kyc_number",
+                "comments_finance",
+                "created_at",
+                "updated_at",
+                "created_by",
+                "updated_by",
+                "account",
+                "property",
+                "is_deleted",
+                "plot_no",
+                "mode_of_payment",
+                "deal_agent",
+                "receipt_id",
+                "property_usage",
+                "property_size",
+                "premises_no",
+                "security_deposit",
+                "submitted_by_agent",
+                "property_type",
+                "tenancy_application_form",
+                "screening",
+                "screening_comments",
+                "seller_nationality",
+                "buyer_nationality",
+                "manager_approved_rejected",
+                # === Related user fields ===
+                "submitted_by_user__id",
+                "submitted_by_user__name",
+                "submitted_by_user__email",
+            )
+        )
+        # Filter out deleted deals
         # print("Initial queryset count:", queryset)
 
         user = Users.objects.annotate(
-    first_group_name=Subquery(
-        Group.objects.filter(custom_user_set=OuterRef("pk"))
-        .order_by("id")  # ensures consistent first group
-        .values("name")[:1]  # take only the first group's name
-    )
+            first_group_name=Subquery(
+                Group.objects.filter(custom_user_set=OuterRef("pk"))
+                .order_by("id")  # ensures consistent first group
+                .values("name")[:1]  # take only the first group's name
+            )
         ).get(id=request.user.id)
 
-         
-       
-         
         # user = Users.objects.get(email = request.user)
-      
-        
 
-        
         # print("Request data:", request.data)
         data = filterSerializer(data=request.data)
         data.is_valid(raise_exception=True)
@@ -598,19 +666,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         data = data.validated_data
         # print("validated", data)
 
-
-       
-
-        
-
-
-
-
-
-
         # Global search
-        search_term = data.get("search", {}).get("value") or ''
-        print(search_term , "point x1")
+        search_term = data.get("search", {}).get("value") or ""
+        print(search_term, "point x1")
         if search_term:
             normalized_search_replace_slash = search_term.replace("/", "-")
             normalized_search_replace_minus = search_term.replace("-", "/")
@@ -618,9 +676,12 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             # combined_q_object |= Q(reference_number__icontains=normalized_search)
             combined_q_object |= Q(submitted_by_user__name__icontains=search_term)
-            combined_q_object |= (Q(reference_number__icontains=search_term)|Q(reference_number__icontains=normalized_search_replace_slash) |
-    Q(reference_number__icontains=normalized_search_replace_minus) )
-            
+            combined_q_object |= (
+                Q(reference_number__icontains=search_term)
+                | Q(reference_number__icontains=normalized_search_replace_slash)
+                | Q(reference_number__icontains=normalized_search_replace_minus)
+            )
+
             combined_q_object |= Q(unit_details__icontains=search_term)
             combined_q_object |= Q(building_name__icontains=search_term)
             combined_q_object |= Q(project_name__icontains=search_term)
@@ -636,19 +697,15 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             # --- Specific Handling for Date Fields ---
             try:
                 # Attempt to parse the search_term as DD-MM-YYYY
-                parsed_date = datetime.strptime(search_term, '%d-%m-%Y').date()
+                parsed_date = datetime.strptime(search_term, "%d-%m-%Y").date()
                 # If successful, format it to YYYY-MM-DD for database comparison
-                formatted_date_for_db = parsed_date.strftime('%Y-%m-%d')
-               
+                formatted_date_for_db = parsed_date.strftime("%Y-%m-%d")
 
                 # Now add these date filters using the correctly formatted date.
                 # For exact date match:
                 combined_q_object |= Q(date=formatted_date_for_db)
                 combined_q_object |= Q(deal_start_date=formatted_date_for_db)
                 combined_q_object |= Q(deal_end_date=formatted_date_for_db)
-
-                
-
 
             except ValueError:
                 # If search_term is not a valid DD-MM-YYYY date, then skip adding date filters.
@@ -661,20 +718,26 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         # Field-specific filters
         filter_fields = [
-            "reference_number", "unit_details", "building_name", "is_new_deal",
-            "is_approved_rejected", "project_name", "owner_first_name", "tenant_first_name",
-            "owner_mobile", "tenant_mobile"
+            "reference_number",
+            "unit_details",
+            "building_name",
+            "is_new_deal",
+            "is_approved_rejected",
+            "project_name",
+            "owner_first_name",
+            "tenant_first_name",
+            "owner_mobile",
+            "tenant_mobile",
         ]
         print(data)
-        print(filter_fields , "point x3")
+        print(filter_fields, "point x3")
         for field in filter_fields:
-          
             value = data.get(field)
-            print(filter_fields , "point x4")
+            print(filter_fields, "point x4")
             if value:
                 print(f"Filtering {field} by {value}")
-                print(filter_fields , "point x5")
-                
+                print(filter_fields, "point x5")
+
                 queryset = queryset.filter(**{f"{field}__icontains": value})
 
         # Filterationon types keyword
@@ -685,127 +748,150 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         # print(user_role)
         # print(role)
         print(queryset)
- 
 
         if type_filter:
             # ---------------- Pending ----------------
             if type_filter == "pending":
                 if user.has_perm("core.view_pending_rental_deals"):
-                    if account_id and (role in ["Manager","Agent"] or user.is_superuser):
-                        queryset = queryset.filter(manager_approved_rejected="P", form_status="Complete")
+                    if account_id and (
+                        role in ["Manager", "Agent"] or user.is_superuser
+                    ):
+                        queryset = queryset.filter(
+                            manager_approved_rejected="P", form_status="Complete"
+                        )
                     else:
-                        print( "entere the admin pending")
+                        print("entere the admin pending")
                         print(len(queryset))
-                        queryset = queryset.filter(is_approved_rejected="P", manager_approved_rejected="A", form_status="Complete")
+                        queryset = queryset.filter(
+                            is_approved_rejected="P",
+                            manager_approved_rejected="A",
+                            form_status="Complete",
+                        )
                         print(len(queryset))
                 else:
-                     return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-                )  # 🚨 Forbidden
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )  # 🚨 Forbidden
 
             # ---------------- Approved ----------------
             elif type_filter == "approved":
                 if user.has_perm("core.view_approved_rental_deals"):
                     if account_id and (role in ["Manager"] or user.is_superuser):
-                        queryset = queryset.filter(manager_approved_rejected="A", form_status="Complete")
+                        queryset = queryset.filter(
+                            manager_approved_rejected="A", form_status="Complete"
+                        )
                     elif role not in ["Agent"]:
-                        queryset = queryset.filter(is_approved_rejected="A", form_status="Complete")
+                        queryset = queryset.filter(
+                            is_approved_rejected="A", form_status="Complete"
+                        )
                 else:
-                     return Response({"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN)
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
             # ---------------- Rejected ----------------
             elif type_filter == "rejected":
                 if user.has_perm("core.view_rejected_rental_deals"):
                     if account_id and (role in ["Manager"] or user.is_superuser):
-                        queryset = queryset.filter(Q(manager_approved_rejected="R", form_status="Complete")) 
+                        queryset = queryset.filter(
+                            Q(manager_approved_rejected="R", form_status="Complete")
+                        )
                     elif role not in ["Agent"]:
                         print("enter the admin rejected block finace")
-                        queryset = queryset.filter(is_approved_rejected="R", form_status="Complete")
+                        queryset = queryset.filter(
+                            is_approved_rejected="R", form_status="Complete"
+                        )
                         print(queryset)
                 else:
-                     return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-)
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
             # ---------------- Waiting Finance ----------------
             elif type_filter == "waiting-finance":
                 if user.has_perm("core.view_waiting_finance_rental_deals"):
                     queryset = queryset.filter(is_approved_rejected="F")
                 else:
-                    return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
             # ---------------- Entered Finance ----------------
             elif type_filter == "entered-finance":
                 if user.has_perm("core.enter_finance_rental_deals"):
-                    queryset = queryset.filter(is_entered_in_finance_system="1", form_status="Complete").filter(
-            is_approved_rejected__in=["F", "A"]
-            )
+                    queryset = queryset.filter(
+                        is_entered_in_finance_system="1", form_status="Complete"
+                    ).filter(is_approved_rejected__in=["F", "A"])
                 else:
-                     return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-)
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
             # ---------------- Pending Finance ----------------
             elif type_filter == "pending-finance":
                 if user.has_perm("core.view_pending_finance_rental_deals"):
-                    queryset = queryset.filter(is_entered_in_finance_system="0", form_status="Complete").filter(
-                    is_approved_rejected__in=["F", "A"]
-                        )
+                    queryset = queryset.filter(
+                        is_entered_in_finance_system="0", form_status="Complete"
+                    ).filter(is_approved_rejected__in=["F", "A"])
                 else:
-                     return Response(
+                    return Response(
                         {"detail": "You do not have permission to access this."},
-                        status=status.HTTP_403_FORBIDDEN
+                        status=status.HTTP_403_FORBIDDEN,
                     )
 
             # ---------------- Draft ----------------
             elif type_filter == "draft":
                 if user.has_perm("core.view_my_draft_rental_deals"):
-                     
                     queryset = queryset.filter(form_status="Incomplete")
-                     
+
                 else:
-                     return Response(
-    {"detail": "You do not have permission to access this."},
-    status=status.HTTP_403_FORBIDDEN
-)
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
             # ---------------- All ----------------
             elif type_filter == "All":
                 if user.has_perm("core.view_all_rental_deals"):
                     print("entered all block")
-                    queryset = queryset.filter(form_status="Complete") 
+                    queryset = queryset.filter(form_status="Complete")
                     print(queryset)
                     # print(f"Queryset count after filter: {queryset.count()}")
                 else:
-                    return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
-                
-                
+                    return Response(
+                        {"detail": "You do not have permission to access this."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
             if role == "Agent" or user_role == "Agent":
                 queryset = queryset.filter(submitted_by_user=user)
-                if type_filter == "rejected": 
-                    queryset = queryset.filter(Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"), form_status="Complete")
+                if type_filter == "rejected":
+                    queryset = queryset.filter(
+                        Q(is_approved_rejected="R") | Q(manager_approved_rejected="R"),
+                        form_status="Complete",
+                    )
                 elif type_filter == "approved":
-                    queryset = queryset.filter(Q(is_approved_rejected="A") , form_status="Complete")
+                    queryset = queryset.filter(
+                        Q(is_approved_rejected="A"), form_status="Complete"
+                    )
 
             elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
                 queryset = queryset.filter(created_by=user.email)
             else:
-                role = "superadmin" 
-
-
-
+                role = "superadmin"
 
         # print(queryset)
         order = request.data.get("order", [{}])[0]  # ⬅️ Use raw request.data
         # print("Order parameter:", order)
- 
+
         column_index = order.get("column")
         direction = order.get("dir")
         # print(f"Column index: {column_index}, Direction: {direction}")
- 
+
         column_mapping = {
             0: None,  # Action column (not orderable)
             1: "id",
@@ -817,20 +903,21 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             7: "rental_price",
             8: "deal_start_date",
             9: "deal_end_date",
-            10: "submitted_date"
-           
+            10: "submitted_date",
         }
- 
+
         if column_index is not None and direction:
             try:
                 column_index = int(column_index)
                 column_name = column_mapping.get(column_index)
                 # print(f"Mapped column name: {column_name}")
- 
+
                 if column_name:
-                    order_expression = column_name if direction == "asc" else f"-{column_name}"
+                    order_expression = (
+                        column_name if direction == "asc" else f"-{column_name}"
+                    )
                     print("Ordering expression:", order_expression)
- 
+
                     queryset = queryset.order_by(order_expression)
                     print("✅ Ordering applied. SQL:", str(queryset.query))
                     for obj in queryset[:5]:
@@ -838,13 +925,9 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 else:
                     pass
                     # print("❌ No mapped column for given index:", column_index)
-            except Exception as e:
+            except Exception:
                 # print(f"⚠️ Ordering error: {str(e)}")
                 pass
-
-         
-       
-
 
         # Date range filter
         if data.get("from_date"):
@@ -854,43 +937,53 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(date__lte=data.get("to_date"))
 
         # Pagination
-        start = int(data.get("start") )  # Default to 0 if not provided
-        length = int(data.get("length")) 
-        print(start , length) # Default to 10 if not provided
+        start = int(data.get("start"))  # Default to 0 if not provided
+        length = int(data.get("length"))
+        print(start, length)  # Default to 10 if not provided
 
         if length != -1:
-            paginated = list(queryset[start:start + length])
+            paginated = list(queryset[start : start + length])
             # Get total count from a separate count query only if needed
-            total_count = queryset.count() if start > 0 or len(paginated) == length else len(paginated)
+            total_count = (
+                queryset.count()
+                if start > 0 or len(paginated) == length
+                else len(paginated)
+            )
         else:
             paginated = list(queryset)
             total_count = len(paginated)
 
         print(queryset)
         print(paginated)
- 
 
-        data = request.data.copy()  # Copy the original data to include in the responseda
-        data.pop('csrfmiddlewaretoken', None)
+        data = (
+            request.data.copy()
+        )  # Copy the original data to include in the responseda
+        data.pop("csrfmiddlewaretoken", None)
 
-        serializer = DealSerializerfordatatable(paginated, many=True, context={'request': request})
+        serializer = DealSerializerfordatatable(
+            paginated, many=True, context={"request": request}
+        )
         response_data = {
-            "draw": data.get("draw") ,  # Ensure draw is an integer
+            "draw": data.get("draw"),  # Ensure draw is an integer
             "recordsTotal": total_count,
             "recordsFiltered": total_count,
             "data": serializer.data,
-            # "input": data   
-              # original input back
-        } 
+            # "input": data
+            # original input back
+        }
 
-        return Response(response_data, status= status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
+
     # // create deal
- 
-   
-    @action(detail=False, methods=['post'], url_path='create-deal')
+
+    @action(detail=False, methods=["post"], url_path="create-deal")
     def create_deal(self, request):
         if not request.user.has_perm("core.add_rentaldeals"):
-            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "You do not have permission to access this."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         logger.info(
             "create_deal called: user=%s id=%s",
@@ -912,13 +1005,10 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             print("base_field_name", base_field_name)
             files = request.FILES.getlist(key)
 
-        
-
             # Get existing value from the DB field (comma-separated filenames)
             # existing_value = getattr(rental_deal, base_field_name, "")
             # existing_files = existing_value.split(",") if existing_value else []
 
-            
             for file in files:
                 timestamp = int(time.time())
                 cleaned_name = re.sub(r"[,]+", " ", file.name)
@@ -928,15 +1018,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 # is_uploaded = upload_file_to_full_s3_url(file, filepath)
 
                 # if is_uploaded:
-                    # new_file_names.append(filename)
-
+                # new_file_names.append(filename)
 
                 if base_field_name not in updated_files:
                     updated_files[base_field_name] = []
                 updated_files[base_field_name].append(filename)
 
                 print("updated_files", updated_files)
-            
+
         final_updated_values = {}
 
         all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
@@ -950,8 +1039,6 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
             # updated_existing_files = []
 
-      
-
             # ✅ Add new files
             new_file_names = []
             for file in request.FILES.getlist(base_field_name + "[]"):
@@ -963,7 +1050,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                 if is_uploaded:
                     new_file_names.append(filename)
-                else :
+                else:
                     logger.error(
                         "Failed to upload file %s for field %s reference=%s user=%s",
                         filename,
@@ -971,166 +1058,129 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                         reference_number,
                         getattr(request.user, "email", None),
                     )
-                    return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {
+                            "detail": f"Failed to upload file {filename}. Please try again.uploading"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             # ✅ Combine and update mutable_data + DB dict
-            combined_files =   new_file_names
+            combined_files = new_file_names
             combined_str = ",".join(combined_files)
 
             # mutable_data[base_field_name] = combined_str
             final_updated_values[base_field_name] = combined_str
 
-
-
         for base_field_name, combined_str in final_updated_values.items():
-            mutable_data[base_field_name] = combined_str 
-            print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
-
-            
-
-
-        
-
-        
-
+            mutable_data[base_field_name] = combined_str
+            print(
+                f"Updated mutable_data[{base_field_name}]:",
+                mutable_data[base_field_name],
+            )
 
         # userobj = Users.objects.filter(pk = request.user.id)
 
-        print(f"DEBUG: save_as received: {mutable_data.get('save_as')}") # <--- ADD THIS
-        if mutable_data.get('save_as') == "create-deal":
-            mutable_data['form_status'] = "Complete"
-            mutable_data['submitted_date']= date.today()
+        print(
+            f"DEBUG: save_as received: {mutable_data.get('save_as')}"
+        )  # <--- ADD THIS
+        if mutable_data.get("save_as") == "create-deal":
+            mutable_data["form_status"] = "Complete"
+            mutable_data["submitted_date"] = date.today()
         else:
-            mutable_data['form_status'] = "Incomplete"
-        print(f"DEBUG: form_status set to: {mutable_data['form_status']}") # <--- ADD THIS
-        print(f"DEBUG: mutable_data before serializer: {mutable_data}") 
+            mutable_data["form_status"] = "Incomplete"
+        print(
+            f"DEBUG: form_status set to: {mutable_data['form_status']}"
+        )  # <--- ADD THIS
+        print(f"DEBUG: mutable_data before serializer: {mutable_data}")
 
-
-
-        
-        # adding reference number to the table of recipts 
-        if mutable_data.get('receipt_no'):
-
-            if mutable_data['receipt_no'].isdigit():
-                print("this is the receipt no", mutable_data['receipt_no'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no']).update(status="Used")
-
-                reccicpt = Receipts.objects.filter(id=mutable_data['receipt_no']).first()
-                mutable_data['receipt_id'] = reccicpt.id
-                mutable_data['receipt_no'] = reccicpt.receipt_number
-                print("this is the receipt id", mutable_data['receipt_id'])
-                print("this is the receipt no", mutable_data['receipt_no'])
-            else:
-                pass
-
-        if mutable_data.get('receipt_no2'):
-            if mutable_data['receipt_no2'].isdigit():
-                print("this is the receipt no2", mutable_data['receipt_no2'])
-                Receipts.objects.filter(id=mutable_data['receipt_no2']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no2']).update(status="Used")
-
-                reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no2']).first()
-                mutable_data['receipt_id2'] = reccicpt2.id
-                mutable_data['receipt_no2'] = reccicpt2.receipt_number
-                print("this is the receipt id2", mutable_data['receipt_id2'])
-                print("this is the receipt no2", mutable_data['receipt_no2'])
-            else:
-                pass
-        if mutable_data.get('receipt_no3'):
-            if mutable_data['receipt_no3'].isdigit():
-                print("this is the receipt no3", mutable_data['receipt_no3'])
-                Receipts.objects.filter(id=mutable_data['receipt_no3']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no3']).update(status="Used")
-                # dont get confused it a varible name
-                reccicpt2 = Receipts.objects.filter(id=mutable_data['receipt_no3']).first()
-                mutable_data['receipt_id3'] = reccicpt2.id
-                mutable_data['receipt_no3'] = reccicpt2.receipt_number
-                print("this is the receipt id3", mutable_data['receipt_id3'])
-                print("this is the receipt no3", mutable_data['receipt_no3'])
-            else:
-                pass
-        
-        if mutable_data.get('receipt_no4'):
-            if mutable_data['receipt_no4'].isdigit():
-                print("this is the receipt no4", mutable_data['receipt_no4'])
-                Receipts.objects.filter(id=mutable_data['receipt_no4']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no4']).update(status="Used")
-
-                reccicpt4 = Receipts.objects.filter(id=mutable_data['receipt_no4']).first()
-                mutable_data['receipt_id4'] = reccicpt4.id
-                mutable_data['receipt_no4'] = reccicpt4.receipt_number
-                print("this is the receipt id4", mutable_data['receipt_id4'])
-                print("this is the receipt no4", mutable_data['receipt_no4'])
-            else:
-                pass
-        if mutable_data.get('receipt_no5'):
-            if mutable_data['receipt_no5'].isdigit():
-                print("this is the receipt no5", mutable_data['receipt_no5'])
-                Receipts.objects.filter(id=mutable_data['receipt_no5']).update(deal_refer_no=mutable_data['reference_number'])
-                Receipts.objects.filter(id=mutable_data['receipt_no5']).update(status="Used")
-
-                reccicpt5 = Receipts.objects.filter(id=mutable_data['receipt_no5']).first()
-                mutable_data['receipt_id5'] = reccicpt5.id
-                mutable_data['receipt_no5'] = reccicpt5.receipt_number
-                print("this is the receipt id5", mutable_data['receipt_id5'])
-                print("this is the receipt no5", mutable_data['receipt_no5'])
-            else:
-                pass
+        # Resolve the 5 legacy receipt slots onto this deal's own display
+        # fields only. The shared Receipts table is locked/released further
+        # below, and only once the deal is actually submitted
+        # (form_status == "Complete") - see _sync_receipt_statuses /
+        # _find_conflicting_receipts.
+        legacy_receipt_fields = [
+            ("receipt_no", "receipt_id"),
+            ("receipt_no2", "receipt_id2"),
+            ("receipt_no3", "receipt_id3"),
+            ("receipt_no4", "receipt_id4"),
+            ("receipt_no5", "receipt_id5"),
+        ]
+        for no_field, id_field in legacy_receipt_fields:
+            raw_value = mutable_data.get(no_field)
+            if raw_value and str(raw_value).isdigit():
+                reccicpt = Receipts.objects.filter(id=raw_value).first()
+                if reccicpt:
+                    mutable_data[id_field] = reccicpt.id
+                    mutable_data[no_field] = reccicpt.receipt_number
+                    print(f"this is the {no_field}", mutable_data[no_field])
+                    print(f"this is the {id_field}", mutable_data[id_field])
 
         legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
         receipts_payload = [
-            item for item in _parse_receipts_list(mutable_data.get('receipts_list'))
-            if item.get('id') not in legacy_receipt_ids
+            item
+            for item in _parse_receipts_list(mutable_data.get("receipts_list"))
+            if item.get("id") not in legacy_receipt_ids
         ]
+        mutable_data["receipts_list"] = json.dumps(receipts_payload)
 
-        mutable_data['receipts_list'] = json.dumps(receipts_payload)
-        _sync_receipt_statuses(receipts_payload, mutable_data['reference_number'])
+        combined_receipts_payload = (
+            _build_receipts_list_from_legacy_fields(mutable_data) + receipts_payload
+        )
+        is_complete = mutable_data["form_status"] == "Complete"
+        if is_complete:
+            conflicting_receipts = _find_conflicting_receipts(
+                [item["id"] for item in combined_receipts_payload],
+                mutable_data["reference_number"],
+            )
+            if conflicting_receipts:
+                conflict_numbers = ", ".join(
+                    str(r.receipt_number) for r in conflicting_receipts
+                )
+                return Response(
+                    {
+                        "detail": f"Receipt(s) {conflict_numbers} are already used by another deal."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        # Release always runs (a draft that no longer references a receipt
+        # must not leave it stuck as Used); locking only happens on a real
+        # submit - see _sync_receipt_statuses.
+        _sync_receipt_statuses(
+            combined_receipts_payload,
+            mutable_data["reference_number"],
+            lock=is_complete,
+        )
 
+        if not mutable_data.get("submitted_by_agent"):
+            mutable_data["submitted_by_user"] = request.user.id
+            mutable_data["submitted_by_agent"] = request.user.id
 
-
-        
-        if not mutable_data.get('submitted_by_agent'):
-            mutable_data['submitted_by_user'] = request.user.id
-            mutable_data['submitted_by_agent'] = request.user.id
-
-        else :
-            mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
-           
-            
-
-
-
-
-
-
+        else:
+            mutable_data["submitted_by_user"] = mutable_data.get("submitted_by_agent")
 
         # mutable_data['submitted_by_user'] = request.user.id
-        mutable_data['account'] = request.user.account_id
+        mutable_data["account"] = request.user.account_id
         # mutable_data['submitted_by_agent'] = request.user.id
 
-        mutable_data['created_by'] = request.user.email
-        mutable_data['created_at'] = now()
+        mutable_data["created_by"] = request.user.email
+        mutable_data["created_at"] = now()
 
         print(f"multable data  acoount_id {mutable_data['account']}")
         print("mutalbel data before the serlizer", mutable_data)
         serializer = self.get_serializer(data=mutable_data)
 
-
         for key, value in final_updated_values.items():
             print(f"Final updated value - {key}: {value}")
 
-        
-       
         missing_files = []
         for base_field_name, files_str in final_updated_values.items():
             for fname in files_str.split(","):
                 relative_path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}/{fname}"
                 if not s3_file_exists(relative_path):
                     missing_files.append(fname)
-        
-        if missing_files:
 
+        if missing_files:
             logger.error(
                 "Missing files in S3 for reference=%s user=%s missing=%s",
                 mutable_data.get("reference_number"),
@@ -1138,14 +1188,11 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 missing_files,
             )
             return Response(
-                {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
-
-
-
-
-
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -1153,50 +1200,54 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             "Rental deal created reference_number=%s id=%s by=%s",
             serializer.data.get("reference_number"),
             serializer.data.get("id"),
-            getattr(request.user, "email", None),)
+            getattr(request.user, "email", None),
+        )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # edit the data 
-    # @action(detail=True, methods=['get', 'post']) 
+    # edit the data
+    # @action(detail=True, methods=['get', 'post'])
     # @permission_required('core.change_rentaldeals')
     def custom_update(self, request, pk=None):
         # print("Raw body:", request.body)
         if not request.user.has_perm("core.change_rentaldeals"):
-            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
-      
+            return Response(
+                {"detail": "You do not have permission to access this."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         rental_deal = get_object_or_404(RentalDeals, pk=pk)
 
-        if request.method == 'GET':
+        if request.method == "GET":
             # ✅ Return current data (populate form)
             serializer = self.get_serializer(rental_deal)
             return Response(serializer.data)
 
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             print("request data", request.data)
-            print("✅ Files:", request.FILES) 
+            print("✅ Files:", request.FILES)
             # print("Keys in request.data:", request.data.keys())
             print("Files:", request.FILES.keys())
             rental_deal = get_object_or_404(RentalDeals, pk=pk)
-            declared_file_fields = request.POST.get('__file_fields__', '').split(',')
+            declared_file_fields = request.POST.get("__file_fields__", "").split(",")
             print("Declared file fields:", declared_file_fields)
 
             print("rental_deal", rental_deal)
 
             user = Users.objects.annotate(
-            first_group_name=Subquery(
-                Group.objects.filter(custom_user_set=OuterRef("pk"))
-                .order_by("id")  # ensures consistent first group
-                .values("name")[:1]  # take only the first group's name
-            )
-                ).get(id=request.user.id)
+                first_group_name=Subquery(
+                    Group.objects.filter(custom_user_set=OuterRef("pk"))
+                    .order_by("id")  # ensures consistent first group
+                    .values("name")[:1]  # take only the first group's name
+                )
+            ).get(id=request.user.id)
 
             #
             removed_fields = {
                 key[:-8]: value.strip()
                 for key, value in request.POST.items()
-                if key.endswith('_removed') and value.strip()
-}
+                if key.endswith("_removed") and value.strip()
+            }
             print("Removed fields:", removed_fields)
 
             mutable_data = request.data.dict().copy()
@@ -1207,16 +1258,19 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             base_field_name = ""
             removed_clean_dict = {}
 
-
             for base_field_name in removed_fields:
                 existing_value_from_db = getattr(rental_deal, base_field_name, "")
-                print("existing_value_from_db", existing_value_from_db )
-                existing_files_names_from_db = existing_value_from_db.split(",") if existing_value_from_db else []
+                print("existing_value_from_db", existing_value_from_db)
+                existing_files_names_from_db = (
+                    existing_value_from_db.split(",") if existing_value_from_db else []
+                )
                 print("existing_files_names_from_db", existing_files_names_from_db)
-                removed_clean_list = [f.strip() for f in removed_fields[base_field_name].split(",")]
+                removed_clean_list = [
+                    f.strip() for f in removed_fields[base_field_name].split(",")
+                ]
                 print("removed_clean_list", removed_clean_list)
                 removed_clean_dict = {
-                key: [f.strip() for f in value.split(",") if f.strip()]
+                    key: [f.strip() for f in value.split(",") if f.strip()]
                     for key, value in removed_fields.items()
                 }
                 print()
@@ -1224,13 +1278,17 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
                 for file_name in existing_files_names_from_db:
                     file_name_clean = file_name.strip()
-                    
-                    
+
                     print("file_name repr:", repr(file_name_clean))
                     print("removed_list repr:", [repr(f) for f in removed_clean_list])
                     print("file_name", file_name)
                     value = file_name in removed_clean_list
-                    print("Checking if file_name is in removed_fields:", file_name, "in", removed_fields[base_field_name])
+                    print(
+                        "Checking if file_name is in removed_fields:",
+                        file_name,
+                        "in",
+                        removed_fields[base_field_name],
+                    )
                     print("value", value)
                     if value:
                         # Remove the file from S3
@@ -1241,7 +1299,7 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                         # print("is_deleted", is_deleted)
 
                         # if is_deleted:
-                            # existing_files_names_from_db.remove(file_name)
+                        # existing_files_names_from_db.remove(file_name)
                         print(f"✅ Deleted from S3: file {file_name} at  ")
                         print("after removing file_names", existing_files_names_from_db)
                         print()
@@ -1251,24 +1309,20 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
                         print("file_name_to_remove_list", file_name_to_remove_list)
 
-
-                        
-
-    # Loop through all uploaded file fields
-    # add data 
-            path = f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
+            # Loop through all uploaded file fields
+            # add data
+            path = (
+                f"rental/referencenumber_CP/{mutable_data['reference_number'].strip()}"
+            )
             for key in request.FILES.keys():
                 base_field_name = key.rstrip("[]")  # Remove [] suffix if present
                 print("base_field_name", base_field_name)
                 files = request.FILES.getlist(key)
- 
-            
 
                 # Get existing value from the DB field (comma-separated filenames)
                 # existing_value = getattr(rental_deal, base_field_name, "")
                 # existing_files = existing_value.split(",") if existing_value else []
 
-                
                 for file in files:
                     timestamp = int(time.time())
                     cleaned_name = re.sub(r"[,]+", " ", file.name)
@@ -1278,15 +1332,14 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     # is_uploaded = upload_file_to_full_s3_url(file, filepath)
 
                     # if is_uploaded:
-                        # new_file_names.append(filename)
-
+                    # new_file_names.append(filename)
 
                     if base_field_name not in updated_files:
                         updated_files[base_field_name] = []
                     updated_files[base_field_name].append(filename)
 
                     print("updated_files", updated_files)
-                    
+
                 # Merge old and new file names
             for file_name_to_remove in file_name_to_remove_list:
                 if file_name_to_remove in existing_files:
@@ -1297,16 +1350,16 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
             combined_str = ",".join(filter(None, combined_files))
             print("combined_str", combined_str)
 
-            common_keys = list(set(removed_clean_dict.keys()) & set(updated_files.keys()))
+            common_keys = list(
+                set(removed_clean_dict.keys()) & set(updated_files.keys())
+            )
 
             print("✅ common_keys", common_keys)
 
-
-                # Set updated string into request.data copy
+            # Set updated string into request.data copy
             # mutable_data[base_field_name] = combined_str
 
-             
-            # // new code 
+            # // new code
             final_updated_values = {}
 
             all_field_keys = set(updated_files.keys()) | set(removed_clean_dict.keys())
@@ -1344,12 +1397,27 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                     is_uploaded = upload_file_to_full_s3_url(file, relative_path)
                     if is_uploaded:
                         new_file_names.append(filename)
-                        logger.info("Uploaded file added: %s for field %s", filename, base_field_name)
+                        logger.info(
+                            "Uploaded file added: %s for field %s",
+                            filename,
+                            base_field_name,
+                        )
 
-                    else :
-                        logger.error("Failed to upload file %s for field %s reference=%s user=%s", filename, base_field_name, reference_number, getattr(request.user, "email", None))
+                    else:
+                        logger.error(
+                            "Failed to upload file %s for field %s reference=%s user=%s",
+                            filename,
+                            base_field_name,
+                            reference_number,
+                            getattr(request.user, "email", None),
+                        )
 
-                        return Response({"detail": f"Failed to upload file {filename}. Please try again.uploading"} , status=status.HTTP_400_BAD_REQUEST)
+                        return Response(
+                            {
+                                "detail": f"Failed to upload file {filename}. Please try again.uploading"
+                            },
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
 
                 # ✅ Combine and update mutable_data + DB dict
                 combined_files = updated_existing_files + new_file_names
@@ -1358,299 +1426,148 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 # mutable_data[base_field_name] = combined_str
                 final_updated_values[base_field_name] = combined_str
 
-
-
             for base_field_name, combined_str in final_updated_values.items():
-                mutable_data[base_field_name] = combined_str 
-                print(f"Updated mutable_data[{base_field_name}]:", mutable_data[base_field_name])
+                mutable_data[base_field_name] = combined_str
+                print(
+                    f"Updated mutable_data[{base_field_name}]:",
+                    mutable_data[base_field_name],
+                )
 
-
-
-            print("user role is", user.first_group_name) 
+            print("user role is", user.first_group_name)
             user_role = user.first_group_name or ""
             role = user_role.split("-", 1)[1] if "-" in user_role else user_role
             print(user_role)
             print(role)
 
-            if mutable_data.get('save_as') == "update-deal":
-                mutable_data['form_status'] = "Complete"
-                is_submitted_date = getattr(rental_deal, 'submitted_date' , "")
-                form_status = getattr(rental_deal, 'form_status' , "")
+            if mutable_data.get("save_as") == "update-deal":
+                mutable_data["form_status"] = "Complete"
+                is_submitted_date = getattr(rental_deal, "submitted_date", "")
+                form_status = getattr(rental_deal, "form_status", "")
                 print("form_status", form_status)
                 print("is_submitted_date", is_submitted_date)
 
+                if not is_submitted_date and role in ["Agent"]:
+                    print(
+                        "submitted date already set so not updating", is_submitted_date
+                    )
+                    mutable_data["submitted_date"] = date.today()
 
-                if (not is_submitted_date and role in ["Agent"] ) : 
-                    print("submitted date already set so not updating", is_submitted_date)
-                    mutable_data['submitted_date']= date.today()
-                           
                     # this the re submitted date block to handle rejection and  resubbmission
-                elif (form_status == "Incomplete" and role in ["Agent"] and is_submitted_date) :
-                     mutable_data['submitted_date']= date.today()
+                elif (
+                    form_status == "Incomplete"
+                    and role in ["Agent"]
+                    and is_submitted_date
+                ):
+                    mutable_data["submitted_date"] = date.today()
                 elif is_submitted_date and role in ["Agent"]:
-                    mutable_data['re_submitted_date']= date.today()
-                    print("this is resubmitted date block", mutable_data['re_submitted_date'])
-                    mutable_data['is_approved_rejected'] = "P"  # set to pending on resubmission
-                    mutable_data['manager_approved_rejected'] = "P"  # set to pending on resubmission      
- 
+                    mutable_data["re_submitted_date"] = date.today()
+                    print(
+                        "this is resubmitted date block",
+                        mutable_data["re_submitted_date"],
+                    )
+                    mutable_data["is_approved_rejected"] = (
+                        "P"  # set to pending on resubmission
+                    )
+                    mutable_data["manager_approved_rejected"] = (
+                        "P"  # set to pending on resubmission
+                    )
+
             else:
-                mutable_data['form_status'] = "Incomplete"
+                mutable_data["form_status"] = "Incomplete"
             print(f"DEBUG: form_status set to: {mutable_data['form_status']}")
 
-
-            if mutable_data.get('receipt_no') is not None:
-                get_receipt_no_db = getattr(rental_deal, 'receipt_no', "")
-                get_receipt_id_db = getattr(rental_deal, 'receipt_id', "")
-                print("get_receipt_no_db", get_receipt_no_db)
-                print("get_receipt_id_db", get_receipt_id_db)
-
-                receipt_value = str(mutable_data.get('receipt_no')).strip()
-
+            # Resolve the 5 legacy receipt slots onto this deal's own display
+            # fields only. The shared Receipts table is locked/released
+            # further below, and only once the deal is actually submitted
+            # (form_status == "Complete") - see _sync_receipt_statuses /
+            # _find_conflicting_receipts. This also fixes a prior bug where
+            # a receipt left unchanged between a draft save and the final
+            # submit was never marked Used at all.
+            legacy_receipt_fields = [
+                ("receipt_no", "receipt_id"),
+                ("receipt_no2", "receipt_id2"),
+                ("receipt_no3", "receipt_id3"),
+                ("receipt_no4", "receipt_id4"),
+                ("receipt_no5", "receipt_id5"),
+            ]
+            for no_field, id_field in legacy_receipt_fields:
+                if mutable_data.get(no_field) is None:
+                    continue
+                receipt_value = str(mutable_data.get(no_field)).strip()
                 if receipt_value.isdigit():
-                    if str(get_receipt_id_db) != receipt_value:
-                        if str(get_receipt_id_db).isdigit():
-                            # Here we did not wrote because the 0 is already present from teh start
-                            Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
-
-                        print("this is the receipt no", receipt_value)
-                        Receipts.objects.filter(id=receipt_value).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value).update(status="Used")
-
-                        reccicpt = Receipts.objects.filter(id=receipt_value).first()
-                        if reccicpt:
-                            mutable_data['receipt_id'] = reccicpt.id
-                            mutable_data['receipt_no'] = reccicpt.receipt_number
-
-
-                    if str(get_receipt_id_db) == receipt_value:
-                        Receipts.objects.filter(id=receipt_value).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value).update(status="Used")
-                        reccicpt = Receipts.objects.filter(id=receipt_value).first()
-                        if reccicpt:
-                            mutable_data['receipt_id'] = get_receipt_id_db
-                            mutable_data['receipt_no'] = get_receipt_no_db
-                else:
-                    if receipt_value in ["Null", "No Commission", ""]:
-                        if str(get_receipt_id_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id_db).update(status="Unused", deal_refer_no="")
-                        mutable_data['receipt_id'] = 0
-                        mutable_data['receipt_no'] = receipt_value
-
-            if mutable_data.get('receipt_no2') is not None:
-                get_receipt_no2_db = getattr(rental_deal, 'receipt_no2', "")
-                get_receipt_id2_db = getattr(rental_deal, 'receipt_id2', "")
-                print("get_receipt_no2_db", get_receipt_no2_db)
-                print("get_receipt_id2_db", get_receipt_id2_db)
-
-                receipt_value2 = str(mutable_data.get('receipt_no2')).strip()
-
-                if receipt_value2.isdigit():
-                    if str(get_receipt_id2_db) != receipt_value2:
-                        if str(get_receipt_id2_db).isdigit() or str(get_receipt_id2_db) == "None":
-                            # we wrote None to handle Null Case fo rthe recipts ids 
-                            if str(get_receipt_id2_db).isdigit():
-                                Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
-
-                        print("this is the receipt no2", receipt_value2)
-                        Receipts.objects.filter(id=receipt_value2).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value2).update(status="Used")
-
-                        reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
-                        if reccicpt2:
-                            mutable_data['receipt_id2'] = reccicpt2.id
-                            mutable_data['receipt_no2'] = reccicpt2.receipt_number
-                            
-                    
-                    if str(get_receipt_id2_db) == receipt_value2:
-                        Receipts.objects.filter(id=receipt_value2).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value2).update(status="Used")
-                        reccicpt2 = Receipts.objects.filter(id=receipt_value2).first()
-                        if reccicpt2:
-                            mutable_data['receipt_id2'] = get_receipt_id2_db
-                            mutable_data['receipt_no2'] = get_receipt_no2_db
-                else:
-                    if receipt_value2 in ["Null", "No Commission", ""]:
-                        if str(get_receipt_id2_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id2_db).update(status="Unused", deal_refer_no="")
-                        mutable_data['receipt_id2'] = 0
-                        mutable_data['receipt_no2'] = receipt_value2
+                    reccicpt = Receipts.objects.filter(id=receipt_value).first()
+                    if reccicpt:
+                        mutable_data[id_field] = reccicpt.id
+                        mutable_data[no_field] = reccicpt.receipt_number
+                elif receipt_value in ["Null", "No Commission", ""]:
+                    mutable_data[id_field] = 0
+                    mutable_data[no_field] = receipt_value
 
             legacy_receipt_ids = _get_legacy_receipt_ids_from_source(mutable_data)
             receipts_payload = [
-                item for item in _parse_receipts_list(mutable_data.get('receipts_list'))
-                if item.get('id') not in legacy_receipt_ids
+                item
+                for item in _parse_receipts_list(mutable_data.get("receipts_list"))
+                if item.get("id") not in legacy_receipt_ids
             ]
+            mutable_data["receipts_list"] = json.dumps(receipts_payload)
 
-            previous_receipts_payload = [
-                item for item in _parse_receipts_list(getattr(rental_deal, 'receipts_list', ''))
-                if item.get('id') not in legacy_receipt_ids
-            ]
+            combined_receipts_payload = (
+                _build_receipts_list_from_legacy_fields(mutable_data) + receipts_payload
+            )
+            is_complete = mutable_data["form_status"] == "Complete"
+            if is_complete:
+                conflicting_receipts = _find_conflicting_receipts(
+                    [item["id"] for item in combined_receipts_payload],
+                    mutable_data["reference_number"],
+                )
+                if conflicting_receipts:
+                    conflict_numbers = ", ".join(
+                        str(r.receipt_number) for r in conflicting_receipts
+                    )
+                    return Response(
+                        {
+                            "detail": f"Receipt(s) {conflict_numbers} are already used by another deal."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            # Release always runs (a draft that no longer references a
+            # receipt must not leave it stuck as Used); locking only
+            # happens on a real submit - see _sync_receipt_statuses.
+            _sync_receipt_statuses(
+                combined_receipts_payload,
+                mutable_data["reference_number"],
+                lock=is_complete,
+            )
 
-            mutable_data['receipts_list'] = json.dumps(receipts_payload)
-            _sync_receipt_statuses(receipts_payload, mutable_data['reference_number'], previous_receipts_payload)
+            if mutable_data.get("is_approved_rejected") and mutable_data.get(
+                "is_approved_rejected"
+            ) in ["A", "R", "F"]:
+                mutable_data["approved_rejected_by"] = request.user.email
 
+            mutable_data["updated_by"] = request.user.email
+            mutable_data["updated_at"] = now()
 
+            # if admin crea ting the deal on behalf of agent user willbe agent name if  agent creating deal user will be user name
+            if not mutable_data.get("submitted_by_agent"):
+                mutable_data["submitted_by_user"] = request.user.id
+                mutable_data["submitted_by_agent"] = request.user.id
+            else:
+                mutable_data["submitted_by_user"] = mutable_data.get(
+                    "submitted_by_agent"
+                )
 
-            if mutable_data.get('receipt_no3') is not None:
-                get_receipt_no3_db = getattr(rental_deal, 'receipt_no3', "")
-                get_receipt_id3_db = getattr(rental_deal, 'receipt_id3', "")
-                print("get_receipt_no3_db", get_receipt_no3_db)
-                print("get_receipt_id3_db", get_receipt_id3_db)
-
-                receipt_value3 = str(mutable_data.get('receipt_no3')).strip()
-
-                if receipt_value3.isdigit():
-                    if str(get_receipt_id3_db) != receipt_value3:
-                        if str(get_receipt_id3_db).isdigit()  or str(get_receipt_id3_db) == "None":
-                            # we wrote None to handle Null Case fo rthe recipts ids 
-                            if str(get_receipt_id3_db).isdigit():
-                                Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
-
-                        print("this is the receipt no3", receipt_value3)
-                        Receipts.objects.filter(id=receipt_value3).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value3).update(status="Used")
-
-                        reccicpt3 = Receipts.objects.filter(id=receipt_value3).first()
-                        if reccicpt3:
-                            mutable_data['receipt_id3'] = reccicpt3.id
-                            mutable_data['receipt_no3'] = reccicpt3.receipt_number
-                    
-                    if str(get_receipt_id3_db) == receipt_value3:
-                        Receipts.objects.filter(id=receipt_value3).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value3).update(status="Used")
-                        reccicpt = Receipts.objects.filter(id=receipt_value3).first()
-                        if reccicpt:
-                            mutable_data['receipt_id3'] = get_receipt_id3_db
-                            mutable_data['receipt_no3'] = get_receipt_no3_db
-
-
-                else:
-                    if receipt_value3 in ["Null", "No Commission", ""]:
-                        if str(get_receipt_id3_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id3_db).update(status="Unused", deal_refer_no="")
-                        mutable_data['receipt_id3'] = 0
-                        mutable_data['receipt_no3'] = receipt_value3
-        
-    
-
-            if mutable_data.get('receipt_no4') is not None:
-                get_receipt_no4_db = getattr(rental_deal, 'receipt_no4', "")
-                get_receipt_id4_db = getattr(rental_deal, 'receipt_id4', "")
-                print("get_receipt_no4_db", get_receipt_no4_db)
-                print("get_receipt_id4_db", get_receipt_id4_db)
-
-                receipt_value4 = str(mutable_data.get('receipt_no4')).strip()
-
-                if receipt_value4.isdigit():
-                    if str(get_receipt_id4_db) != receipt_value4:
-                        if str(get_receipt_id4_db).isdigit()  or str(get_receipt_id4_db) == "None":
-                            # we wrote None to handle Null Case fo rthe recipts ids 
-                            if str(get_receipt_id4_db).isdigit():
-                                Receipts.objects.filter(id=get_receipt_id4_db).update(status="Unused", deal_refer_no="")
-
-                        print("this is the receipt no4", receipt_value4)
-                        Receipts.objects.filter(id=receipt_value4).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value4).update(status="Used")
-
-                        reccicpt4 = Receipts.objects.filter(id=receipt_value4).first()
-                        if reccicpt4:
-                            mutable_data['receipt_id4'] = reccicpt4.id
-                            mutable_data['receipt_no4'] = reccicpt4.receipt_number
-                    
-                    if str(get_receipt_id4_db) == receipt_value4:
-                        Receipts.objects.filter(id=receipt_value4).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value4).update(status="Used")
-                        reccicpt4 = Receipts.objects.filter(id=receipt_value4).first()
-                        if reccicpt4:
-                            mutable_data['receipt_id4'] = get_receipt_id4_db
-                            mutable_data['receipt_no4'] = get_receipt_no4_db
-
-
-                else:
-                    if receipt_value4 in ["Null", "No Commission", ""]:
-                        if str(get_receipt_id4_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id4_db).update(status="Unused", deal_refer_no="")
-                        mutable_data['receipt_id4'] = 0
-                        mutable_data['receipt_no4'] = receipt_value4
-
-
-            if mutable_data.get('receipt_no5') is not None:
-                get_receipt_no5_db = getattr(rental_deal, 'receipt_no5', "")
-                get_receipt_id5_db = getattr(rental_deal, 'receipt_id5', "")
-                print("get_receipt_no5_db", get_receipt_no5_db)
-                print("get_receipt_id5_db", get_receipt_id5_db)
-
-                receipt_value5 = str(mutable_data.get('receipt_no5')).strip()
-
-                if receipt_value5.isdigit():
-                    if str(get_receipt_id5_db) != receipt_value5:
-                        if str(get_receipt_id5_db).isdigit()  or str(get_receipt_id5_db) == "None":
-                            # we wrote None to handle Null Case fo rthe recipts ids 
-                            if str(get_receipt_id5_db).isdigit():
-                                Receipts.objects.filter(id=get_receipt_id5_db).update(status="Unused", deal_refer_no="")
-
-                        print("this is the receipt no5", receipt_value5)
-                        Receipts.objects.filter(id=receipt_value5).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value5).update(status="Used")
-
-                        reccicpt5 = Receipts.objects.filter(id=receipt_value5).first()
-                        if reccicpt5:
-                            mutable_data['receipt_id5'] = reccicpt5.id
-                            mutable_data['receipt_no5'] = reccicpt5.receipt_number
-                    
-                    if str(get_receipt_id5_db) == receipt_value5:
-                        Receipts.objects.filter(id=receipt_value5).update(deal_refer_no=mutable_data['reference_number'])
-                        Receipts.objects.filter(id=receipt_value5).update(status="Used")
-                        reccicpt5 = Receipts.objects.filter(id=receipt_value5).first()
-                        if reccicpt5:
-                            mutable_data['receipt_id5'] = get_receipt_id5_db
-                            mutable_data['receipt_no5'] = get_receipt_no5_db
-
-
-                else:
-                    if receipt_value5 in ["Null", "No Commission", ""]:
-                        if str(get_receipt_id5_db).isdigit():
-                            Receipts.objects.filter(id=get_receipt_id5_db).update(status="Unused", deal_refer_no="")
-                        mutable_data['receipt_id5'] = 0
-                        mutable_data['receipt_no5'] = receipt_value5
-
-
-
-
-
-            if mutable_data.get("is_approved_rejected") and mutable_data.get("is_approved_rejected") in ["A", "R", "F"]:
-                mutable_data['approved_rejected_by'] = request.user.email
-
-
-            mutable_data['updated_by'] = request.user.email
-            mutable_data['updated_at'] = now()
-
-            
-
-
-# if admin crea ting the deal on behalf of agent user willbe agent name if  agent creating deal user will be user name
-            if not mutable_data.get('submitted_by_agent'):
-                mutable_data['submitted_by_user'] = request.user.id
-                mutable_data['submitted_by_agent'] = request.user.id
-            else :
-                mutable_data['submitted_by_user'] = mutable_data.get('submitted_by_agent')
-
-            mutable_data['submitted_by_agent'] = request.user.id
+            mutable_data["submitted_by_agent"] = request.user.id
 
             print("mutable_data", mutable_data)
 
             print("Before saving serializer data:", mutable_data.keys())
             # Now pass this updated data to serializer
 
-
-            print("final UPdate values are " , final_updated_values)
+            print("final UPdate values are ", final_updated_values)
             for key, value in final_updated_values.items():
                 print(f"Final updated value - {key}: {value}")
                 logger.debug("Final updated value - %s: %s", key, value)
 
-
-            
-            
             missing_files = []
             for base_field_name, files_str in final_updated_values.items():
                 for fname in files_str.split(","):
@@ -1661,21 +1578,29 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                         logger.info("checking hte path send to s3 %s", relative_path)
                         if not s3_file_exists(relative_path):
                             missing_files.append(fname)
-                
+
             if missing_files:
-                logger.error("Missing files before update for rental id=%s missing=%s", rental_deal.pk, missing_files)
+                logger.error(
+                    "Missing files before update for rental id=%s missing=%s",
+                    rental_deal.pk,
+                    missing_files,
+                )
 
                 return Response(
-                    {"detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {
+                        "detail": f"The following files are missing in S3: {', '.join(missing_files)} upload again"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-            serializer = self.get_serializer(rental_deal, data=mutable_data, partial=True)
+            serializer = self.get_serializer(
+                rental_deal, data=mutable_data, partial=True
+            )
 
             # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
 
-                # ✅ Update data from form
-                # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
-                
+            # ✅ Update data from form
+            # serializer = self.get_serializer(rental_deal, data=request.data, partial=True)
+
             if serializer.is_valid():
                 print("Before saving serializer data:", mutable_data.keys())
                 serializer.save()
@@ -1684,57 +1609,85 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
     # update the fields      entered in finance system
     def update_single_field(self, request):
-        if request.method == 'PUT':
+        if request.method == "PUT":
             try:
                 print("Request data for single field update:", request.body)
-                data =  request.data
-                obj_id = data.get('object_id')
-                field_name = data.get('field_name')
-                value = data.get('value')
+                data = request.data
+                obj_id = data.get("object_id")
+                field_name = data.get("field_name")
+                value = data.get("value")
                 print("Data received for update:", data)
 
                 # Make sure field is valid
                 if field_name not in [f.name for f in RentalDeals._meta.get_fields()]:
-                    return Response({'status': 'error', 'message': 'Invalid field name'}, status=400)
+                    return Response(
+                        {"status": "error", "message": "Invalid field name"}, status=400
+                    )
 
-# Update directly in DB
+                # Update directly in DB
                 RentalDeals.objects.filter(id=obj_id).update(**{field_name: value})
 
                 updated_deal = RentalDeals.objects.get(id=obj_id)
 
-                return Response({'status': 'success',"updated_value":  getattr(updated_deal, field_name) })
+                return Response(
+                    {
+                        "status": "success",
+                        "updated_value": getattr(updated_deal, field_name),
+                    }
+                )
 
             except Exception as e:
-                return Response({'status': 'error', 'message': str(e)}, status=400)
+                return Response({"status": "error", "message": str(e)}, status=400)
 
-        return Response({'status': 'error', 'message': 'Invalid request'}, status=400)
+        return Response({"status": "error", "message": "Invalid request"}, status=400)
 
-       
     # delete the deal soft delete
-    @action(detail=True, methods=['delete'], url_path='delete')
+    @action(detail=True, methods=["delete"], url_path="delete")
     def delete_deal(self, request, pk=None):
         if not request.user.has_perm("core.change_rentaldeals"):
-            return Response({"detail": "You do not have permission to access this."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "You do not have permission to access this."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         instance = self.get_object()
         print("instance", instance)
-        
-        # Mark attached receipts as Unused
-        receipt_ids = [instance.receipt_id, instance.receipt_id2, instance.receipt_id3, instance.receipt_id4, instance.receipt_id5]
-        receipt_ids = [rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0]  # Filter out null/zero values
-        if receipt_ids:
-            Receipts.objects.filter(id__in=receipt_ids).update(status='Unused', deal_refer_no='')
-        
-        RentalDeals.objects.filter(pk=instance.pk).update(is_deleted='Y')
-        RentalDeals.objects.filter(pk=instance.pk).update(reference_number= instance.reference_number+"D")
-        print("instance", instance)
-        return Response({'detail': 'Rental deal deleted'}, status=status.HTTP_200_OK)
-    
-    # recipt helper function 
-    
 
-    
+        # Mark attached receipts as Unused - covers both the 5 legacy slots
+        # and any dynamic (receipts_list) receipts, and only releases ones
+        # still actually linked to this deal (deal_refer_no match) so we
+        # never clobber a receipt another deal has since claimed.
+        receipt_ids = [
+            instance.receipt_id,
+            instance.receipt_id2,
+            instance.receipt_id3,
+            instance.receipt_id4,
+            instance.receipt_id5,
+        ]
+        receipt_ids = [
+            rid for rid in receipt_ids if str(rid).isdigit() and int(rid) > 0
+        ]  # Filter out null/zero values
+        dynamic_receipt_ids = [
+            item["id"]
+            for item in _parse_receipts_list(getattr(instance, "receipts_list", ""))
+            if item.get("id")
+        ]
+        all_receipt_ids = set(receipt_ids) | set(dynamic_receipt_ids)
+        if all_receipt_ids:
+            Receipts.objects.filter(
+                id__in=all_receipt_ids, deal_refer_no=instance.reference_number
+            ).update(status="Unused", deal_refer_no="")
+
+        RentalDeals.objects.filter(pk=instance.pk).update(is_deleted="Y")
+        RentalDeals.objects.filter(pk=instance.pk).update(
+            reference_number=instance.reference_number + "D"
+        )
+        print("instance", instance)
+        return Response({"detail": "Rental deal deleted"}, status=status.HTTP_200_OK)
+
+    # recipt helper function
+
     # view the rental deal
-    @action(detail=True, methods=['get'], url_path='view')
+    @action(detail=True, methods=["get"], url_path="view")
     def view_rental_deal(self, request, pk=None):
 
         logger.info("Rental deal view is opened successfully")
@@ -1757,29 +1710,23 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 rec = Receipts.objects.filter(receipt_number=receipt_no).first()
                 if rec:
                     return rec.receipt_number, rec.id
-             
 
             return "", ""
 
-
-
-
         rental_deal = get_object_or_404(RentalDeals, pk=pk)
 
+        print(rental_deal.receipt_no, "this is the recipt no")
 
-        print(rental_deal.receipt_no,"this is the recipt no")
-
-
-        serializer = DealSerializer(rental_deal,context={'request': request})
-        aws_url = settings.AWS_URL+"rental/referencenumber_CP/"
+        serializer = DealSerializer(rental_deal, context={"request": request})
+        aws_url = settings.AWS_URL + "rental/referencenumber_CP/"
         # return HttpResponse("hello this is view page")
         # if not rental_deal.receipt_no:
         #     recipt_no = None
         # else:
-        #     recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first() 
+        #     recipt_no = Receipts.objects.filter(id=rental_deal.receipt_no).first()
         #     print(recipt_no.receipt_number , "this is recipt id ")
 
-        receipt_no = (rental_deal.receipt_no or "").strip()   # NORMALIZE
+        receipt_no = (rental_deal.receipt_no or "").strip()  # NORMALIZE
         print(receipt_no, "normalized receipt_no")
 
         # CASE 1: empty or Null
@@ -1802,9 +1749,6 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
                 recipt_no = ""
                 recipt_id = ""
 
-
-
-                
         recipt_no_1, recipt_id_1 = get_receipt_info(rental_deal.receipt_no)
         # Receipt No 2
         recipt_no_2, recipt_id_2 = get_receipt_info(rental_deal.receipt_no2)
@@ -1813,17 +1757,31 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
         recipt_no_3, recipt_id_3 = get_receipt_info(rental_deal.receipt_no3)
         recipt_no_4, recipt_id_4 = get_receipt_info(rental_deal.receipt_no4)
         recipt_no_5, recipt_id_5 = get_receipt_info(rental_deal.receipt_no5)
-        receipts_list_view = _parse_receipts_list(getattr(rental_deal, 'receipts_list', ''))
+        receipts_list_view = _parse_receipts_list(
+            getattr(rental_deal, "receipts_list", "")
+        )
         print(receipts_list_view, "this is the receipts list view")
 
-        return render(request, 'home/rentaldealview.html', {'rentaldeal': serializer.data, 'aws_base_url' : aws_url, "recipt_no":recipt_no  , "recipt_id":recipt_id ,
-        "recipt_no_2":recipt_no_2 , "recipt_id_2":recipt_id_2 ,
-        "recipt_no_3":recipt_no_3 , "recipt_id_3":recipt_id_3,
-        "recipt_no_4":recipt_no_4 , "recipt_id_4":recipt_id_4,
-        "recipt_no_5":recipt_no_5 , "recipt_id_5":recipt_id_5,
-        "receipts_list_view": receipts_list_view
-        })
-    
+        return render(
+            request,
+            "home/rentaldealview.html",
+            {
+                "rentaldeal": serializer.data,
+                "aws_base_url": aws_url,
+                "recipt_no": recipt_no,
+                "recipt_id": recipt_id,
+                "recipt_no_2": recipt_no_2,
+                "recipt_id_2": recipt_id_2,
+                "recipt_no_3": recipt_no_3,
+                "recipt_id_3": recipt_id_3,
+                "recipt_no_4": recipt_no_4,
+                "recipt_id_4": recipt_id_4,
+                "recipt_no_5": recipt_no_5,
+                "recipt_id_5": recipt_id_5,
+                "receipts_list_view": receipts_list_view,
+            },
+        )
+
     # submitted by user dropdown we arenot using this
     def submitted_by_user_dropdown(self, request):
         """
@@ -1837,53 +1795,61 @@ class Rental_DealViewSet(viewsets.ModelViewSet):
 
         serializer = AgentDropdownSerializer(agents, many=True)
         return Response(serializer.data)
-    
-    # receipt dropdown 
+
+    # receipt dropdown
     def receipt_drop_down(self, request):
         reciepts = Receipts.objects.all()
-        return Response(ReceiptDropdownSerilizer(reciepts,many=True).data)
-    
-    # tenancy contact Generation  
-    def download_tenancey_contact_pdf(self,request, pk =None):
-        rental_deal = RentalDeals.objects.get(pk=pk) 
-        deal = DealSerializer(rental_deal,context={'request': request})
+        return Response(ReceiptDropdownSerilizer(reciepts, many=True).data)
+
+    # tenancy contact Generation
+    def download_tenancey_contact_pdf(self, request, pk=None):
+        rental_deal = RentalDeals.objects.get(pk=pk)
+        deal = DealSerializer(rental_deal, context={"request": request})
         print(deal.data, "this is pdf")
-        html_string = render_to_string('home/tenancy_contract_pdf_new.html', {'deal': deal.data})
-        html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+        html_string = render_to_string(
+            "home/tenancy_contract_pdf_new.html", {"deal": deal.data}
+        )
+        html = HTML(string=html_string, base_url=request.build_absolute_uri("/"))
         pdf_file = html.write_pdf()
 
         download = request.GET.get("download") == "1"
-        disposition = 'attachment' if download else 'inline'
+        disposition = "attachment" if download else "inline"
 
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = f'{disposition}; filename="receipt_{rental_deal.reference_number}.pdf"'
+        response = HttpResponse(pdf_file, content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'{disposition}; filename="receipt_{rental_deal.reference_number}.pdf"'
+        )
         return response
 
 
+Rental_DealViewSet_filter = Rental_DealViewSet.as_view({"post": "datatable_filter"})
+Rental_DealViewSet_view = Rental_DealViewSet.as_view({"get": "view_rental_deal"})
+Rental_DealViewSet_filter = Rental_DealViewSet.as_view({"post": "datatable_filter"})
+Rental_DealViewSet_create = Rental_DealViewSet.as_view({"post": "create_deal"})
 
+Rental_DealViewSet_delete = Rental_DealViewSet.as_view({"delete": "delete_deal"})
 
-
-
-Rental_DealViewSet_filter = Rental_DealViewSet.as_view({'post': 'datatable_filter' })
-Rental_DealViewSet_view = Rental_DealViewSet.as_view({'get': 'view_rental_deal'})
-Rental_DealViewSet_filter = Rental_DealViewSet.as_view({'post': 'datatable_filter'})
-Rental_DealViewSet_create = Rental_DealViewSet.as_view({'post': 'create_deal'})
- 
-Rental_DealViewSet_delete = Rental_DealViewSet.as_view({'delete': 'delete_deal'})
- 
-Rental_DealViewSet_update = Rental_DealViewSet.as_view({
-    'get': 'custom_update',
-    'put': 'custom_update',
-})
-Rental_DealViewSet_finance_update = Rental_DealViewSet.as_view({'put': 'update_single_field'})
-Rental_DealViewSet_agent_dropdown = Rental_DealViewSet.as_view({'get': 'submitted_by_user_dropdown'})
-Rental_DealViewSet_receipts_dropdown = Rental_DealViewSet.as_view({'get': 'receipt_drop_down'})
-Rental_DealViewSet_tenancey_contact  = Rental_DealViewSet.as_view({'get': 'download_tenancey_contact_pdf'})
-Rental_DealViewSet_clone = Rental_DealViewSet.as_view({'post': 'clone_deal_with_new_ref'})
-  
-
-
-
+Rental_DealViewSet_update = Rental_DealViewSet.as_view(
+    {
+        "get": "custom_update",
+        "put": "custom_update",
+    }
+)
+Rental_DealViewSet_finance_update = Rental_DealViewSet.as_view(
+    {"put": "update_single_field"}
+)
+Rental_DealViewSet_agent_dropdown = Rental_DealViewSet.as_view(
+    {"get": "submitted_by_user_dropdown"}
+)
+Rental_DealViewSet_receipts_dropdown = Rental_DealViewSet.as_view(
+    {"get": "receipt_drop_down"}
+)
+Rental_DealViewSet_tenancey_contact = Rental_DealViewSet.as_view(
+    {"get": "download_tenancey_contact_pdf"}
+)
+Rental_DealViewSet_clone = Rental_DealViewSet.as_view(
+    {"post": "clone_deal_with_new_ref"}
+)
 
 
 def login_view(request):
@@ -1892,29 +1858,28 @@ def login_view(request):
     msg = None
 
     if request.method == "POST":
-
         print(request)
 
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
-            print(f'{username , password}')
+            print(f"{username, password}")
             # user = Users.objects.get(email=username)
             # print()
             # print(user.check_password(password))
-            
-            user =  authenticate(email = username , password = password)
+
+            user = authenticate(email=username, password=password)
             # user =  authenticate(username=username, password=password)
-          
+
             print(user)
-            
+
             if user is not None:
                 login(request, user)
                 return redirect("/")
             else:
-                msg = 'Invalid credentials'
+                msg = "Invalid credentials"
         else:
-            msg = 'Error validating the form'
+            msg = "Error validating the form"
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg})
 
@@ -1937,26 +1902,23 @@ def register_user(request):
             # return redirect("/login/")
 
         else:
-            msg = 'Form is not valid'
+            msg = "Form is not valid"
     else:
         form = SignUpForm()
 
-    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
-
-
-
-
-
-
-
+    return render(
+        request,
+        "accounts/register.html",
+        {"form": form, "msg": msg, "success": success},
+    )
 
 
 @login_required(login_url="/login/")
-@permission_required('auth.admin_dashboard_access',raise_exception=True)
+@permission_required("auth.admin_dashboard_access", raise_exception=True)
 def index(request):
-    context = {'segment': 'index'}
+    context = {"segment": "index"}
 
-    html_template = loader.get_template('home/index.html')
+    html_template = loader.get_template("home/index.html")
     return HttpResponse(html_template.render(context, request))
 
 
@@ -1966,54 +1928,50 @@ def pages(request):
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
     try:
+        load_template = request.path.split("/")[-1]
 
-        load_template = request.path.split('/')[-1]
+        if load_template == "admin":
+            return HttpResponseRedirect(reverse("admin:index"))
+        context["segment"] = load_template
 
-        if load_template == 'admin':
-            return HttpResponseRedirect(reverse('admin:index'))
-        context['segment'] = load_template
-
-        html_template = loader.get_template('home/' + load_template)
+        html_template = loader.get_template("home/" + load_template)
         return HttpResponse(html_template.render(context, request))
 
     except template.TemplateDoesNotExist:
-
-        html_template = loader.get_template('home/page-404.html')
+        html_template = loader.get_template("home/page-404.html")
         return HttpResponse(html_template.render(context, request))
-    
- 
 
     except:
-        html_template = loader.get_template('home/page-500.html')
+        html_template = loader.get_template("home/page-500.html")
         return HttpResponse(html_template.render(context, request))
 
 
 # html for the all list of rental deals
-@login_required(login_url="/login/") 
-@permission_required("core.manage_rental_deals",raise_exception=True)
+@login_required(login_url="/login/")
+@permission_required("core.manage_rental_deals", raise_exception=True)
 def all_rental_deals(request):
     """
     View to list all rental deals.
     """
     group = request.user.groups.first()
     print(group.name)
-    return render(request, 'home/rentalall.html')
+    return render(request, "home/rentalall.html")
 
 
-# // html forthe edit rental deal 
+# // html forthe edit rental deal
 @login_required(login_url="/login/")
-@permission_required('core.change_rentaldeals',raise_exception=True)
-def edit_rental_deal_view(request, pk): 
+@permission_required("core.change_rentaldeals", raise_exception=True)
+def edit_rental_deal_view(request, pk):
     deal = RentalDeals.objects.get(pk=pk)
-    aws_url = settings.AWS_URL+"rental/referencenumber_CP/"
+    aws_url = settings.AWS_URL + "rental/referencenumber_CP/"
     # account_id = request.user.account_id
     # try:
     #     agent_group = Group.objects.get(name="Agent")  # Adjust group name if needed
     #     agents = Users.objects.filter(is_active=True)
     # except Group.DoesNotExist:
     #         agents = Users.objects.none()
-    
-    agents = Users.objects.filter(is_active=True,  account_id = request.user.account_id)
+
+    agents = Users.objects.filter(is_active=True, account_id=request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
     group = request.user.groups.first().name
@@ -2024,54 +1982,60 @@ def edit_rental_deal_view(request, pk):
 
     print(role)
     reciepts1_used = deal.receipt_id if deal.receipt_id else ""
-    reciepts2_used = deal.receipt_id2 if deal.receipt_id2 else ""      
+    reciepts2_used = deal.receipt_id2 if deal.receipt_id2 else ""
     reciepts3_used = deal.receipt_id3 if deal.receipt_id3 else ""
     reciepts4_used = deal.receipt_id4 if deal.receipt_id4 else ""
     reciepts5_used = deal.receipt_id5 if deal.receipt_id5 else ""
 
-    receipts_list_payload = _parse_receipts_list(getattr(deal, 'receipts_list', ''))
-    receipts_list_ids = [item['id'] for item in receipts_list_payload if item.get('id')]
+    receipts_list_payload = _parse_receipts_list(getattr(deal, "receipts_list", ""))
+    receipts_list_ids = [item["id"] for item in receipts_list_payload if item.get("id")]
 
     used_receipt_ids = [
-        rid for rid in [
+        rid
+        for rid in [
             reciepts1_used,
             reciepts2_used,
             reciepts3_used,
             reciepts4_used,
             reciepts5_used,
             *receipts_list_ids,
-        ] if rid
+        ]
+        if rid
     ]
     if role == "Agent":
-         
-        
         reciepts_db = (
-            Receipts.objects.filter(account_id=request.user.account_id, agent_id=request.user.id)
+            Receipts.objects.filter(
+                account_id=request.user.account_id, agent_id=request.user.id
+            )
             .filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
             .distinct()
-            
         )
         print(reciepts_db)
 
     else:
-        reciepts_db = Receipts.objects.filter(account_id = request.user.account_id).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
+        reciepts_db = Receipts.objects.filter(
+            account_id=request.user.account_id
+        ).filter(Q(status="Unused") | Q(id__in=used_receipt_ids))
+
+    receipts = ReceiptDropdownSerilizer(reciepts_db, many=True).data
+
+    rental_data = {"agents": agents, "receipts": receipts}
+
+    return render(
+        request,
+        "home/editrentaldeal.html",
+        {
+            "deal_id": pk,
+            "aws_url": aws_url,
+            "reference_number": deal.reference_number,
+            "rental_data": json.dumps(rental_data),
+        },
+    )
 
 
-    receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
-
-    rental_data = {
-        'agents': agents,
-        'receipts': receipts
-    }
-       
-
-    return render(request, 'home/editrentaldeal.html', {'deal_id': pk, 'aws_url': aws_url, 'reference_number': deal.reference_number , "rental_data" :  json.dumps(rental_data), })
-
-
-
-# html for the create rental deal 
+# html for the create rental deal
 @login_required(login_url="/login/")
-@permission_required('core.add_rentaldeals',raise_exception=True)
+@permission_required("core.add_rentaldeals", raise_exception=True)
 def create_rental_deal_view(request):
     """
     View to create a new rental deal.
@@ -2084,28 +2048,24 @@ def create_rental_deal_view(request):
     # except Group.DoesNotExist:
     #         agents = Users.objects.none()
 
-    agents = Users.objects.filter(is_active=True , account_id = request.user.account_id)
+    agents = Users.objects.filter(is_active=True, account_id=request.user.account_id)
     agents = AgentDropdownSerializer(agents, many=True).data
 
-    reciepts_db = Receipts.objects.filter(account_id = request.user.account_id ,status= "Unused" , agent_id = request.user.id)
-    receipts = ReceiptDropdownSerilizer(reciepts_db,many=True).data
+    reciepts_db = Receipts.objects.filter(
+        account_id=request.user.account_id, status="Unused", agent_id=request.user.id
+    )
+    receipts = ReceiptDropdownSerilizer(reciepts_db, many=True).data
 
-    rental_data = { 
-        'agents': agents,
-        'receipts': receipts
-    }
-    # print(rental_data) # to check teh data 
-    return render(request, 'home/createrentaldeal.html', { "rental_data" :  json.dumps(rental_data), } )
-
-
-
-
+    rental_data = {"agents": agents, "receipts": receipts}
+    # print(rental_data) # to check teh data
+    return render(
+        request,
+        "home/createrentaldeal.html",
+        {
+            "rental_data": json.dumps(rental_data),
+        },
+    )
 
 
 def home_redirect(request):
-    return redirect('dashbroad') 
-
-
-
-
- 
+    return redirect("dashbroad")
