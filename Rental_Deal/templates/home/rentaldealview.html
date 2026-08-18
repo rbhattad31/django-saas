@@ -1435,9 +1435,27 @@
                                                 </div>
                                             <span class="text-danger" id="screening_error"></span>
                                         </div>
-                                    </div> 
+                                    </div>
                                 </div>
-                                
+                                <div class="row">
+                                     <div class="col-md-6 form-group mb-3">
+                                        <div class="row">
+                                                <div class="col-4">
+                                                <label for="">
+                                                <h6 class="labelname">Referral Agreement</h6>
+                                                </label>
+                                                </div>
+                                                <div class="col-1">:</div>
+                                                <div class="col-6">
+                                                    <div id="upload_prevss" class="referral_agreement_copy_list">
+                                                        {% render_file_links rentaldeal.referral_agreement_copy aws_base_url rentaldeal.reference_number %}
+                                                    </div>
+                                                </div>
+                                            <span class="text-danger" id="referral_agreement_copy_error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
                             <br>
                                 <div class="form-group row mt-3">
                                     <div class="col-sm-12 d-flex justify-content-center">

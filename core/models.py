@@ -1261,6 +1261,7 @@ class RentalDeals (models.Model):
     tenancy_application_form = models.TextField(blank=True, null=True)
     screening = models.TextField()
     commission_shortfall_form_copy = models.TextField(blank=True, null=True)
+    referral_agreement_copy = models.TextField(blank=True, null=True)
     screening_comments = models.TextField(blank=True)
     seller_nationality = models.CharField(max_length=191)
     buyer_nationality = models.CharField(max_length=191)
