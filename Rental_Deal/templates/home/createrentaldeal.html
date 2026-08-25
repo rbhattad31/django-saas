@@ -2079,17 +2079,15 @@
                   </div>
                 </div>
                 <div class="form-group row nav-documents">
-                  <div class="col-md-6 form-group">
-                    <label for="screening_comments">Screening Comments</label>
-                    <textarea
-                      class="form-control"
-                      name="screening_comments"
-                      id="screening_comments"
-                      row="5"
-                      cols="50"
-                      placeholder="Screening Comments"
-                    ></textarea>
-                  </div>
+                    <div class="col-md-6 form-group">
+                        <label for="referral_agreement_copy">Referral Agreement </label><br>
+                        <input multiple="multiple" class="imageUploadInput" id="referral_agreement_copy" type="file" name="referral_agreement_copy[]">
+                        <input type="hidden" id="referral_agreement_copy_existing_count" name="referral_agreement_copy_existing_count" value="0">
+                        <input type="hidden" id="referral_agreement_copy_removed" name="referral_agreement_copy_removed" value="">
+                        <input type="hidden" id="referral_agreement_copy_new_removed_count" name="referral_agreement_copy_new_removed_count" value="">
+                        <div id="upload_prevss" class="referral_agreement_copy_list"></div>
+                        <span class="text-danger" id="referral_agreement_copy_error"></span>
+                    </div>
                     <div class="col-md-6 form-group">
                         <label for="commission_shortfall_form_copy">Commission Shortfall Form or Approval </label><br>
                         <input multiple="multiple" class="imageUploadInput" id="commission_shortfall_form_copy" type="file" name="commission_shortfall_form_copy[]">
@@ -2101,15 +2099,17 @@
                     </div>
                 </div>
                 <div class="form-group row nav-documents">
-                    <div class="col-md-6 form-group">
-                        <label for="referral_agreement_copy">Referral Agreement </label><br>
-                        <input multiple="multiple" class="imageUploadInput" id="referral_agreement_copy" type="file" name="referral_agreement_copy[]">
-                        <input type="hidden" id="referral_agreement_copy_existing_count" name="referral_agreement_copy_existing_count" value="0">
-                        <input type="hidden" id="referral_agreement_copy_removed" name="referral_agreement_copy_removed" value="">
-                        <input type="hidden" id="referral_agreement_copy_new_removed_count" name="referral_agreement_copy_new_removed_count" value="">
-                        <div id="upload_prevss" class="referral_agreement_copy_list"></div>
-                        <span class="text-danger" id="referral_agreement_copy_error"></span>
-                    </div>
+                  <div class="col-md-6 form-group">
+                    <label for="screening_comments">Screening Comments</label>
+                    <textarea
+                      class="form-control"
+                      name="screening_comments"
+                      id="screening_comments"
+                      row="5"
+                      cols="50"
+                      placeholder="Screening Comments"
+                    ></textarea>
+                  </div>
                 </div>
                 <br />
 
