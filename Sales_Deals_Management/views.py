@@ -1544,8 +1544,9 @@ class SalesDealViewSet(viewsets.ModelViewSet):
                         is_approved_rejected="A", form_status="Complete"
                     )
 
-            elif (role == "Admin" or user_role == "Admin") and type_filter == "draft":
-                queryset = queryset.filter(created_by=user.email)
+            elif role == "Admin" or user_role == "Admin":
+                # Admin sees every draft in the account, regardless of who created it
+                pass
             else:
                 role = "superadmin"
 

@@ -1095,11 +1095,14 @@ function renderFilePreviewsNextToInput(
   console.log("Files to preview:", files);
   files.forEach((fileName, index) => {
     const fileUrl = `${awsUrl}${referenceNumber}/${fileName}`;
-    if (  fieldName === "tenancy_application_form"  ) {
-       fieldName = "acknowledgement_of_receiving";
-    }
-    console.log("Previewing file:", fileName, "at URL:", fileUrl, "with label:", fieldName);
-    const label = `${fieldName} ${index + 1}`;
+    // tenancy_application_form is shown as "Acknowledgement of Receiving" in the UI;
+    // only the label changes — data-name must stay the real input id for removal to work
+    const labelName =
+      fieldName === "tenancy_application_form"
+        ? "acknowledgement_of_receiving"
+        : fieldName;
+    console.log("Previewing file:", fileName, "at URL:", fileUrl, "with label:", labelName);
+    const label = `${labelName} ${index + 1}`;
 
     const preview = `
       <div class="upload_prev">
